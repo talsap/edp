@@ -1,20 +1,18 @@
-# etd
-Software ETD (Ensaios Triaxial Dinâmico)
-
 ![Logo of the project](https://github.com/talsap/etd/blob/main/readme_images/logo.png?raw=true)
  
-## Nome
+## Nome_do_Projeto
  
-... Description
+# etd
+Software ETD (Ensaios Triaxial Dinâmico)
  
  
-## Technology 
+## Tecnologias
  
-Here are the technologies used in this project.
+Aqui estão as tecnologias que serão usadas neste projeto.
  
-* Ruby version  x.x.x
-* Rails version x.x.x
-* ...
+* Python  2.7.18 (linguagem da programção)
+* wxPython  4.1.0 Released (GUI toolkit)
+* C++ (icrementação arduino)
  
  
 ## Services Used
