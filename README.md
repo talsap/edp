@@ -22,13 +22,18 @@ Aqui estão as tecnologias que serão usadas neste projeto.
 * Windowns 10 Pro
  
 ## Comandos Utilizados
- 
-* Instalação do pip no windowns:
->    $ bundle install
-* To create the bank and do as migrations:
->    $ rake db:create db:migrate db:seed
-* To run the project:
->    $ rails s
+
+cmd -> (Administrador)
+* Instalação do pip no windowns: (caso necessário)
+>    $ python get-pip.py
+* Instalação do wxPython:
+>    $ python -m pip install -U wxPython
+* Instalação do pySerial:
+>    $ python -m pip install pyserial
+* Instalação do pandas:
+>    $ python -m pip install -U pandas
+* Instalação do unicode:
+>    $ python -m pip install -U unicodecsv
  
 ## How to use
  
