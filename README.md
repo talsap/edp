@@ -3,7 +3,11 @@
 ## Nome do Projeto
  
 Software ETD (Ensaios Triaxial Dinâmico)
+
+## Objetivos
  
+Software ETD (Ensaios Triaxial Dinâmico)
+
 ## Tecnologias
  
 Aqui estão as tecnologias que serão usadas neste projeto.
@@ -38,12 +42,12 @@ cmd -> (Administrador)
 ## Projeto
  
 Aqui estão as imagens e descrições. Conteúdo principal.
- 
+![home screen logo](https://github.com/talsap/etd/blob/main/readme_images/TelaInicial.png?raw=true)
  
 ## Features
  
   - Here will be the features.
-![home screen logo](https://github.com/talsap/etd/blob/main/readme_images/TelaInicial.png?raw=true)
+
  
 ## Links
  
