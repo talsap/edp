@@ -1,5 +1,4 @@
 ![Logo of the project](https://github.com/talsap/edp/blob/main/readme_images/logo-edp%20lateral.png?raw=true)
- 
 ## Projeto
  
 Software EDP - Ensaios Dinâmico para Pavimentação - v1.0 Beta
