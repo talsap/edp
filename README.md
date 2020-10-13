@@ -35,15 +35,15 @@ cmd -> (Administrador)
 * Instalação do unicode:
 >    $ python -m pip install -U unicodecsv
  
-## How to use
+## Projeto
  
-Here will be the images and descriptions. Principal content.
+Aqui estão as imagens e descrições. Conteúdo principal.
  
  
 ## Features
  
   - Here will be the features.
- 
+![home screen logo](https://github.com/talsap/etd/blob/main/readme_images/TelaInicial.png?raw=true)
  
 ## Links
  
