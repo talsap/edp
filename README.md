@@ -8,7 +8,7 @@ Software ETD (Ensaios Triaxial Dinâmico)
  
 Aqui estão as tecnologias que serão usadas neste projeto.
  
-* Python  2.7.18 (linguagem da programção) (https://www.python.org/downloads/release/python-2718/)
+* Python  2.7.18 (linguagem da programção) >> https://www.python.org/downloads/release/python-2718/ <<
 * wxPython  4.1.0 Released (GUI toolkit)
 * C++ (icrementação arduino)
   
