@@ -59,7 +59,7 @@ cmd -> (Administrador)
  - [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
  - Repository: https://github.com/talsap/etd
  - Em caso de bugs sensíveis, como vulnerabilidades de segurança, entre em contato
-      atraves do e-mail em vez de usar o rastreador de problemas. Nós valorizamos seu esforço
+      atraves do [e-mail](tarcisiosapucaia27@gmail.com) em vez de usar o rastreador de problemas. Nós valorizamos seu esforço
       para melhorar a segurança e privacidade deste projeto!
  
 ## Versão
