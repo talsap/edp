@@ -39,11 +39,13 @@ cmd -> (Administrador)
 * Instalação do unicode:
 >    $ python -m pip install -U unicodecsv
  
-## Projeto
- 
-Aqui estão as imagens e descrições. Conteúdo principal.
+## Preview
 ![home screen logo](https://github.com/talsap/etd/blob/main/readme_images/TelaInicial.png?raw=true)
- 
+
+## Protótipo
+Aqui estão as telas e o conteúdo principal.
+>> https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/ <<
+
 ## Features
  
   - Here will be the features.
@@ -60,13 +62,13 @@ Aqui estão as imagens e descrições. Conteúdo principal.
  
 ## Versioning
  
-1.0.0.0
+1.0 BETA
  
  
 ## Authors
  
-* **YOUR NAME**: @YOUR_GITHUB_NICKNAME (https://github.com/YOUR_GITHUB_NICKNAME)
+* **Tarcisio Sapucaia**: @talsap (https://github.com/talsap)
+* **Caio França**: 
  
- 
-Please follow github and join us!
-Thanks to visiting me and good coding!
+Siga-nos no github e junte-se a nós!
+Obrigado por visitar e boa codificação!
