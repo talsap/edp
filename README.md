@@ -1,4 +1,4 @@
-![Logo of the project](https://github.com/talsap/etd/blob/main/readme_images/logo.png?raw=true)
+![Logo of the project](https://github.com/talsap/edp/blob/main/readme_images/logo-edp%20lateral.png?raw=true)
  
 ## Projeto
  
