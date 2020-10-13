@@ -1,8 +1,8 @@
 ![Logo of the project](https://github.com/talsap/etd/blob/main/readme_images/logo.png?raw=true)
  
-## Nome do Projeto
+## Projeto
  
-Software ETD (Ensaios Triaxial Dinâmico)
+Software ETD - Ensaios Triaxial Dinâmico - v1.0 Beta
 
 ## Objetivos
  
@@ -15,10 +15,6 @@ para misturas asfálticas de acordo com as normas do DNIT:
 * DNIT 184/2018-ME
 * DNIT 416/2019-ME
 
-## Cronograma
-
->> [cronograma](https://drive.google.com/file/d/1c7r1mPfhGzOkDZWT1CoPZqmANlJ3iyHx/view?usp=sharing) <<
-
 ## Tecnologias
  
 Aqui estão as tecnologias que serão usadas neste projeto.
@@ -30,7 +26,7 @@ Aqui estão as tecnologias que serão usadas neste projeto.
 ## Serviços Usados
  
 * Github (repositório)
-* Trello (Plano de ações e cronograma)
+* Trello (Plano de ações)
 
 ## Sistema Operacional
  
@@ -53,30 +49,24 @@ cmd -> (Administrador)
 ## Preview
 ![home screen logo](https://github.com/talsap/etd/blob/main/readme_images/TelaInicial.png?raw=true)
 
-## Protótipo
-Aqui estão as telas e o conteúdo principal.
->> https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/ <<
-
 ## Features
  
-  - Here will be the features.
-
+  Aqui será listados os recursos.
  
 ## Links
+>> [cronograma](https://drive.google.com/file/d/1c7r1mPfhGzOkDZWT1CoPZqmANlJ3iyHx/view?usp=sharing)
+>> [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
+
+ - Repository: https://github.com/talsap/etd
+ - Em caso de bugs sensíveis, como vulnerabilidades de segurança, entre em contato
+      atraves do e-mail em vez de usar o rastreador de problemas. Nós valorizamos seu esforço
+      para melhorar a segurança e privacidade deste projeto!
  
-  - Link of deployed application: (if has been deployed)
-  - Repository: https://link_of_repository
-    - In case of sensitive bugs like security vulnerabilities, please contact
-      YOUR EMAIL directly instead of using issue tracker. We value your effort
-      to improve the security and privacy of this project!
- 
- 
-## Versioning
+## Versão
  
 1.0 BETA
  
- 
-## Authors
+## Autores
  
 * **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
 * **Caio França**: 
