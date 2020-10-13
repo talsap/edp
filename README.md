@@ -6,7 +6,7 @@ Software EDP - Ensaios Dinâmicos para Pavimentação - v1.0 Beta
 ## Objetivos
  
 Esse software está sendo desenvolvido para facilitar a realização dos ensaios
-que determina o módulo de resiliência, módulo dinâmico e a resistência à deformação permanente, tanto para solos quanto 
+que determina o módulo de resiliência, o módulo dinâmico e a resistência à deformação permanente, tanto para solos quanto 
 para misturas asfálticas de acordo com as normas do DNIT:
 * [DNIT 134/2018-ME](https://drive.google.com/file/d/18vc2bwBTUGvFR8FzVhaN7bOs5RtttrZZ/view?usp=sharing)     
 * [DNIT 135/2018-ME](https://drive.google.com/file/d/1IKINV4PylHb-LvNS1__UOz4lucjyiUrZ/view?usp=sharing)      
