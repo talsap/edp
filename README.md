@@ -6,7 +6,18 @@ Software ETD (Ensaios Triaxial Dinâmico)
 
 ## Objetivos
  
-Software ETD (Ensaios Triaxial Dinâmico)
+Esse software está sendo desenvolvido para facilitar a realização dos ensaios
+que determina o módulo de resiliência, tanto para solos quanto 
+para misturas asfálticas de acordo com as normas do DNIT:
+* DNIT 134/2018-ME      
+* DNIT 135/2018-ME       
+* DNIT 179/2018-IE
+* DNIT 184/2018-ME
+* DNIT 416/2019-ME
+
+## Cronograma
+
+>> https://drive.google.com/file/d/1c7r1mPfhGzOkDZWT1CoPZqmANlJ3iyHx/view?usp=sharing <<
 
 ## Tecnologias
  
@@ -14,7 +25,7 @@ Aqui estão as tecnologias que serão usadas neste projeto.
  
 * Python  2.7.18 (linguagem da programção) >> https://www.python.org/downloads/release/python-2718/ <<
 * wxPython  4.1.0 Released (GUI toolkit)
-* C++ (icrementação arduino)
+* C++ (incrementação arduino)
   
 ## Serviços Usados
  
@@ -67,7 +78,7 @@ Aqui estão as telas e o conteúdo principal.
  
 ## Authors
  
-* **Tarcisio Sapucaia**: @talsap (https://github.com/talsap)
+* **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
 * **Caio França**: 
  
 Siga-nos no github e junte-se a nós!
