@@ -2,7 +2,7 @@
  
 ## Projeto
  
-Software ETD - Ensaios Triaxial Dinâmico - v1.0 Beta
+Software EDP - Ensaios Dinâmico para Pavimentação - v1.0 Beta
 
 ## Objetivos
  
