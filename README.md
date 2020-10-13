@@ -47,6 +47,7 @@ cmd -> (Administrador)
 >    $ python -m pip install -U unicodecsv
  
 ## Preview
+
 ![home screen logo](https://github.com/talsap/etd/blob/main/readme_images/TelaInicial.png?raw=true)
 
 ## Features
@@ -54,9 +55,8 @@ cmd -> (Administrador)
   Aqui será listados os recursos.
  
 ## Links
->> [cronograma](https://drive.google.com/file/d/1c7r1mPfhGzOkDZWT1CoPZqmANlJ3iyHx/view?usp=sharing)
->> [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
-
+ - [cronograma](https://drive.google.com/file/d/1c7r1mPfhGzOkDZWT1CoPZqmANlJ3iyHx/view?usp=sharing)
+ - [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
  - Repository: https://github.com/talsap/etd
  - Em caso de bugs sensíveis, como vulnerabilidades de segurança, entre em contato
       atraves do e-mail em vez de usar o rastreador de problemas. Nós valorizamos seu esforço
