@@ -8,23 +8,22 @@ Software ETD (Ensaios Triaxial Dinâmico)
  
 Aqui estão as tecnologias que serão usadas neste projeto.
  
-* Python  2.7.18 (linguagem da programção)
+* Python  2.7.18 (linguagem da programção) (https://www.python.org/downloads/release/python-2718/)
 * wxPython  4.1.0 Released (GUI toolkit)
 * C++ (icrementação arduino)
+  
+## Serviços Usados
  
+* Github (repositório)
+* Trello (Plano de ações e cronograma)
+
+## Sistema Operacional
  
-## Services Used
+* Windowns 10 Pro
  
-* Github
-* ...
+## Comandos Utilizados
  
- 
-## Ruby Gems
-...
- 
-## Getting started
- 
-* To install gems:
+* Instalação do pip no windowns:
 >    $ bundle install
 * To create the bank and do as migrations:
 >    $ rake db:create db:migrate db:seed
