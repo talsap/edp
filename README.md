@@ -1,10 +1,8 @@
 ![Logo of the project](https://github.com/talsap/etd/blob/main/readme_images/logo.png?raw=true)
  
-## Nome_do_Projeto
+## Nome do Projeto
  
-# etd
 Software ETD (Ensaios Triaxial Dinâmico)
- 
  
 ## Tecnologias
  
