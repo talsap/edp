@@ -69,7 +69,7 @@ cmd -> (Administrador)
 ## Autores
  
 * **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
-* **Caio França**: 
+* **Caio França**: @Foiac (https://github.com/Foiac)
  
 Siga-nos no github e junte-se a nós!
 Obrigado por visitar e boa codificação!
