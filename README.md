@@ -3,7 +3,7 @@ Software ETD (Ensaios Triaxial Dinâmico)
 
 ![Logo of the project](https://github.com/talsap/etd/blob/main/readme_images/logo.png?raw=true)
  
-## Name_of_the_project
+## Nome
  
 ... Description
  
