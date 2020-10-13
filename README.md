@@ -6,7 +6,7 @@ Software EDP - Ensaios Dinâmicos para Pavimentação - v1.0 Beta
 ## Objetivos
  
 Esse software está sendo desenvolvido para facilitar a realização dos ensaios
-que determina o módulo de resiliência, tanto para solos quanto 
+que determina o módulo de resiliência, módulo dinâmico e a resistência à deformação permanente, tanto para solos quanto 
 para misturas asfálticas de acordo com as normas do DNIT:
 * [DNIT 134/2018-ME](https://drive.google.com/file/d/18vc2bwBTUGvFR8FzVhaN7bOs5RtttrZZ/view?usp=sharing)     
 * [DNIT 135/2018-ME](https://drive.google.com/file/d/1IKINV4PylHb-LvNS1__UOz4lucjyiUrZ/view?usp=sharing)      
@@ -56,7 +56,7 @@ cmd -> (Administrador)
 ## Links
  - [Cronograma](https://drive.google.com/file/d/1c7r1mPfhGzOkDZWT1CoPZqmANlJ3iyHx/view?usp=sharing)
  - [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
- - Repository: https://github.com/talsap/etd
+ - Repository: https://github.com/talsap/edp
  - Em caso de bugs sensíveis, como vulnerabilidades de segurança, entre em contato
       atraves do [e-mail](tarcisiosapucaia27@gmail.com) em vez de usar o rastreador de problemas. Nós valorizamos seu esforço
       para melhorar a segurança e privacidade deste projeto!
