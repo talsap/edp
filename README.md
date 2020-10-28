@@ -25,7 +25,7 @@ Aqui estão as tecnologias que serão usadas neste projeto.
 ## Serviços Usados
  
 * Github (repositório)
-* Trello (Plano de ações)
+* [Trello](https://trello.com/b/HZnkyIaC/desenvolvimento-do-software) (Plano de ações)
 
 ## Sistema Operacional
  
