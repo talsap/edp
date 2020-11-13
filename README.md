@@ -42,6 +42,8 @@ cmd -> (Administrador)
 >    $ python -m pip install pyserial
 * Instalação do pandas:
 >    $ python -m pip install -U pandas
+* Instalação do Reportlab:
+>    $ python -m pip install -U reportlab
 * Instalação do unicode:
 >    $ python -m pip install -U unicodecsv
  
