@@ -1,24 +1,34 @@
 # -*- coding: utf-8 -*-
+#!/usr/bin/env python
 import wx
+import wx.lib.agw.hyperlink as hl
 
-class SampleApp(wx.App):
-    def OnInit(self):
-        self.init_frame()
-        return True
+class Example(wx.Frame):
+    def __init__(self, parent, title):
+        wx.Frame.__init__(self, parent, -1, title)
+        self.InitUI()
 
-    def init_frame(self):
-        self.frm_main = wx.Frame(None)
-        self.sizer = wx.BoxSizer()
-        self.frm_main.SetSizer(self.sizer)
-        self.txt_title = wx.TextCtrl(self.frm_main)
-        self.sizer.Add(self.txt_title, 1, wx.ALIGN_CENTER_VERTICAL)
-        self.btn_submit = wx.Button(self.frm_main)
-        self.btn_submit.SetLabel("Submit")
-        self.sizer.Add(self.btn_submit, 0, wx.ALIGN_CENTER_VERTICAL)
-        self.frm_main.SetTitle("sample_2_2")
-        self.frm_main.SetSize((400, 200))
-        self.frm_main.Show()
+    def InitUI(self):
+        panel = wx.Panel(self)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        textS = wx.StaticText(panel, label='Plain')
+        textS.SetFont(wx.Font(9, wx.SWISS, wx.NORMAL, wx.BOLD, False, 'Arial'))
+        lnk = hl.HyperLinkCtrl(panel, -1, "wxPython Main Page",
+                                  URL="http://www.wxpython.org/")
+        textE = wx.StaticText(panel, label='Text')
+        textE.SetFont(wx.Font(12, wx.SWISS, wx.ITALIC, wx.NORMAL, False, 'Courier'))
+        self.SetSize((500, 150))
+        sizer.Add(textS, 0, wx.ALL, 5 )
+        sizer.Add(lnk, 0, wx.ALL, 5 )
+        sizer.Add(textE, 0, wx.ALL, 5 )
+        lnk.EnableRollover(True)
+        lnk.SetToolTip(wx.ToolTip("Hello World!"))
+        lnk.UpdateLink()
+        self.SetSizer(sizer)
+        self.Centre()
+        self.Show(True)
 
-if __name__ == "__main__":
-    app = SampleApp(False)
-    app.MainLoop()
+if __name__ == '__main__':
+    ex = wx.App()
+    Example(None, 'A Hyperlink')
+    ex.MainLoop()
