@@ -7,7 +7,7 @@ import wx
 import wx.lib.agw.hyperlink as hl
 import wx.lib.mixins.listctrl as listmix
 from wx.lib.agw import ultimatelistctrl as ULC
-'''from novo import TelaNovo'''
+from TelaNovo import TelaNovo
 '''from capsulas import Cap'''
 '''from Editar import Editar'''
 '''from Csv import Csv'''
@@ -74,7 +74,7 @@ class Tela(wx.Frame):
      def basic_gui(self):
          v_sizer = wx.BoxSizer(wx.VERTICAL)
          h_sizer = wx.BoxSizer(wx.HORIZONTAL)
-         self.panel = wx.Panel(self)
+         panel = wx.Panel(self)
 
          '''Iserção do IconeLogo'''
          ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
@@ -111,24 +111,24 @@ class Tela(wx.Frame):
          self.SetMenuBar(menuBar)
 
          '''Botao Novo Ensaio'''
-         self.button = wx.Button(self.panel, -1, '', size=(48,48))
+         self.button = wx.Button(panel, -1, '', size=(48,48))
          self.button.SetBitmap(wx.Bitmap('icons\icons-adicionar-48px.png'))
          self.Bind(wx.EVT_BUTTON, self.NovoEnsaio, self.button)
          v_sizer.AddStretchSpacer(5)
          v_sizer.Add(self.button, 0, wx.ALIGN_CENTER_HORIZONTAL)
          v_sizer.AddStretchSpacer(4)
-         self.panel.SetSizerAndFit(v_sizer)
+         panel.SetSizerAndFit(v_sizer)
 
          '''lista = bancodedados.ListaVisualizacao()'''
 
          '''Lista dos Ensaios'''
-         self.list_ctrl = EditableListCtrl(self.panel, size=(600,0))
+         self.list_ctrl = EditableListCtrl(panel, size=(600,0))
          h_sizer.AddStretchSpacer(5)
          h_sizer.Add(self.list_ctrl, 0, wx.EXPAND)
          h_sizer.AddStretchSpacer(5)
          v_sizer.Add(h_sizer, 40, wx.ALIGN_CENTER_HORIZONTAL)
          v_sizer.AddStretchSpacer(1)
-         self.panel.SetSizerAndFit(v_sizer)
+         panel.SetSizerAndFit(v_sizer)
 
          if len(lista) >=11:
              self.list_ctrl.InsertColumn(0, 'IDENTIFICADOR', wx.LIST_FORMAT_CENTRE, width=170)
@@ -261,16 +261,15 @@ class Tela(wx.Frame):
 
     #--------------------------------------------------
      def NovoEnsaio(self, event):
-         quant = bancodedados.quant_ensaios_deletados()
-         valor_Logico = bancodedados.ler_quant_ensaios() - 1 - quant
+         '''quant = bancodedados.quant_ensaios_deletados()'''
+         '''valor_Logico = bancodedados.ler_quant_ensaios() - 1 - quant'''
          frame = TelaNovo()
-         resultado = frame.ShowModal()
 
          '''lista = bancodedados.ListaVisualizacao()'''
-         index = bancodedados.ler_quant_ensaios() - 1 - quant
+         '''index = bancodedados.ler_quant_ensaios() - 1 - quant'''
 
          '''For apenas para definir os key's'''
-         for key, row in lista:
+         '''for key, row in lista:
              pass
 
          if valor_Logico == index:
@@ -299,7 +298,7 @@ class Tela(wx.Frame):
              self.Bind(wx.EVT_BUTTON, self.Deletar, buttonDEL)
              self.list_ctrl.SetItemData(index, key)
              self.list_ctrl.Update()
-             valor_Logico = valor_Logico + 1
+             valor_Logico = valor_Logico + 1'''
 
          '''lista = bancodedados.ListaVisualizacao()'''
 
@@ -330,7 +329,7 @@ class Tela(wx.Frame):
      def ajudaGUI(self, event):
           '''Dialogo ajuda'''
           message1 = ('Software EDP - Ensaios Dinâmicos para Pavimentação\n\n')
-          message2 = ('Este software foi desenvolvido para facilitar a realização dos ensaios que determina o módulo de resiliência, o módulo dinâmico e a resistência a deformação permanente, tanto para solos quanto para misturas asfálticas de acordo com as normas do DNIT:\n\nDNIT 134/2018-ME       DNIT 135/2018-ME        DNIT 179/2018-IE\nDNIT 184/2018-ME       DNIT 416/2019-ME\n\nDúvidas em relação ao software entrar em contato através do:\nE-mail: ')
+          message2 = ('Este software foi desenvolvido para facilitar a realização dos ensaios que determina o módulo de resiliência, o módulo dinâmico e a resistência a deformação permanente, tanto para solos quanto para misturas asfálticas de acordo com as normas do DNIT:\n\nDNIT 134/2018-ME       DNIT 135/2018-ME        DNIT 179/2018-IE\nDNIT 184/2018-ME       DNIT 416/2019-ME\n\nDúvidas em relação ao software, entrar em contato através do\ne-mail: ')
           message3 = ('tarcisiosapucaia27@gmail.com')
           dlg = wx.MessageDialog(self, message1 + message2 + message3, 'EDP', wx.OK|wx.ICON_INFORMATION)
           aboutPanel = wx.TextCtrl(dlg, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
