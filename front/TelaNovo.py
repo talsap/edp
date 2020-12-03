@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 '''Bibliotecas'''
-
 import wx
-'''import bancodedados'''
-'''from novoensaio import TelaNovoEnsaio'''
+from TelaNovoEnsaioDNIT134 import TelaNovoEnsaioDNIT134
+
+normas = ['DNIT 134/2018ME', 'DNIT 135/2018ME', 'DNIT 179/2018IE', 'DNIT 184/2018ME', 'DNIT 416/2019ME']
 
 '''Tela Selecão de Ensaio'''
 class TelaNovo(wx.Frame):
@@ -17,70 +17,39 @@ class TelaNovo(wx.Frame):
             self.SetIcon(ico)
 
             '''Configurações do Size'''
-            self.SetSize((450,200))
+            self.SetSize((250,200))
             v_sizer = wx.BoxSizer(wx.VERTICAL)
             h_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            h1_sizer = wx.BoxSizer(wx.HORIZONTAL)
             panel = wx.Panel(self)
 
-            self.FontTitle =wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
-            self.title = wx.StaticText(panel, label = "ENSAIOS DINÂMICOS" ,style = wx.ALIGN_CENTRE)
-            self.title.SetFont(self.FontTitle)
-            v_sizer.Add(self.title, 0 ,wx.ALIGN_CENTER_HORIZONTAL |wx.ALL, 20)
-            texto1 = wx.StaticText(panel,label = "NORMAS",style = wx.ALIGN_CENTRE)
+            FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
+            title = wx.StaticText(panel, label = "ENSAIOS DINÂMICOS", style = wx.ALIGN_CENTRE)
+            title.SetFont(FontTitle)
+            '''title.SetBackgroundColour("green")'''
+            v_sizer.Add(title, 1, wx.EXPAND | wx.ALL, 15)
 
-            h_sizer.Add(texto1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL,5)
-            languages = ['C', 'C++', 'Python', 'Java', 'Perl']
-            self.combo = wx.ComboBox(panel, choices = languages, style = wx.EXPAND)
+            texto1 = wx.StaticText(panel, label = "NORMA", style = wx.ALIGN_CENTER_VERTICAL)
+            h_sizer.Add(texto1, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
+            self.combo = wx.ComboBox(panel, choices = normas, style = wx.EXPAND | wx.CB_READONLY)
+            h_sizer.Add(self.combo, 7, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
 
-            h_sizer.Add(self.combo,1,wx.ALIGN_CENTER_VERTICAL|wx.ALL, 0)
-            h_sizer.AddStretchSpacer(40)
-            v_sizer.Add(h_sizer,1,wx.ALIGN_CENTER_HORIZONTAL|wx.ALL,5)
-
-            v_sizer.AddStretchSpacer()
-            '''self.combo.Bind(wx.EVT_COMBOBOX, self.OnCombo)'''
+            v_sizer.Add(h_sizer, 1, wx.EXPAND | wx.ALL, 12)
+            v_sizer.AddStretchSpacer(1)
+            continuar = wx.Button(panel, -1, 'Continuar')
+            v_sizer.Add(continuar, 1,  wx.EXPAND| wx.ALL, 15)
 
             panel.SetSizer(v_sizer)
             self.Centre()
             self.Show()
 
+            continuar.Bind(wx.EVT_BUTTON, self.Prosseguir)
 
     #--------------------------------------------------
         def Prosseguir(self, event):
-            a = self.date.GetValue()
-            b = self.localColeta.GetValue()
-            c = self.operador.GetValue()
-            d = self.profundidade.GetValue()
-            d = format(d).replace(',','.')
-            d = format(d).replace('-','')
-            e = self.identificador.GetValue()
+            a = self.combo.GetSelection()
 
-    #--------------------------------------------------
-            try:
-                if d!= '':
-                    d = float(d)
-
-            except ValueError:
-                print('Os valores digitados em algum dos campos nao esta da maneira esperada')
-                menssagError = wx.MessageDialog(self, 'Os valores digitados em algum dos campos não está da maneira esperada', 'EAU', wx.OK|wx.ICON_INFORMATION)
-                aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-                menssagError.ShowModal()
-                menssagError.Destroy()
-                d = -1
-
-    #--------------------------------------------------
-            self.identificadorCadastrados = bancodedados.ler_IDE()
-
-            if d<0 or d>=0 or d == '':
-                if e in self.identificadorCadastrados:
-                    print('Ja existe esse identificador')
-                    menssagError = wx.MessageDialog(self, 'Já existe um ensaio com esse identificador', 'EAU', wx.OK|wx.ICON_INFORMATION)
-                    aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-                    menssagError.ShowModal()
-                    menssagError.Destroy()
-                else:
-                    self.Close(True)
-                    con = TelaNovoEnsaio(a, b, c, d, e)
-                    resultado = con.ShowModal()
-
-            else:
-                print('Algum dos campos esta digitado errado')
+            '''Acessa a DNIT 134/2018ME'''
+            if a == 0:
+                self.Close(True)
+                frame = TelaNovoEnsaioDNIT134()
