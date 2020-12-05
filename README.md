@@ -46,6 +46,8 @@ cmd -> (Administrador)
 >    $ python -m pip install -U reportlab
 * Instalação do unicode:
 >    $ python -m pip install -U unicodecsv
+* Instalação do MatPlotLib:
+>    $ python -m pip install -U matplotlib
  
 ## Preview
 
