@@ -3,6 +3,7 @@
 '''Bibliotecas'''
 import wx
 import wx.adv
+from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 
 '''Tela Selecão de Ensaio'''
 class TelaNovoEnsaioDNIT134(wx.Frame):
@@ -134,6 +135,7 @@ class TelaNovoEnsaioDNIT134(wx.Frame):
             '''v_sizer.AddStretchSpacer(1)'''
 
             continuar = wx.Button(panel, -1, 'Continuar')
+            continuar.Bind(wx.EVT_BUTTON, self.Prosseguir)
             v_sizer.Add(continuar, 1, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
             sizer.Add(v_sizer, 0,  wx.EXPAND | wx.ALL, 15)
 
@@ -141,7 +143,7 @@ class TelaNovoEnsaioDNIT134(wx.Frame):
             self.Centre()
             self.Show()
 
-
     #--------------------------------------------------
         def Prosseguir(self, event):
-            pass
+            self.Close(True)
+            frame = TelaRealizacaoEnsaioDNIT134()
