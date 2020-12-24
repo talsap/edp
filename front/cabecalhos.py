@@ -13,11 +13,7 @@ from wx.lib.agw import ultimatelistctrl as ULC
 class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
     #----------------------------------------------------------------------
         def __init__(self, parent, ID=wx.ID_ANY, pos=wx.DefaultPosition, size=wx.DefaultSize, style=0):
-<<<<<<< HEAD
             ULC.UltimateListCtrl.__init__(self, parent, ID, pos, size, agwStyle = ULC.ULC_REPORT | ULC.ULC_HAS_VARIABLE_ROW_HEIGHT | ULC.ULC_HRULES | ULC.ULC_VRULES | ULC.ULC_AUTO_CHECK_PARENT)
-=======
-            ULC.UltimateListCtrl.__init__(self, parent, ID, pos, size, agwStyle = ULC.ULC_REPORT | ULC.ULC_HAS_VARIABLE_ROW_HEIGHT | ULC.ULC_HRULES | ULC.ULC_VRULES | ULC.ULC_SINGLE_SEL | ULC.ULC_STICKY_HIGHLIGHT)
->>>>>>> front-end
 
         def UpdateListCtrl(self):
             self.DeleteAllItems()
@@ -72,11 +68,7 @@ class Cab(wx.Frame):
             self.Bind(wx.EVT_BUTTON, self.NovoCabecalho, self.CadastrarCabecalhoButton)
 
             '''lista = bancodedados.ListaVisualizacaoCab()'''
-<<<<<<< HEAD
             lista = [[0, [u'(Default)']], [1, [u'(Default1)']], [2, [u'(Default2)']], [3, [u'(Default3)']], [4, [u'(Default4)']]]
-=======
-            lista = [[0, [u'(Default)']], [1, [u'(Default1)']], [2, [u'(Default2)']]]
->>>>>>> front-end
 
             '''Lista das Capsulas'''
             self.list_ctrl = EditableListCtrl(self.panel, size=(315,395), pos=(20,75))
@@ -96,7 +88,6 @@ class Cab(wx.Frame):
             print lista
 
             for key, row in lista:
-<<<<<<< HEAD
                 if index == 0:
                     pos = self.list_ctrl.InsertStringItem(index, '', 1)
                     self.list_ctrl.SetStringItem(index, 1, row[0])
@@ -121,20 +112,6 @@ class Cab(wx.Frame):
                     self.Bind(wx.EVT_BUTTON, self.Deletar, buttonDEL)
                     self.list_ctrl.SetItemData(index, key)
                     index += 1
-=======
-                pos = self.list_ctrl.InsertStringItem(index, '', 1)
-                self.list_ctrl.SetStringItem(index, 1, row[0])
-                buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
-                buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
-                buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-                buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
-                self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonEDT, expand=True)
-                self.list_ctrl.SetItemWindow(pos, col=3, wnd=buttonDEL, expand=True)
-                self.Bind(wx.EVT_BUTTON, self.Editar, buttonEDT)
-                self.Bind(wx.EVT_BUTTON, self.Deletar, buttonDEL)
-                self.list_ctrl.SetItemData(index, key)
-                index += 1
->>>>>>> front-end
 
             self.Bind(wx.EVT_LIST_COL_DRAGGING, self.ColumAdapter, self.list_ctrl)
             self.Bind(wx.EVT_LIST_COL_RIGHT_CLICK, self.ColumAdapter2, self.list_ctrl)
