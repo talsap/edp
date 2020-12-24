@@ -41,7 +41,7 @@ class TelaNovoEnsaioDNIT134(wx.Frame):
 
             texto1 = wx.StaticText(panel, label = "Identificador", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto1, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.Identificador = wx.TextCtrl(panel, -1, 'DNIT 134/2018', style = wx.TE_RIGHT)
+            self.Identificador = wx.TextCtrl(panel, -1, 'DNIT134/2018', style = wx.TE_RIGHT)
             h_sizer.Add(self.Identificador, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto2 = wx.StaticText(panel, label = "C.P. Nº", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto2, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)

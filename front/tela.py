@@ -8,7 +8,7 @@ import wx.lib.agw.hyperlink as hl
 import wx.lib.mixins.listctrl as listmix
 from wx.lib.agw import ultimatelistctrl as ULC
 from TelaNovo import TelaNovo
-'''from capsulas import Cap'''
+from cabecalhos import Cab
 '''from Editar import Editar'''
 '''from Csv import Csv'''
 
@@ -106,6 +106,7 @@ class Tela(wx.Frame):
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')
          self.Bind(wx.EVT_MENU, self.NovoEnsaio, novoEnsaioMenuItem)
+         self.Bind(wx.EVT_MENU, self.Cabecalhos, cabecalhosMenuitem)
          self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
          self.Bind(wx.EVT_MENU, self.ajudaGUI, ajudaMenuItem)
          self.SetMenuBar(menuBar)
@@ -320,10 +321,9 @@ class Tela(wx.Frame):
             self.list_ctrl.SetColumnWidth(6, width=40)
 
     #--------------------------------------------------
-     def CapCadastradas(self, event):
-         '''Abri tela com as Capsulas Cadastradas no bancodedados'''
-         frame = Cap()
-         resultado = frame.ShowModal()
+     def Cabecalhos(self, event):
+         '''Abri tela com os Cabeçalhos cadastrados'''
+         frame = Cab()
 
     #--------------------------------------------------
      def ajudaGUI(self, event):

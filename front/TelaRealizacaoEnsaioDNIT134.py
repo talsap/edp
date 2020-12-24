@@ -209,7 +209,7 @@ class BottomPanel(wx.Panel):
             self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
             self.NGolpes = wx.TextCtrl(self, -1, '500', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
             self.GolpeAtual = wx.TextCtrl(self, -1, '0', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTRE)
-            self.freq = wx.ComboBox(self, choices = frequencias, style = wx.CB_READONLY)
+            self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, style = wx.CB_READONLY)
 
             self.y1V.SetFont(Fonttext)
             self.y2V.SetFont(Fonttext)
