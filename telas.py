@@ -9,7 +9,7 @@ import wx.lib.mixins.listctrl as listmix
 '''from front.editarCapsula import edtCapsula'''
 from wx.lib.agw import ultimatelistctrl as ULC
 
-'''lista = [[0, [u'(Default)']], [1, [u'(Default1)']], [2, [u'(Default2)']], [3, [u'(Default3)']], [4, [u'(Default4)']], [5, [u'(Default5)']], [6, [u'(Default6)']], [7, [u'(Default7)']], [8, [u'(Default8)']], [9, [u'(Default9)']], [10, [u'(Default10)']]]'''
+lista = [[0, [u'(Default)']], [1, [u'(Default1)']], [2, [u'(Default2)']], [3, [u'(Default3)']], [4, [u'(Default4)']], [5, [u'(Default5)']], [6, [u'(Default6)']], [7, [u'(Default7)']], [8, [u'(Default8)']], [9, [u'(Default9)']], [10, [u'(Default10)']]]
 
 '''Classe da Lista editável'''
 class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -19,7 +19,7 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
 
         def UpdateListCtrl(self):
             self.DeleteAllItems()
-            lista = bancodedados.ListaVisualizacaoCab()
+            '''lista = bancodedados.ListaVisualizacaoCab()'''
             index = 0
 
             for key, row in lista:
@@ -80,7 +80,7 @@ class Cab(wx.Frame):
                 v_sizer.AddStretchSpacer(4)
                 panel.SetSizerAndFit(v_sizer)
 
-                lista = bancodedados.ListaVisualizacaoCab()
+                '''lista = bancodedados.ListaVisualizacaoCab()'''
 
                 '''Lista dos Cabeçalhos'''
                 self.list_ctrl = EditableListCtrl(panel, size=(315,0))
@@ -136,12 +136,10 @@ class Cab(wx.Frame):
 
                 self.list_ctrl.UpdateListCtrl()
 
-                self.combo = wx.ComboBox(panel, value = list_cab[0] ,choices = list_cab, style = wx.EXPAND | wx.CB_READONLY)
+                print list_cab
+
+                self.combo = wx.ComboBox(panel, choices = list_cab, style = wx.EXPAND | wx.CB_READONLY)
                 definirAtual = wx.Button(panel, -1, 'Definir Atual')
-
-                if len(list_cab) == 1:
-                    definirAtual.SetForegroundColour((119,118,114))
-
                 h2_sizer.AddStretchSpacer(5)
                 h2_sizer.Add(self.combo, 10, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
                 h2_sizer.Add(definirAtual, 10, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
@@ -256,3 +254,12 @@ class Cab(wx.Frame):
                 self.list_ctrl.SetColumnWidth(0, width=230)
                 self.list_ctrl.SetColumnWidth(1, width=40)
                 self.list_ctrl.SetColumnWidth(2, width=40)
+
+
+
+
+if __name__ == "__main__":
+		app = wx.App()
+		frame = Cab()
+		frame.Show()
+		app.MainLoop()

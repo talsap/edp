@@ -100,7 +100,6 @@ class Tela(wx.Frame):
 
          novoEnsaioMenuItem = arquivoMenu.Append(wx.NewId(),'Novo Ensaio\tCtrl+N', 'Novo Ensaio')
          arquivoMenu.AppendSeparator()
-         novoCabecalhoMenuiItem = arquivoMenu.Append(wx.NewId(), 'Novo Cabeçalho', 'Novo Cabeçalho')
          cabecalhosMenuitem = arquivoMenu.Append(wx.NewId(), 'Cabeçalhos', 'Cabeçalhos')
          arquivoMenu.AppendSeparator()
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
