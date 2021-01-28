@@ -498,7 +498,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Frame):
             wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME', size = (1200,800), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
-            ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+            ico = wx.Icon(r'icons\logo.ico', wx.BITMAP_TYPE_ICO)
             self.SetIcon(ico)
 
             '''Configurações do SPLITTER'''

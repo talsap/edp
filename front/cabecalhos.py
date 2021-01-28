@@ -3,10 +3,9 @@
 '''Bibliotecas'''
 
 import wx
-import bancodedados
+import bancodedadosCAB
 import wx.lib.mixins.listctrl as listmix
-'''from front.cadastrarcapsula2 import cadCapsula2'''
-'''from front.editarCapsula import edtCapsula'''
+from front.NovoCabecalho import NovoCabecalho
 from wx.lib.agw import ultimatelistctrl as ULC
 
 '''lista = [[0, [u'(Default)']], [1, [u'(Default1)']], [2, [u'(Default2)']], [3, [u'(Default3)']], [4, [u'(Default4)']], [5, [u'(Default5)']], [6, [u'(Default6)']], [7, [u'(Default7)']], [8, [u'(Default8)']], [9, [u'(Default9)']], [10, [u'(Default10)']]]'''
@@ -19,7 +18,7 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
 
         def UpdateListCtrl(self):
             self.DeleteAllItems()
-            lista = bancodedados.ListaVisualizacaoCab()
+            lista = bancodedadosCAB.ListaVisualizacaoCab()
             index = 0
 
             for key, row in lista:
@@ -27,8 +26,8 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
                            pos = self.InsertStringItem(index, row[0])
                            buttonEDT = wx.Button(self, id = key, label="")
                            buttonDEL = wx.Button(self, id = 15000+key, label="")
-                           buttonEDT.SetBitmap(wx.Bitmap('icons\icons-neditar-arquivo-24px.png'))
-                           buttonDEL.SetBitmap(wx.Bitmap('icons\icons-nlixo-24px.png'))
+                           buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-neditar-arquivo-24px.png'))
+                           buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-nlixo-24px.png'))
                            self.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
                            self.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
                            self.SetItemData(index, key)
@@ -37,8 +36,8 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
                            pos = self.InsertStringItem(index, row[0])
                            buttonEDT = wx.Button(self, id = key, label="")
                            buttonDEL = wx.Button(self, id = 15000+key, label="")
-                           buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-                           buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
+                           buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+                           buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
                            self.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
                            self.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
                            self.SetItemData(index, key)
@@ -54,7 +53,7 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
                self.SetColumnWidth(1, width=40)
                self.SetColumnWidth(2, width=40)
 
-'''Tela Capsulas'''
+'''Tela Cabeçalhos'''
 class Cab(wx.Frame):
         #--------------------------------------------------
         def __init__(self, *args, **kwargs):
@@ -66,21 +65,21 @@ class Cab(wx.Frame):
                 panel = wx.Panel(self)
 
                 '''Iserção do IconeLogo'''
-                ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+                ico = wx.Icon(r'icons\logo.ico', wx.BITMAP_TYPE_ICO)
                 self.SetIcon(ico)
 
                 '''Configurações do Size'''
                 self.SetSize((360,520))
 
                 self.CadastrarCabecalhoButton = wx.Button(panel, -1, '', size=(30, 30))
-                self.CadastrarCabecalhoButton.SetBitmap(wx.Bitmap('icons\icons-adicionar-48px.png'))
+                self.CadastrarCabecalhoButton.SetBitmap(wx.Bitmap(r'icons\icons-adicionar-48px.png'))
                 self.Bind(wx.EVT_BUTTON, self.NovoCabecalho, self.CadastrarCabecalhoButton)
                 v_sizer.AddStretchSpacer(5)
                 v_sizer.Add(self.CadastrarCabecalhoButton, 0, wx.ALIGN_CENTER_HORIZONTAL)
                 v_sizer.AddStretchSpacer(4)
                 panel.SetSizerAndFit(v_sizer)
 
-                lista = bancodedados.ListaVisualizacaoCab()
+                lista = bancodedadosCAB.ListaVisualizacaoCab()
 
                 '''Lista dos Cabeçalhos'''
                 self.list_ctrl = EditableListCtrl(panel, size=(315,0))
@@ -111,8 +110,8 @@ class Cab(wx.Frame):
                                 pos = self.list_ctrl.InsertStringItem(index, row[0])
                                 buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
                                 buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
-                                buttonEDT.SetBitmap(wx.Bitmap('icons\icons-neditar-arquivo-24px.png'))
-                                buttonDEL.SetBitmap(wx.Bitmap('icons\icons-nlixo-24px.png'))
+                                buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-neditar-arquivo-24px.png'))
+                                buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-nlixo-24px.png'))
                                 self.list_ctrl.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
                                 self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
                                 self.list_ctrl.SetItemData(index, key)
@@ -121,8 +120,8 @@ class Cab(wx.Frame):
                                 pos = self.list_ctrl.InsertStringItem(index, row[0])
                                 buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
                                 buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
-                                buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-                                buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
+                                buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+                                buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
                                 self.list_ctrl.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
                                 self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
                                 self.Bind(wx.EVT_BUTTON, self.Editar, buttonEDT)
@@ -155,20 +154,23 @@ class Cab(wx.Frame):
 
     #--------------------------------------------------
         def NovoCabecalho(self, event):
-            dialogo = cadCapsula2()
-            resultado = dialogo.ShowModal()
+            dialogo = NovoCabecalho()
 
-            index = 0
+            self.list_ctrl.UpdateListCtrl()
+
+            '''index = 0
             self.list_ctrl.DeleteAllItems()
-            lista = bancodedados.ListaVisualizacaoCap()
+            lista = bancodedadosCAB.ListaVisualizacaoCap()
+
+
 
             for key, row in lista:
                 pos = self.list_ctrl.InsertStringItem(index, row[0])
                 self.list_ctrl.SetStringItem(index, 1, row[1])
                 buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
                 buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
-                buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-                buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
+                buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+                buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
                 self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonEDT, expand=True)
                 self.list_ctrl.SetItemWindow(pos, col=3, wnd=buttonDEL, expand=True)
                 self.Bind(wx.EVT_BUTTON, self.Editar, buttonEDT)
@@ -176,23 +178,22 @@ class Cab(wx.Frame):
                 self.list_ctrl.SetItemData(index, key)
                 index += 1
 
-            lista = bancodedados.ListaVisualizacaoCap()
+            lista = bancodedadosCAB.ListaVisualizacaoCap()
 
-            if len(lista)>=13:
-                self.list_ctrl.SetColumnWidth(0, width=105)
-                self.list_ctrl.SetColumnWidth(1, width=110)
+            if len(lista) >=11:
+                self.list_ctrl.SetColumnWidth(0, width=210)
+                self.list_ctrl.SetColumnWidth(1, width=40)
                 self.list_ctrl.SetColumnWidth(2, width=40)
-                self.list_ctrl.SetColumnWidth(3, width=40)
             else:
-                self.list_ctrl.SetColumnWidth(0, width=115)
-                self.list_ctrl.SetColumnWidth(1, width=115)
-                self.list_ctrl.SetColumnWidth(2, width=40)
-                self.list_ctrl.SetColumnWidth(3, width=40)
+                self.list_ctrl.SetColumnWidth(0, width=230)
+                self.list_ctrl.SetColumnWidth(1, width=40)
+                self.list_ctrl.SetColumnWidth(2, width=40)'''
 
     #--------------------------------------------------
         def Selecionar(self, event):
             a = self.list_ctrl.GetFirstSelected()
             print a
+
     #--------------------------------------------------
         def Editar(self, event):
             a = self.list_ctrl.GetFocusedItem()
@@ -212,7 +213,7 @@ class Cab(wx.Frame):
             result = dlg.ShowModal()
 
             if result == wx.ID_YES:
-                bancodedados.deleteCap(id)
+                bancodedadosCAB.deleteCap(id)
                 dlg.Destroy()
                 self.list_ctrl.UpdateListCtrl()
             else:
@@ -220,8 +221,8 @@ class Cab(wx.Frame):
 
     #--------------------------------------------------
         def ColumAdapter(self, event):
-             '''lista = bancodedados.ListaVisualizacaoCap()'''
              '''Ajusta os tamanhos das colunas ao arrastar'''
+             lista = bancodedadosCAB.ListaVisualizacaoCap()
              if len(lista) >=11:
                  self.list_ctrl.SetColumnWidth(0, width=210)
                  self.list_ctrl.SetColumnWidth(1, width=40)
@@ -233,8 +234,8 @@ class Cab(wx.Frame):
 
     #--------------------------------------------------
         def ColumAdapter2(self, event):
-            '''lista = bancodedados.ListaVisualizacaoCap()'''
             '''Ajusta os tamanhos das colunas ao clicar com botão esquerdo sobre a coluna'''
+            lista = bancodedadosCAB.ListaVisualizacaoCap()
             if len(lista) >=11:
                 self.list_ctrl.SetColumnWidth(0, width=210)
                 self.list_ctrl.SetColumnWidth(1, width=40)
@@ -246,8 +247,8 @@ class Cab(wx.Frame):
 
     #--------------------------------------------------
         def ColumAdapter3(self, event):
-            '''lista = bancodedados.ListaVisualizacaoCap()'''
             '''Ajusta os tamanhos das colunas ao clicar com o botão direito sobre a coluna'''
+            lista = bancodedadosCAB.ListaVisualizacaoCap()
             if len(lista) >=11:
                 self.list_ctrl.SetColumnWidth(0, width=210)
                 self.list_ctrl.SetColumnWidth(1, width=40)
