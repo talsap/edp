@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 '''Bibliotecas'''
-
 import wx
 import bancodedadosCAB
 import math
@@ -71,7 +70,8 @@ class Pdf(wx.Dialog):
                 except:
                     pass
 
-                cnv.drawString(100/0.352777, 100/0.352777, instituicao)
+                cnv.setFont("Helvetica-Bold", 24)
+                cnv.drawString(100/0.352777, 277/0.352777, instituicao)
                 cnv.save()
 
             except:
