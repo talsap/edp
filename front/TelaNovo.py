@@ -13,7 +13,7 @@ class TelaNovo(wx.Frame):
             wx.Frame.__init__(self, None, -1, 'EDP - Beta', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
-            ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+            ico = wx.Icon(r'icons\logo.ico', wx.BITMAP_TYPE_ICO)
             self.SetIcon(ico)
 
             '''Configurações do Size'''

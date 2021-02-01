@@ -8,7 +8,7 @@ import wx.lib.agw.hyperlink as hl
 import wx.lib.mixins.listctrl as listmix
 from wx.lib.agw import ultimatelistctrl as ULC
 from TelaNovo import TelaNovo
-'''from capsulas import Cap'''
+from cabecalhos import Cab
 '''from Editar import Editar'''
 '''from Csv import Csv'''
 
@@ -35,11 +35,11 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
                    buttonPDF = wx.Button(self, id = 10000+key, label="")
                    buttonCSV = wx.Button(self, id = 15000+key, label="")
                    buttonDEL = wx.Button(self, id = 20000+key, label="")
-                   buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-                   buttonGRF.SetBitmap(wx.Bitmap('icons\icons-grafico-24px.png'))
-                   buttonPDF.SetBitmap(wx.Bitmap('icons\icons-exportar-pdf-24px.png'))
-                   buttonCSV.SetBitmap(wx.Bitmap('icons\icons-exportar-csv-24px.png'))
-                   buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
+                   buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+                   buttonGRF.SetBitmap(wx.Bitmap(r'icons\icons-grafico-24px.png'))
+                   buttonPDF.SetBitmap(wx.Bitmap(r'icons\icons-exportar-pdf-24px.png'))
+                   buttonCSV.SetBitmap(wx.Bitmap(r'icons\icons-exportar-csv-24px.png'))
+                   buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
                    self.SetItemWindow(pos, col=4, wnd=buttonEDT, expand=True)
                    self.SetItemWindow(pos, col=5, wnd=buttonPDF, expand=True)
                    self.SetItemWindow(pos, col=6, wnd=buttonCSV, expand=True)
@@ -77,7 +77,7 @@ class Tela(wx.Frame):
          panel = wx.Panel(self)
 
          '''Iserção do IconeLogo'''
-         ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+         ico = wx.Icon(r'icons\logo.ico', wx.BITMAP_TYPE_ICO)
          self.SetIcon(ico)
 
          '''Configurações do Size'''
@@ -100,19 +100,19 @@ class Tela(wx.Frame):
 
          novoEnsaioMenuItem = arquivoMenu.Append(wx.NewId(),'Novo Ensaio\tCtrl+N', 'Novo Ensaio')
          arquivoMenu.AppendSeparator()
-         novoCabecalhoMenuiItem = arquivoMenu.Append(wx.NewId(), 'Novo Cabeçalho', 'Novo Cabeçalho')
          cabecalhosMenuitem = arquivoMenu.Append(wx.NewId(), 'Cabeçalhos', 'Cabeçalhos')
          arquivoMenu.AppendSeparator()
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')
          self.Bind(wx.EVT_MENU, self.NovoEnsaio, novoEnsaioMenuItem)
+         self.Bind(wx.EVT_MENU, self.Cabecalhos, cabecalhosMenuitem)
          self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
          self.Bind(wx.EVT_MENU, self.ajudaGUI, ajudaMenuItem)
          self.SetMenuBar(menuBar)
 
          '''Botao Novo Ensaio'''
          self.button = wx.Button(panel, -1, '', size=(48,48))
-         self.button.SetBitmap(wx.Bitmap('icons\icons-adicionar-48px.png'))
+         self.button.SetBitmap(wx.Bitmap(r'icons\icons-adicionar-48px.png'))
          self.Bind(wx.EVT_BUTTON, self.NovoEnsaio, self.button)
          v_sizer.AddStretchSpacer(5)
          v_sizer.Add(self.button, 0, wx.ALIGN_CENTER_HORIZONTAL)
@@ -158,11 +158,11 @@ class Tela(wx.Frame):
              buttonPDF = wx.Button(self.list_ctrl, id = 10000+key, label="")
              buttonCSV = wx.Button(self.list_ctrl, id = 15000+key, label="")
              buttonDEL = wx.Button(self.list_ctrl, id = 20000+key, label="")
-             buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-             buttonGRF.SetBitmap(wx.Bitmap('icons\icons-grafico-24px.png'))
-             buttonPDF.SetBitmap(wx.Bitmap('icons\icons-exportar-pdf-24px.png'))
-             buttonCSV.SetBitmap(wx.Bitmap('icons\icons-exportar-csv-24px.png'))
-             buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
+             buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+             buttonGRF.SetBitmap(wx.Bitmap(r'icons\icons-grafico-24px.png'))
+             buttonPDF.SetBitmap(wx.Bitmap(r'icons\icons-exportar-pdf-24px.png'))
+             buttonCSV.SetBitmap(wx.Bitmap(r'icons\icons-exportar-csv-24px.png'))
+             buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
              self.list_ctrl.SetItemWindow(pos, col=3, wnd=buttonEDT, expand=True)
              self.list_ctrl.SetItemWindow(pos, col=4, wnd=buttonPDF, expand=True)
              self.list_ctrl.SetItemWindow(pos, col=5, wnd=buttonCSV, expand=True)
@@ -224,11 +224,11 @@ class Tela(wx.Frame):
                     buttonPDF = wx.Button(self.list_ctrl, id = 10000+key, label="")
                     buttonCSV = wx.Button(self.list_ctrl, id = 15000+key, label="")
                     buttonDEL = wx.Button(self.list_ctrl, id = 20000+key, label="")
-                    buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-                    buttonGRF.SetBitmap(wx.Bitmap('icons\icons-grafico-24px.png'))
-                    buttonPDF.SetBitmap(wx.Bitmap('icons\icons-exportar-pdf-24px.png'))
-                    buttonCSV.SetBitmap(wx.Bitmap('icons\icons-exportar-csv-24px.png'))
-                    buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
+                    buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+                    buttonGRF.SetBitmap(wx.Bitmap(r'icons\icons-grafico-24px.png'))
+                    buttonPDF.SetBitmap(wx.Bitmap(r'icons\icons-exportar-pdf-24px.png'))
+                    buttonCSV.SetBitmap(wx.Bitmap(r'icons\icons-exportar-csv-24px.png'))
+                    buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
                     self.list_ctrl.SetItemWindow(pos, col=3, wnd=buttonEDT, expand=True)
                     self.list_ctrl.SetItemWindow(pos, col=4, wnd=buttonPDF, expand=True)
                     self.list_ctrl.SetItemWindow(pos, col=5, wnd=buttonCSV, expand=True)
@@ -285,11 +285,11 @@ class Tela(wx.Frame):
              buttonPDF = wx.Button(self.list_ctrl, id = 10000+key, label="")
              buttonCSV = wx.Button(self.list_ctrl, id = 15000+key, label="")
              buttonDEL = wx.Button(self.list_ctrl, id = 20000+key, label="")
-             buttonEDT.SetBitmap(wx.Bitmap('icons\icons-editar-arquivo-24px.png'))
-             buttonGRF.SetBitmap(wx.Bitmap('icons\icons-grafico-24px.png'))
-             buttonPDF.SetBitmap(wx.Bitmap('icons\icons-exportar-pdf-24px.png'))
-             buttonCSV.SetBitmap(wx.Bitmap('icons\icons-exportar-csv-24px.png'))
-             buttonDEL.SetBitmap(wx.Bitmap('icons\icons-lixo-24px.png'))
+             buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+             buttonGRF.SetBitmap(wx.Bitmap(r'icons\icons-grafico-24px.png'))
+             buttonPDF.SetBitmap(wx.Bitmap(r'icons\icons-exportar-pdf-24px.png'))
+             buttonCSV.SetBitmap(wx.Bitmap(r'icons\icons-exportar-csv-24px.png'))
+             buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
              self.list_ctrl.SetItemWindow(pos, col=4, wnd=buttonEDT, expand=True)
              self.list_ctrl.SetItemWindow(pos, col=5, wnd=buttonCSV, expand=True)
              self.list_ctrl.SetItemWindow(pos, col=6, wnd=buttonDEL, expand=True)
@@ -320,10 +320,9 @@ class Tela(wx.Frame):
             self.list_ctrl.SetColumnWidth(6, width=40)
 
     #--------------------------------------------------
-     def CapCadastradas(self, event):
-         '''Abri tela com as Capsulas Cadastradas no bancodedados'''
-         frame = Cap()
-         resultado = frame.ShowModal()
+     def Cabecalhos(self, event):
+         '''Abri tela com os Cabeçalhos cadastrados'''
+         frame = Cab()
 
     #--------------------------------------------------
      def ajudaGUI(self, event):

@@ -209,7 +209,7 @@ class BottomPanel(wx.Panel):
             self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
             self.NGolpes = wx.TextCtrl(self, -1, '500', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
             self.GolpeAtual = wx.TextCtrl(self, -1, '0', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTRE)
-            self.freq = wx.ComboBox(self, choices = frequencias, style = wx.CB_READONLY)
+            self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, style = wx.CB_READONLY)
 
             self.y1V.SetFont(Fonttext)
             self.y2V.SetFont(Fonttext)
@@ -498,7 +498,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Frame):
             wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME', size = (1000,700), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
-            ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+            ico = wx.Icon(r'icons\logo.ico', wx.BITMAP_TYPE_ICO)
             self.SetIcon(ico)
 
             '''Configurações do SPLITTER'''
