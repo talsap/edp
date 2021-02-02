@@ -36,6 +36,9 @@ Aqui estão as tecnologias que serão usadas neste projeto.
 cmd -> (Administrador)
 * Instalação do pip no windowns: (caso necessário)
 >    $ python get-pip.py
+* Instalação do PyPDF2:
+>    $ pip install PyPDF2
+* Instalação do pySerial:
 * Instalação do wxPython:
 >    $ python -m pip install -U wxPython
 * Instalação do pySerial:
