@@ -38,7 +38,6 @@ cmd -> (Administrador)
 >    $ python get-pip.py
 * Instalação do PyPDF2:
 >    $ pip install PyPDF2
-* Instalação do pySerial:
 * Instalação do wxPython:
 >    $ python -m pip install -U wxPython
 * Instalação do pySerial:
