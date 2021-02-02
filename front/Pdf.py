@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
 '''Bibliotecas'''
-
 import wx
-'''import bancodedados'''
-import unicodecsv
-import csv
+import bancodedadosCAB
 import math
+import os
+import re
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 
-pi = math.pi
-
-'''Class Export CSV'''
-class Csv(wx.Dialog):
+'''Class Export PDF'''
+class Pdf(wx.Dialog):
     #--------------------------------------------------
      def __init__(self, id, *args, **kwargs):
         wx.Dialog.__init__(self, None, -1, 'EDP - PDF')
@@ -21,82 +20,32 @@ class Csv(wx.Dialog):
     #--------------------------------------------------
      def basic_gui(self):
         id = self.id
-        '''massaEspGra = bancodedados.massaEspecificaGraos(id)
-        massaS = bancodedados.mSeca(id)
-        b = bancodedados.ListStatursEstagio(id)'''
-
-        massaEspGra = 10
-        massaS = 10
-        b = 10
-        condition = 0
-        c = 1
-
-        if c in b:
-            condition = 0
-
-        try:
-            '''grauSatInicial = bancodedados.grauSaturacaoInicial(id)
-            indiceVaziosInicial = bancodedados.indiceVaziosInicial(id)
-            alturaSolidos = bancodedados.AlturaSolidos(id)'''
-
-            grauSatInicial = 10
-            indiceVaziosInicial = 10
-            alturaSolidos = 10
-            condition = 1
-        except:
-            condition = 0
-
-        if massaEspGra == '' or massaS[0] == '' or massaS[1] == '' or massaS[2] == '' or massaEspGra == 0  or massaS[0] == 0 or massaS[1] == 0 or massaS[2] == 0 or condition == 0:
-            menssagError = wx.MessageDialog(self, 'NADA CALCULADO AINDA!\n\n Seu arquivo .CSV ainda não pode ser exportado!\n Alguns dados precisam ser coletados.', 'EAU', wx.OK|wx.ICON_INFORMATION)
-            aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-            menssagError.ShowModal()
-            menssagError.Destroy()
-            self.Destroy()
-
-        else:
-            self.createCSV("teste")
+        self.a = bancodedadosCAB.idEscolha()
+        self.createPDF("EDP - PDF")
 
     #--------------------------------------------------
-     def createCSV(self, name):
+     def createPDF(self, name):
      	id = self.id
 
-     	'''Obter dados do banco'''
-        try:
-            pass
-        except Exception as e:
-            raise
+     	'''Obtendo os dados do banco'''
+        print name
+        listaCAB = bancodedadosCAB.ListaDadosCab(self.a)
+        instituicao = listaCAB[1].encode('utf-8','ignore')
+        fantasia = listaCAB[2].encode('utf-8','ignore')
+        cpfcnpj = listaCAB[3].encode('utf-8','ignore')
+        email = listaCAB[4].encode('utf-8','ignore')
+        fone = listaCAB[5].encode('utf-8','ignore')
+        uf = listaCAB[6].encode('utf-8','ignore')
+        cidade = listaCAB[7].encode('utf-8','ignore')
+        bairro = listaCAB[8].encode('utf-8','ignore')
+        rua = listaCAB[9].encode('utf-8','ignore')
+        numero = listaCAB[10].encode('utf-8','ignore')
+        complemento = listaCAB[11].encode('utf-8','ignore')
+        cep = listaCAB[12].encode('utf-8','ignore')
+        logo = listaCAB[13].encode('utf-8','ignore')
 
-        a = bancodedados.ListaDadosInicias(id)
-
-     	dataInicio = a[0]
-     	dataFim = bancodedados.DataFinalDoEnsaio(id)
-     	nomeDoEnsaio = a[12]
-     	local = a[9]
-     	operador = a[10]
-     	profundidadeColeta = a[11]
-     	diametroAnel = a[2]
-     	alturaAnel = a[3]
-        alturaCP = a[6]
-     	volumeAnel = (pi/4)*a[2]**2
-     	massaAnel = a[4]
-     	massaSoloInicial = a[5] - a[4]
-     	massaEspGrao = a[7]
-     	teorUmidadeInicial = bancodedados.teorUmidadeInicial(id)
-     	grauSatInicial = bancodedados.grauSaturacaoInicial(id)
-     	indiceVaziosInicial = bancodedados.indiceVaziosInicial(id)
-     	alturaSolidos = bancodedados.AlturaSolidos(id)
-        P = bancodedados.P_Aplicadas(id)
-        IndiceVaziosFinal = bancodedados.e_finalEstagio(id)
-        Estagios = bancodedados.ComboEstagios(id)
-        quant = len(Estagios)
-        Tabela = []
-        i = 1
-
-        while i<quant:
-            Tabela.append(bancodedados.TabelaEstagio(id, i))
-            i = i+1
-
-        with wx.FileDialog(self, name, wildcard="CSV files(*.csv)|*.csv*", style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
+        '''Criando arquivo PDF'''
+        with wx.FileDialog(self, name, wildcard="PDF files(*.pdf)|*.pdf*", style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                 return
@@ -104,26 +53,30 @@ class Csv(wx.Dialog):
             pathname = fileDialog.GetPath()
 
             try:
-                with open(fileDialog.GetPath() + '.csv', 'w') as file:
-				editor = csv.writer(file)
-				editor.writerow(['EAU - Ensaio de Adensamento Unidimensional','','',''])
-				editor.writerow(['Data Inicial do Ensaio','','',dataInicio])
-				editor.writerow(['Data Final do Ensaio','','',dataFim])
-				editor.writerow(['Local','','',local])
-				editor.writerow(['Operador','','',operador])
-				editor.writerow(['Profundidade da coleta (m)','','',profundidadeColeta])
-				editor.writerow(['','','',''])
-				editor.writerow(['Diametro do Anel (mm)','','',diametroAnel])
-				editor.writerow(['Altura do Anel (mm)','','',alturaAnel])
-				editor.writerow(['Volume do Anel (mm3)','','',volumeAnel])
-				editor.writerow(['Massa do anel (g)','','', massaAnel])
-				editor.writerow(['Massa do Solo Inicial (g)','','',massaSoloInicial])
-				editor.writerow(['Massa Especifica dos Graos (g/cm3)','','',massaEspGrao])
-				editor.writerow(['Teor de Umidade Inicial','','',teorUmidadeInicial])
-				editor.writerow(['Grau Saturacao Inicial','','',grauSatInicial])
-				editor.writerow(['Indice de Vazios Inicial','','',indiceVaziosInicial])
-				editor.writerow(['Altura dos Solidos (cm)','','',alturaSolidos])
-                editor.writerows(Tabela)
+                if re.search('\\.pdf\\b', pathname, re.IGNORECASE):
+                    diretorio = pathname
+                else:
+                    diretorio = pathname+".pdf"
 
-            except IOError:
-            	wx.LogError("O arquivo não pôde ser salvo em '%s'." % pathname)
+                cnv = canvas.Canvas(diretorio, pagesize=A4)
+                try:
+                    cnv.drawImage(logo, 15/0.352777, 252/0.352777, width = 95, height = 95)
+                except:
+                    pass
+
+                cnv.setFont("Helvetica-Bold", 16)
+                cnv.drawCentredString(125/0.352777, 280.5/0.352777, fantasia)
+                cnv.setFont("Helvetica-Bold", 14)
+                cnv.drawCentredString(125/0.352777, 274/0.352777, instituicao)
+                cnv.setFont("Helvetica", 11)
+                cnv.drawCentredString(125/0.352777, 269/0.352777, rua+', '+numero+', '+bairro)
+                cnv.drawCentredString((125)/0.352777, 264/0.352777, cep+', '+cidade+', '+uf)
+                cnv.drawCentredString((125)/0.352777, 259/0.352777, complemento)
+                cnv.drawCentredString((125)/0.352777, 254/0.352777, cpfcnpj+', '+fone+', '+email)
+                cnv.save()
+
+            except:
+                wx.LogError("O arquivo nao pode ser salvo em '%s'." % pathname)
+                dlg = wx.MessageDialog(None, 'Erro ao criar PDF', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                result = dlg.ShowModal()
+                return
