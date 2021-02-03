@@ -8,9 +8,9 @@ class PDFViewer(sc.SizedFrame):
         super(PDFViewer, self).__init__(parent, **kwds)
 
         paneCont = self.GetContentsPane()
-        self.buttonpanel = pdfButtonPanel(paneCont, wx.NewId(),
+        '''self.buttonpanel = pdfButtonPanel(paneCont, wx.NewId(),
                                 wx.DefaultPosition, wx.DefaultSize, 0)
-        self.buttonpanel.SetSizerProps(expand=True)
+        self.buttonpanel.SetSizerProps(expand=True)'''
         self.viewer = pdfViewer(paneCont, wx.NewId(), wx.DefaultPosition,
                                 wx.DefaultSize,
                                 wx.HSCROLL|wx.VSCROLL|wx.SUNKEN_BORDER)
@@ -18,8 +18,8 @@ class PDFViewer(sc.SizedFrame):
         self.viewer.SetSizerProps(expand=True, proportion=1)
 
         # introduce buttonpanel and viewer to each other
-        self.buttonpanel.viewer = self.viewer
-        self.viewer.buttonpanel = self.buttonpanel
+        '''self.buttonpanel.viewer = self.viewer
+        self.viewer.buttonpanel = self.buttonpanel'''
 
 
 if __name__ == '__main__':
@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     pdfV = PDFViewer(None, size=(800, 600))
     pdfV.viewer.UsePrintDirect = ``False``
-    pdfV.viewer.LoadFile(r'a path to a .pdf file')
+    pdfV.viewer.LoadFile(r'logo\\A.pdf')
     pdfV.Show()
 
     app.MainLoop()

@@ -14,8 +14,11 @@ class NovoCabecalho(wx.Frame):
             wx.Frame.__init__(self, None, -1, 'EDP - CABEÇALHO', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
-            ico = wx.Icon(r'icons\logo.ico', wx.BITMAP_TYPE_ICO)
-            self.SetIcon(ico)
+            try:
+                ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+                self.SetIcon(ico)
+            except:
+                pass
 
             '''Configurações do Size'''
             self.SetSize((650,400))
@@ -168,7 +171,7 @@ class NovoCabecalho(wx.Frame):
     #--------------------------------------------------
         def PreviewPDF(self, event):
             '''Opcao ver Preview do Cabeçalho do PDF'''
-            dialogo = Preview()
+            dialogo = Preview(None, 1)
 
     #--------------------------------------------------
         def salvarDados(self, event):

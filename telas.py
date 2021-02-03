@@ -3,27 +3,48 @@
 '''Bibliotecas'''
 import wx
 import bancodedadosCAB
-from wx.lib.pdfviewer import pdfViewer, pdfButtonPanel
+import wx.lib.sized_controls as sc
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from wx.lib.pdfviewer import pdfViewer
 
 '''Tela de Preview do Cabeçalho do PDF'''
-class Preview(wx.Frame):
+class Preview(sc.SizedFrame):
     #--------------------------------------------------
-        def __init__(self, id, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'Pré-Visualização', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+        def __init__(self, parent, id, *args, **kwargs):
+            super(Preview, self).__init__(parent, id, 'Pré-Visualização', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION, **kwargs)
 
             self.id = id
 
+            print id
+
             '''Iserção do IconeLogo'''
-            ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
-            self.SetIcon(ico)
+            try:
+                ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+                self.SetIcon(ico)
+            except:
+                pass
 
             '''Configurações do Size'''
             self.SetSize((650,400))
 
-            self.Bind(wx.EVT_PAINT, self.OnPaint)
+
+            '''cnv = canvas.Canvas('logo', pagesize=A4)'''
+
+            paneCont = self.GetContentsPane()
+
+            self.viewer = pdfViewer(paneCont, wx.NewId(), (10,10), (600,400), wx.HSCROLL | wx.VSCROLL | wx.SUNKEN_BORDER)
+            self.viewer.UsePrintDirect = ``False``
+            self.viewer.SetSizerProps(expand=True, proportion=1)
+            self.viewer.LoadFile(r'logo\\A.pdf')
+
+            '''Inicialize o panel'''
             self.Centre()
             self.Show()
 
+
+
+            '''self.Bind(wx.EVT_PAINT, self.OnPaint)'''
     #--------------------------------------------------
         def OnPaint(self, event):
             id = self.id
@@ -49,10 +70,10 @@ class Preview(wx.Frame):
             logo = listaCAB[13].encode('utf-8','ignore')
 
             dc.SetPen(wx.Pen('#4c4c4c', 1, wx.SOLID))
-            '''dc.DrawRectangle(23, 30, 600, 350)'''
-            self.viewer = pdfViewer(self, wx.NewId(), 600, 350, wx.HSCROLL|wx.VSCROLL|wx.SUNKEN_BORDER)
-            self.viewer.UsePrintDirect = ``False``
-            self.viewer.SetSizerProps(expand=True, proportion=1)
+            dc.DrawRectangle(23, 30, 600, 350)
+
+            '''fantasia.SetFont()'''
+            dc.DrawText(fantasia, 40,40)
 
             '''try:
                 dc.drawImage(logo, 15/0.352777, 252/0.352777, width = 95, height = 95)
@@ -71,7 +92,7 @@ class Preview(wx.Frame):
 
 
 if __name__ == "__main__":
-		app = wx.App()
-		frame = Preview(1)
-		frame.Show()
-		app.MainLoop()
+	app = wx.App()
+	frame = Preview(None, 1)
+	frame.Show()
+	app.MainLoop()

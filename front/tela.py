@@ -77,8 +77,11 @@ class Tela(wx.Frame):
          panel = wx.Panel(self)
 
          '''Iserção do IconeLogo'''
-         ico = wx.Icon(r'icons\logo.ico', wx.BITMAP_TYPE_ICO)
-         self.SetIcon(ico)
+         try:
+             ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
+             self.SetIcon(ico)
+         except:
+             pass
 
          '''Configurações do Size'''
          self.SetSize((630,500))
