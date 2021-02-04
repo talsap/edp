@@ -2,13 +2,14 @@
 
 '''Bibliotecas'''
 import wx
-import wx.adv
 import shutil
 import bancodedadosCAB
 from front.previsualizar import Preview
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 
 '''Tela Novo Cabeçalho'''
-class NovoCabecalho(wx.Frame):
+class NovoCabecalho(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Frame.__init__(self, None, -1, 'EDP - CABEÇALHO', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
@@ -164,11 +165,6 @@ class NovoCabecalho(wx.Frame):
             self.dc.DrawBitmap(bmp, 20, 30, useMask=False)
 
     #--------------------------------------------------
-        def OnLogo(self, event):
-            '''Opcao de Adicionar Logo'''
-            print self.nameArquivo
-
-    #--------------------------------------------------
         def PreviewPDF(self, event):
             '''Opcao ver Preview do Cabeçalho do PDF'''
             dialogo = Preview(None, 1)
@@ -205,6 +201,29 @@ class NovoCabecalho(wx.Frame):
                 else:
                     print 'Salvando dados...'
                     bancodedadosCAB.data_save_dados(a, b, c, d, e, f, g, h, i, j, k, l, m, n)
+
+                    '''criando cabeçalho pra vizualização'''
+                    try:
+                        cnv = canvas.Canvas(r'logo\\CAB.pdf', pagesize=A4)
+                    except:
+                        print 'error ao criar CAB.pdf'
+
+                    try:
+                        cnv.drawImage(n, 15/0.352777, 252/0.352777, width = 95, height = 95)
+                    except:
+                        pass
+
+                    cnv.setFont("Helvetica-Bold", 16)
+                    cnv.drawCentredString(125/0.352777, 280.5/0.352777, c)
+                    cnv.setFont("Helvetica-Bold", 14)
+                    cnv.drawCentredString(125/0.352777, 274/0.352777, b)
+                    cnv.setFont("Helvetica", 11)
+                    cnv.drawCentredString(125/0.352777, 269/0.352777, j+', '+k+', '+i)
+                    cnv.drawCentredString((125)/0.352777, 264/0.352777, l+', '+h+', '+g)
+                    cnv.drawCentredString((125)/0.352777, 259/0.352777, m)
+                    cnv.drawCentredString((125)/0.352777, 254/0.352777, d+', '+f+', '+e)
+                    cnv.save()
+
                     self.previsualizar.Enable()
                     self.Bind(wx.EVT_BUTTON, self.PreviewPDF, self.previsualizar)
                     self.panel.Update()
@@ -215,7 +234,6 @@ class NovoCabecalho(wx.Frame):
                     except:
                         self.logo.Disable()
                         self.logo.Update()
-
 
     #--------------------------------------------------
         def OnOpen(self, event):

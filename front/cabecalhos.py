@@ -20,8 +20,10 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
             self.DeleteAllItems()
             lista = bancodedadosCAB.ListaVisualizacaoCab()
             index = 0
+            list_cab = []
 
             for key, row in lista:
+                   list_cab.append(row[0])
                    if index == 0:
                            pos = self.InsertStringItem(index, row[0])
                            buttonEDT = wx.Button(self, id = key, label="")
@@ -52,6 +54,8 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
                self.SetColumnWidth(0, width=230)
                self.SetColumnWidth(1, width=40)
                self.SetColumnWidth(2, width=40)
+
+            return list_cab
 
 '''Tela Cabeçalhos'''
 class Cab(wx.Frame):
@@ -104,11 +108,11 @@ class Cab(wx.Frame):
 
                 index = 0
 
-                list_cab = []
+                self.list_cab = []
                 print lista
 
                 for key, row in lista:
-                        list_cab.append(row[0])
+                        self.list_cab.append(row[0])
                         if index == 0:
                                 pos = self.list_ctrl.InsertStringItem(index, row[0])
                                 buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
@@ -138,11 +142,13 @@ class Cab(wx.Frame):
 
                 self.list_ctrl.UpdateListCtrl()
 
-                self.combo = wx.ComboBox(panel, value = list_cab[0] ,choices = list_cab, style = wx.EXPAND | wx.CB_READONLY)
                 definirAtual = wx.Button(panel, -1, 'Definir Atual')
 
-                if len(list_cab) == 1:
+                if len(self.list_cab) == 1:
+                    self.combo = wx.ComboBox(panel, value = self.list_cab[0], choices = self.list_cab, style = wx.EXPAND | wx.CB_READONLY)
                     definirAtual.SetForegroundColour((119,118,114))
+                else:
+                    self.combo = wx.ComboBox(panel, value = self.list_cab[0], choices = self.list_cab, style = wx.EXPAND | wx.CB_READONLY)
 
                 h2_sizer.AddStretchSpacer(5)
                 h2_sizer.Add(self.combo, 10, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
@@ -157,45 +163,12 @@ class Cab(wx.Frame):
 
     #--------------------------------------------------
         def NovoCabecalho(self, event):
-            dialogo = NovoCabecalho()
-
-            self.list_ctrl.UpdateListCtrl()
-
-            '''index = 0
-            self.list_ctrl.DeleteAllItems()
-            lista = bancodedadosCAB.ListaVisualizacaoCap()
-
-
-
-            for key, row in lista:
-                pos = self.list_ctrl.InsertStringItem(index, row[0])
-                self.list_ctrl.SetStringItem(index, 1, row[1])
-                buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
-                buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
-                buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
-                buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
-                self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonEDT, expand=True)
-                self.list_ctrl.SetItemWindow(pos, col=3, wnd=buttonDEL, expand=True)
-                self.Bind(wx.EVT_BUTTON, self.Editar, buttonEDT)
-                self.Bind(wx.EVT_BUTTON, self.Deletar, buttonDEL)
-                self.list_ctrl.SetItemData(index, key)
-                index += 1
-
-            lista = bancodedadosCAB.ListaVisualizacaoCap()
-
-            if len(lista) >=11:
-                self.list_ctrl.SetColumnWidth(0, width=210)
-                self.list_ctrl.SetColumnWidth(1, width=40)
-                self.list_ctrl.SetColumnWidth(2, width=40)
-            else:
-                self.list_ctrl.SetColumnWidth(0, width=230)
-                self.list_ctrl.SetColumnWidth(1, width=40)
-                self.list_ctrl.SetColumnWidth(2, width=40)'''
-
-    #--------------------------------------------------
-        def Selecionar(self, event):
-            a = self.list_ctrl.GetFirstSelected()
-            print a
+            dialogo = NovoCabecalho().ShowModal()
+            self.list_cab = self.list_ctrl.UpdateListCtrl()
+            self.combo.SetItems(self.list_cab)
+            i = 2
+            self.combo.SetSelection(i)
+            '''self.combo.Refresh()'''
 
     #--------------------------------------------------
         def Editar(self, event):
