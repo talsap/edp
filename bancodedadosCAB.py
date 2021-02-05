@@ -9,6 +9,7 @@ c = connection.cursor()
 
 def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS Cabecalho (id INTEGER PRIMARY KEY AUTOINCREMENT, identificador text, instituicao text, fantasia text, cpfcnpj text, email text, fone text, uf text, cidade text, bairro text, rua text, numero text, complemento text, cep text, logo text)")
+    c.execute('CREATE TABLE IF NOT EXISTS idDeletados (idDeletados integer)')
     c.execute("CREATE TABLE IF NOT EXISTS escolha (id)")
 
 def data_entry():
@@ -77,14 +78,19 @@ def idEscolha():
 
     return escolha[0]
 
-'''Captura o id do Cabeçalho escolhido para impressão'''
-def idEscolha():
-    escolha = []
+'''Captura o ultimo id do Cabeçalho cadastrado mais recente'''
+def idUltimo(ident):
+    ult = []
 
-    for row in c.execute('SELECT * FROM escolha'):
-        escolha.append(row[0])
+    for row in c.execute('SELECT * FROM Cabecalho WHERE identificador = ?', (ident,)):
+        ult.append(row[0])
 
-    return escolha[0]
+    return ult[0]
+
+'''Altera o Cabeçalho de escolha no banco de dados'''
+def updateEscolha(id):
+    c.execute("UPDATE escolha SET id = ?", (id,))
+    connection.commit()
 
 '''Retorna uma lista com os dados cadastrados no cabeçalho dado o id'''
 def ListaDadosCab(id):
@@ -106,3 +112,26 @@ def ListaDadosCab(id):
         lista.append(row[14])
 
     return lista
+
+'''Deleta um Cabeçalho no banco de dados de acordo com o id'''
+def deleteCAB(id):
+    c.execute("DELETE FROM Cabecalho WHERE id = ?", (id,))
+    c.execute("INSERT INTO idDeletados (idDeletados) VALUES (?)", (id,))
+    connection.commit()
+
+'''Ver a quantidade de cabeçalhos que já foram deletados'''
+def quant_CAB_deletados():
+    identificador = []
+    for rows in c.execute('SELECT * FROM idDeletados'):
+        identificador.append(rows[0])
+
+    id = len(identificador)
+    return id
+
+'''Ver os id dos cabeçalhos que foram deletados'''
+def ler_ID_CAB_deletados():
+    identificador = []
+    for rows in c.execute('SELECT * FROM idDeletados'):
+        identificador.append(rows[0])
+
+    return identificador

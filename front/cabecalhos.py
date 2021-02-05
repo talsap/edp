@@ -109,10 +109,12 @@ class Cab(wx.Frame):
                 index = 0
 
                 self.list_cab = []
-                print lista
+                i = bancodedadosCAB.idEscolha()
 
                 for key, row in lista:
                         self.list_cab.append(row[0])
+                        if i == key:
+                            self.iddd = index
                         if index == 0:
                                 pos = self.list_ctrl.InsertStringItem(index, row[0])
                                 buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
@@ -142,17 +144,18 @@ class Cab(wx.Frame):
 
                 self.list_ctrl.UpdateListCtrl()
 
-                definirAtual = wx.Button(panel, -1, 'Definir Atual')
-
+                self.definirAtual = wx.Button(panel, -1, 'Definir Atual')
+                print self.list_cab
                 if len(self.list_cab) == 1:
                     self.combo = wx.ComboBox(panel, value = self.list_cab[0], choices = self.list_cab, style = wx.EXPAND | wx.CB_READONLY)
-                    definirAtual.SetForegroundColour((119,118,114))
+                    self.definirAtual.Disable()
                 else:
-                    self.combo = wx.ComboBox(panel, value = self.list_cab[0], choices = self.list_cab, style = wx.EXPAND | wx.CB_READONLY)
+                    self.combo = wx.ComboBox(panel, value = self.list_cab[self.iddd], choices = self.list_cab, style = wx.EXPAND | wx.CB_READONLY)
+                    self.Bind(wx.EVT_BUTTON, self.DefinirATUAL, self.definirAtual)
 
                 h2_sizer.AddStretchSpacer(5)
                 h2_sizer.Add(self.combo, 10, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
-                h2_sizer.Add(definirAtual, 10, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
+                h2_sizer.Add(self.definirAtual, 10, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 3)
                 h2_sizer.AddStretchSpacer(5)
                 v_sizer.Add(h2_sizer, 5, wx.ALIGN_CENTER_HORIZONTAL)
                 v_sizer.AddStretchSpacer(1)
@@ -164,11 +167,58 @@ class Cab(wx.Frame):
     #--------------------------------------------------
         def NovoCabecalho(self, event):
             dialogo = NovoCabecalho().ShowModal()
-            self.list_cab = self.list_ctrl.UpdateListCtrl()
+
+
+            self.list_ctrl.DeleteAllItems()
+            lista = bancodedadosCAB.ListaVisualizacaoCab()
+            index = 0
+            self.list_cab = []
+
+            for key, row in lista:
+                   self.list_cab.append(row[0])
+                   if index == 0:
+                           pos = self.list_ctrl.InsertStringItem(index, row[0])
+                           buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
+                           buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
+                           buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-neditar-arquivo-24px.png'))
+                           buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-nlixo-24px.png'))
+                           self.list_ctrl.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
+                           self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
+                           self.list_ctrl.SetItemData(index, key)
+                           index += 1
+                   else:
+                           pos = self.list_ctrl.InsertStringItem(index, row[0])
+                           buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
+                           buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
+                           buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+                           buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
+                           self.list_ctrl.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
+                           self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
+                           self.list_ctrl.Bind(wx.EVT_BUTTON, self.Editar, buttonEDT)
+                           self.list_ctrl.Bind(wx.EVT_BUTTON, self.Deletar, buttonDEL)
+                           self.list_ctrl.SetItemData(index, key)
+                           index += 1
+
+            if len(lista)>=11:
+               self.list_ctrl.SetColumnWidth(0, width=210)
+               self.list_ctrl.SetColumnWidth(1, width=40)
+               self.list_ctrl.SetColumnWidth(2, width=40)
+
+            else:
+               self.list_ctrl.SetColumnWidth(0, width=230)
+               self.list_ctrl.SetColumnWidth(1, width=40)
+               self.list_ctrl.SetColumnWidth(2, width=40)
+
             self.combo.SetItems(self.list_cab)
-            i = 2
-            self.combo.SetSelection(i)
-            '''self.combo.Refresh()'''
+            i = bancodedadosCAB.idEscolha()
+            q = bancodedadosCAB.quant_CAB_deletados()
+            self.combo.SetSelection(i-q)
+            self.definirAtual.Enable()
+            self.Bind(wx.EVT_BUTTON, self.DefinirATUAL, self.definirAtual)
+
+    #--------------------------------------------------
+        def DefinirATUAL(self, event):
+            print self.combo.GetSelection()
 
     #--------------------------------------------------
         def Editar(self, event):
@@ -185,13 +235,40 @@ class Cab(wx.Frame):
             id = id - 15000
 
             '''Diálogo se deseja realmente excluir a Cápsula'''
-            dlg = wx.MessageDialog(None, 'Deseja mesmo excluir essa Cápsula?', 'EAU', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
+            dlg = wx.MessageDialog(None, 'Deseja mesmo excluir essa Cabeçalho?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
             result = dlg.ShowModal()
 
             if result == wx.ID_YES:
-                bancodedadosCAB.deleteCap(id)
+                bancodedadosCAB.deleteCAB(id)
                 dlg.Destroy()
-                self.list_ctrl.UpdateListCtrl()
+                self.list_cab = self.list_ctrl.UpdateListCtrl()
+                i = bancodedadosCAB.idEscolha()
+                atual = self.combo.GetStringSelection()
+                j = 0
+                try:
+                    j = self.list_cab.index(atual)
+                except:
+                    pass
+
+                print self.list_cab
+
+                if len(self.list_cab) == 1:
+                    self.combo.SetItems(self.list_cab)
+                    self.combo.SetSelection(0)
+                    self.combo.Update()
+                    bancodedadosCAB.updateEscolha(0)
+                    self.definirAtual.Disable()
+                if id == i:
+                    self.combo.SetItems(self.list_cab)
+                    self.combo.SetSelection(0)
+                    self.combo.Update()
+                    bancodedadosCAB.updateEscolha(0)
+                else:
+                    self.combo.SetItems(self.list_cab)
+                    self.combo.SetSelection(j)
+                    self.combo.Update()
+                    if j == 0:
+                        bancodedadosCAB.updateEscolha(j)
             else:
                 dlg.Destroy()
 

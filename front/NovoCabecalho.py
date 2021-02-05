@@ -201,6 +201,8 @@ class NovoCabecalho(wx.Dialog):
                 else:
                     print 'Salvando dados...'
                     bancodedadosCAB.data_save_dados(a, b, c, d, e, f, g, h, i, j, k, l, m, n)
+                    idd = bancodedadosCAB.idUltimo(a)
+                    bancodedadosCAB.updateEscolha(idd)
 
                     '''criando cabeçalho pra vizualização'''
                     try:
