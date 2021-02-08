@@ -60,7 +60,7 @@ cmd -> (Administrador)
   Aqui será listados os recursos.
  
 ## Links
- - [Cronograma](https://drive.google.com/file/d/1c7r1mPfhGzOkDZWT1CoPZqmANlJ3iyHx/view?usp=sharing)
+ - [Cronograma](https://drive.google.com/file/d/14ANMyzFSMZsLhsU12tyyPpHEQqWXQraC/view?usp=sharing)
  - [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
  - Repository: https://github.com/talsap/edp
  - Em caso de bugs sensíveis, como vulnerabilidades de segurança, entre em contato
