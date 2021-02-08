@@ -87,6 +87,15 @@ def identificador_id(ident):
 
     return ult[0] #retorna com id
 
+'''Entra com a id para encontrar o identificador'''
+def id_identificador(id):
+    ult = []
+
+    for row in c.execute('SELECT * FROM Cabecalho WHERE id = ?', (id,)):
+        ult.append(row[1])
+
+    return ult[0] #retorna com identificador
+
 '''Altera o Cabeçalho de escolha no banco de dados'''
 def updateEscolha(id):
     c.execute("UPDATE escolha SET id = ?", (id,))
@@ -135,3 +144,42 @@ def ler_ID_CAB_deletados():
         identificador.append(rows[0])
 
     return identificador
+
+'''Retorna uma lista com os dados do cabeçalho de acordo com o id'''
+def ListaDadosCabecalhos(id):
+    lista = []
+    for row in c.execute('SELECT * FROM Cabecalho WHERE id = ?', (id,)):
+        lista.append(row[1])
+        lista.append(row[2])
+        lista.append(row[3])
+        lista.append(row[4])
+        lista.append(row[5])
+        lista.append(row[6])
+        lista.append(row[7])
+        lista.append(row[8])
+        lista.append(row[9])
+        lista.append(row[10])
+        lista.append(row[11])
+        lista.append(row[12])
+        lista.append(row[13])
+        lista.append(row[14])
+
+    return lista
+
+'''Atualiza os dados de um Cabeçalho de acordo com o id'''
+def data_update_dados(id, identificador, instituicao, fantasia, cpfcnpj, email, fone, uf, cidade, bairro, rua, numero, complemento, cep, logo):
+    c.execute("UPDATE Cabecalho SET identificador = ? WHERE id = ?", (identificador, id,))
+    c.execute("UPDATE Cabecalho SET instituicao = ? WHERE id = ?", (instituicao, id,))
+    c.execute("UPDATE Cabecalho SET fantasia = ? WHERE id = ?", (fantasia, id,))
+    c.execute("UPDATE Cabecalho SET cpfcnpj = ? WHERE id = ?", (cpfcnpj, id,))
+    c.execute("UPDATE Cabecalho SET email = ? WHERE id = ?", (email, id,))
+    c.execute("UPDATE Cabecalho SET fone = ? WHERE id = ?", (fone, id,))
+    c.execute("UPDATE Cabecalho SET uf = ? WHERE id = ?", (uf, id,))
+    c.execute("UPDATE Cabecalho SET cidade = ? WHERE id = ?", (cidade, id,))
+    c.execute("UPDATE Cabecalho SET bairro = ? WHERE id = ?", (bairro, id,))
+    c.execute("UPDATE Cabecalho SET rua = ? WHERE id = ?", (rua, id,))
+    c.execute("UPDATE Cabecalho SET numero = ? WHERE id = ?", (numero, id,))
+    c.execute("UPDATE Cabecalho SET complemento = ? WHERE id = ?", (complemento, id,))
+    c.execute("UPDATE Cabecalho SET cep = ? WHERE id = ?", (cep, id,))
+    c.execute("UPDATE Cabecalho SET logo = ? WHERE id = ?", (logo, id,))
+    connection.commit()

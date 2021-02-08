@@ -9,10 +9,14 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 
 '''Tela Novo Cabeçalho'''
-class NovoCabecalho(wx.Dialog):
+class EditarCabecalho(wx.Dialog):
     #--------------------------------------------------
-        def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - Novo Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+        def __init__(self, id, *args, **kwargs):
+            wx.Frame.__init__(self, None, -1, 'EDP - Editar Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+
+            '''Busca no bancodedadosCAB'''
+            self.id = id
+            lista = bancodedadosCAB.ListaDadosCabecalhos(id)
 
             '''Iserção do IconeLogo'''
             try:
@@ -53,69 +57,68 @@ class NovoCabecalho(wx.Dialog):
 
             texto1 = wx.StaticText(self.panel, label = "Identificador", style = wx.ALIGN_RIGHT)
             h2_sizer.Add(texto1, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.Identificador = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.Identificador = wx.TextCtrl(self.panel, -1, lista[0], style = wx.TE_RIGHT)
             h2_sizer.Add(self.Identificador, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             h2_sizer.AddStretchSpacer(9)
 
             texto2 = wx.StaticText(self.panel, label = "Empresa/Instituição", style = wx.ALIGN_RIGHT)
             h3_sizer.Add(texto2, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.empresa = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.empresa = wx.TextCtrl(self.panel, -1, lista[1], style = wx.TE_RIGHT)
             h3_sizer.Add(self.empresa, 5, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
-            '''h3_sizer.AddStretchSpacer(1)'''
             texto3 = wx.StaticText(self.panel, label = "Fantasia", style = wx.ALIGN_RIGHT)
             h10_sizer.Add(texto3, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.fantasia = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.fantasia = wx.TextCtrl(self.panel, -1, lista[2], style = wx.TE_RIGHT)
             h10_sizer.Add(self.fantasia, 6, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             texto4 = wx.StaticText(self.panel, label = "CPF/CNPJ", style = wx.ALIGN_RIGHT)
             h4_sizer.Add(texto4, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.cpfcnpj = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.cpfcnpj = wx.TextCtrl(self.panel, -1, lista[3], style = wx.TE_RIGHT)
             h4_sizer.Add(self.cpfcnpj, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto5 = wx.StaticText(self.panel, label = "E-mail", style = wx.ALIGN_RIGHT)
             h4_sizer.AddStretchSpacer(1)
             h4_sizer.Add(texto5, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.email = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.email = wx.TextCtrl(self.panel, -1, lista[4], style = wx.TE_RIGHT)
             h4_sizer.Add(self.email, 7, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             texto6 = wx.StaticText(self.panel, label = "Fone", style = wx.ALIGN_RIGHT)
             h5_sizer.Add(texto6, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.fone = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.fone = wx.TextCtrl(self.panel, -1, lista[5], style = wx.TE_RIGHT)
             h5_sizer.Add(self.fone, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto7 = wx.StaticText(self.panel, label = "UF", style = wx.ALIGN_RIGHT)
             h5_sizer.AddStretchSpacer(1)
             h5_sizer.Add(texto7, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.uf = wx.TextCtrl(self.panel, -1, '', size=(25,23), style = wx.TE_RIGHT)
+            self.uf = wx.TextCtrl(self.panel, -1, lista[6], size=(25,23), style = wx.TE_RIGHT)
             h5_sizer.Add(self.uf, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             h5_sizer.AddStretchSpacer(1)
             texto8 = wx.StaticText(self.panel, label = "Cidade", style = wx.ALIGN_RIGHT)
             h5_sizer.Add(texto8, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.cidade = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.cidade = wx.TextCtrl(self.panel, -1, lista[7], style = wx.TE_RIGHT)
             h5_sizer.Add(self.cidade, 7, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             texto9 = wx.StaticText(self.panel, label = "Bairro", style = wx.ALIGN_RIGHT)
             h6_sizer.Add(texto9, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.bairro = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.bairro = wx.TextCtrl(self.panel, -1, lista[8], style = wx.TE_RIGHT)
             h6_sizer.Add(self.bairro, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto10 = wx.StaticText(self.panel, label = "Rua", style = wx.ALIGN_RIGHT)
             h6_sizer.AddStretchSpacer(1)
             h6_sizer.Add(texto10, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.rua = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.rua = wx.TextCtrl(self.panel, -1, lista[9], style = wx.TE_RIGHT)
             h6_sizer.Add(self.rua, 7, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             h6_sizer.AddStretchSpacer(1)
             texto11 = wx.StaticText(self.panel, label = "Nº", style = wx.ALIGN_RIGHT)
             h6_sizer.Add(texto11, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.numero = wx.TextCtrl(self.panel, -1, '', size=(25,23), style = wx.TE_RIGHT)
+            self.numero = wx.TextCtrl(self.panel, -1, lista[10], size=(25,23), style = wx.TE_RIGHT)
             h6_sizer.Add(self.numero, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             texto12 = wx.StaticText(self.panel, label = "CEP", style = wx.ALIGN_RIGHT)
             h7_sizer.Add(texto12, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.cep = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.cep = wx.TextCtrl(self.panel, -1, lista[12], style = wx.TE_RIGHT)
             h7_sizer.Add(self.cep, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto13 = wx.StaticText(self.panel, label = "Complemento", style = wx.ALIGN_RIGHT)
             h7_sizer.AddStretchSpacer(1)
             h7_sizer.Add(texto13, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.complemento = wx.TextCtrl(self.panel, -1, '', style = wx.TE_RIGHT)
+            self.complemento = wx.TextCtrl(self.panel, -1, lista[11], style = wx.TE_RIGHT)
             h7_sizer.Add(self.complemento, 7, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v2_sizer.AddStretchSpacer(1)
@@ -152,7 +155,7 @@ class NovoCabecalho(wx.Dialog):
             sizer.Add(v_sizer, 0,  wx.EXPAND | wx.ALL, 15)
 
             self.Bind(wx.EVT_PAINT, self.OnPaint)
-            self.directory = ''
+            self.directory = lista[13]
 
             self.panel.SetSizer(sizer)
             self.Centre()
@@ -162,11 +165,19 @@ class NovoCabecalho(wx.Dialog):
             '''Opcao Logo Dimensão'''
             self.dc = wx.ClientDC(self.panel)
 
-            self.dc.SetPen(wx.Pen('#4c4c4c', 1, wx.SOLID))
-            png = wx.Image(r'logo\default.png', wx.BITMAP_TYPE_PNG)
-            bmp = png.Scale(90, 90, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
-            self.dc.DrawRectangle(20, 30, 90, 90)
-            self.dc.DrawBitmap(bmp, 20, 30, useMask=False)
+            try:
+                self.dc.SetPen(wx.Pen('#4c4c4c', 1, wx.SOLID))
+                png = wx.Image(self.directory, wx.BITMAP_TYPE_PNG)
+                bmp = png.Scale(90, 90, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                self.dc.DrawRectangle(20, 30, 90, 90)
+                self.dc.DrawBitmap(bmp, 20, 30, useMask=False)
+            except:
+                self.dc.SetPen(wx.Pen('#4c4c4c', 1, wx.SOLID))
+                png = wx.Image(r'logo\default.png', wx.BITMAP_TYPE_PNG)
+                bmp = png.Scale(90, 90, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+                self.dc.DrawRectangle(20, 30, 90, 90)
+                self.dc.DrawBitmap(bmp, 20, 30, useMask=False)
+
 
     #--------------------------------------------------
         def PreviewPDF(self, event):
@@ -190,6 +201,7 @@ class NovoCabecalho(wx.Dialog):
             l = self.cep.GetValue()
             m = self.complemento.GetValue()
             n = self.directory
+            o = self.id
 
             if  a == '' or c == '':
                 '''Diálogo para Forçar preenchimento do Identificador e do nome Fantasia'''
@@ -197,49 +209,42 @@ class NovoCabecalho(wx.Dialog):
                 result = dlg.ShowModal()
 
             else:
-                cond = bancodedadosCAB.data_identificadores()
-                if a in cond:
-                    '''Diálogo para informar que já existe um Cabeçalho com esse identificador'''
-                    dlg = wx.MessageDialog(None, 'Já existe um Cabeçalho com esse identificador.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
-                    result = dlg.ShowModal()
-                else:
-                    print 'Salvando dados...'
-                    bancodedadosCAB.data_save_dados(a, b, c, d, e, f, g, h, i, j, k, l, m, n)
-                    idd = bancodedadosCAB.identificador_id(a)
-                    bancodedadosCAB.updateEscolha(idd)
+                print 'Salvando dados...'
+                bancodedadosCAB.data_update_dados(o, a, b, c, d, e, f, g, h, i, j, k, l, m, n)
+                bancodedadosCAB.updateEscolha(o)
 
-                    '''criando cabeçalho pra vizualização'''
-                    try:
-                        cnv = canvas.Canvas(r'logo\\CAB.pdf', pagesize=A4)
-                    except:
-                        print 'error ao criar CAB.pdf'
+                '''criando cabeçalho pra vizualização'''
+                try:
+                    cnv = canvas.Canvas(r'logo\\CAB.pdf', pagesize=A4)
+                except:
+                    print 'error ao criar CAB.pdf'
 
-                    try:
-                        cnv.drawImage(n, 15/0.352777, 252/0.352777, width = 95, height = 95)
-                    except:
-                        pass
+                try:
+                    cnv.drawImage(n, 15/0.352777, 252/0.352777, width = 95, height = 95)
+                except:
+                    pass
 
-                    cnv.setFont("Helvetica-Bold", 16)
-                    cnv.drawCentredString(125/0.352777, 280.5/0.352777, c)
-                    cnv.setFont("Helvetica-Bold", 14)
-                    cnv.drawCentredString(125/0.352777, 274/0.352777, b)
-                    cnv.setFont("Helvetica", 11)
-                    cnv.drawCentredString(125/0.352777, 269/0.352777, j+', '+k+', '+i)
-                    cnv.drawCentredString((125)/0.352777, 264/0.352777, l+', '+h+', '+g)
-                    cnv.drawCentredString((125)/0.352777, 259/0.352777, m)
-                    cnv.drawCentredString((125)/0.352777, 254/0.352777, d+', '+f+', '+e)
-                    cnv.save()
+                cnv.setFont("Helvetica-Bold", 16)
+                cnv.drawCentredString(125/0.352777, 280.5/0.352777, c)
+                cnv.setFont("Helvetica-Bold", 14)
+                cnv.drawCentredString(125/0.352777, 274/0.352777, b)
+                cnv.setFont("Helvetica", 11)
+                cnv.drawCentredString(125/0.352777, 269/0.352777, j+', '+k+', '+i)
+                cnv.drawCentredString((125)/0.352777, 264/0.352777, l+', '+h+', '+g)
+                cnv.drawCentredString((125)/0.352777, 259/0.352777, m)
+                cnv.drawCentredString((125)/0.352777, 254/0.352777, d+', '+f+', '+e)
+                cnv.save()
 
-                    self.previsualizar.Enable()
-                    self.Bind(wx.EVT_BUTTON, self.PreviewPDF, self.previsualizar)
-                    self.panel.Update()
-                    myobject = event.GetEventObject()
-                    myobject.Disable()
-                    try:
-                        self.AbrirLogo.Disable()
-                    except:
-                        self.logo.Disable()
-                        self.logo.Update()
+                self.previsualizar.Enable()
+                self.Bind(wx.EVT_BUTTON, self.PreviewPDF, self.previsualizar)
+                self.panel.Update()
+                myobject = event.GetEventObject()
+                myobject.Disable()
+                try:
+                    self.AbrirLogo.Disable()
+                except:
+                    self.logo.Disable()
+                    self.logo.Update()
 
     #--------------------------------------------------
         def OnOpen(self, event):

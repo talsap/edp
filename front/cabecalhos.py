@@ -6,6 +6,7 @@ import wx
 import bancodedadosCAB
 import wx.lib.mixins.listctrl as listmix
 from front.NovoCabecalho import NovoCabecalho
+from front.EditarCabecalho import EditarCabecalho
 from wx.lib.agw import ultimatelistctrl as ULC
 
 '''Classe da Lista editável'''
@@ -143,7 +144,7 @@ class Cab(wx.Frame):
                 self.list_ctrl.UpdateListCtrl()
 
                 self.definirAtual = wx.Button(panel, -1, 'Definir Atual')
-                print self.list_cab
+
                 if len(self.list_cab) == 1:
                     self.combo = wx.ComboBox(panel, value = self.list_cab[0], choices = self.list_cab, style = wx.EXPAND | wx.CB_READONLY)
                     self.definirAtual.Disable()
@@ -165,7 +166,6 @@ class Cab(wx.Frame):
     #--------------------------------------------------
         def NovoCabecalho(self, event):
             dialogo = NovoCabecalho().ShowModal()
-
 
             self.list_ctrl.DeleteAllItems()
             lista = bancodedadosCAB.ListaVisualizacaoCab()
@@ -209,28 +209,79 @@ class Cab(wx.Frame):
 
             self.combo.SetItems(self.list_cab)
             i = bancodedadosCAB.idEscolha()
-            q = bancodedadosCAB.quant_CAB_deletados()
-            self.combo.SetSelection(i-q)
+            identificador = bancodedadosCAB.id_identificador(i)
+            j = self.list_cab.index(str(identificador))
+            self.combo.SetSelection(j)
             self.definirAtual.Enable()
             self.Bind(wx.EVT_BUTTON, self.DefinirATUAL, self.definirAtual)
 
     #--------------------------------------------------
         def DefinirATUAL(self, event):
-            a = self.combo.GetStringSelection()
-            b = str(a)
-            id = bancodedadosCAB.identificador_id(a)
-            bancodedadosCAB.updateEscolha(id)
-            dlg = wx.MessageDialog(self, 'O cabeçalho '+b+' foi definido como atual.', 'EDP', wx.OK | wx.ICON_INFORMATION)
-            result = dlg.ShowModal()
+            try:
+                a = self.combo.GetStringSelection()
+                b = str(a)
+                id = bancodedadosCAB.identificador_id(a)
+                bancodedadosCAB.updateEscolha(id)
+                dlg = wx.MessageDialog(self, 'O cabeçalho '+b+' foi definido como atual.', 'EDP', wx.OK | wx.ICON_INFORMATION)
+                result = dlg.ShowModal()
+            except:
+                dlg = wx.MessageDialog(self, 'O cabeçalho não pode ser definido como atual', '#ERROR', wx.OK | wx.ICON_INFORMATION)
+                result = dlg.ShowModal()
+
 
     #--------------------------------------------------
         def Editar(self, event):
-            a = self.list_ctrl.GetFocusedItem()
-            print a
-            '''id = event.GetId()
-            dialogo = edtCapsula(id)
-            resultado = dialogo.ShowModal()
-            self.list_ctrl.UpdateListCtrl()'''
+            id = event.GetId()
+
+            dialogo = EditarCabecalho(id).ShowModal()
+
+            self.list_ctrl.DeleteAllItems()
+            lista = bancodedadosCAB.ListaVisualizacaoCab()
+            index = 0
+            self.list_cab = []
+
+            for key, row in lista:
+                   self.list_cab.append(row[0])
+                   if index == 0:
+                           pos = self.list_ctrl.InsertStringItem(index, row[0])
+                           buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
+                           buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
+                           buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-neditar-arquivo-24px.png'))
+                           buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-nlixo-24px.png'))
+                           self.list_ctrl.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
+                           self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
+                           self.list_ctrl.SetItemData(index, key)
+                           index += 1
+                   else:
+                           pos = self.list_ctrl.InsertStringItem(index, row[0])
+                           buttonEDT = wx.Button(self.list_ctrl, id = key, label="")
+                           buttonDEL = wx.Button(self.list_ctrl, id = 15000+key, label="")
+                           buttonEDT.SetBitmap(wx.Bitmap(r'icons\icons-editar-arquivo-24px.png'))
+                           buttonDEL.SetBitmap(wx.Bitmap(r'icons\icons-lixo-24px.png'))
+                           self.list_ctrl.SetItemWindow(pos, col=1, wnd=buttonEDT, expand=True)
+                           self.list_ctrl.SetItemWindow(pos, col=2, wnd=buttonDEL, expand=True)
+                           self.list_ctrl.Bind(wx.EVT_BUTTON, self.Editar, buttonEDT)
+                           self.list_ctrl.Bind(wx.EVT_BUTTON, self.Deletar, buttonDEL)
+                           self.list_ctrl.SetItemData(index, key)
+                           index += 1
+
+            if len(lista)>=11:
+               self.list_ctrl.SetColumnWidth(0, width=210)
+               self.list_ctrl.SetColumnWidth(1, width=40)
+               self.list_ctrl.SetColumnWidth(2, width=40)
+
+            else:
+               self.list_ctrl.SetColumnWidth(0, width=230)
+               self.list_ctrl.SetColumnWidth(1, width=40)
+               self.list_ctrl.SetColumnWidth(2, width=40)
+
+            self.combo.SetItems(self.list_cab)
+            i = bancodedadosCAB.idEscolha()
+            identificador = bancodedadosCAB.id_identificador(i)
+            j = self.list_cab.index(str(identificador))
+            self.combo.SetSelection(j)
+            self.definirAtual.Enable()
+            self.Bind(wx.EVT_BUTTON, self.DefinirATUAL, self.definirAtual)
 
     #--------------------------------------------------
         def Deletar(self, event):
@@ -252,8 +303,6 @@ class Cab(wx.Frame):
                     j = self.list_cab.index(atual)
                 except:
                     pass
-
-                print self.list_cab
 
                 if len(self.list_cab) == 1:
                     self.combo.SetItems(self.list_cab)
