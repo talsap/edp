@@ -12,5 +12,3 @@ class main():
      app.MainLoop()
 
 main()
-
-#FALTA FAZER O BOTÃO DEFINIR ATUAL

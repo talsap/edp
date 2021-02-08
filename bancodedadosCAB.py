@@ -78,14 +78,14 @@ def idEscolha():
 
     return escolha[0]
 
-'''Captura o ultimo id do Cabeçalho cadastrado mais recente'''
-def idUltimo(ident):
+'''Compara a String identificador para encontrar o id'''
+def identificador_id(ident):
     ult = []
 
     for row in c.execute('SELECT * FROM Cabecalho WHERE identificador = ?', (ident,)):
         ult.append(row[0])
 
-    return ult[0]
+    return ult[0] #retorna com id
 
 '''Altera o Cabeçalho de escolha no banco de dados'''
 def updateEscolha(id):

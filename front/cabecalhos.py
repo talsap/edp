@@ -8,8 +8,6 @@ import wx.lib.mixins.listctrl as listmix
 from front.NovoCabecalho import NovoCabecalho
 from wx.lib.agw import ultimatelistctrl as ULC
 
-'''lista = [[0, [u'(Default)']], [1, [u'(Default1)']], [2, [u'(Default2)']], [3, [u'(Default3)']], [4, [u'(Default4)']], [5, [u'(Default5)']], [6, [u'(Default6)']], [7, [u'(Default7)']], [8, [u'(Default8)']], [9, [u'(Default9)']], [10, [u'(Default10)']]]'''
-
 '''Classe da Lista editável'''
 class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
     #----------------------------------------------------------------------
@@ -218,7 +216,12 @@ class Cab(wx.Frame):
 
     #--------------------------------------------------
         def DefinirATUAL(self, event):
-            print self.combo.GetSelection()
+            a = self.combo.GetStringSelection()
+            b = str(a)
+            id = bancodedadosCAB.identificador_id(a)
+            bancodedadosCAB.updateEscolha(id)
+            dlg = wx.MessageDialog(self, 'O cabeçalho '+b+' foi definido como atual.', 'EDP', wx.OK | wx.ICON_INFORMATION)
+            result = dlg.ShowModal()
 
     #--------------------------------------------------
         def Editar(self, event):
