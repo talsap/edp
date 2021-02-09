@@ -492,7 +492,7 @@ class BottomPanel(wx.Panel):
             self.SetSizer(self.sizer)
 
 '''Tela Realização do Ensaio'''
-class TelaRealizacaoEnsaioDNIT134(wx.Frame):
+class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME', size = (1000,700), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)

@@ -7,7 +7,7 @@ from TelaNovoEnsaioDNIT134 import TelaNovoEnsaioDNIT134
 normas = ['DNIT 134/2018ME', 'DNIT 135/2018ME', 'DNIT 179/2018IE', 'DNIT 184/2018ME', 'DNIT 416/2019ME']
 
 '''Tela Selecão de Ensaio'''
-class TelaNovo(wx.Frame):
+class TelaNovo(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Frame.__init__(self, None, -1, 'EDP - Beta', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
@@ -55,4 +55,4 @@ class TelaNovo(wx.Frame):
             '''Acessa a DNIT 134/2018ME'''
             if a == 0:
                 self.Close(True)
-                frame = TelaNovoEnsaioDNIT134()
+                frame = TelaNovoEnsaioDNIT134().ShowModal()

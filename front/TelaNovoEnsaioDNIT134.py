@@ -7,7 +7,7 @@ import bancodedados
 from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 
 '''Tela Selecão de Ensaio'''
-class TelaNovoEnsaioDNIT134(wx.Frame):
+class TelaNovoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Frame.__init__(self, None, -1, 'EDP - DNIT 134/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
@@ -205,7 +205,7 @@ class TelaNovoEnsaioDNIT134(wx.Frame):
                             '''Salva os dados iniciais de um ensaio'''
                             bancodedados.data_save_dados(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, data, amostra, diametro, altura, energia, distAp, obs)
                             self.Close(True)
-                            frame = TelaRealizacaoEnsaioDNIT134()
+                            frame = TelaRealizacaoEnsaioDNIT134().ShowModal()
                     else:
                         '''Diálogo para informar que os campos diametro ou altura ou energia ou distAo estão vazios.'''
                         if condicional>0:
