@@ -3,6 +3,7 @@
 '''Bibliotecas'''
 import wx
 import wx.adv
+import bancodedados
 from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 
 '''Tela Selecão de Ensaio'''
@@ -135,7 +136,6 @@ class TelaNovoEnsaioDNIT134(wx.Frame):
             h9_sizer.Add(self.obs, 5, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h9_sizer, 1, wx.EXPAND | wx.ALL)
-            '''v_sizer.AddStretchSpacer(1)'''
 
             continuar = wx.Button(panel, -1, 'Continuar')
             continuar.Bind(wx.EVT_BUTTON, self.Prosseguir)
@@ -148,5 +148,66 @@ class TelaNovoEnsaioDNIT134(wx.Frame):
 
     #--------------------------------------------------
         def Prosseguir(self, event):
-            self.Close(True)
-            frame = TelaRealizacaoEnsaioDNIT134()
+            identificador = self.Identificador.GetValue()
+            cp = self.cp.GetValue()
+            rodovia = self.rodovia.GetValue()
+            origem = self.origem.GetValue()
+            trecho = self.trecho.GetValue()
+            estKm = self.est.GetValue()
+            operador = self.operador.GetValue()
+            interesse = self.interesse.GetValue()
+            data = self.date.GetValue()
+            amostra = self.amostra.GetSelection()
+            diametro = self.diametro.GetValue()
+            diametro = format(diametro).replace(',','.')
+            diametro = format(diametro).replace('-','')
+            altura = self.altura.GetValue()
+            altura = format(altura).replace(',','.')
+            altura = format(altura).replace('-','')
+            energia = self.energia.GetValue()
+            energia = format(energia).replace(',','.')
+            energia = format(energia).replace('-','')
+            distAp = self.distAp.GetValue()
+            distAp = format(distAp).replace(',','.')
+            distAp = format(distAp).replace('-','')
+            obs = self.obs.GetValue()
+            condicional = 1
+
+            try:
+                diametro = float(diametro)
+                altura = float(altura)
+                energia = float(energia)
+                distAp = float(distAp)
+
+            except ValueError:
+                print('Os valores digitados em algum dos campos nao esta da maneira esperada')
+                menssagError = wx.MessageDialog(self, 'Os valores digitados em algum dos campos não está da maneira esperada.', 'EDP', wx.OK|wx.ICON_INFORMATION)
+                aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                menssagError.ShowModal()
+                menssagError.Destroy()
+                diametro = -1
+                condicional = -1
+
+            if identificador == '' and condicional>0:
+                '''Diálogo para Forçar preenchimento do Identificador'''
+                dlg = wx.MessageDialog(None, 'É necessário que no mínimo o Identificador seja preenchido.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                result = dlg.ShowModal()
+
+            else:
+                cond = bancodedados.data_identificadores()
+                if identificador in cond:
+                    '''Diálogo para informar que já existe um Ensaio com esse identificador'''
+                    dlg = wx.MessageDialog(None, 'Já existe um Ensaio com esse identificador.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                    result = dlg.ShowModal()
+                else:
+                    if diametro!='' and altura!='' and energia!='' and distAp!='':
+                        if diametro>0 and altura>0 and energia>0 and distAp>0:
+                            '''Salva os dados iniciais de um ensaio'''
+                            bancodedados.data_save_dados(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, data, amostra, diametro, altura, energia, distAp, obs)
+                            self.Close(True)
+                            frame = TelaRealizacaoEnsaioDNIT134()
+                    else:
+                        '''Diálogo para informar que os campos diametro ou altura ou energia ou distAo estão vazios.'''
+                        if condicional>0:
+                            dlg = wx.MessageDialog(None, 'Os valores de diametro, altura, energia e distAp devem está preenchidos.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                            result = dlg.ShowModal()

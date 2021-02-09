@@ -31,7 +31,7 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
                    self.SetStringItem(index, 2, row[2])
                    '''self.SetStringItem(index, 3, row[3])'''
                    buttonEDT = wx.Button(self, id = key, label="")
-                   buttonGRF = wx.Button(self, id = 4000+key, label="")
+                   buttonGRF = wx.Button(self, id = 5000+key, label="")
                    buttonPDF = wx.Button(self, id = 10000+key, label="")
                    buttonCSV = wx.Button(self, id = 15000+key, label="")
                    buttonDEL = wx.Button(self, id = 20000+key, label="")
