@@ -13,11 +13,6 @@ class Pdf(wx.Dialog):
      def __init__(self, id, *args, **kwargs):
         wx.Dialog.__init__(self, None, -1, 'EDP - PDF')
         self.id = id
-        frame = self.basic_gui()
-
-    #--------------------------------------------------
-     def basic_gui(self):
-        id = self.id
         self.a = bancodedadosCAB.idEscolha()
         self.createPDF("EDP - PDF")
 
@@ -26,7 +21,6 @@ class Pdf(wx.Dialog):
      	id = self.id
 
      	'''Obtendo os dados do banco'''
-        print name
         listaCAB = bancodedadosCAB.ListaDadosCab(self.a)
         instituicao = listaCAB[1].encode('utf-8','ignore')
         fantasia = listaCAB[2].encode('utf-8','ignore')
@@ -72,9 +66,11 @@ class Pdf(wx.Dialog):
                 cnv.drawCentredString((125)/0.352777, 259/0.352777, complemento)
                 cnv.drawCentredString((125)/0.352777, 254/0.352777, cpfcnpj+', '+fone+', '+email)
                 cnv.save()
+                self.Destroy()
 
             except:
                 wx.LogError("O arquivo nao pode ser salvo em '%s'." % pathname)
                 dlg = wx.MessageDialog(None, 'Erro ao criar PDF', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                 result = dlg.ShowModal()
+                self.Destroy()
                 return

@@ -9,6 +9,7 @@ import wx.lib.mixins.listctrl as listmix
 from wx.lib.agw import ultimatelistctrl as ULC
 from TelaNovo import TelaNovo
 from cabecalhos import Cab
+from Pdf import Pdf
 '''from Editar import Editar'''
 '''from Csv import Csv'''
 
@@ -186,6 +187,7 @@ class Tela(wx.Frame):
          id = event.GetId()
          id = id - 8000
          print str(id)+'PDF'
+         dialogo = Pdf(id).ShowModal()
 
     #--------------------------------------------------
      def exportCSV(self, event):
