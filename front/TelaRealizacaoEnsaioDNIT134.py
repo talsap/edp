@@ -39,15 +39,15 @@ class TopPanel(wx.Panel):
             self.continua = wx.Button(self, -1, 'CONTINUA')
             self.fim = wx.Button(self, -1, 'FIM')
 
+            self.avanca.Disable()
+            self.pausa.Disable()
+            self.continua.Disable()
+            self.fim.Disable()
+
             self.avanca.SetFont(FontTitle)
             self.pausa.SetFont(FontTitle)
             self.continua.SetFont(FontTitle)
             self.fim.SetFont(FontTitle)
-
-            self.avanca.SetForegroundColour((190,190,190))
-            self.pausa.SetForegroundColour((190,190,190))
-            self.continua.SetForegroundColour((190,190,190))
-            self.fim.SetForegroundColour((190,190,190))
 
             self.v_sizer.Add(self.avanca, 1, wx.EXPAND | wx.ALL, 5)
             self.v_sizer.Add(self.pausa, 1, wx.EXPAND | wx.ALL, 5)
@@ -99,21 +99,26 @@ class BottomPanel(wx.Panel):
             staticbox6.SetBackgroundColour(wx.Colour(215,215,215))
 
             self.qTensoes = wx.Button(self, -1, 'Q. Tensões')
+            self.Bind(wx.EVT_BUTTON, self.QT, self.qTensoes)
             self.condic = wx.Button(self, -1, 'CONDIC.')
+            self.Bind(wx.EVT_BUTTON, self.CONDIC, self.condic)
             self.mr = wx.Button(self, -1, 'M. R.')
+            self.Bind(wx.EVT_BUTTON, self.MR, self.mr)
             self.LTeste = wx.Button(self, -1, "L. TESTE", size = wx.DefaultSize)
+            self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
             self.LZero = wx.Button(self, -1, "L. ZERO", size = wx.DefaultSize)
+            self.Bind(wx.EVT_BUTTON, self.LZERO, self.LZero)
+
+            self.qTensoes.Disable()
+            self.condic.Disable()
+            self.mr.Disable()
+            self.LZero.Disable()
 
             self.qTensoes.SetFont(FontTitle1)
             self.condic.SetFont(FontTitle1)
             self.mr.SetFont(FontTitle1)
             self.LTeste.SetFont(FontTitle1)
             self.LZero.SetFont(FontTitle1)
-
-            self.qTensoes.SetForegroundColour((190,190,190))
-            self.condic.SetForegroundColour((190,190,190))
-            self.mr.SetForegroundColour((190,190,190))
-            self.LZero.SetForegroundColour((190,190,190))
 
             texto1 = wx.StaticText(self, label = "EIXO Y", style = wx.ALIGN_CENTRE)
             texto2 = wx.StaticText(self, label = "EIXO Y (mm)", style = wx.ALIGN_CENTRE)
@@ -210,6 +215,27 @@ class BottomPanel(wx.Panel):
             self.NGolpes = wx.TextCtrl(self, -1, '500', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
             self.GolpeAtual = wx.TextCtrl(self, -1, '0', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTRE)
             self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, style = wx.CB_READONLY)
+
+            self.y1V.Disable()
+            self.y2V.Disable()
+            self.y1mm.Disable()
+            self.y2mm.Disable()
+            self.defElastica.Disable()
+            self.defPlastica.Disable()
+            self.defPCond.Disable()
+            self.defPAcum.Disable()
+            self.AlturaFinal.Disable()
+            self.PCreal.Disable()
+            self.PCalvo.Disable()
+            self.SigmaReal.Disable()
+            self.SigmaAlvo.Disable()
+            self.AlturaMM.Disable()
+            self.DiametroMM.Disable()
+            self.DefCritica.Disable()
+            self.Ciclo.Disable()
+            self.NGolpes.Disable()
+            self.GolpeAtual.Disable()
+            self.freq.Disable()
 
             self.y1V.SetFont(Fonttext)
             self.y2V.SetFont(Fonttext)
@@ -491,6 +517,39 @@ class BottomPanel(wx.Panel):
             self.sizer.Add(self.h_sizer, 0,  wx.EXPAND | wx.ALL, 10)
             self.SetSizer(self.sizer)
 
+    #--------------------------------------------------
+        '''Função responsável em realizar o CONDICIONAMENTO'''
+        def LTESTE(self, event):
+            print 'LTESTE'
+            self.LTeste.Disable()
+            self.LZero.Enable()
+
+    #--------------------------------------------------
+        '''Função responsável pela leitura zero'''
+        def LZERO(self, event):
+            print 'LZERO'
+            self.freq.Enable()
+            self.qTensoes.Enable()
+            self.condic.Enable()
+            self.mr.Enable()
+            self.LTeste.Disable()
+
+    #--------------------------------------------------
+        '''Função responsável em mostrar o quadro dinâmico de tensões'''
+        def QT(self, event):
+            print 'QT'
+
+    #--------------------------------------------------
+        '''Função responsável em realizar o CONDICIONAMENTO'''
+        def CONDIC(self, event):
+            print 'CONDIC'
+
+    #--------------------------------------------------
+        '''Função responsável em realizar o MODULO RESILIENTE'''
+        def MR(self, event):
+            print 'MR'
+
+
 '''Tela Realização do Ensaio'''
 class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
@@ -509,9 +568,9 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             top = TopPanel(splitter)
             bottom = BottomPanel(splitter, top)
             splitter.SplitHorizontally(top, bottom, 450)
-            splitter.SetMinimumPaneSize(300)
+            splitter.SetMinimumPaneSize(400)
             top.draw()
 
             self.Centre()
             self.Show()
-            '''self.Maximize(True)'''
+            self.Maximize(True)
