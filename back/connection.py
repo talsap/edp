@@ -33,11 +33,9 @@ def connect():
                 a = conexao.readline()
                 if a[0] == "c":
                     print "conectado"
-                    condicaoConeccao = True
                     return portlist[i], "connectado"
                 else:
                     print "notconectado"
-                    condicaoConeccao = False
                     conexao.close()
         except:
             conexao.close()
