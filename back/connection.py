@@ -14,30 +14,35 @@ opcaoD = "D"
 opcaoI = "I"
 condicaoConeccao = False
 
-'''ComboBox Port Serial'''
+'''Port Serial'''
 portlist = [port for port,desc,hwin in list_ports.comports()]
+conexao = serial.Serial()
+conexao.baudrate = 19200
+
 
 def connect():
-    for item in portlist:
+    i = 0
+    while i < len(portlist):
+        conexao.port = portlist[i]
         try:
-            conexao = serial.Serial(item, rate)
-            print conexao.inWaiting()
-            print("Verificando Conexao com porta serial "+str(item)+"...\n")
-            time.sleep(1)
-            print 'a'
-            conexao.write(opcaoC)
-            print 'a'
-            a = conexao.read()
-            if a == '':
-                print "bb"
-                condicaoConeccao = True
-                return a[0]
-            else:
-                print "aa"
-            print "cc"
+            conexao.open()
+            if conexao.isOpen() == True:
+                print("Verificando Conexao com porta serial "+conexao.port+"...\n")
+                conexao.write(opcaoC)
+                conexao.timeout = 1
+                a = conexao.readline()
+                if a[0] == "c":
+                    print "conectado"
+                    condicaoConeccao = True
+                    return portlist[i], "connectado"
+                else:
+                    print "notconectado"
+                    condicaoConeccao = False
+                    conexao.close()
         except:
-            time.sleep(1)
-            print("Nao foi possivel manter a conexao com "+str(item)+"! Verifique a conexao usb.\n")
-            return 0
+            conexao.close()
+            time.sleep(.2)
+            print("Nao foi possivel manter a conexao com "+str(portlist[i])+"! Verifique a conexao usb.\n")
+            i = i+1
 
-connect()
+print connect()
