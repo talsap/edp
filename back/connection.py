@@ -40,7 +40,5 @@ def connect():
         except:
             conexao.close()
             time.sleep(.2)
-            print("Nao foi possivel manter a conexao com "+str(portlist[i])+"! Verifique a conexao usb.\n")
+            print("Nao foi possivel manter a conexao com "+conexao.port+"! Verifique a conexao usb.\n")
             i = i+1
-
-print connect()

@@ -2,14 +2,70 @@
 
 '''Bibliotecas'''
 import wx
+import time
 import wx.adv
 import matplotlib
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-import matplotlib.pyplot as plt
 import numpy as np
+import back.connection as con
+import matplotlib.pyplot as plt
+from threading import Thread
+from wx.lib.pubsub import pub
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
 '''plt.style.use('ggplot')'''
 frequencias = ['1', '2', '3']
+
+########################################################################
+'''TestThread'''
+class TestThread(Thread):
+    """Test Worker Thread Class."""
+    #-------------------------------------------------------------------
+    def __init__(self):
+        """Init Worker Thread Class."""
+        Thread.__init__(self)
+        self.start()    # start the thread
+
+    #-------------------------------------------------------------------
+    def run(self):
+        """Run Worker Thread."""
+        # This is the code executing in the new thread.
+        wx.CallAfter(pub.sendMessage, "update", msg="")
+        valor = con.connect()
+        if valor[1] == 'connectado':
+            print 'CONECTADO'
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+        else:
+            print 'DESCONECTADO'
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+
+########################################################################
+'''MyProgressDialog'''
+class MyProgressDialog(wx.Dialog):
+    """"""
+    #-------------------------------------------------------------------
+    def __init__(self):
+        """Constructor"""
+        wx.Frame.__init__(self, None, -1, size=(700,15), style=0)
+        self.Centre()
+        self.count = 0
+        self.progress = wx.Gauge(self, range=2)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer1 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self.progress, 0, wx.EXPAND)
+        sizer1.Add(sizer, wx.EXPAND, wx.ALIGN_CENTER)
+        self.SetSizer(sizer1)
+        # create a pubsub receiver
+        pub.subscribe(self.updateProgress, "update")
+
+    #-------------------------------------------------------------------
+    def updateProgress(self, msg):
+        """"""
+        self.count += 1
+        if self.count >= 2:
+            self.Destroy()
+        self.progress.SetValue(self.count)
+
+########################################################################
 
 '''Painel Superior'''
 class TopPanel(wx.Panel):
@@ -522,6 +578,9 @@ class BottomPanel(wx.Panel):
         def LTESTE(self, event):
             print 'LTESTE'
             self.LTeste.Disable()
+            TestThread()
+            dlg = MyProgressDialog()
+            dlg.ShowModal()
             self.LZero.Enable()
 
     #--------------------------------------------------

@@ -205,7 +205,7 @@ class EditarCabecalho(wx.Dialog):
 
             if  a == '' or c == '':
                 '''Diálogo para Forçar preenchimento do Identificador e do nome Fantasia'''
-                dlg = wx.MessageDialog(None, 'É necessário que no mínimo o Identificador e o nome Fantasia seja preenchido.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                dlg = wx.MessageDialog(None, 'É necessário que no mínimo o Identificador e o nome Fantasia seja preenchido.', 'EDP', wx.OK | wx.CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                 result = dlg.ShowModal()
 
             else:

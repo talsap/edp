@@ -19,7 +19,7 @@ create_table()
 
 '''Salva os dados iniciais de um ensaio'''
 def data_save_dados(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, dataColeta, amostra, diametro, altura, energia, distAp, obs):
-    dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y'))
+    dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
     c.execute("INSERT INTO dadosIniciais (id, identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, dataColeta, dataInicio, dataFim, amostra, diametro, altura, energia, distAp, obs) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, dataColeta, dataInicio, dataFim, amostra, diametro, altura, energia, distAp, obs))
