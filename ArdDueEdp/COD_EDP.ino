@@ -1,0 +1,107 @@
+/*******************************************************************
+*           Código arduino para o software EDP - Beta              *
+* ---------------------------------------------------------------- *
+* created by: Tarcisio Sapucaia - tarcisiosapucaia27@gmail.com     *
+* Data – 25/02/2021 - v 1.0                                        *
+********************************************************************/
+/* Import from Libraries */
+#include <Wire.h>
+#include <Oversampling.h>
+
+Oversampling adc(12, 16, 2); 
+
+/* Variables */
+int condConect = 0;
+float ad0, ad1;
+unsigned char conexao, leitura;
+
+/* Initialization serial */
+void setup(void) {
+  Serial.begin(19200);
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+  analogReadResolution(12);
+}
+
+/* Main */
+void loop(void) {
+  
+  conexao = Serial.read();
+  
+  switch(conexao){
+/*******************************************************************/
+    case 'C':
+      //caso receba C (verifica se há conexao com a porta serial)
+      Serial.println("conectado");
+      Serial.flush();
+      condConect = 1;
+      break;
+
+/*******************************************************************/  
+    case 'D':
+      //caso receba D (implica na desconexao com a porta serial)
+      Serial.println("desconectado");
+      Serial.flush();
+      Serial.end();
+      condConect = 0;
+      break;
+      
+/*******************************************************************/
+/************************* norma DNIT134 ***************************/  
+/*******************************************************************/
+    case 'I':
+      if(condConect == 1){
+        //caso receba I (acessa o ensaio da norma DNIT134)
+
+        //***********************//
+        sensorLVDTDNIT134:
+        while(true){
+          leitura = Serial.read();
+          ad0 = adc.read(A0);
+          ad1 = adc.read(A1);
+          Serial.print(ad0);
+          Serial.print(" ");
+          Serial.println(ad1);
+          Serial.flush();
+          delay(5);
+          if(leitura == 'd'){
+            break;
+            }
+          if(leitura == 's'){
+            goto sensor;
+            }
+          }
+        break;
+
+        //***********************//
+        sensor:
+        while(true){
+          leitura = Serial.read();
+          Serial.println("sensor");
+          Serial.flush();
+          delay(5);
+          if(leitura == 'd'){
+            break;
+            }
+          
+          }
+       
+        
+      }
+      
+/*******************************************************************/
+/************************* norma DNIT... ***************************/  
+/*******************************************************************/  
+    case 'G':
+      if(condConect == 1){
+        //caso receba I (acessa o ensaio da norma ...)
+        Serial.println("Ainda falta complementar");
+      }
+
+/*******************************************************************/
+/*******************************************************************/  
+/*******************************************************************/ 
+   
+   }/*switch*/
+
+}/*void*/
