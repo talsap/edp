@@ -8,19 +8,23 @@
 #include <Wire.h>
 #include <Oversampling.h>
 
+#define ADC_16BIT_MAX   65536
+
 Oversampling adc(12, 16, 2); 
 
 /* Variables */
 int condConect = 0;
-float ad0, ad1;
+float ad0, ad1, vd0, vd1, bit_Voltage;
+float InputRange_code = 3.3f;
 unsigned char conexao, leitura;
 
 /* Initialization serial */
 void setup(void) {
   Serial.begin(19200);
+  analogReadResolution(12);
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
-  analogReadResolution(12);
+  bit_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1);
 }
 
 /* Main */
@@ -59,9 +63,15 @@ void loop(void) {
           leitura = Serial.read();
           ad0 = adc.read(A0);
           ad1 = adc.read(A1);
+          vd0 = adc.read(A0)*bit_Voltage;
+          vd1 = adc.read(A1)*bit_Voltage;
           Serial.print(ad0);
-          Serial.print(" ");
-          Serial.println(ad1);
+          Serial.print(" , ");
+          Serial.print(ad1);
+          Serial.print(" ; ");
+          Serial.print(vd0);
+          Serial.print(" , ");
+          Serial.println(vd1);
           Serial.flush();
           delay(5);
           if(leitura == 'd'){
