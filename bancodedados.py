@@ -13,9 +13,38 @@ c = connection.cursor()
 
 def create_table():
     c.execute('CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, identificador text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, interesse text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, energia real, distAp real, obs text)')
+    c.execute("CREATE TABLE IF NOT EXISTS calibrador (id INTEGER PRIMARY KEY AUTOINCREMENT, A0 real, B0 real, A1 real, B1 real)")
+
+def data_entry():
+    try:
+        c.execute("INSERT INTO calibrador VALUES (0, 1.00000, 0.00000, 1.00000, 0.00000)")
+        connection.commit()
+    except Exception:
+        pass
 
 create_table()
+data_entry()
 
+'''Atualiza os dados A e B de Calibração do LVDT'''
+def update_dados_LVDT(a0, b0, a1, b1):
+    id = 0;
+    c.execute("UPDATE calibrador SET A0 = ? WHERE id = ?", (a0, id,))
+    c.execute("UPDATE calibrador SET B0 = ? WHERE id = ?", (b0, id,))
+    c.execute("UPDATE calibrador SET A1= ? WHERE id = ?", (a1, id,))
+    c.execute("UPDATE calibrador SET B1 = ? WHERE id = ?", (b1, id,))
+    connection.commit()
+
+'''Retorna uma lista as variaveis A e B de Calibração do LVDT'''
+def LVDT():
+    list = []
+
+    for row in c.execute('SELECT * FROM calibrador'):
+        list.append(row[1])
+        list.append(row[2])
+        list.append(row[3])
+        list.append(row[4])
+
+    return list
 
 '''Salva os dados iniciais de um ensaio'''
 def data_save_dados(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, dataColeta, amostra, diametro, altura, energia, distAp, obs):

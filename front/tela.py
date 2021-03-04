@@ -9,6 +9,7 @@ import wx.lib.mixins.listctrl as listmix
 from wx.lib.agw import ultimatelistctrl as ULC
 from TelaNovo import TelaNovo
 from cabecalhos import Cab
+from calibration import Cal
 from Pdf import Pdf
 '''from Editar import Editar'''
 '''from Csv import Csv'''
@@ -104,10 +105,12 @@ class Tela(wx.Frame):
          cabecalhosMenuitem = arquivoMenu.Append(wx.NewId(), 'Cabeçalhos', 'Cabeçalhos')
          arquivoMenu.AppendSeparator()
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
+         calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Calibração LVDT\tCtrl+T', 'Calibração LVDT')
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')
          self.Bind(wx.EVT_MENU, self.NovoEnsaio, novoEnsaioMenuItem)
          self.Bind(wx.EVT_MENU, self.Cabecalhos, cabecalhosMenuitem)
          self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
+         self.Bind(wx.EVT_MENU, self.calibrate, calibrateLVDTitem)
          self.Bind(wx.EVT_MENU, self.ajudaGUI, ajudaMenuItem)
          self.SetMenuBar(menuBar)
 
@@ -388,3 +391,8 @@ class Tela(wx.Frame):
      def onExit(self, event):
           '''Opcao Sair'''
           self.Close(True)
+
+    #--------------------------------------------------
+     def calibrate(self, event):
+          '''Opcao Calibração LVDT'''
+          frame = Cal()
