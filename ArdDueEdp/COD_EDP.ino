@@ -20,7 +20,7 @@ unsigned char conexao, leitura;
 
 /* Initialization serial */
 void setup(void) {
-  Serial.begin(19200);
+  Serial.begin(115200);
   analogReadResolution(12);
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
@@ -68,7 +68,7 @@ void loop(void) {
           Serial.print(ad0);
           Serial.print(" , ");
           Serial.print(ad1);
-          Serial.print(" ; ");
+          Serial.print(" , ");
           Serial.print(vd0);
           Serial.print(" , ");
           Serial.println(vd1);
