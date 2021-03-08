@@ -9,11 +9,14 @@ import numpy as np
 import back.connection as con
 import matplotlib.pyplot as plt
 from threading import Thread
+from multiprocessing.pool import ThreadPool
 from wx.lib.pubsub import pub
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
 '''plt.style.use('ggplot')'''
 frequencias = ['1', '2', '3']
+
+pool = ThreadPool(processes=1)
 
 ########################################################################
 '''TestThread'''
@@ -34,9 +37,15 @@ class TestThread(Thread):
         if valor[1] == 'connectado':
             print 'CONECTADO'
             wx.CallAfter(pub.sendMessage, "update", msg="")
+            self._return = 'connectado'
         else:
             print 'DESCONECTADO'
             wx.CallAfter(pub.sendMessage, "update", msg="")
+            self._return = 'desconnectado'
+    #-------------------------------------------------------------------
+    def ret(self):
+        Thread.join(self)
+        return self._return
 
 ########################################################################
 '''MyProgressDialog'''
@@ -576,12 +585,22 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em realizar o CONDICIONAMENTO'''
         def LTESTE(self, event):
-            print 'LTESTE'
-            self.LTeste.Disable()
-            TestThread()
+            threadConection = TestThread()
             dlg = MyProgressDialog()
             dlg.ShowModal()
-            self.LZero.Enable()
+            cond = threadConection.ret()
+            if cond == 'connectado':
+                menssagError = wx.MessageDialog(self, 'CONECTADO!', 'EDP', wx.OK|wx.ICON_AUTH_NEEDED)
+                aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                menssagError.ShowModal()
+                menssagError.Destroy()
+                self.LTeste.Disable()
+                self.LZero.Enable()
+            else:
+                menssagError = wx.MessageDialog(self, 'Não é possível manter uma conecção serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
+                aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                menssagError.ShowModal()
+                menssagError.Destroy()
 
     #--------------------------------------------------
         '''Função responsável pela leitura zero'''
