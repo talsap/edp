@@ -8,20 +8,19 @@ from sys import *
 from serial.tools import list_ports
 
 '''Variaveis Globais'''
-rate = 19200
 opcaoC = "C"
 opcaoD = "D"
 opcaoI = "I"
-condicaoConeccao = False
 
 '''Port Serial'''
 portlist = [port for port,desc,hwin in list_ports.comports()]
 conexao = serial.Serial()
-conexao.baudrate = 19200
+conexao.baudrate = 115200
 
+#-------------------------------------------------------------------
 def connect():
     i = 0
-    conditionC = 0
+    condicaoConeccao = False
     try:
         while i < len(portlist):
             conexao.port = portlist[i]
@@ -34,7 +33,7 @@ def connect():
                     a = conexao.readline()
                     if a[0] == "c":
                         print "conectado"
-                        conditionC = 1
+                        condicaoConeccao = True
                         return conexao.port, "connectado"
                     else:
                         print "notconectado"
@@ -50,12 +49,43 @@ def connect():
     except:
         time.sleep(.2)
         print("Nao foi possivel manter a conexao! Verifique a conexao usb.\n")
+        condicaoConeccao = False
         return "0", "notconnectado"
 
     else:
-        if conditionC == 1:
+        if condicaoConeccao == True:
             pass
         else:
             time.sleep(.2)
             print("Nao foi possivel manter a conexao! Verifique a conexao usb.\n")
+            condicaoConeccao = False
             return "0", "notconnectado"
+
+#-------------------------------------------------------------------
+def modeD():
+    conexao.write(opcaoD)
+
+#-------------------------------------------------------------------
+def modeI():
+    conexao.write(opcaoC)
+    conexao.write(opcaoI)
+
+#-------------------------------------------------------------------
+def ColetaI():
+    while conexao.inWaiting() == 0:
+        pass
+    time.sleep(.005)
+    arduinoString = conexao.readline()
+    Array = arduinoString.split(',')
+    try:
+        y1mm = float(Array[0])
+        y2mm = float(Array[1])
+        y1v = float(Array[2])
+        y2v = float(Array[3])
+    except:
+        y1mm = ''
+        y2mm = ''
+        y1v = ''
+        y2v = ''
+
+    return y1mm, y2mm, y1v, y2v

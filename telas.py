@@ -8,15 +8,13 @@ import matplotlib
 import numpy as np
 import back.connection as con
 import matplotlib.pyplot as plt
+import threading
 from threading import Thread
-from multiprocessing.pool import ThreadPool
 from wx.lib.pubsub import pub
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
 '''plt.style.use('ggplot')'''
 frequencias = ['1', '2', '3']
-
-pool = ThreadPool(processes=1)
 
 ########################################################################
 '''TestThread'''
@@ -37,7 +35,7 @@ class TestThread(Thread):
         if valor[1] == 'connectado':
             print 'CONECTADO'
             wx.CallAfter(pub.sendMessage, "update", msg="")
-            self._return = 'connectado'
+            self._return = 'connectado', valor[0]
         else:
             print 'DESCONECTADO'
             wx.CallAfter(pub.sendMessage, "update", msg="")
@@ -74,6 +72,12 @@ class MyProgressDialog(wx.Dialog):
             self.Destroy()
         self.progress.SetValue(self.count)
 
+    #--------------------------------------------------
+    def worker(self):
+        con.modeI()
+        while True:
+            valores = con.ColetaI()
+            print valores
 ########################################################################
 
 '''Painel Superior'''
@@ -260,10 +264,10 @@ class BottomPanel(wx.Panel):
             texto23.SetBackgroundColour(wx.Colour(215,215,215))
             texto24.SetBackgroundColour(wx.Colour(215,215,215))
 
-            self.y1V = wx.TextCtrl(self, -1, 'y1v', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.y2V = wx.TextCtrl(self, -1, 'y2v', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.y1mm = wx.TextCtrl(self, -1, 'y1mm', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.y2mm = wx.TextCtrl(self, -1, 'y2mm', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y1V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y2V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y1mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y2mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.defElastica = wx.TextCtrl(self, -1, 'defE', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.defPlastica = wx.TextCtrl(self, -1, 'defP', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.defPCond = wx.TextCtrl(self, -1, 'defPCond', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -583,19 +587,43 @@ class BottomPanel(wx.Panel):
             self.SetSizer(self.sizer)
 
     #--------------------------------------------------
-        '''Função responsável em realizar o CONDICIONAMENTO'''
+        '''Função responsável em realizar a CONECÇÃO'''
         def LTESTE(self, event):
             threadConection = TestThread()
             dlg = MyProgressDialog()
             dlg.ShowModal()
             cond = threadConection.ret()
-            if cond == 'connectado':
+            if cond[0] == 'connectado':
                 menssagError = wx.MessageDialog(self, 'CONECTADO!', 'EDP', wx.OK|wx.ICON_AUTH_NEEDED)
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                 menssagError.ShowModal()
                 menssagError.Destroy()
                 self.LTeste.Disable()
                 self.LZero.Enable()
+                #--------------------------------------------------
+                def worker(self):
+                    con.modeI()
+                    while True:
+                        valores = con.ColetaI()
+                        print valores
+                        try:
+                            self.y1mm.Clear()
+                            self.y2mm.Clear()
+                            self.y1V.Clear()
+                            self.y2V.Clear()
+                        except:
+                            pass
+                        self.y1mm.AppendText(str(valores[0]))
+                        self.y2mm.AppendText(str(valores[1]))
+                        self.y1V.AppendText(str(valores[2]))
+                        self.y2V.AppendText(str(valores[3]))
+                #--------------------------------------------------
+                self.t = threading.Thread(target=worker, args=(self,))
+                try:
+                    self.t.start()
+                except:
+                    self.t.run()
+                #--------------------------------------------------
             else:
                 menssagError = wx.MessageDialog(self, 'Não é possível manter uma conecção serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
