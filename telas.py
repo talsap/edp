@@ -605,7 +605,6 @@ class BottomPanel(wx.Panel):
                     con.modeI()
                     while True:
                         valores = con.ColetaI()
-                        print valores
                         try:
                             self.y1mm.Clear()
                             self.y2mm.Clear()
@@ -639,6 +638,10 @@ class BottomPanel(wx.Panel):
             self.condic.Enable()
             self.mr.Enable()
             self.LTeste.Disable()
+            self.y1mmm = self.y1mm.GetValue()
+            self.y2mmm = self.y2mm.GetValue()
+            print self.y1mmm
+            print self.y2mmm
 
     #--------------------------------------------------
         '''Função responsável em mostrar o quadro dinâmico de tensões'''
