@@ -14,7 +14,7 @@ from wx.lib.pubsub import pub
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
 '''plt.style.use('ggplot')'''
-frequencias = ['1', '2', '3']
+frequencias = ['1', '2', '3', '4', '5']
 
 ########################################################################
 '''TestThread'''
@@ -30,16 +30,19 @@ class TestThread(Thread):
     def run(self):
         """Run Worker Thread."""
         # This is the code executing in the new thread.
-        wx.CallAfter(pub.sendMessage, "update", msg="")
+        wx.CallAfter(pub.sendMessage, "update", msg="Conectando...")
         valor = con.connect()
         if valor[1] == 'connectado':
             print 'CONECTADO'
-            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="CONECTADO")
             self._return = 'connectado', valor[0]
         else:
             print 'DESCONECTADO'
-            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="DESCONECTADO")
             self._return = 'desconnectado'
+    #-------------------------------------------------------------------
+    def motorAtiva(self):
+        pass
     #-------------------------------------------------------------------
     def ret(self):
         Thread.join(self)
@@ -71,10 +74,8 @@ class MyProgressDialog(wx.Dialog):
     def updateProgress(self, msg):
         """"""
         self.count += 1
-        if self.count == 0:
-            self.texto.SetLabel("Conectando...")
-        if self.count == 1:
-            self.texto.SetLabel("Conectando...")
+        if self.count < 2:
+            self.texto.SetLabel(msg)
         if self.count >= 2:
             self.Destroy()
         self.progress.SetValue(self.count)
