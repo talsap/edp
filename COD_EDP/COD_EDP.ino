@@ -106,16 +106,16 @@ void loop(void) {
             break;
             }
           if(leitura == 's'){
-            goto sensor;
+            goto motor;
             }
           }
         break;
 
         //***********************//
-        sensor:
+        motor:
         while(true){
           leitura = Serial.read();
-          Serial.println("sensor");
+          Serial.println("motor");
           Serial.flush();
           delay(5);
           if(leitura == 'd'){
@@ -125,6 +125,7 @@ void loop(void) {
           }
         
       }
+      break;
       
     /*******************************************************************/
     /************************* norma DNIT... ***************************/  
@@ -134,7 +135,7 @@ void loop(void) {
       if(condConect == 1){
         Serial.println("Ainda falta complementar");
       }
-
+      break;
     /*******************************************************************/
     /*******************************************************************/  
     /*******************************************************************/ 
