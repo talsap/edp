@@ -52,14 +52,17 @@ class MyProgressDialog(wx.Dialog):
     #-------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
-        wx.Frame.__init__(self, None, -1, size=(700,15), style=0)
+        wx.Frame.__init__(self, None, -1, size=(500,15), style=0)
         self.Centre()
         self.count = 0
         self.progress = wx.Gauge(self, range=2)
+        self.texto = wx.StaticText(self, label = wx.EmptyString, style = wx.ALIGN_CENTRE)
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(self.progress, 0, wx.EXPAND)
-        sizer1.Add(sizer, wx.EXPAND, wx.ALIGN_CENTER)
+        sizer1.AddStretchSpacer(1)
+        sizer1.Add(self.texto, 2, wx.ALIGN_CENTER)
+        sizer1.Add(sizer, 8, wx.ALIGN_CENTER)
         self.SetSizer(sizer1)
         # create a pubsub receiver
         pub.subscribe(self.updateProgress, "update")
@@ -68,6 +71,10 @@ class MyProgressDialog(wx.Dialog):
     def updateProgress(self, msg):
         """"""
         self.count += 1
+        if self.count == 0:
+            self.texto.SetLabel("Conectando...")
+        if self.count == 1:
+            self.texto.SetLabel("Conectando...")
         if self.count >= 2:
             self.Destroy()
         self.progress.SetValue(self.count)

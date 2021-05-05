@@ -4,6 +4,7 @@
 
 import time
 import serial
+import bancodedados
 from sys import *
 from serial.tools import list_ports
 
@@ -77,9 +78,14 @@ def ColetaI():
     time.sleep(.005)
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
+    L = bancodedados.LVDT()
+    A1 = float(L[0])
+    B1 = float(L[1])
+    A2 = float(L[2])
+    B2 = float(L[3])
     try:
-        y1mm = float(Array[0])
-        y2mm = float(Array[1])
+        y1mm = float(Array[0])*A1+B1
+        y2mm = float(Array[1])*A2+B2
         y1v = float(Array[2])
         y2v = float(Array[3])
     except:
