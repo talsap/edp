@@ -10,7 +10,8 @@
 #include <Stepper.h>
 #include <Oversampling.h> 
 
-#define ADC_16BIT_MAX   65536 //valor da resolucao do arduino
+#define AR_12BIT_MAX   4096 //valor da resolucao do arduino
+#define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
 
 Oversampling adc(12, 16, 2); //motor de passos
 
@@ -19,7 +20,8 @@ Oversampling adc(12, 16, 2); //motor de passos
 const int pinAplicador = 12; //pino do apolicador de golpes
 int condConect = 0; //Condicao para conecxao com o software
 int condicao = 1; //Condicao para o aplicador de golpes
-float bit_Voltage; //Usado para a conversao de bit ~ volts
+float bit12_Voltage; //Usado para a conversao de bits ~ volts
+float bit16_Voltage; //Usado para a conversao de bits ~ volts
 float InputRange_code = 3.3f; //valor do ImputRange 3.3V
 float val; //valor analogico do sensor de pressao
 float ValMilivolt; //valor do sensor de pressao em mBar
@@ -27,10 +29,14 @@ float setpoint; //setpoint
 float setponit1; //valor de entrada esperado para o setpoint
 float camara; //valor da pressao na camara
 float valor;
-float ad0;
-float ad1;
-float vd0;
-float vd1;
+float ad0; //valor analógico do LVDT1
+float ad1; //valor analógico do LVDT2
+float ad2; //valor analógico do sensor de pressão (Aplicador)
+float ad3; //valor analógico do sensor de pressão (Camara)
+float vd0; //valor em voltagem do LVDT1
+float vd1; //valor em voltagem do LVDT2
+float vd2; //valor do sensor de pressão em mBar (Aplicador)
+float vd3; //valor do sensor de pressão em mBar (Camara)
 long intervalo01 = 100; //100 milseg Freq.
 long intervalo09 = 1000; //1Hz 01-09
 long intervalo05 = 500; //2Hz 01-04-01-04
@@ -45,15 +51,18 @@ Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 
 /* Inicializacao da serial */
 void setup(void) {
-  Serial.begin(115200);
-  analogReadResolution(12);
-  analogWrite(DAC0, 15);
-  pinMode(A0, INPUT);
-  pinMode(A1, INPUT);
+  Serial.begin(115200); //velocidade de cominicacao com a porta serial
+  analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
+  analogWrite(DAC0, 15); //pino responsavel em alterar a pressao de (Camara)
+  pinMode(A0, INPUT); //pino LVDT1
+  pinMode(A1, INPUT); //pino LVDT2
+  pinMode(A2, INPUT); //pino Sensor de pressão (Aplicador)
+  pinMode(A3, INPUT); //pino Sensor de pressão (Camara)
   pinMode(pinAplicador, OUTPUT);  //configura o pinAplicador
   mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
-  mp.step(0);  //inicia o motor de passos com zero passos 
-  bit_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1);
+  mp.step(0);  //inicia o motor de passos com zero passos
+  bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
+  bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
 }
 
 /* Principal */
@@ -89,17 +98,25 @@ void loop(void) {
         sensorLVDTDNIT134:
         while(true){
           leitura = Serial.read();
-          ad0 = adc.read(A0);
-          ad1 = adc.read(A1);
-          vd0 = adc.read(A0)*bit_Voltage;
-          vd1 = adc.read(A1)*bit_Voltage;
+          ad0 = adc.read(A0); 
+          ad1 = adc.read(A1); 
+          vd0 = ad0*bit16_Voltage; 
+          vd1 = ad1*bit16_Voltage; 
+          ad2 = analogRead(A2);  
+          ad3 = analogRead(A3); 
+          vd2 = ad2*bit12_Voltage*1000; 
+          vd3 = ad3*bit12_Voltage*1000; 
           Serial.print(ad0);
           Serial.print(" , ");
           Serial.print(ad1);
           Serial.print(" , ");
           Serial.print(vd0);
           Serial.print(" , ");
-          Serial.println(vd1);
+          Serial.print(vd1);
+          Serial.print(" , ");
+          Serial.print(vd2);
+          Serial.print(" , ");
+          Serial.println(vd3);
           Serial.flush();
           delay(5);
           if(leitura == 'd'){
