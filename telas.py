@@ -9,12 +9,17 @@ import numpy as np
 import back.connection as con
 import matplotlib.pyplot as plt
 import threading
+from front.dialogoDinamico import dialogoDinamico
 from threading import Thread
 from wx.lib.pubsub import pub
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
 '''plt.style.use('ggplot')'''
 frequencias = ['1', '2', '3', '4', '5']
+
+'''Variáveis Globais'''
+global leituraZerob1
+global leituraZerob2
 
 ########################################################################
 '''TestThread'''
@@ -611,6 +616,8 @@ class BottomPanel(wx.Panel):
                 #--------------------------------------------------
                 def worker(self):
                     con.modeI()
+                    self.leituraZerob1 = 0
+                    self.leituraZerob2 = 0
                     while True:
                         valores = con.ColetaI()
                         try:
@@ -620,10 +627,12 @@ class BottomPanel(wx.Panel):
                             self.y2V.Clear()
                         except:
                             pass
-                        self.y1mm.AppendText(str(valores[0]))
-                        self.y2mm.AppendText(str(valores[1]))
-                        self.y1V.AppendText(str(valores[2]))
-                        self.y2V.AppendText(str(valores[3]))
+                        self.valorLeitura = valores[0]
+                        self.valorLeitura = valores[1]
+                        self.y1mm.AppendText(str(round((valores[0]-self.leituraZerob1), 4)))
+                        self.y2mm.AppendText(str(round((valores[1]-self.leituraZerob2), 4)))
+                        self.y1V.AppendText(str(round((valores[2]), 2)))
+                        self.y2V.AppendText(str(round((valores[3]), 2)))
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
                 try:
@@ -632,7 +641,7 @@ class BottomPanel(wx.Panel):
                     self.t.run()
                 #--------------------------------------------------
             else:
-                menssagError = wx.MessageDialog(self, 'Não é possível manter uma conecção serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
+                menssagError = wx.MessageDialog(self, 'Não é possível manter uma conexão serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                 menssagError.ShowModal()
                 menssagError.Destroy()
@@ -648,6 +657,8 @@ class BottomPanel(wx.Panel):
             self.LTeste.Disable()
             self.y1mmm = self.y1mm.GetValue()
             self.y2mmm = self.y2mm.GetValue()
+            self.leituraZerob1 = float(self.valorLeitura)
+            self.leituraZerob2 = float(self.valorLeitura)
             print self.y1mmm
             print self.y2mmm
 
@@ -691,6 +702,15 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             self.Centre()
             self.Show()
             self.Maximize(True)
+
+            '''Dialogo Inicial'''
+            info = "EDP 134/2018ME"
+            titulo = "Ajuste o Zero dos LVDTs"
+            message1 = "Com o valor entre:"
+            message2 = "1.0 e 1.5 Volts"
+            message3 = "realizando a L. TESTE"
+            dlg = dialogoDinamico(1, info, titulo, message1, message2, message3, None)
+            dlg.ShowModal()
 
 if __name__ == "__main__":
 	app = wx.App()

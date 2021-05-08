@@ -75,7 +75,7 @@ def modeI():
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
-def modeS(): 
+def modeS():
     conexao.write(opcaoS)
 
 #-------------------------------------------------------------------
@@ -95,10 +95,14 @@ def ColetaI():
         y2mm = float(Array[1])*A2+B2
         y1v = float(Array[2])
         y2v = float(Array[3])
+        sen = float(Array[4])
+        cam = float(Array[5])
     except:
-        y1mm = ''
-        y2mm = ''
-        y1v = ''
-        y2v = ''
+        y1mm = 0.0000
+        y2mm = 0.0000
+        y1v = 0.00
+        y2v = 0.00
+        sen = 0.00
+        cam = 0.00
 
-    return y1mm, y2mm, y1v, y2v
+    return y1mm, y2mm, y1v, y2v, sen, cam

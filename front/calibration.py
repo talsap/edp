@@ -39,7 +39,7 @@ class Cal(wx.Frame):
                 texto1 = wx.StaticText(panel, label = "Curva do tipo Ax + B", style = wx.ALIGN_RIGHT)
 
                 textoA0 = wx.StaticText(panel, label = "A =", style = wx.ALIGN_RIGHT)
-                self.alvdt0 = wx.TextCtrl(panel, -1, "%.5f" % lista[0], style = wx.TE_LEFT)
+                self.alvdt0 = wx.TextCtrl(panel, -1, "%.12f" % lista[0], style = wx.TE_LEFT)
                 self.alvdt0.Disable()
                 textoB0 = wx.StaticText(panel, label = "B =", style = wx.ALIGN_RIGHT)
                 self.blvdt0 = wx.TextCtrl(panel, -1, "%.5f" % lista[1], style = wx.TE_LEFT)
@@ -50,7 +50,7 @@ class Cal(wx.Frame):
                 texto2 = wx.StaticText(panel, label = "Curva do tipo Ax + B", style = wx.ALIGN_RIGHT)
 
                 textoA1 = wx.StaticText(panel, label = "A =", style = wx.ALIGN_RIGHT)
-                self.alvdt1 = wx.TextCtrl(panel, -1, "%.5f" % lista[2], style = wx.TE_LEFT)
+                self.alvdt1 = wx.TextCtrl(panel, -1, "%.12f" % lista[2], style = wx.TE_LEFT)
                 self.alvdt1.Disable()
                 textoB1 = wx.StaticText(panel, label = "B =", style = wx.ALIGN_RIGHT)
                 self.blvdt1 = wx.TextCtrl(panel, -1, "%.5f" % lista[3], style = wx.TE_LEFT)
