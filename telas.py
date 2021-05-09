@@ -10,6 +10,7 @@ import back.connection as con
 import matplotlib.pyplot as plt
 import threading
 from front.dialogoDinamico import dialogoDinamico
+from front.quadrotensoes import quadro
 from threading import Thread
 from wx.lib.pubsub import pub
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
@@ -665,7 +666,7 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em mostrar o quadro dinâmico de tensões'''
         def QT(self, event):
-            print 'QT'
+            dlg = quadro().ShowModal()
 
     #--------------------------------------------------
         '''Função responsável em realizar o CONDICIONAMENTO'''
@@ -676,7 +677,6 @@ class BottomPanel(wx.Panel):
         '''Função responsável em realizar o MODULO RESILIENTE'''
         def MR(self, event):
             print 'MR'
-
 
 '''Tela Realização do Ensaio'''
 class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
