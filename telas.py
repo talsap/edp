@@ -49,6 +49,7 @@ class TestThread(Thread):
     #-------------------------------------------------------------------
     def motorAtiva(self):
         pass
+
     #-------------------------------------------------------------------
     def ret(self):
         Thread.join(self)
@@ -85,13 +86,6 @@ class MyProgressDialog(wx.Dialog):
         if self.count >= 2:
             self.Destroy()
         self.progress.SetValue(self.count)
-
-    #--------------------------------------------------
-    def worker(self):
-        con.modeI()
-        while True:
-            valores = con.ColetaI()
-            print valores
 ########################################################################
 
 '''Painel Superior'''
@@ -672,6 +666,24 @@ class BottomPanel(wx.Panel):
         '''Função responsável em realizar o CONDICIONAMENTO'''
         def CONDIC(self, event):
             print 'CONDIC'
+            '''Dialogo CONDIC'''
+            info = "EDP 134/2018ME"
+            titulo = "Preparação da câmara triaxial."
+            message1 = "Verifique se está tudo certo:"
+            message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conctadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
+            dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
+            dlg.ShowModal()
+            #--------------------------------------------------
+            def worker1(self):
+                con.modeS()
+            #--------------------------------------------------
+            self.t1 = threading.Thread(target=worker1, args=(self,))
+            try:
+                self.t1.start()
+            except:
+                self.t1.run()
+            #--------------------------------------------------
+
 
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''
