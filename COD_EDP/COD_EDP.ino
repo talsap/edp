@@ -20,13 +20,12 @@ Oversampling adc(12, 16, 2); //motor de passos
 const int pinAplicador = 12; //pino do apolicador de golpes
 int condConect = 0; //Condicao para conecxao com o software
 int condicao = 1; //Condicao para o aplicador de golpes
+int setpoint1; //Valor de entrada para o setpoint em milibar (0 - 10.000)mBar
 float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
 float InputRange_code = 3.3f; //valor do ImputRange 3.3V
-float val; //valor analogico do sensor de pressao
-float ValMilivolt; //valor do sensor de pressao em mBar
-float setpoint; //setpoint
-float setponit1; //valor de entrada esperado para o setpoint
+float ValMilivolt; //Valor do sensor de pressao em mBar
+float setpoint; //Valor do setpoint 
 float camara; //valor da pressao na camara
 float valor;
 float ad0; //valor analógico do LVDT1
@@ -63,6 +62,7 @@ void setup(void) {
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
+  setpoint = 0;   //setpoint inicia sendo o valor zero
 }
 
 /* Principal */
@@ -119,10 +119,10 @@ void loop(void) {
           Serial.println(vd3);
           Serial.flush();
           delay(5);
-          if(leitura == 'd'){
+          if(leitura == 'B'){
             break;
             }
-          if(leitura == 's'){
+          if(leitura == 'M'){
             goto motor;
             }
           }
@@ -132,13 +132,49 @@ void loop(void) {
         motor:
         while(true){
           leitura = Serial.read();
-          Serial.println("motor");
+          ad0 = adc.read(A0); 
+          ad1 = adc.read(A1); 
+          vd0 = ad0*bit16_Voltage; 
+          vd1 = ad1*bit16_Voltage; 
+          ad2 = analogRead(A2);  
+          ad3 = analogRead(A3); 
+          vd2 = ad2*bit12_Voltage*1000; 
+          vd3 = ad3*bit12_Voltage*1000; 
+          Serial.print(ad0);
+          Serial.print(" , ");
+          Serial.print(ad1);
+          Serial.print(" , ");
+          Serial.print(vd0);
+          Serial.print(" , ");
+          Serial.print(vd1);
+          Serial.print(" , ");
+          Serial.print(vd2);
+          Serial.print(" , ");
+          Serial.println(vd3);
           Serial.flush();
           delay(5);
-          if(leitura == 'd'){
+          if(leitura == 'B'){
             break;
             }
-          
+            
+          if(Serial.available()>1){
+            setpoint1 = Serial.parseInt();
+            setpoint = setpoint1/3.3;
+            condicao = 0;
+            }
+            
+          //INTERVALO DE PRESSÃO OK//
+          if(vd2 < 1.05*setpoint && vd2 > 0.95*setpoint){
+            Serial.println("ok");
+            mp.step(0);
+            }
+            
+          //INTERVALO DE PRESSÃO NÃO OK//
+          if(condicao == 0){
+            Serial.println("no_ok");
+            mp.step(floor(setpoint - vd2));
+            }
+            
           }
         
       }
