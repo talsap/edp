@@ -12,7 +12,8 @@ from serial.tools import list_ports
 opcaoC = "C"    '''conectado'''
 opcaoD = "D"    '''desconectado'''
 opcaoI = "I"    '''DNIT134'''
-opcaoS = "s"    '''AJUSTE MOTOR DE PASSOS'''
+opcaoM = "M"    '''MOTOR DE PASSOS'''
+opcaoB = "B"    '''Break'''
 
 '''Port Serial'''
 portlist = [port for port,desc,hwin in list_ports.comports()]
@@ -75,8 +76,8 @@ def modeI():
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
-def modeS():
-    conexao.write(opcaoS)
+def modeM():
+    conexao.write(opcaoM)
 
 #-------------------------------------------------------------------
 def ColetaI():

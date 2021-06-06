@@ -669,13 +669,15 @@ class BottomPanel(wx.Panel):
             '''Dialogo CONDIC'''
             info = "EDP 134/2018ME"
             titulo = "Preparação da câmara triaxial."
-            message1 = "Verifique se está tudo certo:"
+            message1 = "Verifique se está tudo certo!"
             message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conctadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
             dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
             dlg.ShowModal()
+            self.LZero.Disable()
             #--------------------------------------------------
             def worker1(self):
-                con.modeS()
+                con.modeM()
+
             #--------------------------------------------------
             self.t1 = threading.Thread(target=worker1, args=(self,))
             try:
