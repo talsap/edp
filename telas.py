@@ -21,21 +21,66 @@ frequencias = ['1', '2', '3', '4', '5']
 '''Variáveis Globais'''
 global leituraZerob1
 global leituraZerob2
+global A2 #área do corpo de prova, vinda do banco de dados do Ensai
+global A1 #área da seção do cilindro pneumático
+
+A2 = 0.007854
+A1 = 0.007854
+
+VETOR_COND = [[0.070,0.070],
+              [0.070,0.210],
+              [0.105,0.315]]
+
+VETOR_MR =  [[0.020,0.020],
+             [0.020,0.040],
+             [0.020,0.060],
+             [0.035,0.035],
+             [0.035,0.070],
+             [0.035,0.105],
+             [0.050,0.050],
+             [0.050,0.100],
+             [0.050,0.150],
+             [0.070,0.070],
+             [0.070,0.140],
+             [0.070,0.210],
+             [0.105,0.105],
+             [0.105,0.210],
+             [0.105,0.315],
+             [0.140,0.140],
+             [0.140,0.280],
+             [0.140,0.420]]
 
 ########################################################################
-'''TestThread'''
-class TestThread(Thread):
-    """Test Worker Thread Class."""
+'''MotorThread'''
+class MotorThread(Thread):
     #-------------------------------------------------------------------
-    def __init__(self):
-        """Init Worker Thread Class."""
+    def __init__(self, j):
         Thread.__init__(self)
-        self.start()    # start the thread
+        self.start()
+        self.j = j
 
     #-------------------------------------------------------------------
     def run(self):
-        """Run Worker Thread."""
-        # This is the code executing in the new thread.
+        wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
+        valor = con.modeM((10000*A2/A1)*VETOR_COND[self.j][0], 10000*VETOR_COND[self.j][1])
+        if valor == 'p1ok':
+            print 'PRESSAO OK'
+            wx.CallAfter(pub.sendMessage, "update", msg="Calibrando pressao")
+    #-------------------------------------------------------------------
+    def ret(self):
+        Thread.join(self)
+        return self._return
+
+########################################################################
+'''ConexaoThread'''
+class ConexaoThread(Thread):
+    #-------------------------------------------------------------------
+    def __init__(self):
+        Thread.__init__(self)
+        self.start()
+
+    #-------------------------------------------------------------------
+    def run(self):
         wx.CallAfter(pub.sendMessage, "update", msg="Conectando...")
         valor = con.connect()
         if valor[1] == 'connectado':
@@ -46,9 +91,6 @@ class TestThread(Thread):
             print 'DESCONECTADO'
             wx.CallAfter(pub.sendMessage, "update", msg="DESCONECTADO")
             self._return = 'desconnectado'
-    #-------------------------------------------------------------------
-    def motorAtiva(self):
-        pass
 
     #-------------------------------------------------------------------
     def ret(self):
@@ -58,14 +100,14 @@ class TestThread(Thread):
 ########################################################################
 '''MyProgressDialog'''
 class MyProgressDialog(wx.Dialog):
-    """"""
     #-------------------------------------------------------------------
-    def __init__(self):
-        """Constructor"""
-        wx.Frame.__init__(self, None, -1, size=(500,15), style=0)
+    def __init__(self, k):
+        """Construtor"""
+        wx.Dialog.__init__(self, None, -1, size=(500,15), style=0)
         self.Centre()
+        self.k = k
         self.count = 0
-        self.progress = wx.Gauge(self, range=2)
+        self.progress = wx.Gauge(self, range = self.k)
         self.texto = wx.StaticText(self, label = wx.EmptyString, style = wx.ALIGN_CENTRE)
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -79,15 +121,14 @@ class MyProgressDialog(wx.Dialog):
 
     #-------------------------------------------------------------------
     def updateProgress(self, msg):
-        """"""
         self.count += 1
-        if self.count < 2:
+        if self.count < self.k:
             self.texto.SetLabel(msg)
-        if self.count >= 2:
+        if self.count >= self.k:
             self.Destroy()
         self.progress.SetValue(self.count)
-########################################################################
 
+########################################################################
 '''Painel Superior'''
 class TopPanel(wx.Panel):
         def __init__(self, parent):
@@ -199,8 +240,8 @@ class BottomPanel(wx.Panel):
 
             texto1 = wx.StaticText(self, label = "EIXO Y", style = wx.ALIGN_CENTRE)
             texto2 = wx.StaticText(self, label = "EIXO Y (mm)", style = wx.ALIGN_CENTRE)
-            texto3 = wx.StaticText(self, label = "Pressão do Cilindro", style = wx.ALIGN_CENTRE)
-            texto4 = wx.StaticText(self, label = "σ1 (kgf/cm)", style = wx.ALIGN_CENTRE)
+            texto3 = wx.StaticText(self, label = "σ3 - Tensão confinante (Bar)", style = wx.ALIGN_CENTRE)
+            texto4 = wx.StaticText(self, label = "σd - Tensão desvio (Bar)", style = wx.ALIGN_CENTRE)
             texto5 = wx.StaticText(self, label = "Y1 (V)", style = wx.ALIGN_CENTER)
             texto6 = wx.StaticText(self, label = "Y2 (V)", style = wx.ALIGN_CENTER)
             texto7 = wx.StaticText(self, label = "Y1 (mm)", style = wx.ALIGN_CENTER)
@@ -597,8 +638,8 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em realizar a CONECÇÃO'''
         def LTESTE(self, event):
-            threadConection = TestThread()
-            dlg = MyProgressDialog()
+            threadConection = ConexaoThread()
+            dlg = MyProgressDialog(2)
             dlg.ShowModal()
             cond = threadConection.ret()
             if cond[0] == 'connectado':
@@ -608,28 +649,31 @@ class BottomPanel(wx.Panel):
                 menssagError.Destroy()
                 self.LTeste.Disable()
                 self.LZero.Enable()
+                con.modeI()
                 #--------------------------------------------------
                 def worker(self):
-                    con.modeI()
                     self.leituraZerob1 = 0
                     self.leituraZerob2 = 0
                     while True:
                         valores = con.ColetaI()
-                        try:
-                            self.y1mm.Clear()
-                            self.y2mm.Clear()
-                            self.y1V.Clear()
-                            self.y2V.Clear()
-                        except:
-                            pass
+                        self.y1mm.Clear()
+                        self.y2mm.Clear()
+                        self.y1V.Clear()
+                        self.y2V.Clear()
+                        self.PCreal.Clear()
+                        self.SigmaReal.Clear()
                         self.valorLeitura = valores[0]
                         self.valorLeitura = valores[1]
                         self.y1mm.AppendText(str(round((valores[0]-self.leituraZerob1), 4)))
                         self.y2mm.AppendText(str(round((valores[1]-self.leituraZerob2), 4)))
                         self.y1V.AppendText(str(round((valores[2]), 2)))
                         self.y2V.AppendText(str(round((valores[3]), 2)))
+                        self.PCreal.AppendText(str(round((valores[5]), 2)))
+                        self.SigmaReal.AppendText(str(round((valores[4]), 2)))
+
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
+                '''self.t.setDaemon(True)'''
                 try:
                     self.t.start()
                 except:
@@ -654,8 +698,8 @@ class BottomPanel(wx.Panel):
             self.y2mmm = self.y2mm.GetValue()
             self.leituraZerob1 = float(self.valorLeitura)
             self.leituraZerob2 = float(self.valorLeitura)
-            print self.y1mmm
-            print self.y2mmm
+            print self.leituraZerob1
+            print self.leituraZerob2
 
     #--------------------------------------------------
         '''Função responsável em mostrar o quadro dinâmico de tensões'''
@@ -674,18 +718,17 @@ class BottomPanel(wx.Panel):
             dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
             dlg.ShowModal()
             self.LZero.Disable()
-            #--------------------------------------------------
-            def worker1(self):
-                con.modeM()
 
-            #--------------------------------------------------
-            self.t1 = threading.Thread(target=worker1, args=(self,))
-            try:
-                self.t1.start()
-            except:
-                self.t1.run()
-            #--------------------------------------------------
+            threadConection = MotorThread(0)
+            dlg2 = MyProgressDialog(2)
+            dlg2.ShowModal()
 
+            self.PCalvo.Clear()
+            self.SigmaAlvo.Clear()
+            self.PCalvo.AppendText(str(10*VETOR_COND[0][0]))
+            self.SigmaAlvo.AppendText(str(10*VETOR_COND[0][1]))
+            abc = self.t.isAlive()
+            print abc
 
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''

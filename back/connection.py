@@ -20,6 +20,13 @@ portlist = [port for port,desc,hwin in list_ports.comports()]
 conexao = serial.Serial()
 conexao.baudrate = 115200
 
+'''Coeficientes da calibracao'''
+L = bancodedados.LVDT()
+A1 = float(L[0])
+B1 = float(L[1])
+A2 = float(L[2])
+B2 = float(L[3])
+
 #-------------------------------------------------------------------
 def connect():
     i = 0
@@ -76,8 +83,23 @@ def modeI():
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
-def modeM():
+def modeM(p1, p2):
     conexao.write(opcaoM)
+    time.sleep(.1)
+    conexao.write(str(int(p1)))
+    contadorOK = 0
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
+        if a[0] == "o":
+            return "p1ok"
+            if contadorOK == 5:
+                contadorOK += 1
+                break
+        if a[0] == "n":                         # <--- so pra questao de testes. (apagar depois)
+            conexao.write('-1')   # <--- so pra questao de testes. (apagar depois)
+            return "p1ok"                       # <--- so pra questao de testes. (apagar depois)
 
 #-------------------------------------------------------------------
 def ColetaI():
@@ -86,11 +108,6 @@ def ColetaI():
     time.sleep(.005)
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
-    L = bancodedados.LVDT()
-    A1 = float(L[0])
-    B1 = float(L[1])
-    A2 = float(L[2])
-    B2 = float(L[3])
     try:
         y1mm = float(Array[0])*A1+B1
         y2mm = float(Array[1])*A2+B2
@@ -106,4 +123,4 @@ def ColetaI():
         sen = 0.00
         cam = 0.00
 
-    return y1mm, y2mm, y1v, y2v, sen, cam
+    return y1mm, y2mm, y1v, y2v, sen/1000, cam/1000
