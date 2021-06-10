@@ -20,11 +20,11 @@ Oversampling adc(12, 16, 2); //motor de passos
 const int pinAplicador = 12; //pino do apolicador de golpes
 int condConect = 0; //Condicao para conecxao com o software
 int condicao = 1; //Condicao para o aplicador de golpes
-int setpoint1; //Valor de entrada para o setpoint em milibar (0 - 10.000)mBar
 float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
 float InputRange_code = 3.3f; //valor do ImputRange 3.3V
 float ValMilivolt; //Valor do sensor de pressao em mBar
+float setpoint1; //Valor de entrada para o setpoint em milibar (0 - 10.000)mBar
 float setpoint; //Valor do setpoint 
 float camara; //valor da pressao na camara
 float valor;
@@ -52,6 +52,7 @@ Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 void setup(void) {
   Serial.begin(115200); //velocidade de cominicacao com a porta serial
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
+  analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
   analogWrite(DAC0, 15); //pino responsavel em alterar a pressao de (Camara)
   pinMode(A0, INPUT); //pino LVDT1
   pinMode(A1, INPUT); //pino LVDT2
@@ -118,7 +119,7 @@ void loop(void) {
           Serial.print(" , ");
           Serial.println(vd3);
           Serial.flush();
-          delay(5);
+          delay(20);
           if(leitura == 'B'){
             break;
             }
@@ -152,7 +153,7 @@ void loop(void) {
           Serial.print(" , ");
           Serial.println(vd3);
           Serial.flush();
-          delay(5);
+          delay(20);
           if(leitura == 'B'){
             break;
             }
@@ -160,9 +161,15 @@ void loop(void) {
           if(Serial.available()>1){
             setpoint1 = Serial.parseInt();
             setpoint = setpoint1/3.3;
-            condicao = 0;
+            if (setpoint1 < 0){
+              condicao = 1;
+              setpoint1 = 0;
+              }
+            else{
+              condicao = 0;
+              }
             }
-            
+          
           //INTERVALO DE PRESSÃO OK//
           if(vd2 < 1.05*setpoint && vd2 > 0.95*setpoint){
             Serial.println("ok");
@@ -174,7 +181,6 @@ void loop(void) {
             Serial.println("no_ok");
             mp.step(floor(setpoint - vd2));
             }
-            
           }
         
       }
