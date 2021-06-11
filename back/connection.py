@@ -12,6 +12,7 @@ from serial.tools import list_ports
 opcaoC = "C"    '''conectado'''
 opcaoD = "D"    '''desconectado'''
 opcaoI = "I"    '''DNIT134'''
+opcaoE = "E"    '''Camara'''
 opcaoM = "M"    '''MOTOR DE PASSOS'''
 opcaoB = "B"    '''Break'''
 
@@ -83,7 +84,21 @@ def modeI():
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
-def modeM(p1, p2):
+def modeCAM(p2):
+    conexao.write(opcaoE)
+    incremental = p2/10
+    i = 1
+    while i <= 10:
+        conexao.write(str(int(incremental*i)))
+        time.sleep(.5)
+        i += 1
+        if i == 10:
+            conexao.write('-1')
+            return "p2ok"
+            break
+#-------------------------------------------------------------------
+'''Ativacao do motor de passos'''
+def modeM(p1):
     conexao.write(opcaoM)
     time.sleep(.1)
     conexao.write(str(int(p1)))
@@ -93,13 +108,18 @@ def modeM(p1, p2):
             pass
         a = conexao.readline()
         if a[0] == "o":
-            return "p1ok"
+            contadorOK += 1
             if contadorOK == 5:
-                contadorOK += 1
+                conexao.write('-1')
+                return "p1ok"
                 break
-        if a[0] == "n":                         # <--- so pra questao de testes. (apagar depois)
-            conexao.write('-1')   # <--- so pra questao de testes. (apagar depois)
-            return "p1ok"                       # <--- so pra questao de testes. (apagar depois)
+
+        if a[0] == "n":   # <--- so pra questao de testes. (apagar depois)
+            contadorOK += 1
+            if contadorOK == 2:
+                conexao.write('-1')
+                return "p1ok"
+                break
 
 #-------------------------------------------------------------------
 def ColetaI():

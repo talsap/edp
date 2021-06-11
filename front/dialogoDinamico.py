@@ -55,6 +55,24 @@ class dialogoDinamico(wx.Dialog):
                 self.h_sizer.Add(self.v_sizer, 1,  wx.EXPAND | wx.ALL, 10)
                 self.SetSize((620,185))
 
+            if indicador == 3:
+                FontCorpo2 = wx.Font(10, wx.SWISS, wx.NORMAL, wx.BOLD)
+                TextoTitle = wx.StaticText(self, label = texto0, style = wx.ALIGN_CENTRE)
+                TextoTitle.SetFont(FontTitle)
+                TextoTitle.SetForegroundColour((0,51,188))
+                TextoCorpo1 = wx.StaticText(self, label = texto1, style = wx.ALIGN_CENTRE)
+                TextoCorpo1.SetFont(FontCorpo1)
+                TextoCorpo2 = wx.StaticText(self, label = texto2, style = wx.ALIGN_CENTRE)
+                TextoCorpo2.SetFont(FontCorpo2)
+                TextoCorpo2.SetForegroundColour((231,160,48))
+                Button = wx.Button(self, label = "INICIAR", style = wx.BORDER_NONE)
+                self.v_sizer.Add(TextoTitle, 1, wx.CENTER)
+                self.v_sizer.Add(TextoCorpo1, 1, wx.CENTER)
+                self.v_sizer.Add(TextoCorpo2, 2, wx.CENTER)
+                self.v_sizer.Add(Button, 1, wx.ALL | wx.CENTER)
+                self.h_sizer.Add(self.v_sizer, 1,  wx.EXPAND | wx.ALL, 10)
+                self.SetSize((620,185))
+
             self.Bind(wx.EVT_BUTTON, self.Button, Button)
             self.SetSizer(self.h_sizer)
 

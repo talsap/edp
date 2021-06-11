@@ -62,10 +62,23 @@ class MotorThread(Thread):
     #-------------------------------------------------------------------
     def run(self):
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
-        valor = con.modeM((10000*A2/A1)*VETOR_COND[self.j][0], 10000*VETOR_COND[self.j][1])
+        time.sleep(3)
+        wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
+        valor = con.modeM((10000*A2/A1)*VETOR_COND[self.j][0])
         if valor == 'p1ok':
-            print 'PRESSAO OK'
-            wx.CallAfter(pub.sendMessage, "update", msg="Calibrando pressao")
+            print 'PRESSAO GOLPES OK'
+            wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
+
+        time.sleep(1.5)
+        wx.CallAfter(pub.sendMessage, "update", msg="Regulando...")
+        valor2 = con.modeCAM(10000*VETOR_COND[self.j][1])
+        if valor2 == 'p2ok':
+            print 'PRESSAO CAMARA OK'
+            wx.CallAfter(pub.sendMessage, "update", msg="σ3 - ok")
+
+        time.sleep(2)
+        wx.CallAfter(pub.sendMessage, "update", msg="Tudo Pronto!")
+
     #-------------------------------------------------------------------
     def ret(self):
         Thread.join(self)
@@ -322,10 +335,10 @@ class BottomPanel(wx.Panel):
             self.defPCond = wx.TextCtrl(self, -1, 'defPCond', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.defPAcum = wx.TextCtrl(self, -1, 'defPAcum', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.AlturaFinal = wx.TextCtrl(self, -1, 'AF', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.PCreal = wx.TextCtrl(self, -1, 'PCreal', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.PCalvo = wx.TextCtrl(self, -1, 'PCalvo', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.SigmaReal = wx.TextCtrl(self, -1, 'SigReal', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.SigmaAlvo = wx.TextCtrl(self, -1, 'SigAlv', size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.PCreal = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.PCalvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.SigmaReal = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.SigmaAlvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.AlturaMM = wx.TextCtrl(self, -1, '200,00', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.DiametroMM = wx.TextCtrl(self, -1, '100,0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.DefCritica = wx.TextCtrl(self, -1, '4,00', size = (80, 41.5), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -673,7 +686,6 @@ class BottomPanel(wx.Panel):
 
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
-                '''self.t.setDaemon(True)'''
                 try:
                     self.t.start()
                 except:
@@ -719,17 +731,18 @@ class BottomPanel(wx.Panel):
             dlg.ShowModal()
             self.LZero.Disable()
 
-            threadConection = MotorThread(0)
-            dlg2 = MyProgressDialog(2)
-            dlg2.ShowModal()
-
             self.PCalvo.Clear()
             self.SigmaAlvo.Clear()
             self.PCalvo.AppendText(str(10*VETOR_COND[0][0]))
             self.SigmaAlvo.AppendText(str(10*VETOR_COND[0][1]))
-            abc = self.t.isAlive()
-            print abc
 
+            threadConection = MotorThread(0)
+            dlg2 = MyProgressDialog(6)
+            dlg2.ShowModal()
+
+            dlg3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Tudo pronto!", "Aperte Iniciar.", "", None)
+            dlg3.ShowModal()
+            
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''
         def MR(self, event):
