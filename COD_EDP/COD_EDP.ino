@@ -16,16 +16,20 @@
 Oversampling adc(12, 16, 2); //motor de passos
 
 /* Variables */
-
 const int pinAplicador = 12; //pino do apolicador de golpes
 int condConect = 0; //Condicao para conecxao com o software
 int condicao = 1; //Condicao para o aplicador de golpes
+int frequencia;  //Valor condicao para intervalo da frequencia
+int nGolpe = 1;  //numpero de golpes
+int ntotalGolpes; //Numero total de golpes por estagio
+int statuS = 0; //(0 ou 1)(ok ou n_ok) mado de avisar erro de pressao do aplicador
 float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
 float InputRange_code = 3.3f; //valor do ImputRange 3.3V
 float ValMilivolt; //Valor do sensor de pressao em mBar
 float setpoint1; //Valor de entrada para o setpoint em milibar (0 - 10.000)mBar
 float setpoint; //Valor do setpoint 
+float botoes; //Acoes do botoes pausar, parar e continuar o ensaio
 float camara; //valor da pressao na camara
 float valor;
 float ad0; //valor analógico do LVDT1
@@ -42,9 +46,17 @@ long intervalo05 = 500; //2Hz 01-04-01-04
 long intervalo04 = 333; //3Hz 01-0233-01-0233-01-0233
 long intervalo03 = 250; //4Hz 01-015-01-015-01-015-01-015
 long intervalo02 = 200; //5Hz 01-01-01-01-01-01-01-01-01-01
+long resultTempo[2];
 unsigned long currentMillis; //variacao do tempo em milisegundos
+unsigned long initialMillis; //tempo incial dinamico
 unsigned char conexao;  //tipos de conexoes
 unsigned char leitura;
+
+/* Estruturas de funções */
+struct S{
+  long t;
+  int n;
+};
 
 Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 
@@ -99,92 +111,147 @@ void loop(void) {
         sensorLVDTDNIT134:
         while(true){
           leitura = Serial.read();
-          ad0 = adc.read(A0); 
-          ad1 = adc.read(A1); 
-          vd0 = ad0*bit16_Voltage; 
-          vd1 = ad1*bit16_Voltage; 
-          ad2 = analogRead(A2);  
-          ad3 = analogRead(A3); 
-          vd2 = ad2*bit12_Voltage*1000; 
-          vd3 = ad3*bit12_Voltage*1000; 
-          Serial.print(ad0);
-          Serial.print(" , ");
-          Serial.print(ad1);
-          Serial.print(" , ");
-          Serial.print(vd0);
-          Serial.print(" , ");
-          Serial.print(vd1);
-          Serial.print(" , ");
-          Serial.print(vd2);
-          Serial.print(" , ");
-          Serial.println(vd3);
-          Serial.flush();
+          imprimir();
           delay(20);
           if(leitura == 'B'){
             break;
-            }
+          }
+          if(leitura == 'E'){
+            goto camara;
+          }
           if(leitura == 'M'){
             goto motor;
+          }
+          if(leitura == 'G'){
+            goto golpes;
+          }
+        }
+        break;
+        
+        //***********************//
+        camara:
+        while(true){
+          imprimir();
+          if (Serial.available()>1){
+            camara = Serial.parseInt();    //valor em mbar
+            if(camara>=0){
+              valor = camara*255/3300;     //valor em contagem
+              analogWrite(DAC0, valor);
+            }
+            if(camara == -1){
+              goto sensorLVDTDNIT134;
             }
           }
+          delay(20); 
+        }
         break;
-
+        
         //***********************//
         motor:
         while(true){
-          leitura = Serial.read();
-          ad0 = adc.read(A0); 
-          ad1 = adc.read(A1); 
-          vd0 = ad0*bit16_Voltage; 
-          vd1 = ad1*bit16_Voltage; 
-          ad2 = analogRead(A2);  
-          ad3 = analogRead(A3); 
-          vd2 = ad2*bit12_Voltage*1000; 
-          vd3 = ad3*bit12_Voltage*1000; 
-          Serial.print(ad0);
-          Serial.print(" , ");
-          Serial.print(ad1);
-          Serial.print(" , ");
-          Serial.print(vd0);
-          Serial.print(" , ");
-          Serial.print(vd1);
-          Serial.print(" , ");
-          Serial.print(vd2);
-          Serial.print(" , ");
-          Serial.println(vd3);
-          Serial.flush();
-          delay(20);
-          if(leitura == 'B'){
-            break;
-            }
-            
+          ad2 = analogRead(A2);
+          vd2 = ad2*bit12_Voltage*1000;
+          
           if(Serial.available()>1){
             setpoint1 = Serial.parseInt();
-            setpoint = setpoint1/3.3;
-            if (setpoint1 < 0){
-              condicao = 1;
-              setpoint1 = 0;
-              }
+            if(setpoint1 == -1){
+              goto sensorLVDTDNIT134;
+            }
             else{
               condicao = 0;
-              }
+              setpoint = setpoint1/3.3;     //valor do setpoint em milibar (0 - 10.000)mBar 
             }
+          }   
           
-          //INTERVALO DE PRESSÃO OK//
+          //INTERVALO DE PRESSAO OK//
           if(vd2 < 1.05*setpoint && vd2 > 0.95*setpoint){
             Serial.println("ok");
             mp.step(0);
-            }
+          }
             
-          //INTERVALO DE PRESSÃO NÃO OK//
+          //INTERVALO DE PRESSAO NAO OK//
           if(condicao == 0){
             Serial.println("no_ok");
             mp.step(floor(setpoint - vd2));
+          }
+          delay(50);
+        }
+        break;
+
+        //***********************//
+        golpes:
+        //RESPONSAVEL EM COLETAR A QUANTIDADE TOTAL DE GOLPES//
+        while(true){
+          imprimir();
+          if(Serial.available()> 1){
+            ntotalGolpes = Serial.parseInt();
+            if(ntotalGolpes > 0){
+              break;
             }
           }
+          delay(20);
+        }
+        //RESPONSAVEL EM COLETAR A FREQUENCIA DOS GOLPES//
+        while(true){
+          imprimir();
+          if(Serial.available()>1){
+            frequencia = Serial.parseInt();
+            if(frequencia > 0){
+              break;
+            }
+          }
+          delay(20);
+        }
+
+        currentMillis = millis(); //Tempo atual em ms
+        initialMillis = currentMillis;  //Tempo inicial
         
-      }
-      break;
+        while(true){
+          S resultTempo = tempo(nGolpe, frequencia, initialMillis);
+          initialMillis = resultTempo.t;
+          nGolpe = resultTempo.n;
+          imprimir();
+          delay(20);
+          if(nGolpe == ntotalGolpes+1){
+            nGolpe = 1;
+            goto sensorLVDTDNIT134;
+          }
+          
+          ad2 = analogRead(A2);
+          vd2 = ad2*bit12_Voltage*1000;
+          //INTERVALO DE PRESSAO NAO OK//
+          if(vd2 > 1.05*setpoint && vd2 < 0.95*setpoint){
+            statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
+          }
+
+          //aguarda o valor na serial e se for -3 "para" o ensaio//
+          if (Serial.available()>1){  
+            botoes = Serial.parseInt();
+            if(botoes == -3){
+              pararEnsaio:
+              goto sensorLVDTDNIT134;
+            }
+            //aguarda o valor na serial e se for -4 pausa o ensaio//
+            if(botoes == -4){
+              while(true){
+                if (Serial.available()>1){
+                  botoes = Serial.parseInt();
+                  //aguarda o valor na serial. e se for -1 continua o ensaio de onde parou//
+                  if(botoes == -1){
+                    break;
+                  }
+                  //aguarda o valor na serial. e se for -3 "para" o ensaio//
+                  if(botoes == -3){
+                    goto pararEnsaio;
+                  }
+                }
+              }
+            }
+          }
+          
+        }/*while*/
+        break;
+      }/*if(condConect == 1)*/
       
     /*******************************************************************/
     /************************* norma DNIT... ***************************/  
@@ -195,6 +262,7 @@ void loop(void) {
         Serial.println("Ainda falta complementar");
       }
       break;
+    
     /*******************************************************************/
     /*******************************************************************/  
     /*******************************************************************/ 
@@ -202,3 +270,104 @@ void loop(void) {
    }/*switch*/
 
 }/*void*/
+
+/* Imprimir dados na tela */
+void imprimir(){
+  ad0 = adc.read(A0); 
+  ad1 = adc.read(A1); 
+  vd0 = ad0*bit16_Voltage; 
+  vd1 = ad1*bit16_Voltage; 
+  ad2 = analogRead(A2);  
+  ad3 = analogRead(A3); 
+  vd2 = ad2*bit12_Voltage*1000; 
+  vd3 = ad3*bit12_Voltage*1000; 
+  Serial.print(ad0);
+  Serial.print(" , ");
+  Serial.print(ad1);
+  Serial.print(" , ");
+  Serial.print(vd0);
+  Serial.print(" , ");
+  Serial.print(vd1);
+  Serial.print(" , ");
+  Serial.print(vd2);
+  Serial.print(" , ");
+  Serial.print(vd3);
+  Serial.print(" , ");
+  Serial.print(nGolpe);
+  Serial.print(" , ");
+  Serial.println(statuS);
+  Serial.flush();
+}/* Imprimir dados na tela */
+
+
+/* Intervalo de tempo do aplicador */
+S tempo(int nGolpe, int frequencia, long initialMillis){
+  currentMillis = millis(); //Tempo atual em ms
+  switch(frequencia){
+    case 1:
+      if(currentMillis - initialMillis < intervalo01){
+        digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
+        digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo09){
+        initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
+        nGolpe++;
+      }
+      break;
+      
+    case 2:
+      if(currentMillis - initialMillis < intervalo01){
+        digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo05){
+        digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo05){
+        initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
+        nGolpe++;
+      }
+      break;
+            
+    case 3:
+      if(currentMillis - initialMillis < intervalo01){
+        digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo04){
+        digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo04){
+        initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
+        nGolpe++;
+      }
+      break;
+              
+    case 4:
+      if(currentMillis - initialMillis < intervalo01){
+        digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo03){
+        digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo03){
+        initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
+        nGolpe++;
+      }
+      break;
+              
+    case 5:
+      if(currentMillis - initialMillis < intervalo01){
+        digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo02){
+        digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+      }
+      if((currentMillis - initialMillis) > intervalo02){
+        initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
+        nGolpe++;
+      }
+      break;
+  }/*switch*/
+  return {initialMillis, nGolpe};    
+}/* Intervalo de tempo do aplicador */
