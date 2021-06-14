@@ -56,6 +56,7 @@ unsigned char leitura;
 struct S{
   long t;
   int n;
+  int nC;
 };
 
 Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
@@ -202,14 +203,16 @@ void loop(void) {
           }
           delay(20);
         }
-
+        
         currentMillis = millis(); //Tempo atual em ms
         initialMillis = currentMillis;  //Tempo inicial
+        int nCond = 0; //condicao das demais frequencias
         
         while(true){
-          S resultTempo = tempo(nGolpe, frequencia, initialMillis);
+          S resultTempo = tempo(nGolpe, frequencia, nCond, initialMillis);
           initialMillis = resultTempo.t;
           nGolpe = resultTempo.n;
+          nCond = resultTempo.nC;
           imprimir();
           delay(20);
           if(nGolpe == ntotalGolpes+1){
@@ -229,6 +232,7 @@ void loop(void) {
             botoes = Serial.parseInt();
             if(botoes == -3){
               pararEnsaio:
+              nGolpe = 1;
               goto sensorLVDTDNIT134;
             }
             //aguarda o valor na serial e se for -4 pausa o ensaio//
@@ -301,7 +305,7 @@ void imprimir(){
 
 
 /* Intervalo de tempo do aplicador */
-S tempo(int nGolpe, int frequencia, long initialMillis){
+S tempo(int nGolpe, int frequencia, int nCond, long initialMillis){
   currentMillis = millis(); //Tempo atual em ms
   switch(frequencia){
     case 1:
@@ -326,7 +330,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo05){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
-        nGolpe++;
+        nCond++;
+        if(nCond == 2){
+          nGolpe++;
+          nCond = 0;
+          }
       }
       break;
             
@@ -339,7 +347,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo04){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
-        nGolpe++;
+        nCond++;
+        if(nCond == 3){
+          nGolpe++;
+          nCond = 0;
+          }
       }
       break;
               
@@ -352,7 +364,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo03){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
-        nGolpe++;
+        nCond++;
+        if(nCond == 4){
+          nGolpe++;
+          nCond = 0;
+          }
       }
       break;
               
@@ -365,9 +381,13 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo02){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
-        nGolpe++;
+        nCond++;
+        if(nCond == 5){
+          nGolpe++;
+          nCond = 0;
+          }
       }
       break;
   }/*switch*/
-  return {initialMillis, nGolpe};    
+  return {initialMillis, nGolpe, nCond};    
 }/* Intervalo de tempo do aplicador */
