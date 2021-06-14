@@ -2,7 +2,7 @@
 *               Arduino code for EDP software - Beta               *
 * ---------------------------------------------------------------- *
 * Creado por: Tarcisio Sapucaia - tarcisiosapucaia27@gmail.com     *
-* Data – 05/05/2021 - v 1.0                                        *
+* Data – 14/06/2021 - v 1.0                                        *
 ********************************************************************/
 
 /* Import das Bibliotecas */
@@ -233,6 +233,7 @@ void loop(void) {
             if(botoes == -3){
               pararEnsaio:
               nGolpe = 1;
+              statuS = 0;
               goto sensorLVDTDNIT134;
             }
             //aguarda o valor na serial e se for -4 pausa o ensaio//
