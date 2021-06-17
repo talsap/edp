@@ -62,14 +62,18 @@ class MotorThread(Thread):
     #-------------------------------------------------------------------
     def run(self):
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
-        time.sleep(3)
+        time.sleep(1)
+        con.modeM()
+        time.sleep(2)
         wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
-        valor = con.modeM((10000*A2/A1)*VETOR_COND[self.j][0])
+        valor = con.modeMotor((10000*A2/A1)*VETOR_COND[self.j][0])
         if valor == 'p1ok':
             print 'PRESSAO GOLPES OK'
             wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
 
-        time.sleep(1.5)
+        time.sleep(1)
+        con.modeE()
+        time.sleep(2)
         wx.CallAfter(pub.sendMessage, "update", msg="Regulando...")
         valor2 = con.modeCAM(10000*VETOR_COND[self.j][1])
         if valor2 == 'p2ok':
@@ -195,7 +199,7 @@ class TopPanel(wx.Panel):
         def draw(self):
             x = np.arange(0,10,0.01)
             y = np.sin(np.pi*x)
-            self.axes.plot(x, y, 'xkcd:off white')
+            '''self.axes.plot(x, y, 'xkcd:off white')'''
 
 '''Painel Inferior'''
 class BottomPanel(wx.Panel):
@@ -343,8 +347,8 @@ class BottomPanel(wx.Panel):
             self.DiametroMM = wx.TextCtrl(self, -1, '100,0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.DefCritica = wx.TextCtrl(self, -1, '4,00', size = (80, 41.5), style = wx.TE_READONLY | wx.TE_CENTER)
             self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.NGolpes = wx.TextCtrl(self, -1, '500', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.GolpeAtual = wx.TextCtrl(self, -1, '0', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTRE)
+            self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTRE)
             self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, style = wx.CB_READONLY)
 
             self.y1V.Disable()
@@ -675,8 +679,8 @@ class BottomPanel(wx.Panel):
                         self.y2V.Clear()
                         self.PCreal.Clear()
                         self.SigmaReal.Clear()
-                        self.valorLeitura = valores[0]
-                        self.valorLeitura = valores[1]
+                        self.valorLeitura0 = valores[0]
+                        self.valorLeitura1 = valores[1]
                         self.y1mm.AppendText(str(round((valores[0]-self.leituraZerob1), 4)))
                         self.y2mm.AppendText(str(round((valores[1]-self.leituraZerob2), 4)))
                         self.y1V.AppendText(str(round((valores[2]), 2)))
@@ -708,8 +712,8 @@ class BottomPanel(wx.Panel):
             self.LTeste.Disable()
             self.y1mmm = self.y1mm.GetValue()
             self.y2mmm = self.y2mm.GetValue()
-            self.leituraZerob1 = float(self.valorLeitura)
-            self.leituraZerob2 = float(self.valorLeitura)
+            self.leituraZerob1 = float(self.valorLeitura0)
+            self.leituraZerob2 = float(self.valorLeitura1)
             print self.leituraZerob1
             print self.leituraZerob2
 
@@ -723,18 +727,23 @@ class BottomPanel(wx.Panel):
         def CONDIC(self, event):
             print 'CONDIC'
             '''Dialogo CONDIC'''
-            info = "EDP 134/2018ME"
-            titulo = "Preparação da câmara triaxial."
-            message1 = "Verifique se está tudo certo!"
-            message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conctadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
-            dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
-            dlg.ShowModal()
+            freq = self.freq.GetValue()
             self.LZero.Disable()
-
+            self.freq.Disable()
+            self.mr.Disable()
+            self.condic.Disable()
             self.PCalvo.Clear()
             self.SigmaAlvo.Clear()
             self.PCalvo.AppendText(str(10*VETOR_COND[0][0]))
             self.SigmaAlvo.AppendText(str(10*VETOR_COND[0][1]))
+            self.NGolpes.AppendText(str(500))
+
+            info = "EDP 134/2018ME"
+            titulo = "Preparação da câmara triaxial."
+            message1 = "Verifique se está tudo certo!"
+            message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
+            dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
+            dlg.ShowModal()
 
             threadConection = MotorThread(0)
             dlg2 = MyProgressDialog(6)
@@ -742,7 +751,25 @@ class BottomPanel(wx.Panel):
 
             dlg3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Tudo pronto!", "Aperte Iniciar.", "", None)
             dlg3.ShowModal()
-            
+
+            con.modeG(500, int(freq))
+
+            #--------------------------------------------------
+            '''def worker1(self):
+                golpeA = 1
+                while True:
+                    valores = con.ColetaI2()
+                    self.GolpeAtual.Clear()
+                    self.GolpeAtual.AppendText(str(int(valores[0])))
+
+            #--------------------------------------------------
+            self.t1 = threading.Thread(target=worker1, args=(self,))
+            try:
+                self.t1.start()
+            except:
+                self.t1.run()'''
+            #--------------------------------------------------
+
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''
         def MR(self, event):
@@ -765,7 +792,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             splitter = wx.SplitterWindow(self)
             top = TopPanel(splitter)
             bottom = BottomPanel(splitter, top)
-            splitter.SplitHorizontally(top, bottom, 450)
+            splitter.SplitHorizontally(top, bottom, 400)
             splitter.SetMinimumPaneSize(400)
             top.draw()
 
