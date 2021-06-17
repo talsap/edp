@@ -6,14 +6,13 @@
 ********************************************************************/
 
 /* Import das Bibliotecas */
-#include <Wire.h>
-#include <Stepper.h>
-#include <Oversampling.h> 
+#include <Stepper.h>  //biblioteca para controlar motor de passos
+#include <Oversampling.h>  //biblioteca de alteração da resolução
 
 #define AR_12BIT_MAX   4096 //valor da resolucao do arduino
 #define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
 
-Oversampling adc(12, 16, 2); //motor de passos
+Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit
 
 /* Variables */
 const int pinAplicador = 12; //pino do aplicador de golpes
@@ -137,21 +136,20 @@ void loop(void) {
         camara:
         Serial.println("Digite valor de pressão em mBar: "); 
         while(true){
-          //imprimir();
-          delay(20);
+          imprimir();
+          //delay(20);
           ad3 = analogRead(A3);
           vd3 = ad3*bit12_Voltage*1000;
           
-          if (Serial.available()>0){
+          if (Serial.available()>1){
             setpoint2 = Serial.parseInt();    //valor em mbar
             Serial.print("Chegou dadoC: "); 
             Serial.print(setpoint2);
             Serial.print(" - Sensor: ");
             Serial.println(vd3*3.3f);
-            if(setpoint2>=0){
+            if(setpoint2 > 5){
               setpointC = setpoint2*255/3300;   //valor em contagem
               analogWrite(DAC0, setpointC);
-              Serial.print("DAC");
             }
             if(setpoint2 == -1){
               goto sensorLVDTDNIT134;
@@ -164,12 +162,12 @@ void loop(void) {
         motor:
         Serial.println("Digite valor de pressão em mBar: "); 
         while(true){
-          //imprimir();
-          delay(20);
+          imprimir();
+          //delay(20);
           ad2 = analogRead(A2);
           vd2 = ad2*bit12_Voltage*1000;
           
-          if(Serial.available()>0){
+          if(Serial.available()>1){
             setpoint1 = Serial.parseInt();
             Serial.print("Chegou dadoM: "); 
             Serial.print(setpoint1);
@@ -205,19 +203,13 @@ void loop(void) {
           
           //INTERVALO DE PRESSAO OK//
           if(vd2 < 1.02*setpointM && vd2 > 0.98*setpointM){
-            Serial.print("ok");
-            Serial.print(" - Sensor: ");
-            Serial.println(vd2*3.3f);
+            Serial.println("o");
             mp.step(0);
             condicao = 1;
           }         
             
           if(condicao == 0){
-            Serial.print("no_ok");
-            Serial.print(" - Sensor: ");
-            Serial.print(vd2*3.3f);
-            Serial.print(" - Passos: ");
-            Serial.println(floor((setpointM - vd2)));
+            Serial.println("n");
             mp.step(floor((setpointM - vd2)));
           }
         }
@@ -228,7 +220,7 @@ void loop(void) {
         //RESPONSAVEL EM COLETAR A QUANTIDADE TOTAL DE GOLPES//
         while(true){
           imprimir();
-          if(Serial.available()){
+          if(Serial.available()>1){
             ntotalGolpes = Serial.parseInt();
             if(ntotalGolpes > 0){
               break;
@@ -238,7 +230,7 @@ void loop(void) {
         //RESPONSAVEL EM COLETAR A FREQUENCIA DOS GOLPES//
         while(true){
           imprimir();
-          if(Serial.available()){
+          if(Serial.available()>1){
             frequencia = Serial.parseInt();
             if(frequencia > 0){
               break;
@@ -268,7 +260,7 @@ void loop(void) {
           }
 
           //aguarda o valor na serial e se for -3 "para" o ensaio//
-          if (Serial.available()){  
+          if (Serial.available()>1){  
             botoes = Serial.parseInt();
             if(botoes == -3){
               pararEnsaio:
@@ -279,7 +271,7 @@ void loop(void) {
             //aguarda o valor na serial e se for -4 pausa o ensaio//
             if(botoes == -4){
               while(true){
-                if (Serial.available()){
+                if (Serial.available()>1){
                   botoes = Serial.parseInt();
                   //aguarda o valor na serial. e se for -1 continua o ensaio de onde parou//
                   if(botoes == -1){
@@ -334,9 +326,9 @@ void imprimir(){
   Serial.print(" , ");
   Serial.print(vd1);
   Serial.print(" , ");
-  Serial.print(vd2);
+  Serial.print(vd2*3.3f);
   Serial.print(" , ");
-  Serial.print(vd3);
+  Serial.print(vd3*3.3f);
   Serial.print(" , ");
   Serial.print(nGolpe);
   Serial.print(" , ");
