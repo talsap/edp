@@ -17,7 +17,7 @@ def create_table():
 
 def data_entry():
     try:
-        c.execute("INSERT INTO calibrador VALUES (0, 1.00000, 0.00000, 1.00000, 0.00000)")
+        c.execute("INSERT INTO calibrador VALUES (0, 0.0004, 1.1104, 1.00000, 0.00000)")
         connection.commit()
     except Exception:
         pass

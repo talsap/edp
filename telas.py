@@ -64,7 +64,7 @@ class MotorThread(Thread):
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
         time.sleep(1)
         con.modeM()
-        time.sleep(2)
+        time.sleep(1)
         wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
         valor = con.modeMotor((10000*A2/A1)*VETOR_COND[self.j][0])
         if valor == 'p1ok':
@@ -73,12 +73,22 @@ class MotorThread(Thread):
 
         time.sleep(1)
         con.modeE()
-        time.sleep(2)
+        time.sleep(1)
         wx.CallAfter(pub.sendMessage, "update", msg="Regulando...")
         valor2 = con.modeCAM(10000*VETOR_COND[self.j][1])
         if valor2 == 'p2ok':
             print 'PRESSAO CAMARA OK'
             wx.CallAfter(pub.sendMessage, "update", msg="σ3 - ok")
+
+        wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
+        time.sleep(1)
+        con.modeM()
+        time.sleep(1)
+        wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
+        valor3 = con.modeMotor((10000*A2/A1)*VETOR_COND[self.j][0])
+        if valor3 == 'p1ok':
+            print 'PRESSAO GOLPES OK'
+            wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
 
         time.sleep(2)
         wx.CallAfter(pub.sendMessage, "update", msg="Tudo Pronto!")
@@ -162,6 +172,8 @@ class TopPanel(wx.Panel):
             self.canvas = FigureCanvas(self, -1, self.figure)
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
+            self.axes.set_ylim(float(0), float(10))
+            self.axes.set_xlim(float(0), float(5))
 
             rect = self.figure.patch
             rect.set_facecolor('#D7D7D7')
@@ -194,6 +206,16 @@ class TopPanel(wx.Panel):
 
             self.sizer.Add(self.h_sizer, 0, wx.EXPAND | wx.ALL, 10)
             self.SetSizer(self.sizer)
+
+    #--------------------------------------------------
+        def changeAxesX(self, min, max):
+    		self.axes.set_xlim(float(min), float(max))
+    		self.canvas.draw()
+
+    #--------------------------------------------------
+        def changeAxesY(self, min, max):
+    		self.axes.set_ylim(float(min), float(max))
+    		self.canvas.draw()
 
     #--------------------------------------------------
         def draw(self):
@@ -679,6 +701,7 @@ class BottomPanel(wx.Panel):
                         self.y2V.Clear()
                         self.PCreal.Clear()
                         self.SigmaReal.Clear()
+                        self.GolpeAtual.Clear()
                         self.valorLeitura0 = valores[0]
                         self.valorLeitura1 = valores[1]
                         self.y1mm.AppendText(str(round((valores[0]-self.leituraZerob1), 4)))
@@ -687,7 +710,7 @@ class BottomPanel(wx.Panel):
                         self.y2V.AppendText(str(round((valores[3]), 2)))
                         self.PCreal.AppendText(str(round((valores[5]), 2)))
                         self.SigmaReal.AppendText(str(round((valores[4]), 2)))
-
+                        self.GolpeAtual.AppendText(str(int(valores[6])))
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
                 try:
@@ -746,13 +769,14 @@ class BottomPanel(wx.Panel):
             dlg.ShowModal()
 
             threadConection = MotorThread(0)
-            dlg2 = MyProgressDialog(6)
+            dlg2 = MyProgressDialog(9)
             dlg2.ShowModal()
 
             dlg3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Tudo pronto!", "Aperte Iniciar.", "", None)
             dlg3.ShowModal()
 
             con.modeG(500, int(freq))
+            self.graph.pausa.Enable()
 
             #--------------------------------------------------
             '''def worker1(self):
@@ -774,6 +798,7 @@ class BottomPanel(wx.Panel):
         '''Função responsável em realizar o MODULO RESILIENTE'''
         def MR(self, event):
             print 'MR'
+
 
 '''Tela Realização do Ensaio'''
 class TelaRealizacaoEnsaioDNIT134(wx.Dialog):

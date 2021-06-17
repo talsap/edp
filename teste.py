@@ -78,6 +78,8 @@ class BottomPanel(wx.Panel):
 
 	#LOOK AT THIS
 	def OnStartClick(self, event):
+		while True:
+			self.graph.draw(3,2)
 		self.x = np.arange(0,3,0.01)
 		self.y = np.sin(np.pi*self.x)
 		self.graph.draw(self.x,self.y)

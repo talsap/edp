@@ -107,44 +107,38 @@ def modeG(qtd, freq):
 #-------------------------------------------------------------------
 '''Camara de ar'''
 def modeCAM(p2):
-    conexao.write(opcaoE)
-    time.sleep(1)
-    incremental = p2/10
+    incremental = p2/5
     i = 1
-    while i <= 10:
-        conexao.write(str(incremental*i))
-        time.sleep(.5)
+    time.sleep(1)
+    while i <= 6:
+        conexao.write(str(int(round(incremental*i,0))))
+        print str(int(round(incremental*i,0)))
+        time.sleep(2)
         i += 1
-        if i == 10:
+        if i == 6:
             conexao.write(str(-1))
             return "p2ok"
             break
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
 def modeMotor(p1):
-    conexao.write(str(p1))
+    conexao.write(str(int(round(p1,0))))
+    print str(int(round(p1,0)))
     contadorOK = 0
+    time.sleep(.5)
     while True:
         while (conexao.inWaiting() == 0):
             pass
         a = conexao.readline()
-        print str(a).encode('utf-8')
-        if a[0] == "o":
-            contadorOK += 1
-            if contadorOK == 5:
-                conexao.write(str(-1))
-                return "p1ok"
-                break
-
-        if a[0] == "n":
-            contadorOK = 0
-
-        '''if a[0] == "n":   # <--- so pra questao de testes. (apagar depois)
-            contadorOK += 1
-            if contadorOK == 2:
-                conexao.write(str(-1))
-                return "p1ok"
-                break'''
+        try:
+            if a[0] == "o":
+                contadorOK += 1
+                if contadorOK == 50:
+                    conexao.write(str(-1))
+                    return "p1ok"
+                    break
+        except:
+            pass
 
 #-------------------------------------------------------------------
 def ColetaI():
@@ -170,6 +164,8 @@ def ColetaI():
             y2v[i] = float(Array[3])
             sen[i] = float(Array[4])
             cam[i] = float(Array[5])
+            glp = float(Array[6])
+            sts = float(Array[7])
         except:
             Media[i] = 0
             y1mm[i] = 0.0000
@@ -178,6 +174,8 @@ def ColetaI():
             y2v[i] = 0.00
             sen[i] = 0.00
             cam[i] = 0.00
+            glp = 1
+            sts = 0
         i+=1
 
     try:
@@ -198,13 +196,12 @@ def ColetaI():
         Sen = 0
         Cam = 0
 
-    return Y1mm, Y2mm, Y1v, Y2v, Sen/1000, Cam/1000
+    return Y1mm, Y2mm, Y1v, Y2v, Sen/1000, Cam/1000, glp, sts
 
 #-------------------------------------------------------------------
 def ColetaI2():
     while conexao.inWaiting() == 0:
         pass
-    time.sleep(.1)
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
     try:
