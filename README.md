@@ -50,6 +50,8 @@ cmd -> (Administrador)
 >    $ python -m pip install -U unicodecsv
 * Instalação do MatPlotLib:
 >    $ python -m pip install -U matplotlib
+* Instalação do Drawnow:
+>    $ python -m pip install drawnow
  
 ## Preview
 
