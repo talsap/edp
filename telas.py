@@ -9,11 +9,15 @@ import numpy as np
 import back.connection as con
 import matplotlib.pyplot as plt
 import threading
+from drawnow import *
 from front.dialogoDinamico import dialogoDinamico
 from front.quadrotensoes import quadro
 from threading import Thread
 from wx.lib.pubsub import pub
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+from matplotlib.figure import Figure
+X = [0]
+Y = [0]
 
 '''plt.style.use('ggplot')'''
 frequencias = ['1', '2', '3', '4', '5']
@@ -167,13 +171,13 @@ class TopPanel(wx.Panel):
             self.v_sizer = wx.BoxSizer(wx.VERTICAL)
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-            self.figure = plt.figure()
+            self.figure = Figure()
             self.axes = self.figure.add_subplot(111)
             self.canvas = FigureCanvas(self, -1, self.figure)
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             self.axes.set_ylim(float(0), float(10))
-            self.axes.set_xlim(float(0), float(5))
+            #self.axes.set_xlim(float(0), float(5))
 
             rect = self.figure.patch
             rect.set_facecolor('#D7D7D7')
@@ -182,9 +186,13 @@ class TopPanel(wx.Panel):
             rect1.set_facecolor('#A0BA8C')
 
             self.avanca = wx.Button(self, -1, 'AVANÇA')
+            self.Bind(wx.EVT_BUTTON, self.AVANCA, self.avanca)
             self.pausa = wx.Button(self, -1, 'PAUSA')
+            self.Bind(wx.EVT_BUTTON, self.PAUSA, self.pausa)
             self.continua = wx.Button(self, -1, 'CONTINUA')
+            self.Bind(wx.EVT_BUTTON, self.CONTINUA, self.continua)
             self.fim = wx.Button(self, -1, 'FIM')
+            self.Bind(wx.EVT_BUTTON, self.FIM, self.fim)
 
             self.avanca.Disable()
             self.pausa.Disable()
@@ -208,20 +216,53 @@ class TopPanel(wx.Panel):
             self.SetSizer(self.sizer)
 
     #--------------------------------------------------
+        '''Função AVANCA'''
+        def AVANCA(self, event):
+            pass
+
+    #--------------------------------------------------
+        '''Função PAUSA'''
+        def PAUSA(self, event):
+            self.pausa.Disable()
+            con.modeP()
+            self.continua.Enable()
+            self.fim.Enable()
+
+    #--------------------------------------------------
+        '''Função CONTINUA'''
+        def CONTINUA(self, event):
+            self.continua.Disable()
+            con.modeP()
+            self.pausa.Enable()
+            self.fim.Disable()
+
+    #--------------------------------------------------
+        '''Função FIM'''
+        def FIM(self, event):
+            self.fim.Disable()
+            con.modeF()
+            self.avanca.Enable()
+            self.continua.Disable()
+
+    #--------------------------------------------------
+        '''Ajusta min e max EIXO X'''
         def changeAxesX(self, min, max):
     		self.axes.set_xlim(float(min), float(max))
     		self.canvas.draw()
 
     #--------------------------------------------------
+        '''Ajusta min e max EIXO Y'''
         def changeAxesY(self, min, max):
     		self.axes.set_ylim(float(min), float(max))
     		self.canvas.draw()
 
     #--------------------------------------------------
-        def draw(self):
-            x = np.arange(0,10,0.01)
+        def draw(self, x, y):
+            self.axes.plot(x, y, 'xkcd:off white')
+            self.canvas.draw()
+            '''x = np.arange(0,10,0.01)
             y = np.sin(np.pi*x)
-            '''self.axes.plot(x, y, 'xkcd:off white')'''
+            self.axes.plot(x, y, 'xkcd:off white')'''
 
 '''Painel Inferior'''
 class BottomPanel(wx.Panel):
@@ -779,19 +820,21 @@ class BottomPanel(wx.Panel):
             self.graph.pausa.Enable()
 
             #--------------------------------------------------
-            '''def worker1(self):
-                golpeA = 1
+            def worker1(self):
+                t = time.time()
                 while True:
-                    valores = con.ColetaI2()
-                    self.GolpeAtual.Clear()
-                    self.GolpeAtual.AppendText(str(int(valores[0])))
-
+                    y1 = self.y1mm.GetValue()
+                    y2 = self.y2mm.GetValue()
+                    X.append(time.time()-t)
+                    Y.append(y1)
+                    self.graph.draw(X, Y)
+                    plt.pause(.000001)
             #--------------------------------------------------
             self.t1 = threading.Thread(target=worker1, args=(self,))
             try:
                 self.t1.start()
             except:
-                self.t1.run()'''
+                self.t1.run()
             #--------------------------------------------------
 
     #--------------------------------------------------
@@ -819,7 +862,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             bottom = BottomPanel(splitter, top)
             splitter.SplitHorizontally(top, bottom, 400)
             splitter.SetMinimumPaneSize(400)
-            top.draw()
+            top.draw(X,Y)
 
             self.Centre()
             self.Show()
