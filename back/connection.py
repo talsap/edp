@@ -100,10 +100,6 @@ def modeD():
 '''Ativando camara'''
 def modeE():
     conexao.write(opcaoE)
-    while (conexao.inWaiting() == 0):
-        pass
-    L = conexao.readline()
-    print L
 
 #-------------------------------------------------------------------
 '''Conecxao com a DNIT134'''
@@ -193,7 +189,7 @@ def ColetaI():
             pass
         arduinoString = conexao.readline()
         Array = arduinoString.split(',')
-        print arduinoString
+        #print arduinoString
         try:
             Media[i] = 1
             y1mm[i] = float(Array[0])*A1+B1
@@ -204,6 +200,15 @@ def ColetaI():
             cam[i] = float(Array[5])
             glp = float(Array[6])
             sts = float(Array[7])
+            #sempre guarda os valores na memoria, para ter a ultima leitura
+            anty1mm = y1mm[i]
+            anty2mm = y2mm[i]
+            anty1v = y1v[i]
+            anty2v = y2v[i]
+            antsen = sen[i]
+            antcam = cam[i]
+            antglp = glp
+            antsts = sts
         except:
             Media[i] = 0
             y1mm[i] = 0.0000
@@ -212,7 +217,7 @@ def ColetaI():
             y2v[i] = 0.00
             sen[i] = 0.00
             cam[i] = 0.00
-            glp = 0
+            glp = 1
             sts = 0
         i+=1
 
@@ -227,11 +232,23 @@ def ColetaI():
         Sen = (sen[0]+sen[1]+sen[2]+sen[3]+sen[4])/Divisor
         Cam = (cam[0]+cam[1]+cam[2]+cam[3]+cam[4])/Divisor
     except:
-        Y1mm = 0
-        Y2mm = 0
-        Y1v = 0
-        Y2v = 0
-        Sen = 0
-        Cam = 0
+        try:
+            Y1mm = anty1mm
+            Y2mm = anty2mm
+            Y1v = anty1v
+            Y2v = anty2v
+            Sen = antsen
+            Cam = antcam
+            glp = antglp
+            sts = antsts
+        except:
+            Y1mm = 0
+            Y2mm = 0
+            Y1v = 0
+            Y2v = 0
+            Sen = 0
+            Cam = 0
+            glp = 1
+            sts = 0
 
     return Y1mm, Y2mm, Y1v, Y2v, Sen/1000, Cam/1000, glp, sts

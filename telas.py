@@ -3,19 +3,18 @@
 '''Bibliotecas'''
 import wx
 import time
-import wx.adv
+import threading
 import matplotlib
-import numpy as np
 import back.connection as con
 import matplotlib.pyplot as plt
-import threading
+import back.MotorThread as MotorThread
+import back.ConexaoThread as ConexaoThread
 from drawnow import *
-from front.dialogoDinamico import dialogoDinamico
-from front.quadrotensoes import quadro
-from threading import Thread
-from wx.lib.pubsub import pub
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.figure import Figure
+from front.quadrotensoes import quadro
+from front.dialogoDinamico import dialogoDinamico
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+
 X = [0]
 Y = [0]
 
@@ -55,115 +54,12 @@ VETOR_MR =  [[0.020,0.020],
              [0.140,0.420]]
 
 ########################################################################
-'''MotorThread'''
-class MotorThread(Thread):
-    #-------------------------------------------------------------------
-    def __init__(self, j):
-        Thread.__init__(self)
-        self.start()
-        self.j = j
-
-    #-------------------------------------------------------------------
-    def run(self):
-        wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
-        time.sleep(1)
-        con.modeM()
-        time.sleep(1)
-        wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
-        valor = con.modeMotor((10000*A2/A1)*VETOR_COND[self.j][0])
-        if valor == 'p1ok':
-            print 'PRESSAO GOLPES OK'
-            wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
-
-        time.sleep(1)
-        con.modeE()
-        time.sleep(1)
-        wx.CallAfter(pub.sendMessage, "update", msg="Regulando...")
-        valor2 = con.modeCAM(10000*VETOR_COND[self.j][1])
-        if valor2 == 'p2ok':
-            print 'PRESSAO CAMARA OK'
-            wx.CallAfter(pub.sendMessage, "update", msg="σ3 - ok")
-
-        wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
-        time.sleep(1)
-        con.modeM()
-        time.sleep(1)
-        wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
-        valor3 = con.modeMotor((10000*A2/A1)*VETOR_COND[self.j][0])
-        if valor3 == 'p1ok':
-            print 'PRESSAO GOLPES OK'
-            wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
-
-        time.sleep(2)
-        wx.CallAfter(pub.sendMessage, "update", msg="Tudo Pronto!")
-
-    #-------------------------------------------------------------------
-    def ret(self):
-        Thread.join(self)
-        return self._return
-
-########################################################################
-'''ConexaoThread'''
-class ConexaoThread(Thread):
-    #-------------------------------------------------------------------
-    def __init__(self):
-        Thread.__init__(self)
-        self.start()
-
-    #-------------------------------------------------------------------
-    def run(self):
-        wx.CallAfter(pub.sendMessage, "update", msg="Conectando...")
-        valor = con.connect()
-        if valor[1] == 'connectado':
-            print 'CONECTADO'
-            wx.CallAfter(pub.sendMessage, "update", msg="CONECTADO")
-            self._return = 'connectado', valor[0]
-        else:
-            print 'DESCONECTADO'
-            wx.CallAfter(pub.sendMessage, "update", msg="DESCONECTADO")
-            self._return = 'desconnectado'
-
-    #-------------------------------------------------------------------
-    def ret(self):
-        Thread.join(self)
-        return self._return
-
-########################################################################
-'''MyProgressDialog'''
-class MyProgressDialog(wx.Dialog):
-    #-------------------------------------------------------------------
-    def __init__(self, k):
-        """Construtor"""
-        wx.Dialog.__init__(self, None, -1, size=(500,15), style=0)
-        self.Centre()
-        self.k = k
-        self.count = 0
-        self.progress = wx.Gauge(self, range = self.k)
-        self.texto = wx.StaticText(self, label = wx.EmptyString, style = wx.ALIGN_CENTRE)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(self.progress, 0, wx.EXPAND)
-        sizer1.AddStretchSpacer(1)
-        sizer1.Add(self.texto, 2, wx.ALIGN_CENTER)
-        sizer1.Add(sizer, 8, wx.ALIGN_CENTER)
-        self.SetSizer(sizer1)
-        # create a pubsub receiver
-        pub.subscribe(self.updateProgress, "update")
-
-    #-------------------------------------------------------------------
-    def updateProgress(self, msg):
-        self.count += 1
-        if self.count < self.k:
-            self.texto.SetLabel(msg)
-        if self.count >= self.k:
-            self.Destroy()
-        self.progress.SetValue(self.count)
-
-########################################################################
 '''Painel Superior'''
 class TopPanel(wx.Panel):
-        def __init__(self, parent):
-            wx.Panel.__init__(self, parent =  parent)
+        def __init__(self, parent, _self):
+            wx.Panel.__init__(self, parent = parent)
+
+            self._self = _self
 
             FontTitle = wx.Font(-1, wx.SWISS, wx.NORMAL, wx.BOLD)
 
@@ -223,18 +119,21 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função PAUSA'''
         def PAUSA(self, event):
-            self.pausa.Disable()
             con.modeP()
+            global condition
+            condition = True
             self.continua.Enable()
             self.fim.Enable()
+            self.pausa.Disable()
 
     #--------------------------------------------------
         '''Função CONTINUA'''
         def CONTINUA(self, event):
-            self.continua.Disable()
-            con.modeP()
+            con.modeC()
+            #self._self.bottom.t1.start()
             self.pausa.Enable()
             self.fim.Disable()
+            self.continua.Disable()
 
     #--------------------------------------------------
         '''Função FIM'''
@@ -258,7 +157,7 @@ class TopPanel(wx.Panel):
 
     #--------------------------------------------------
         def draw(self, x, y):
-            self.axes.plot(x, y, 'xkcd:off white')
+            self.axes.plot(x, y, 'ro-')
             self.canvas.draw()
             '''x = np.arange(0,10,0.01)
             y = np.sin(np.pi*x)
@@ -267,7 +166,7 @@ class TopPanel(wx.Panel):
 '''Painel Inferior'''
 class BottomPanel(wx.Panel):
         def __init__(self, parent, top):
-            wx.Panel.__init__(self, parent =  parent)
+            wx.Panel.__init__(self, parent = parent)
 
             self.graph = top
 
@@ -718,8 +617,8 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em realizar a CONECÇÃO'''
         def LTESTE(self, event):
-            threadConection = ConexaoThread()
-            dlg = MyProgressDialog(2)
+            threadConection = ConexaoThread.ConexaoThread()
+            dlg = ConexaoThread.MyProgressDialog(2)
             dlg.ShowModal()
             cond = threadConection.ret()
             if cond[0] == 'connectado':
@@ -809,8 +708,8 @@ class BottomPanel(wx.Panel):
             dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
             dlg.ShowModal()
 
-            threadConection = MotorThread(0)
-            dlg2 = MyProgressDialog(9)
+            threadConection = MotorThread.MotorThread(VETOR_COND[0][0], VETOR_COND[0][1], A1, A2)
+            dlg2 = MotorThread.MyProgressDialog(9)
             dlg2.ShowModal()
 
             dlg3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Tudo pronto!", "Aperte Iniciar.", "", None)
@@ -821,14 +720,24 @@ class BottomPanel(wx.Panel):
 
             #--------------------------------------------------
             def worker1(self):
+                global condition
+                condition = False
+                cnt = 0
                 t = time.time()
                 while True:
                     y1 = self.y1mm.GetValue()
                     y2 = self.y2mm.GetValue()
                     X.append(time.time()-t)
                     Y.append(y1)
+                    #Y.append((y1+y2)/2)
                     self.graph.draw(X, Y)
                     plt.pause(.000001)
+                    cnt += 1
+                    if cnt >= 50:
+                        X.pop(0)
+                        Y.pop(0)
+                    if condition == True:
+                        break
             #--------------------------------------------------
             self.t1 = threading.Thread(target=worker1, args=(self,))
             try:
@@ -858,9 +767,9 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
 
             '''Configurações do SPLITTER'''
             splitter = wx.SplitterWindow(self)
-            top = TopPanel(splitter)
-            bottom = BottomPanel(splitter, top)
-            splitter.SplitHorizontally(top, bottom, 400)
+            top = TopPanel(splitter, self)
+            self.bottom = BottomPanel(splitter, top)
+            splitter.SplitHorizontally(top, self.bottom, 400)
             splitter.SetMinimumPaneSize(400)
             top.draw(X,Y)
 

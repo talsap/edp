@@ -9,9 +9,9 @@ import numpy as np
 data =[]
 
 class TopPanel(wx.Panel):
-	def __init__(self, parent):
+	def __init__(self, parent, bottom):
 		wx.Panel.__init__(self, parent = parent)
-
+		
 		self.figure = Figure()
 		self.axes = self.figure.add_subplot(111)
 		self.canvas = FigureCanvas(self, -1, self.figure)
@@ -97,7 +97,8 @@ class Main(wx.Frame):
 		wx.Frame.__init__(self, parent = None, title = "Arduino Oscilloscope", size = (600,600))
 
 		splitter = wx.SplitterWindow(self)
-		top = TopPanel(splitter)
+		bottom = BottomPanel(splitter, None)
+		top = TopPanel(splitter, bottom)
 		bottom = BottomPanel(splitter, top)
 		splitter.SplitHorizontally(top, bottom)
 		splitter.SetMinimumPaneSize(400)
