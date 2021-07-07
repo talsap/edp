@@ -61,7 +61,7 @@ Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 
 /* Inicializacao da serial */
 void setup(void) {
-  Serial.begin(115200); //velocidade de cominicacao com a porta serial
+  Serial.begin(250000); //velocidade de cominicacao com a porta serial
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
   analogWrite(DAC0, 1); //pino responsavel em alterar a pressao de (Camara)
@@ -287,6 +287,7 @@ void loop(void) {
             //aguarda o valor na serial e se for -4 pausa o ensaio//
             if(botoes == -4){
               while(true){
+                imprimir();
                 if (Serial.available()>1){
                   botoes = Serial.parseInt();
                   //aguarda o valor na serial. e se for -1 continua o ensaio de onde parou//
