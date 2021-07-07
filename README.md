@@ -52,6 +52,8 @@ cmd -> (Administrador)
 >    $ python -m pip install -U matplotlib
 * Instalação do Drawnow:
 >    $ python -m pip install drawnow
+* Correção de Bug wxpython image size:
+>    $ pip install --user -U wxPython==4.0.7.post2
  
 ## Preview
 
