@@ -23,7 +23,7 @@ T = []          #Array tempo grafico'''
 '''Port Serial'''
 portlist = [port for port,desc,hwin in list_ports.comports()]
 conexao = serial.Serial()
-conexao.baudrate = 115200
+conexao.baudrate = 250000
 
 '''Coeficientes da calibracao'''
 L = bancodedados.LVDT()
@@ -252,3 +252,10 @@ def ColetaI():
             sts = 0
 
     return Y1mm, Y2mm, Y1v, Y2v, Sen/1000, Cam/1000, glp, sts
+
+#-------------------------------------------------------------------
+def ColetaII():
+    while (conexao.inWaiting() == 0):
+        pass
+    arduinoString = conexao.readline()
+    Array = arduinoString.split(',')

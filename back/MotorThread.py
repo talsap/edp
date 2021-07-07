@@ -2,7 +2,7 @@
 import wx
 import time
 import back.connection as con
-from wx.lib.pubsub import pub
+from pubsub import pub
 from threading import Thread
 
 ########################################################################

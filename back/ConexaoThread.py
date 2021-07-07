@@ -2,7 +2,7 @@
 import wx
 import back.connection as con
 from threading import Thread
-from wx.lib.pubsub import pub
+from pubsub import pub
 
 ########################################################################
 '''ConexaoThread'''

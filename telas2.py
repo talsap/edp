@@ -26,7 +26,6 @@ global A2 #área do corpo de prova, vinda do banco de dados do Ensai
 global A1 #área da seção do cilindro pneumático
 global X  #valores X do gráfico
 global Y  #valores Y do gráfico
-global Ti
 
 A2 = 0.007854
 A1 = 0.007854
@@ -143,25 +142,24 @@ class TopPanel(wx.Panel):
                 while True:
                     y1 = self._self.bottom.y1mm.GetValue()
                     y2 = self._self.bottom.y2mm.GetValue()
-                    try:
-                        y1 = float(y1)
-                        y2 = float(y2)
-                        X.append(time.time()-Ti)
-                        Y.append(y1)
-                        #Y.append((y1+y2)/2)
-                        self.graph.draw()
-                        cnt += 1
-                        if cnt >= 100:
-                            X.pop(0)
-                            Y.pop(0)
-                    except:
-                        pass
+                    X.append(time.time()-Ti)
+                    Y.append(y1)
+                    #Y.append((y1+y2)/2)
+                    self.draw(X, Y)
+                    plt.pause(.000001)
+                    cnt += 1
+                    if cnt >= 5:
+                        X.pop(0)
+                        Y.pop(0)
                     if condition == True:
                         break
             #--------------------------------------------------
             self.t1 = threading.Thread(target=worker1, args=(self,))
-            self.t1.start()
-            print 'star'
+            try:
+                self.t1.start()
+            except:
+                self.t1.run()
+            #--------------------------------------------------
             self.pausa.Enable()
             self.fim.Disable()
             self.continua.Disable()
@@ -187,12 +185,13 @@ class TopPanel(wx.Panel):
     		self.canvas.draw()
 
     #--------------------------------------------------
-        def draw(self):
-            #print Y
+        def draw(self, x, y):
             self.axes.clear()
-            self.axes.plot(X, Y, 'ro-')
+            self.axes.plot(x, y, 'ro-')
             self.canvas.draw()
-            '''self.axes.plot(x, y, 'xkcd:off white')'''
+            '''x = np.arange(0,10,0.01)
+            y = np.sin(np.pi*x)
+            self.axes.plot(x, y, 'xkcd:off white')'''
 
 '''Painel Inferior'''
 class BottomPanel(wx.Panel):
@@ -200,6 +199,15 @@ class BottomPanel(wx.Panel):
             wx.Panel.__init__(self, parent = parent)
 
             self.graph = top
+
+            #--------------------------------------------------
+            self.timer = wx.Timer(self)
+            self.Bind(wx.EVT_TIMER, self.TimeInterval, self.timer)
+
+            self.x = np.array([])
+            self.y = np.array([])
+            self.x_counter = 0
+            #--------------------------------------------------
 
             FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.BOLD)
             FontTitle1 = wx.Font(-1, wx.SWISS, wx.NORMAL, wx.BOLD)
@@ -239,7 +247,7 @@ class BottomPanel(wx.Panel):
 
             self.qTensoes.Disable()
             self.condic.Disable()
-            self.mr.Disable()
+            #self.mr.Disable()
             self.LZero.Disable()
 
             self.qTensoes.SetFont(FontTitle1)
@@ -591,8 +599,7 @@ class BottomPanel(wx.Panel):
             self.v3_sizer.Add(self.GolpeAtual, 2, wx.ALL | wx.CENTER)
 
             self.v4_sizer.Add(texto23, 1, wx.ALL | wx.CENTER)
-            self.v4_sizer.AddStretchSpacer(1)
-            self.v4_sizer.Add(self.freq, 1, wx.ALL | wx.CENTER)
+            self.v4_sizer.Add(self.freq, 2, wx.ALL | wx.CENTER)
 
             self.v5_sizer.Add(texto22, 1, wx.ALL | wx.CENTER)
             self.v5_sizer.Add(self.NGolpes, 2, wx.ALL | wx.CENTER)
@@ -600,7 +607,7 @@ class BottomPanel(wx.Panel):
             self.v6_sizer.Add(texto21, 1, wx.ALL | wx.CENTER)
             self.v6_sizer.Add(self.Ciclo, 2, wx.ALL | wx.CENTER)
 
-            self.h2_sizer.Add(self.v4_sizer, 3, wx.EXPAND | wx.CENTER)
+            self.h2_sizer.Add(self.v4_sizer, 3, wx.CENTER)
             self.h2_sizer.AddStretchSpacer(1)
             self.h2_sizer.Add(self.v3_sizer, 4, wx.CENTER)
 
@@ -646,13 +653,6 @@ class BottomPanel(wx.Panel):
             self.sizer.Add(self.h_sizer, 0,  wx.EXPAND | wx.ALL, 10)
             self.SetSizer(self.sizer)
 
-
-            self.timer = wx.Timer(self)
-            self.Bind(wx.EVT_TIMER, self.TimeInterval, self.timer)
-            self.x = np.array([])
-            self.y = np.array([])
-            self.x_counter = 0
-
     #--------------------------------------------------
         '''Função responsável em realizar a CONECÇÃO'''
         def LTESTE(self, event):
@@ -692,8 +692,11 @@ class BottomPanel(wx.Panel):
                         self.GolpeAtual.AppendText(str(int(valores[6])))
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
-                self.t.start()
-
+                try:
+                    self.t.start()
+                except:
+                    self.t.run()
+                #--------------------------------------------------
             else:
                 menssagError = wx.MessageDialog(self, 'Não é possível manter uma conexão serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
@@ -764,57 +767,46 @@ class BottomPanel(wx.Panel):
                 while True:
                     y1 = self.y1mm.GetValue()
                     y2 = self.y2mm.GetValue()
-                    try:
-                        y1 = float(y1)
-                        y2 = float(y2)
-                        X.append(time.time()-Ti)
-                        Y.append(y1)
-                        #Y.append((y1+y2)/2)
-                        self.graph.draw()
-                        cnt += 1
-                        if cnt >= 30:
-                            X.pop(0)
-                            Y.pop(0)
-                    except:
-                        pass
+                    X.append(time.time()-Ti)
+                    Y.append(y1)
+                    #Y.append((y1+y2)/2)
+                    self.graph.draw(X, Y)
+                    plt.pause(.000001)
+                    cnt += 1
+                    self.graph.changeAxesY(0, y1)
+                    if cnt >= 5:
+                        X.pop(0)
+                        Y.pop(0)
                     if condition == True:
                         break
             #--------------------------------------------------
             self.t1 = threading.Thread(target=worker1, args=(self,))
-            self.t1.start()
+            try:
+                self.t1.start()
+            except:
+                self.t1.run()
+            #--------------------------------------------------
 
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''
         def MR(self, event):
             print 'MR'
-            global Ti
-            freq = self.freq.GetValue()
-            self.timer.Start(int('50'))
-            Ti = time.time()
-            con.modeG(500, int(freq))
+            self.timer.Start(int('100'))
+            time.sleep(1)
+            con.modeG(500, int(1))
             self.graph.pausa.Enable()
 
     #--------------------------------------------------
         '''Função responsável em pegar os dados para plotagem'''
         def TimeInterval(self, event):
-            global Ti
             y1 = self.y1mm.GetValue()
             y2 = self.y2mm.GetValue()
-            cnt = 0
-            try:
-                y1 = float(y1)
-                y2 = float(y2)
-                X.append(time.time()-Ti)
-                Y.append(y1)
-                #Y.append((y1+y2)/2)
-                self.graph.draw()
-                cnt += 1
-                if cnt >= 30:
-                    X.pop(0)
-                    Y.pop(0)
-            except:
-                print "ola"
-                pass
+            self.y = np.append(self.y, float(y1))
+            self.x = np.append(self.x, self.x_counter)
+            self.x_counter += 1
+            print(self.x)
+            self.graph.draw(self.x, self.y)
+
 
 '''Tela Realização do Ensaio'''
 class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
@@ -835,7 +827,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             self.bottom = BottomPanel(splitter, top)
             splitter.SplitHorizontally(top, self.bottom, 400)
             splitter.SetMinimumPaneSize(400)
-            top.draw()
+            top.draw(0,0)
 
             self.Centre()
             self.Show()

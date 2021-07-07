@@ -5,13 +5,14 @@ import matplotlib
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
+import serial
+import time
 
-data =[]
 
 class TopPanel(wx.Panel):
-	def __init__(self, parent, bottom):
+	def __init__(self, parent):
 		wx.Panel.__init__(self, parent = parent)
-		
+
 		self.figure = Figure()
 		self.axes = self.figure.add_subplot(111)
 		self.canvas = FigureCanvas(self, -1, self.figure)
@@ -21,12 +22,13 @@ class TopPanel(wx.Panel):
 		self.axes.set_xlabel("Time")
 		self.axes.set_ylabel("A/D Counts")
 
-    #LOOK AT THIS
-	def draw(self, x, y):
+	def draw(self,x,y):
+		#x = np.arange(0,3,0.01)
+		#y = np.sin(np.pi*x)
 		self.axes.clear()
-		self.axes.plot(x,y)
+		self.axes.plot(x,y, '-o')
 		self.canvas.draw()
-
+		
 	def changeAxes(self, min, max):
 		self.axes.set_ylim(float(min), float(max))
 		self.canvas.draw()
@@ -56,8 +58,18 @@ class BottomPanel(wx.Panel):
 		labelMaxY = wx.StaticText(self, -1, "Max Y", pos = (400, 60))
 		self.textboxMaxYAxis = wx.TextCtrl(self, -1, "1024", pos = (400,80))
 
-		self.buttonRange = wx.Button(self, 01, "Set Y Axis", pos =(400,105))
+		self.buttonRange = wx.Button(self, -1, "Set Y Axis", pos =(400,105))
 		self.buttonRange.Bind(wx.EVT_BUTTON, self.SetButtonRange)
+
+		self.timer = wx.Timer(self)
+		self.Bind(wx.EVT_TIMER, self.TimeInterval, self.timer)
+
+		self.serial_connection = False
+
+		self.x = np.array([])
+		self.y = np.array([])
+		self.x_counter = 0
+
 
 	def SetButtonRange(self, event):
 		min = self.textboxMinYAxis.GetValue()
@@ -67,42 +79,55 @@ class BottomPanel(wx.Panel):
 	def OnSend(self, event):
 		val = self.textboxSampleTime.GetValue()
 		print(val)
+		self.timer.Start(int(val))
 
-	#LOOK AT THIS
+
 	def OnChecked(self, event):
-		self.x = np.arange(0,3,0.01)
-		self.y = np.cos(np.pi*self.x)
-		self.graph.draw(self.x,self.y)
 		cb = event.GetEventObject()
 		print("%s is clicked" % (cb.GetLabel()))
 
-	#LOOK AT THIS
-	def OnStartClick(self, event):
-		while True:
-			self.graph.draw(3,2)
-		self.x = np.arange(0,3,0.01)
-		self.y = np.sin(np.pi*self.x)
-		self.graph.draw(self.x,self.y)
+	def TimeInterval(self, event):
+		self.serial_arduino.write('a\n')
+		tmp = self.serial_arduino.readline()
+		print(tmp)
+		self.y = np.append(self.y, int(tmp))
+		self.x = np.append(self.x, self.x_counter)
+		self.x_counter += 1
+		self.graph.draw(self.x, self.y)
 
+
+	def OnStartClick(self, event):
 		val = self.togglebuttonStart.GetValue()
 		if (val == True):
 			self.togglebuttonStart.SetLabel("Stop")
+			self.timer.Start(int(self.textboxSampleTime.GetValue()))
 		else:
 			self.togglebuttonStart.SetLabel("Start")
+			self.timer.Stop()
 
-
+		if self.serial_connection == False:
+			try:
+				self.serial_arduino = serial.Serial('COM3', 9600, timeout = 2)
+				time.sleep(2)
+				self.serial_arduino.write('i\n')
+				res = self.serial_arduino.readline()
+				print(res)
+				if res == "Starting\r\n":
+					print("arduino is ready!")
+					self.serial_connection = True
+			except serial.serialutil.SerialException:
+				print("Problem connecting to Arduino")
 
 class Main(wx.Frame):
 	def __init__(self):
 		wx.Frame.__init__(self, parent = None, title = "Arduino Oscilloscope", size = (600,600))
 
 		splitter = wx.SplitterWindow(self)
-		bottom = BottomPanel(splitter, None)
-		top = TopPanel(splitter, bottom)
+		top = TopPanel(splitter)
 		bottom = BottomPanel(splitter, top)
 		splitter.SplitHorizontally(top, bottom)
 		splitter.SetMinimumPaneSize(400)
-		top.draw([0],[0])
+		top.draw(0,0)
 
 
 
