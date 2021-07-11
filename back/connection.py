@@ -119,7 +119,7 @@ def modeI():
 def modeG(qtd, freq):
     print "OPC G"
     conexao.write(opcaoG)
-    time.sleep(1)
+    time.sleep(.5)
     conexao.write(str(int(round(qtd,0))))
     time.sleep(1)
     conexao.write(str(int(round(freq,0))))
@@ -217,7 +217,7 @@ def ColetaI():
             y2v[i] = 0.00
             sen[i] = 0.00
             cam[i] = 0.00
-            glp = 1
+            glp = 0
             sts = 0
         i+=1
 
@@ -248,14 +248,7 @@ def ColetaI():
             Y2v = 0
             Sen = 0
             Cam = 0
-            glp = 1
+            glp = 0
             sts = 0
 
     return Y1mm, Y2mm, Y1v, Y2v, Sen/1000, Cam/1000, glp, sts
-
-#-------------------------------------------------------------------
-def ColetaII():
-    while (conexao.inWaiting() == 0):
-        pass
-    arduinoString = conexao.readline()
-    Array = arduinoString.split(',')

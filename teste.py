@@ -28,7 +28,7 @@ class TopPanel(wx.Panel):
 		self.axes.clear()
 		self.axes.plot(x,y, '-o')
 		self.canvas.draw()
-		
+
 	def changeAxes(self, min, max):
 		self.axes.set_ylim(float(min), float(max))
 		self.canvas.draw()
@@ -94,6 +94,7 @@ class BottomPanel(wx.Panel):
 		self.x = np.append(self.x, self.x_counter)
 		self.x_counter += 1
 		self.graph.draw(self.x, self.y)
+		print self.y
 
 
 	def OnStartClick(self, event):
