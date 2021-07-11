@@ -144,18 +144,17 @@ void loop(void) {
         Serial.println("VALORCAMARA"); 
         while(true){
           imprimir();
-          //delay(20);
           ad3 = analogRead(A3);
           vd3 = ad3*bit12_Voltage*1000;
           
           if (Serial.available()>1){
             setpoint2 = Serial.parseInt();    //valor em mbar
-            Serial.flush();
-            Serial.print("CHEGOU="); 
-            Serial.print(setpoint2);
-            Serial.print("/SENSOR=");
-            Serial.println(vd3*3.3f);
             if(setpoint2 > 5){
+              Serial.flush();
+              Serial.print("CHEGOU="); 
+              Serial.print(setpoint2);
+              Serial.print("/SENSOR=");
+              Serial.println(vd3*3.3f);
               setpointC = setpoint2*255/3300;   //valor em contagem
               analogWrite(DAC0, setpointC);
             }
@@ -178,11 +177,13 @@ void loop(void) {
           
           if(Serial.available()>1){
             setpoint1 = Serial.parseInt();
-            Serial.flush();
-            Serial.print("CHEGOU="); 
-            Serial.print(setpoint1);
-            Serial.print("/SENSOR=");
-            Serial.println(vd2*3.3f);
+            if(setpoint1 > 5){   
+              Serial.flush();
+              Serial.print("CHEGOU="); 
+              Serial.print(setpoint1);
+              Serial.print("/SENSOR=");
+              Serial.println(vd2*3.3f);
+            }
             if(setpoint1 == -1){
               goto sensorLVDTDNIT134;
             }
@@ -228,15 +229,18 @@ void loop(void) {
         //***********************//
         golpes:
         //RESPONSAVEL EM COLETAR A QUANTIDADE TOTAL DE GOLPES//
-        while(true){
+        while(true){ 
           imprimir();
           if(Serial.available()>1){
             ntotalGolpes = Serial.parseInt();
-            Serial.flush();
-            Serial.print("NGOLPES="); 
-            Serial.println(ntotalGolpes);
             if(ntotalGolpes > 0){
+              Serial.flush();
+              Serial.print("NGOLPES="); 
+              Serial.println(ntotalGolpes);
               break;
+            }
+            if(ntotalGolpes == -3){
+              goto sensorLVDTDNIT134;
             }
           }
         }
@@ -245,11 +249,14 @@ void loop(void) {
           imprimir();
           if(Serial.available()>=1){
             frequencia = Serial.parseInt();
-            Serial.flush();
-            Serial.print("FREQ="); 
-            Serial.println(frequencia);
             if(frequencia > 0){
+              Serial.flush();
+              Serial.print("FREQ="); 
+              Serial.println(frequencia);
               break;
+            }
+            if(ntotalGolpes == -3){
+              goto sensorLVDTDNIT134;
             }
           }
         }
@@ -264,6 +271,16 @@ void loop(void) {
           nGolpe = resultTempo.n;
           imprimir();
           if(nGolpe == ntotalGolpes+1){
+            imprimir();
+            imprimir();
+            imprimir();
+            imprimir();
+            imprimir();
+            imprimir();
+            imprimir();
+            imprimir();
+            imprimir();
+            imprimir();
             nGolpe = 1;
             goto sensorLVDTDNIT134;
           }
@@ -351,7 +368,7 @@ void imprimir(){
   Serial.print(nGolpe);
   Serial.print(",");
   Serial.println(statuS);
-  delay(5);
+  delay(1);
 }/* Imprimir dados na tela */
 
 
