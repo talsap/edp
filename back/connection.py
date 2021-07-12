@@ -79,17 +79,17 @@ def connect():
 #-------------------------------------------------------------------
 '''Fim'''
 def modeF():
-    conexao.write(str(-3))  #O valor responsável em parar o ensaio é -3
+    conexao.write('b')  #O valor responsável em parar o ensaio é b
 
 #-------------------------------------------------------------------
 '''Continua'''
 def modeC():
-    conexao.write(str(-1))  #O valor responsável em continuar o ensaio é -1
+    conexao.write('c')  #O valor responsável em continuar o ensaio é c
 
 #-------------------------------------------------------------------
 '''Pausa'''
 def modeP():
-    conexao.write(str(-4))  #O valor responsável em pausar o ensaio é -4
+    conexao.write("p")  #O valor responsável em pausar o ensaio é p
 
 #-------------------------------------------------------------------
 '''Desconectando'''

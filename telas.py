@@ -75,8 +75,8 @@ class TopPanel(wx.Panel):
             self.figure = plt.figure(constrained_layout=True)
             self.axes = self.figure.add_subplot(111)
             self.canvas = FigureCanvas(self, -1, self.figure)
-            self.axes.set_xlabel("TEMPO (seg)")
-            self.axes.set_ylabel("DESLOCAMENTO (mm)")
+            #self.axes.set_xlabel("TEMPO (seg)")
+            #self.axes.set_ylabel("DESLOCAMENTO (mm)")
             #self.axes.set_ylim(float(0), float(5))
             #self.axes.set_xlim(float(0), float(5))
 
@@ -160,7 +160,7 @@ class TopPanel(wx.Panel):
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
                     threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
-                    dlg2 = MotorThread.MyProgressDialog(9)
+                    dlg2 = MotorThread.MyProgressDialog(10)
                     dlg2.ShowModal()
 
                     info = "EDP 134/2018ME"
@@ -178,7 +178,7 @@ class TopPanel(wx.Panel):
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
                     threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1], A1, A2)
-                    dlg2 = MotorThread.MyProgressDialog(9)
+                    dlg2 = MotorThread.MyProgressDialog(10)
                     dlg2.ShowModal()
 
                     info = "EDP 134/2018ME"
@@ -353,7 +353,7 @@ class TopPanel(wx.Panel):
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             #rect1 = self.axes.patch
             #rect1.set_facecolor('#A0BA8C')
-            self.axes.plot(X, Y, 'ro-')
+            self.axes.plot(X, Y, 'r-')
             #self.axes.plot(X, Y, 'xkcd:off white')
             self.canvas.draw()
 
@@ -862,7 +862,7 @@ class BottomPanel(wx.Panel):
                             X = np.append(X, time.time()-Ti)
                             Y = np.append(Y, (valores[0]-self.leituraZerob1))
                             cnt = len(X)
-                            if cnt >= 180:
+                            if cnt >= 60:
                                 X = np.delete(X, 0, 0)
                                 Y = np.delete(Y, 0, 0)
 
@@ -932,7 +932,7 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo < 3:
                 threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
-                dlg2 = MotorThread.MyProgressDialog(9)
+                dlg2 = MotorThread.MyProgressDialog(10)
                 dlg2.ShowModal()
 
             if self._ciclo == 0:
@@ -987,7 +987,7 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo < 17:
                 threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1], A1, A2)
-                dlg2 = MotorThread.MyProgressDialog(9)
+                dlg2 = MotorThread.MyProgressDialog(10)
                 dlg2.ShowModal()
 
             if self._ciclo == 0:
@@ -1011,8 +1011,8 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em zera a pressão do sistema'''
         def pressao_zero(self):
-            threadConection = MotorThread.MotorThread(110, 10, A1, A2)  #110 e 10 são os menores valores se pressão admissível
-            dlg2 = MotorThread.MyProgressDialog(9)
+            threadConection = MotorThread.MotorThread(0.013, 0.001, A1, A2)  #0.013 e 0.001 são os menores valores se pressão admissível
+            dlg2 = MotorThread.MyProgressDialog(10)
             dlg2.ShowModal()
 
     #--------------------------------------------------
