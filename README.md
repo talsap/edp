@@ -52,8 +52,10 @@ cmd -> (Administrador)
 >    $ python -m pip install -U matplotlib
 * Instalação do Drawnow:
 >    $ python -m pip install drawnow
+* Instalação do pubsub:
+>    $ python -m pip install pypubsub
 * Correção de Bug wxpython image size:
->    $ pip install --user -U wxPython==4.0.7.post2
+>    $ python -m pip install --user -U wxPython==4.0.7.post2
  
 ## Preview
 
