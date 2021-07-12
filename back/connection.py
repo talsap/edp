@@ -165,11 +165,11 @@ def modeMotor(p1):
                     conexao.write(str(-1))
                     return "p1ok"
                     break
-            else: #else apenas para testes
+            '''else: #else apenas para testes
                 time.sleep(5)
                 conexao.write(str(-1))
                 return "p1ok"
-                break
+                break'''
         except:
             pass
 

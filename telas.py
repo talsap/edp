@@ -159,9 +159,9 @@ class TopPanel(wx.Panel):
                     self._self.bottom.SigmaAlvo.AppendText(str(10*VETOR_COND[self._ciclo][1]))
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
-                    '''threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
+                    threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
                     dlg2 = MotorThread.MyProgressDialog(9)
-                    dlg2.ShowModal()'''
+                    dlg2.ShowModal()
 
                     info = "EDP 134/2018ME"
                     dlg3 = dialogoDinamico(3, info, 'CONDICIONAMENTO', "Tudo pronto!", "Aperte INICIO.", "", None)
@@ -177,9 +177,9 @@ class TopPanel(wx.Panel):
                     self._self.bottom.SigmaAlvo.AppendText(str(10*VETOR_MR[self._ciclo][1]))
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
-                    '''threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1], A1, A2)
+                    threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1], A1, A2)
                     dlg2 = MotorThread.MyProgressDialog(9)
-                    dlg2.ShowModal()'''
+                    dlg2.ShowModal()
 
                     info = "EDP 134/2018ME"
                     dlg3 = dialogoDinamico(3, info, 'MÓDULO DE RESILIÊNCIA', "Tudo pronto!", "Aperte INICIO.", "", None)
