@@ -19,7 +19,7 @@ const int pinAplicador = 12; //pino do aplicador de golpes
 int condConect = 0; //Condicao para conecxao com o software
 int condicao = 1; //Condicao para o aplicador de golpes
 int frequencia;  //Valor condicao para intervalo da frequencia
-int nGolpe = 1;  //numpero de golpes
+int nGolpe = 0;  //numpero de golpes
 int ntotalGolpes; //Numero total de golpes por estagio
 int statuS = 0; //(0 ou 1)(ok ou n_ok) mado de avisar erro de pressao do aplicador
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
@@ -39,6 +39,13 @@ float vd0; //valor em voltagem do LVDT1
 float vd1; //valor em voltagem do LVDT2
 float vd2; //valor do sensor de pressão em mBar (Aplicador)
 float vd3; //valor do sensor de pressão em mBar (Camara)
+float def; //valor analógico da deformacao estavel
+float def1; //valor analógico da deformacao estavel do golpe 1
+float defAnt; //valor analógico da deformacao estavel do golpe anterior
+float defMax; //valor analógico da deformacao max
+float defE; //valor analógico da deformacao Elastica
+float defP; //valor analógico da deformacao Plastica
+float defAc; //valor analógico da deformacao Acumulada
 long intervalo01 = 100; //100 milseg Freq.
 long intervalo09 = 1000; //1Hz 01-09
 long intervalo05 = 500; //2Hz 01-04-01-04
@@ -50,18 +57,20 @@ unsigned long currentMillis; //variacao do tempo em milisegundos
 unsigned long initialMillis; //tempo incial dinamico
 unsigned char conexao;  //tipos de conexoes
 unsigned char leitura;  //ler dado na porta serial
+boolean pin; //pin ativado ou desativado
 
 /* Estrutura da função S */
 struct S{
   long t;
   int n;
+  boolean p;
 };
 
 Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 
 /* Inicializacao da serial */
 void setup(void) {
-  Serial.begin(250000); //velocidade de cominicacao com a porta serial
+  Serial.begin(115200); //velocidade de cominicacao com a porta serial
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
   analogWrite(DAC0, 1); //pino responsavel em alterar a pressao de (Camara)
@@ -74,8 +83,15 @@ void setup(void) {
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
-  setpointM = 110/3.3f;   //setpointM inicia sendo o menor valor admissível (referente ao motor)
+  setpointM = 150/3.3f;   //setpointM inicia sendo o menor valor admissível (referente ao motor)
   setpointC = 10*255/3300;   //setpoint inicia sendo o menor valor admissível (referente a camara)
+  pin = false;
+  def = 0; 
+  def1 = 0; 
+  defAnt = 0; 
+  defMax = 0; 
+  defE = 0; 
+  defP = 0; 
 }
 
 /* Principal */
@@ -269,6 +285,7 @@ void loop(void) {
           S resultTempo = tempo(nGolpe, frequencia, initialMillis);
           initialMillis = resultTempo.t;
           nGolpe = resultTempo.n;
+          pin = resultTempo.p;
           imprimir();
           if(nGolpe == ntotalGolpes+1){
             imprimir();
@@ -281,7 +298,7 @@ void loop(void) {
             imprimir();
             imprimir();
             imprimir();
-            nGolpe = 1;
+            nGolpe = 0;
             goto sensorLVDTDNIT134;
           }
           
@@ -297,11 +314,11 @@ void loop(void) {
             botoes = Serial.parseInt();
             if(botoes == -3){
               pararEnsaio:
-              nGolpe = 1;
+              nGolpe = 0;
               statuS = 0;
               goto sensorLVDTDNIT134;
             }
-            //aguarda o valor na serial e se for -4 pausa o ensaio//
+            //aguarda o valor na serial. e se for -4 pausa o ensaio//
             if(botoes == -4){
               while(true){
                 imprimir();
@@ -352,6 +369,21 @@ void imprimir(){
   ad3 = analogRead(A3); 
   vd2 = ad2*bit12_Voltage*1000; 
   vd3 = ad3*bit12_Voltage*1000;
+  if (pin == false){
+    def = ad0;
+    defE = defMax - def;
+    defP = def - defAnt;
+    defAc = def1 - def;
+    }
+  if (pin == true){
+    defAnt = def;
+    if (ad0 >= defMax){
+      defMax = ad0;
+    }
+  }
+  if (nGolpe == 1){
+    def1 = ad0;
+  }
   Serial.flush();
   Serial.print(ad0);
   Serial.print(",");
@@ -367,7 +399,13 @@ void imprimir(){
   Serial.print(",");
   Serial.print(nGolpe);
   Serial.print(",");
-  Serial.println(statuS);
+  Serial.print(statuS);
+  Serial.print(",");
+  Serial.print(defE);
+  Serial.print(",");
+  Serial.print(defP);
+  Serial.print(",");
+  Serial.println(defAc);  
   delay(1);
 }/* Imprimir dados na tela */
 
@@ -379,9 +417,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
     case 1:
       if(currentMillis - initialMillis < intervalo01){
         digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+        pin = true;
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
         digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+        pin = false;
       }
       if((currentMillis - initialMillis) > intervalo09){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
@@ -392,9 +432,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
     case 2:
       if(currentMillis - initialMillis < intervalo01){
         digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+        pin = true;
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo05){
         digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+        pin = false;
       }
       if((currentMillis - initialMillis) > intervalo05){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
@@ -405,9 +447,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
     case 3:
       if(currentMillis - initialMillis < intervalo01){
         digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+        pin = true;
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo04){
         digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+        pin = false;
       }
       if((currentMillis - initialMillis) > intervalo04){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
@@ -418,9 +462,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
     case 4:
       if(currentMillis - initialMillis < intervalo01){
         digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+        pin = true;
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo03){
         digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+        pin = false;
       }
       if((currentMillis - initialMillis) > intervalo03){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
@@ -431,9 +477,11 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
     case 5:
       if(currentMillis - initialMillis < intervalo01){
         digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+        pin = true;
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo02){
         digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+        pin = false;
       }
       if((currentMillis - initialMillis) > intervalo02){
         initialMillis = currentMillis; //Salva o tempo atual como sendo o inicial
@@ -441,5 +489,5 @@ S tempo(int nGolpe, int frequencia, long initialMillis){
       }
       break;
   }/*switch*/
-  return {initialMillis, nGolpe};    
+  return {initialMillis, nGolpe, pin};    
 }/* Intervalo de tempo do aplicador */
