@@ -47,7 +47,7 @@ class MotorThread(Thread):
         con.modeE()
         time.sleep(1)
         wx.CallAfter(pub.sendMessage, "update", msg="Regulando...")
-        valor2 = con.modeCAM(10000*self.p2)
+        valor2 = con.modeCAM(10000*self.p1)
         if valor2 == 'p2ok':
             print 'PRESSAO CAMARA OK'
             wx.CallAfter(pub.sendMessage, "update", msg="σ3 - ok")
@@ -58,7 +58,7 @@ class MotorThread(Thread):
         con.modeM()
         time.sleep(1)
         wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
-        valor = con.modeMotor((10000*self.a2/self.a1)*self.p1)
+        valor = con.modeMotor((10000*self.a2/self.a1)*self.p2)
         if valor == 'p1ok':
             print 'PRESSAO GOLPES OK'
             wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
@@ -73,14 +73,14 @@ class MotorThread(Thread):
             con.modeG(1,1)
             time.sleep(15)
             valor = con.ColetaI()
-            if valor[4] < (10*self.p1 - 1*self.p1):
+            if valor[4] < (10*self.p2 - 1*self.p2):
                 cond = True
                 wx.CallAfter(pub.sendMessage, "update", msg="Ativando motor")
                 time.sleep(1)
                 con.modeM()
                 time.sleep(1)
                 wx.CallAfter(pub.sendMessage, "update", msg="Ajustando...")
-                valor = con.modeMotor((10000*self.a2/self.a1)*self.p1)
+                valor = con.modeMotor((10000*self.a2/self.a1)*self.p2)
                 if valor == 'p1ok':
                     print 'PRESSAO GOLPES OK'
                     wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
