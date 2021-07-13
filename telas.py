@@ -6,6 +6,8 @@ import time
 import threading
 import matplotlib
 import numpy as np
+import bancodedados
+import back.save as s
 import back.connection as con
 import matplotlib.pyplot as plt
 import back.MotorThread as MotorThread
@@ -24,6 +26,7 @@ global leituraZerob1
 global leituraZerob2
 global A2 #área do corpo de prova, vinda do banco de dados do Ensai
 global A1 #área da seção do cilindro pneumático
+global H  #Altura do corpo de prova
 global X  #valores X do gráfico
 global Y  #valores Y do gráfico
 global Ti #valor temporal
@@ -31,8 +34,11 @@ global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 
 A2 = 0.007854
 A1 = 0.007854
+H = 200
 X = np.array([])
 Y = np.array([])
+xz = []
+yz = []
 Fase = ''
 
 VETOR_COND = [[0.070,0.070],
@@ -252,6 +258,7 @@ class TopPanel(wx.Panel):
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             if valorGolpe == 501:
+                                print len(xz)
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
@@ -348,14 +355,16 @@ class TopPanel(wx.Panel):
 
     #--------------------------------------------------
         def draw(self):
-            self.axes.clear()
-            self.axes.set_xlabel("TEMPO (seg)")
-            self.axes.set_ylabel("DESLOCAMENTO (mm)")
+            #self.axes.clear()
+            #self.axes.set_xlabel("TEMPO (seg)")
+            #self.axes.set_ylabel("DESLOCAMENTO (mm)")
             #rect1 = self.axes.patch
             #rect1.set_facecolor('#A0BA8C')
-            self.axes.plot(X, Y, 'r-')
+            #self.axes.plot(X, Y, 'r-')
             #self.axes.plot(X, Y, 'xkcd:off white')
-            self.canvas.draw()
+            #self.canvas.draw()
+            #print Y
+            pass
 
 
 '''Painel Inferior'''
@@ -491,11 +500,11 @@ class BottomPanel(wx.Panel):
             self.y2V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.y1mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.y2mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.defElastica = wx.TextCtrl(self, -1, 'defE', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.defPlastica = wx.TextCtrl(self, -1, 'defP', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.defElastica = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.defPlastica = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.defPCond = wx.TextCtrl(self, -1, 'defPCond', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.defPAcum = wx.TextCtrl(self, -1, 'defPAcum', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.AlturaFinal = wx.TextCtrl(self, -1, 'AF', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.defPAcum = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.AlturaFinal = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.PCreal = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.PCalvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.SigmaReal = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -836,6 +845,7 @@ class BottomPanel(wx.Panel):
                     global Ti
                     global X
                     global Y
+                    global H
                     condition = False
                     cnt = 0
                     self.leituraZerob1 = 0
@@ -858,13 +868,24 @@ class BottomPanel(wx.Panel):
                         self.SigmaReal.AppendText(str(round((valores[4]/10), 3)))
                         if condition == True:
                             self.GolpeAtual.Clear()
+                            self.defElastica.Clear()
+                            self.defPlastica.Clear()
+                            self.defPAcum.Clear()
+                            self.AlturaFinal.Clear()
+                            self.defElastica.AppendText(str(round((valores[8]), 3)))
+                            self.defPlastica.AppendText(str(round((valores[9]), 3)))
+                            self.defPAcum.AppendText(str(round((valores[10]), 3)))
+                            self.AlturaFinal.AppendText(str(round(H-(valores[0]-self.leituraZerob1), 3)))
                             self.GolpeAtual.AppendText(str(int(valores[6])))
-                            X = np.append(X, time.time()-Ti)
-                            Y = np.append(Y, (valores[0]-self.leituraZerob1))
-                            cnt = len(X)
-                            if cnt >= 60:
-                                X = np.delete(X, 0, 0)
-                                Y = np.delete(Y, 0, 0)
+                            if valores[0] != 0:
+                                X = np.append(X, time.time()-Ti)
+                                Y = np.append(Y, (valores[0]-self.leituraZerob1))
+                                cnt = len(X)
+                                if cnt >= 60:
+                                    X = np.delete(X, 0, 0)
+                                    Y = np.delete(Y, 0, 0)
+                                xz.append(time.time()-Ti)
+                                yz.append(valores[0])
 
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
@@ -930,10 +951,10 @@ class BottomPanel(wx.Panel):
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 dlg.ShowModal()
 
-            if self._ciclo < 3:
+            '''if self._ciclo < 3:
                 threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
                 dlg2 = MotorThread.MyProgressDialog(14)
-                dlg2.ShowModal()
+                dlg2.ShowModal()'''
 
             if self._ciclo == 0:
                 dlg3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Tudo pronto!", "Aperte INICIO.", "", None)

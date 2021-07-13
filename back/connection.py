@@ -23,7 +23,7 @@ T = []          #Array tempo grafico'''
 '''Port Serial'''
 portlist = [port for port,desc,hwin in list_ports.comports()]
 conexao = serial.Serial()
-conexao.baudrate = 250000
+conexao.baudrate = 115200
 
 '''Coeficientes da calibracao'''
 L = bancodedados.LVDT()
@@ -165,11 +165,11 @@ def modeMotor(p1):
                     conexao.write(str(-1))
                     return "p1ok"
                     break
-            '''else: #else apenas para testes
+            else: #else apenas para testes
                 time.sleep(5)
                 conexao.write(str(-1))
                 return "p1ok"
-                break'''
+                break
         except:
             pass
 
@@ -182,6 +182,9 @@ def ColetaI():
     y2v = np.zeros(5)
     sen = np.zeros(5)
     cam = np.zeros(5)
+    defE = np.zeros(5)
+    defP = np.zeros(5)
+    defAc = np.zeros(5)
 
     i = 0
     while i < 5:
@@ -200,6 +203,9 @@ def ColetaI():
             cam[i] = float(Array[5])
             glp = float(Array[6])
             sts = float(Array[7])
+            defE[i] = float(Array[8])*A1+B1
+            defP[i] = float(Array[9])*A1+B1
+            defAc[i] = float(Array[10])*A1+B1
             #sempre guarda os valores na memoria, para ter a ultima leitura
             anty1mm = y1mm[i]
             anty2mm = y2mm[i]
@@ -209,6 +215,9 @@ def ColetaI():
             antcam = cam[i]
             antglp = glp
             antsts = sts
+            antdefE = defE[i]
+            antdefP = defP[i]
+            antdefAc = defAc[i]
         except:
             Media[i] = 0
             y1mm[i] = 0.0000
@@ -219,6 +228,9 @@ def ColetaI():
             cam[i] = 0.00
             glp = 0
             sts = 0
+            defE[i] = 0.000
+            defP[i] = 0.000
+            defAc[i] = 0.000
         i+=1
 
     try:
@@ -231,6 +243,9 @@ def ColetaI():
         Y2v = (y2v[0]+y2v[1]+y2v[2]+y2v[3]+y2v[4])/Divisor
         Sen = (sen[0]+sen[1]+sen[2]+sen[3]+sen[4])/Divisor
         Cam = (cam[0]+cam[1]+cam[2]+cam[3]+cam[4])/Divisor
+        DefE = (defE[0]+defE[1]+defE[2]+defE[3]+defE[4])/Divisor
+        DefP = (defP[0]+defP[1]+defP[2]+defP[3]+defP[4])/Divisor
+        DefAc = (defAc[0]+defAc[1]+defAc[2]+defAc[3]+defAc[4])/Divisor
     except:
         try:
             Y1mm = anty1mm
@@ -241,14 +256,10 @@ def ColetaI():
             Cam = antcam
             glp = antglp
             sts = antsts
+            DefE = antdefE
+            DefP = antdefP
+            DefAc = antdefAc
         except:
-            Y1mm = 0
-            Y2mm = 0
-            Y1v = 0
-            Y2v = 0
-            Sen = 0
-            Cam = 0
-            glp = 0
-            sts = 0
+            pass
 
-    return Y1mm, Y2mm, Y1v, Y2v, Sen/1000, Cam/1000, glp, sts
+    return Y1mm, Y2mm, Y1v, Y2v, Sen/1000, Cam/1000, glp, sts, DefE, DefP, DefAc

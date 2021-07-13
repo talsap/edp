@@ -69,7 +69,7 @@ class MotorThread(Thread):
         while i <3 and cond == True:
             i = i+1
             time.sleep(1)
-            wx.CallAfter(pub.sendMessage, "update", msg="...golpe teste")
+            wx.CallAfter(pub.sendMessage, "update", msg="golpe teste...")
             con.modeG(1,1)
             time.sleep(15)
             valor = con.ColetaI()
@@ -88,7 +88,7 @@ class MotorThread(Thread):
             else:
                 cond = False
                 wx.CallAfter(pub.sendMessage, "update", msg="teste")
-                wx.CallAfter(pub.sendMessage, "update", msg="...ok")
+                wx.CallAfter(pub.sendMessage, "update", msg="_ok_")
                 wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
 
         if i == 1:
@@ -102,7 +102,7 @@ class MotorThread(Thread):
             wx.CallAfter(pub.sendMessage, "update", msg="")
             wx.CallAfter(pub.sendMessage, "update", msg="")
             wx.CallAfter(pub.sendMessage, "update", msg="")
-            
+
     #-------------------------------------------------------------------
     def ret(self):
         Thread.join(self)

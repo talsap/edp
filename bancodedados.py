@@ -12,8 +12,16 @@ connection = sqlite3.connect('banco.db', check_same_thread = False)
 c = connection.cursor()
 
 def create_table():
-    c.execute('CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, identificador text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, interesse text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, energia real, distAp real, obs text)')
+    c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, identificador text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, interesse text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, energia real, distAp real, obs text)")
     c.execute("CREATE TABLE IF NOT EXISTS calibrador (id INTEGER PRIMARY KEY AUTOINCREMENT, A0 real, B0 real, A1 real, B1 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS dados (idt text, x real, y real, pc real, pg real)")
+
+
+def save(idt, x, y, pc, pg):
+    c.execute("begin")
+    c.execute("INSERT INTO dados (idt, x, y, pc, pg) VALUES (?, ?, ?, ?, ?)", (idt, x, y, pc, pg))
+    connection.commit()
+    c.execute("commit")
 
 def data_entry():
     try:
