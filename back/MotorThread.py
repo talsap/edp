@@ -91,6 +91,18 @@ class MotorThread(Thread):
                 wx.CallAfter(pub.sendMessage, "update", msg="...ok")
                 wx.CallAfter(pub.sendMessage, "update", msg="σd - ok")
 
+        if i == 1:
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+
+        if i == 2:
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            
     #-------------------------------------------------------------------
     def ret(self):
         Thread.join(self)
