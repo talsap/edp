@@ -155,8 +155,8 @@ class TopPanel(wx.Panel):
                 self._self.bottom.Ciclo.Clear()
 
                 if Fase == 'CONDICIONAMENTO':
-                    self._self.bottom.PCalvo.AppendText(str(10*VETOR_COND[self._ciclo][0]))
-                    self._self.bottom.SigmaAlvo.AppendText(str(10*VETOR_COND[self._ciclo][1]))
+                    self._self.bottom.PCalvo.AppendText(str(VETOR_COND[self._ciclo][0]))
+                    self._self.bottom.SigmaAlvo.AppendText(str(VETOR_COND[self._ciclo][1]))
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
                     threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
@@ -173,8 +173,8 @@ class TopPanel(wx.Panel):
                         self.avanca.Disable()
 
                 if Fase == 'MR':
-                    self._self.bottom.PCalvo.AppendText(str(10*VETOR_MR[self._ciclo][0]))
-                    self._self.bottom.SigmaAlvo.AppendText(str(10*VETOR_MR[self._ciclo][1]))
+                    self._self.bottom.PCalvo.AppendText(str(VETOR_MR[self._ciclo][0]))
+                    self._self.bottom.SigmaAlvo.AppendText(str(VETOR_MR[self._ciclo][1]))
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
                     threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1], A1, A2)
@@ -414,8 +414,8 @@ class BottomPanel(wx.Panel):
 
             texto1 = wx.StaticText(self, label = "EIXO Y", style = wx.ALIGN_CENTRE)
             texto2 = wx.StaticText(self, label = "EIXO Y (mm)", style = wx.ALIGN_CENTRE)
-            texto3 = wx.StaticText(self, label = "σ3 - Tensão confinante (Bar)", style = wx.ALIGN_CENTRE)
-            texto4 = wx.StaticText(self, label = "σd - Tensão desvio (Bar)", style = wx.ALIGN_CENTRE)
+            texto3 = wx.StaticText(self, label = "σ3 - Tensão confinante (MPa)", style = wx.ALIGN_CENTRE)
+            texto4 = wx.StaticText(self, label = "σd - Tensão desvio (MPa)", style = wx.ALIGN_CENTRE)
             texto5 = wx.StaticText(self, label = "Y1 (V)", style = wx.ALIGN_CENTER)
             texto6 = wx.StaticText(self, label = "Y2 (V)", style = wx.ALIGN_CENTER)
             texto7 = wx.StaticText(self, label = "Y1 (mm)", style = wx.ALIGN_CENTER)
@@ -854,8 +854,8 @@ class BottomPanel(wx.Panel):
                         self.y2mm.AppendText(str(round((valores[1]-self.leituraZerob2), 4)))
                         self.y1V.AppendText(str(round((valores[2]), 2)))
                         self.y2V.AppendText(str(round((valores[3]), 2)))
-                        self.PCreal.AppendText(str(round((valores[5]), 2)))
-                        self.SigmaReal.AppendText(str(round((valores[4]), 2)))
+                        self.PCreal.AppendText(str(round((valores[5]/10), 3)))
+                        self.SigmaReal.AppendText(str(round((valores[4]/10), 3)))
                         if condition == True:
                             self.GolpeAtual.Clear()
                             self.GolpeAtual.AppendText(str(int(valores[6])))
@@ -916,8 +916,8 @@ class BottomPanel(wx.Panel):
                 self.Ciclo.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
-                self.PCalvo.AppendText(str(10*VETOR_COND[self._ciclo][0]))
-                self.SigmaAlvo.AppendText(str(10*VETOR_COND[self._ciclo][1]))
+                self.PCalvo.AppendText(str(VETOR_COND[self._ciclo][0]))
+                self.SigmaAlvo.AppendText(str(VETOR_COND[self._ciclo][1]))
                 self.NGolpes.AppendText(str(500))
                 self.Ciclo.AppendText(str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
@@ -971,8 +971,8 @@ class BottomPanel(wx.Panel):
                 self.Ciclo.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
-                self.PCalvo.AppendText(str(10*VETOR_MR[self._ciclo][0]))
-                self.SigmaAlvo.AppendText(str(10*VETOR_MR[self._ciclo][1]))
+                self.PCalvo.AppendText(str(VETOR_MR[self._ciclo][0]))
+                self.SigmaAlvo.AppendText(str(VETOR_MR[self._ciclo][1]))
                 self.NGolpes.AppendText(str(10))
                 self.Ciclo.AppendText(str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
