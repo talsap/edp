@@ -10,7 +10,9 @@ import bancodedados
 import back.save as s
 import back.connection as con
 import matplotlib.pyplot as plt
+import back.MyProgressDialog as My
 import back.MotorThread as MotorThread
+import back.CamaraThread as CamaraThread
 import back.ConexaoThread as ConexaoThread
 from drawnow import *
 from front.quadrotensoes import quadro
@@ -827,7 +829,7 @@ class BottomPanel(wx.Panel):
         '''Função responsável em realizar a CONECÇÃO'''
         def LTESTE(self, event):
             threadConection = ConexaoThread.ConexaoThread()
-            dlg = ConexaoThread.MyProgressDialog(2)
+            dlg = My.MyProgressDialog(2)
             dlg.ShowModal()
             cond = threadConection.ret()
             if cond[0] == 'connectado':
@@ -835,18 +837,21 @@ class BottomPanel(wx.Panel):
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                 menssagError.ShowModal()
                 menssagError.Destroy()
+                con.modeI()
                 self.LTeste.Disable()
                 self.LZero.Enable()
-                con.modeI()
+
                 #--------------------------------------------------
                 def worker(self):
                     global condition
+                    global conditionEnsaio
                     global Fase
                     global Ti
                     global X
                     global Y
                     global H
-                    condition = False
+                    condition = True
+                    conditionEnsaio = False
                     cnt = 0
                     cont = 0
                     cont1 = 0
@@ -854,53 +859,57 @@ class BottomPanel(wx.Panel):
                     self.leituraZerob1 = 0
                     self.leituraZerob2 = 0
                     while True:
-                        valores = con.ColetaI()
-                        if cont1 > 3:
-                            self.y1mm.Clear()
-                            self.y2mm.Clear()
-                            self.y1V.Clear()
-                            self.y2V.Clear()
-                            self.PCreal.Clear()
-                            self.SigmaReal.Clear()
-                            self.valorLeitura0 = valores[0]
-                            self.valorLeitura1 = valores[1]
-                            self.y1mm.AppendText(str(round((valores[0]-self.leituraZerob1), 4)))
-                            self.y2mm.AppendText(str(round((valores[1]-self.leituraZerob2), 4)))
-                            self.y1V.AppendText(str(round((valores[2]), 2)))
-                            self.y2V.AppendText(str(round((valores[3]), 2)))
-                            self.PCreal.AppendText(str(round((valores[5]/10), 3)))
-                            self.SigmaReal.AppendText(str(round((valores[4]/10), 3)))
-                            if cont1 == 3:
-                                cont1 = 0
-                        cont1 += 1
-                        if condition == True:
-                            if cont >= 3:
-                                self.defElastica.Clear()
-                                self.defPlastica.Clear()
-                                self.defPAcum.Clear()
-                                self.AlturaFinal.Clear()
-                                self.DefCritica.Clear()
-                                self.defElastica.AppendText(str(round((valores[8]), 3)))
-                                self.defPlastica.AppendText(str(round((valores[9]), 3)))
-                                self.defPAcum.AppendText(str(round((valores[10]), 3)))
-                                self.AlturaFinal.AppendText(str(round(H-(valores[0]-self.leituraZerob1), 2)))
-                                self.DefCritica.AppendText(str(round((valores[10]), 3)))
-                                if cont == 3:
-                                    cont = 0
-                            cont += 1
-                            if int(valores[6]) != GolpeAnterior:
-                                GolpeAnterior = int(valores[6])
-                                self.GolpeAtual.Clear()
-                                self.GolpeAtual.AppendText(str(int(valores[6])))
-                            if valores[0] != 0:
-                                X = np.append(X, valores[6])
-                                Y = np.append(Y, (valores[0]-self.leituraZerob1))
-                                cnt = len(X)
-                                if cnt >= 60:
-                                    X = np.delete(X, 0, 0)
-                                    Y = np.delete(Y, 0, 0)
-                                xz.append(time.time()-Ti)
-                                yz.append(valores[0])
+                        while condition == True:
+                            valores = con.ColetaI()
+                            if cont1 >= 5:
+                                self.y1mm.Clear()
+                                self.y2mm.Clear()
+                                self.y1V.Clear()
+                                self.y2V.Clear()
+                                self.PCreal.Clear()
+                                self.SigmaReal.Clear()
+                                self.valorLeitura0 = valores[0]
+                                self.valorLeitura1 = valores[1]
+                                self.y1mm.AppendText(str(round((valores[0]-self.leituraZerob1), 4)))
+                                self.y2mm.AppendText(str(round((valores[1]-self.leituraZerob2), 4)))
+                                self.y1V.AppendText(str(round((valores[2]), 2)))
+                                self.y2V.AppendText(str(round((valores[3]), 2)))
+                                self.PCreal.AppendText(str(round((valores[5]), 3)))
+                                self.SigmaReal.AppendText(str(round((valores[4]), 3)))
+                                if cont1 == 5:
+                                    cont1 = 0
+                            cont1 = cont1 + 1
+
+                            if conditionEnsaio == True:
+                                if cont >= 3:
+                                    self.defElastica.Clear()
+                                    self.defPlastica.Clear()
+                                    self.defPAcum.Clear()
+                                    self.AlturaFinal.Clear()
+                                    self.DefCritica.Clear()
+                                    self.defElastica.AppendText(str(round((valores[8]), 3)))
+                                    self.defPlastica.AppendText(str(round((valores[9]), 3)))
+                                    self.defPAcum.AppendText(str(round((valores[10]), 3)))
+                                    self.AlturaFinal.AppendText(str(round(H-(valores[0]-self.leituraZerob1), 2)))
+                                    self.DefCritica.AppendText(str(round((valores[10]), 3)))
+                                    if cont == 3:
+                                        cont = 0
+                                cont += 1
+                                if int(valores[6]) != GolpeAnterior:
+                                    GolpeAnterior = int(valores[6])
+                                    self.GolpeAtual.Clear()
+                                    self.GolpeAtual.AppendText(str(int(valores[6])))
+                                if valores[0] != 0:
+                                    X = np.append(X, time.time()-Ti)
+                                    Y = np.append(Y, (valores[0]-self.leituraZerob1))
+                                    cnt = len(X)
+                                    if cnt >= 60:
+                                        X = np.delete(X, 0, 0)
+                                        Y = np.delete(Y, 0, 0)
+                                    xz.append(time.time()-Ti)
+                                    yz.append(valores[0])
+
+
 
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
@@ -966,8 +975,14 @@ class BottomPanel(wx.Panel):
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 dlg.ShowModal()
 
-            '''if self._ciclo < 3:
-                threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
+            if self._ciclo < 3:
+                condition = False
+                threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], A1, A2)
+                dlgC1 = My.MyProgressDialog(4)
+                dlgC1.ShowModal()
+                time.sleep(1)
+                condition = True
+                '''threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
                 dlg2 = MotorThread.MyProgressDialog(14)
                 dlg2.ShowModal()'''
 
@@ -1060,7 +1075,7 @@ class BottomPanel(wx.Panel):
 class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME', size = (1000,700), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME - telas1', size = (1000,700), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
             try:
