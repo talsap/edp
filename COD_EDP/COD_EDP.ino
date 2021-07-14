@@ -128,27 +128,31 @@ void loop(void) {
         Serial.flush();
         Serial.println("DNIT134");
         while(true){
-          leitura = Serial.read();
-          imprimir();
-          if(leitura == 'B'){
-            Serial.flush();
-            Serial.println("BREAK");
-            break;
-          }
-          if(leitura == 'E'){
-            Serial.flush();
-            Serial.println("CAMARA");
-            goto camara;
-          }
-          if(leitura == 'M'){
-            Serial.flush();
-            Serial.println("MOTOR");
-            goto motor;
-          }
-          if(leitura == 'G'){
-            Serial.flush();
-            Serial.println("GOLPES");
-            goto golpes;
+          while(Serial.available()>0){
+            leitura = Serial.read();
+            if(leitura == 'B'){
+              Serial.flush();
+              Serial.println("BREAK");
+              break;
+            }
+            if(leitura == 'E'){
+              Serial.flush();
+              Serial.println("CAMARA");
+              goto camara;
+            }
+            if(leitura == 'M'){
+              Serial.flush();
+              Serial.println("MOTOR");
+              goto motor;
+            }
+            if(leitura == 'G'){
+              Serial.flush();
+              Serial.println("GOLPES");
+              goto golpes;
+            }
+            if(leitura == '0'){
+              imprimir();
+            }
           }
         }
         break;
@@ -159,7 +163,6 @@ void loop(void) {
         Serial.flush();
         Serial.println("VALORCAMARA"); 
         while(true){
-          imprimir();
           ad3 = analogRead(A3);
           vd3 = ad3*bit12_Voltage*1000;
           
@@ -177,6 +180,9 @@ void loop(void) {
             if(setpoint2 == -1){
               goto sensorLVDTDNIT134;
             }
+            if(setpoint2 == 0){
+              imprimir();
+            }
           }
         }
         break;
@@ -187,7 +193,6 @@ void loop(void) {
         Serial.flush();
         Serial.println("VALORMOTOR"); 
         while(true){
-          imprimir();
           ad2 = analogRead(A2);
           vd2 = ad2*bit12_Voltage*1000;
           
@@ -216,6 +221,9 @@ void loop(void) {
               delay(200);
               digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
               setpoint1 = 120;
+            }
+            if(setpoint1 == 0){
+              imprimir();
             }
             else{
               setpointM = setpoint1/3.3f;     //valor do setpoint em milibar (0 - 10.000)mBar
@@ -246,7 +254,6 @@ void loop(void) {
         golpes:
         //RESPONSAVEL EM COLETAR A QUANTIDADE TOTAL DE GOLPES//
         while(true){ 
-          imprimir();
           if(Serial.available()>1){
             ntotalGolpes = Serial.parseInt();
             if(ntotalGolpes > 0){
@@ -258,12 +265,14 @@ void loop(void) {
             if(ntotalGolpes == -3){
               goto sensorLVDTDNIT134;
             }
+            if(ntotalGolpes == 0){
+              imprimir();
+            }
           }
         }
         //RESPONSAVEL EM COLETAR A FREQUENCIA DOS GOLPES//
         while(true){
-          imprimir();
-          if(Serial.available()>=1){
+          if(Serial.available()>1){
             frequencia = Serial.parseInt();
             if(frequencia > 0){
               Serial.flush();
@@ -271,8 +280,11 @@ void loop(void) {
               Serial.println(frequencia);
               break;
             }
-            if(ntotalGolpes == -3){
+            if(frequencia == -3){
               goto sensorLVDTDNIT134;
+            }
+            if(frequencia == 0){
+              imprimir();
             }
           }
         }
@@ -286,18 +298,7 @@ void loop(void) {
           initialMillis = resultTempo.t;
           nGolpe = resultTempo.n;
           pin = resultTempo.p;
-          imprimir();
           if(nGolpe == ntotalGolpes+1){
-            imprimir();
-            imprimir();
-            imprimir();
-            imprimir();
-            imprimir();
-            imprimir();
-            imprimir();
-            imprimir();
-            imprimir();
-            imprimir();
             nGolpe = 0;
             goto sensorLVDTDNIT134;
           }
@@ -309,9 +310,12 @@ void loop(void) {
             statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
           }
 
-          if (Serial.available()>1){  
+          if (Serial.available()> 1){  
             //aguarda o valor na serial e se for -3 "para" o ensaio//
             botoes = Serial.parseInt();
+            if(botoes == 0){
+              imprimir();
+            }
             if(botoes == -3){
               pararEnsaio:
               nGolpe = 0;
@@ -321,10 +325,12 @@ void loop(void) {
             //aguarda o valor na serial. e se for -4 pausa o ensaio//
             if(botoes == -4){
               while(true){
-                imprimir();
-                if (Serial.available()>1){
+                if (Serial.available()> 1){
                   botoes = Serial.parseInt();
                   //aguarda o valor na serial. e se for -1 continua o ensaio de onde parou//
+                  if(botoes == 0){
+                    imprimir();
+                  }
                   if(botoes == -1){
                     break;
                   }
@@ -397,7 +403,7 @@ void imprimir(){
   Serial.print(",");
   Serial.print(vd3*3.3f);
   Serial.print(",");
-  Serial.print(nGolpe);
+  Serial.print(float(nGolpe)+float(currentMillis - initialMillis)/1000);
   Serial.print(",");
   Serial.print(statuS);
   Serial.print(",");
@@ -405,8 +411,9 @@ void imprimir(){
   Serial.print(",");
   Serial.print(defP);
   Serial.print(",");
-  Serial.println(defAc);  
-  delay(1);
+  Serial.print(defAc);
+  Serial.print(",");
+  Serial.println(defMax);    
 }/* Imprimir dados na tela */
 
 
