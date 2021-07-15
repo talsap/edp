@@ -30,7 +30,6 @@ float InputRange_code = 3.3f; //valor do ImputRange 3.3V
 float ValMilivolt; //Valor do sensor de pressao em mBar
 float setpointM; //Valor do setpointM
 float setpointC; //Valor do setpointC  
-float botoes; //Acoes do botoes pausar, parar e continuar o ensaio
 float ad0; //valor analógico do LVDT1
 float ad1; //valor analógico do LVDT2
 float ad2; //valor analógico do sensor de pressão (Aplicador)
@@ -57,6 +56,7 @@ unsigned long currentMillis; //variacao do tempo em milisegundos
 unsigned long initialMillis; //tempo incial dinamico
 unsigned char conexao;  //tipos de conexoes
 unsigned char leitura;  //ler dado na porta serial
+unsigned char botoes;  //Acoes do botoes pausar, parar e continuar o ensaio
 boolean pin; //pin ativado ou desativado
 
 /* Estrutura da função S */
@@ -70,7 +70,7 @@ Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 
 /* Inicializacao da serial */
 void setup(void) {
-  Serial.begin(115200); //velocidade de cominicacao com a porta serial
+  Serial.begin(250000); //velocidade de cominicacao com a porta serial
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
   analogWrite(DAC0, 1); //pino responsavel em alterar a pressao de (Camara)
@@ -125,8 +125,8 @@ void loop(void) {
       //caso receba I (acessa o ensaio da norma DNIT134)
       if(condConect == 1){  
         //****************************//
-        sensorLVDTDNIT134:
         Serial.println("DNIT134");
+        sensorLVDTDNIT134:
         serialFlush();
         while(true){
           while(Serial.available()>0){
@@ -188,13 +188,11 @@ void loop(void) {
         //***********************//
         motor:
         //MOTOR DE PASSOS//
-        Serial.println("VALORMOTOR");
-        serialFlush();
         while(true){
           ad2 = analogRead(A2);
           vd2 = ad2*bit12_Voltage*1000;
           
-          if(Serial.available()>1){
+          if(Serial.available()>0){
             setpoint1 = Serial.parseInt();
             if(setpoint1 > 5){   
               Serial.print("CHEGOU="); 
@@ -204,11 +202,11 @@ void loop(void) {
               serialFlush();
               condicao = 1;
             }
-            if(setpoint1 == -1){
+            if(setpoint1 == 1){
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
-            if(setpoint1 == -2){
+            if(setpoint1 == 2){
               digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
               delay(200);
               digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
@@ -251,7 +249,7 @@ void loop(void) {
         golpes:
         //RESPONSAVEL EM COLETAR A QUANTIDADE TOTAL DE GOLPES//
         while(true){ 
-          if(Serial.available()>0){
+          if(Serial.available()>1){
             ntotalGolpes = Serial.parseInt();
             if(ntotalGolpes > 0){
               Serial.print("NGOLPES="); 
@@ -265,7 +263,7 @@ void loop(void) {
         }
         //RESPONSAVEL EM COLETAR A FREQUENCIA DOS GOLPES//
         while(true){
-          if(Serial.available()>0){
+          if(Serial.available()>=1){
             frequencia = Serial.parseInt();
             if(frequencia > 0){
               Serial.print("FREQ="); 
@@ -287,7 +285,7 @@ void loop(void) {
           initialMillis = resultTempo.t;
           nGolpe = resultTempo.n;
           pin = resultTempo.p;
-          if(nGolpe == ntotalGolpes+1){
+          if(nGolpe == ntotalGolpes){
             nGolpe = 0;
             goto sensorLVDTDNIT134;
           }
@@ -299,32 +297,32 @@ void loop(void) {
             statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
           }
 
-          if (Serial.available()> 1){  
+          if (Serial.available()> 0){  
             //aguarda o valor na serial e se for -3 "para" o ensaio//
-            botoes = Serial.parseInt();
-            if(botoes == 0){
+            botoes = Serial.read();
+            if(botoes == '0'){
               imprimir();
             }
-            if(botoes == -3){
+            if(botoes == '3'){
               pararEnsaio:
               nGolpe = 0;
               statuS = 0;
               goto sensorLVDTDNIT134;
             }
             //aguarda o valor na serial. e se for -4 pausa o ensaio//
-            if(botoes == -4){
+            if(botoes == '4'){
               while(true){
-                if (Serial.available()> 1){
-                  botoes = Serial.parseInt();
+                if (Serial.available()> 0){
+                  botoes = Serial.read();
                   //aguarda o valor na serial. e se for -1 continua o ensaio de onde parou//
-                  if(botoes == 0){
+                  if(botoes == '0'){
                     imprimir();
                   }
-                  if(botoes == -1){
+                  if(botoes == '1'){
                     break;
                   }
                   //aguarda o valor na serial. e se for -3 "para" o ensaio//
-                  if(botoes == -3){
+                  if(botoes == '3'){
                     goto pararEnsaio;
                   }
                 }
