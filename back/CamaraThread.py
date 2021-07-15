@@ -9,12 +9,13 @@ from threading import Thread
 '''MotorThread'''
 class CamaraThread(Thread):
     #-------------------------------------------------------------------
-    def __init__(self, p1, A1, A2):
+    def __init__(self, p1, A1, A2, p1Ant):
         Thread.__init__(self)
         self.start()
         self.p1 = p1
         self.a1 = A1
         self.a2 = A2
+        self.p1Ant = p1Ant
 
     #-------------------------------------------------------------------
     def run(self):
@@ -23,13 +24,12 @@ class CamaraThread(Thread):
         con.modeE()
         wx.CallAfter(pub.sendMessage, "update", msg="       Regulando...")
         time.sleep(1)
-        valor2 = con.modeCAM(10000*self.p1)
-        if valor2 == 'p2ok':
-            print 'PRESSAO CAMARA OK'               
+        valor2 = con.modeCAM(10000*self.p1, self.p1Ant)
+        if valor2 == 'p1ok':
+            print 'PRESSAO CAMARA OK'
             wx.CallAfter(pub.sendMessage, "update", msg="            σ3 - ok")
             time.sleep(1)
 
-        wx.CallAfter(pub.sendMessage, "update", msg="")
     #-------------------------------------------------------------------
     def ret(self):
         Thread.join(self)

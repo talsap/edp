@@ -909,8 +909,6 @@ class BottomPanel(wx.Panel):
                                     xz.append(time.time()-Ti)
                                     yz.append(valores[0])
 
-
-
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
                 self.t.start()
@@ -977,14 +975,29 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo < 3:
                 condition = False
-                threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], A1, A2)
-                dlgC1 = My.MyProgressDialog(4)
+                if self._ciclo > 0:
+                    if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0]:
+                        threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], A1, A2, VETOR_COND[self._ciclo-1][0])
+                else:
+                    threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], A1, A2, 0)
+                dlgC1 = My.MyProgressDialog(3)
                 dlgC1.ShowModal()
+                dlgC1.Destroy()
+                time.sleep(1)
+
+                condition = True
+                time.sleep(2)
+                condition = False
+
+                threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][1], A1, A2)
+                dlgC2 = My.MyProgressDialog(15)
+                dlgC2.ShowModal()
+
+                if threadConection.ret() == False:
+                    dlgC3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
+                    dlgC3.ShowModal()
                 time.sleep(1)
                 condition = True
-                '''threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
-                dlg2 = MotorThread.MyProgressDialog(14)
-                dlg2.ShowModal()'''
 
             if self._ciclo == 0:
                 dlg3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Tudo pronto!", "Aperte INICIO.", "", None)

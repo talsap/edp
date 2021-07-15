@@ -100,6 +100,12 @@ def modeD():
 '''Ativando camara'''
 def modeE():
     conexao.write(opcaoE)
+    while (conexao.inWaiting() == 0):
+        pass
+    print (conexao.readline())
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
 
 #-------------------------------------------------------------------
 '''Conecxao com a DNIT134'''
@@ -108,75 +114,103 @@ def modeI():
     conexao.write(opcaoI)
     while (conexao.inWaiting() == 0):
         pass
-    L = conexao.readline()
+    print(conexao.readline())
     while (conexao.inWaiting() == 0):
         pass
-    L = conexao.readline()
-    print L
+    print(conexao.readline())
 
 #-------------------------------------------------------------------
 '''Aplica os Golpes'''
 def modeG(qtd, freq):
-    print "OPC G"
     conexao.write(opcaoG)
-    time.sleep(.5)
+    while (conexao.inWaiting() == 0):
+        pass
+    print (conexao.readline())
     conexao.write(str(int(round(qtd,0))))
+    while (conexao.inWaiting() == 0):
+        pass
+    print (conexao.readline())
     time.sleep(1)
     conexao.write(str(int(round(freq,0))))
+    while (conexao.inWaiting() == 0):
+        pass
+    print (conexao.readline())
+    while (conexao.inWaiting() == 0):
+        pass
+    print (conexao.readline())
+    time.sleep(1)
+
 
 #-------------------------------------------------------------------
 '''Camara de ar'''
-def modeCAM(p2):
-    incremental = p2/5
+def modeCAM(p1, p1Ant):
+    incremental = (p1 - p1Ant)/5
     i = 1
     time.sleep(1)
     while i <= 6:
-        conexao.write(str(int(round(incremental*i,0))))
-        print str(int(round(incremental*i,0)))
+        conexao.write(str(int(round((p1Ant + incremental*i),0))))
+        while (conexao.inWaiting() == 0):
+            pass
+        print (conexao.readline())
         time.sleep(1)
         i += 1
         if i == 6:
             conexao.write(str(-1))
-            return "p2ok"
+            while (conexao.inWaiting() == 0):
+                pass
+            print (conexao.readline())
+            return "p1ok"
             break
 
 #-------------------------------------------------------------------
 '''Ativando motor'''
 def modeM():
     conexao.write(opcaoM)
+    while (conexao.inWaiting() == 0):
+        pass
+    print (conexao.readline())
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
-def modeMotor(p1):
-    conexao.write(str(int(round(p1,0))))
+def modeMotor(p2):
+    conexao.write(str(int(round(p2,0))))
     while (conexao.inWaiting() == 0):
         pass
+    print(conexao.readline())
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
     contadorOK = 0
     time.sleep(.5)
     while True:
         while (conexao.inWaiting() == 0):
             pass
         a = conexao.readline()
-        #print a
         try:
             if a[0] == "o":
                 contadorOK += 1
                 if contadorOK == 25: #contadorOK igual a 25
                     conexao.write(str(-1))
-                    return "p1ok"
+                    while (conexao.inWaiting() == 0):
+                        pass
+                    print(conexao.readline())
+                    return "p2ok"
                     break
-            else: #else apenas para testes
-                time.sleep(5)
+            if a[0] == "n": #if apenas para testes
                 conexao.write(str(-1))
-                return "p1ok"
+                while (conexao.inWaiting() == 0):
+                    pass
+                print(conexao.readline())
+                return "p2ok"
                 break
         except:
             pass
 
 #-------------------------------------------------------------------
 def ColetaI():
-    conexao.flushInput()
-    #conexao.flushOutput()
     conexao.write(str(0))
     while (conexao.inWaiting() == 0):
         pass

@@ -31,6 +31,5 @@ class MyProgressDialog(wx.Dialog):
         if self.count < self.k:
             self.texto.SetLabel(msg)
         if self.count >= self.k:
-            self.progress.SetValue(self.count+1)
             self.Destroy()
         self.progress.SetValue(self.count)

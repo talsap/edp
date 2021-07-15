@@ -21,7 +21,7 @@ class ConexaoThread(Thread):
             wx.CallAfter(pub.sendMessage, "update", msg="          CONECTADO")
             self._return = 'connectado', valor[0]
         else:
-            print 'DESCONECTADO'                    
+            print 'DESCONECTADO'
             wx.CallAfter(pub.sendMessage, "update", msg="       DESCONECTADO")
             self._return = 'desconnectado'
 
