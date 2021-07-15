@@ -92,9 +92,11 @@ class BottomPanel(wx.Panel):
 		print(tmp)
 		self.y = np.append(self.y, int(tmp))
 		self.x = np.append(self.x, self.x_counter)
+		if self.x_counter >= 60:
+			self.x = np.delete(self.x , 0, 0)
+			self.y = np.delete(self.y, 0, 0)
 		self.x_counter += 1
 		self.graph.draw(self.x, self.y)
-		print self.y
 
 
 	def OnStartClick(self, event):
@@ -108,7 +110,7 @@ class BottomPanel(wx.Panel):
 
 		if self.serial_connection == False:
 			try:
-				self.serial_arduino = serial.Serial('COM3', 9600, timeout = 2)
+				self.serial_arduino = serial.Serial('COM5', 9600, timeout = 2)
 				time.sleep(2)
 				self.serial_arduino.write('i\n')
 				res = self.serial_arduino.readline()
@@ -129,6 +131,11 @@ class Main(wx.Frame):
 		splitter.SplitHorizontally(top, bottom)
 		splitter.SetMinimumPaneSize(400)
 		top.draw(0,0)
+
+
+
+
+
 
 
 

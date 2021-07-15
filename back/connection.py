@@ -23,7 +23,7 @@ T = []          #Array tempo grafico'''
 '''Port Serial'''
 portlist = [port for port,desc,hwin in list_ports.comports()]
 conexao = serial.Serial()
-conexao.baudrate = 115200
+conexao.baudrate = 250000
 
 '''Coeficientes da calibracao'''
 L = bancodedados.LVDT()
@@ -79,17 +79,17 @@ def connect():
 #-------------------------------------------------------------------
 '''Fim'''
 def modeF():
-    conexao.write(str(-3))  #O valor responsável em parar o ensaio é b
+    conexao.write(str(3))  #O valor responsável em parar o ensaio é 3
 
 #-------------------------------------------------------------------
 '''Continua'''
 def modeC():
-    conexao.write(str(-1))  #O valor responsável em continuar o ensaio é c
+    conexao.write(str(1))  #O valor responsável em continuar o ensaio é 1
 
 #-------------------------------------------------------------------
 '''Pausa'''
 def modeP():
-    conexao.write(str(-4))  #O valor responsável em pausar o ensaio é p
+    conexao.write(str(4))  #O valor responsável em pausar o ensaio é 4
 
 #-------------------------------------------------------------------
 '''Desconectando'''
@@ -135,11 +135,27 @@ def modeG(qtd, freq):
     while (conexao.inWaiting() == 0):
         pass
     print (conexao.readline())
-    while (conexao.inWaiting() == 0):
-        pass
-    print (conexao.readline())
-    time.sleep(1)
 
+#-------------------------------------------------------------------
+'''Camara de ar pressao zero'''
+def modeCAMZERO(p1, p1Sen):
+    incremental = p1Sen/5
+    i = 4
+    time.sleep(1)
+    while i <= 4 and i >= 0:
+        conexao.write(str(int(round((p1 + incremental*i),0))))
+        while (conexao.inWaiting() == 0):
+            pass
+        print (conexao.readline())
+        time.sleep(1)
+        i = i - 1
+        if i == 0:
+            conexao.write(str(-1))
+            while (conexao.inWaiting() == 0):
+                pass
+            print (conexao.readline())
+            return "p1ok"
+            break
 
 #-------------------------------------------------------------------
 '''Camara de ar'''
@@ -156,9 +172,6 @@ def modeCAM(p1, p1Ant):
         i += 1
         if i == 6:
             conexao.write(str(-1))
-            while (conexao.inWaiting() == 0):
-                pass
-            print (conexao.readline())
             return "p1ok"
             break
 
@@ -169,9 +182,17 @@ def modeM():
     while (conexao.inWaiting() == 0):
         pass
     print (conexao.readline())
+
+#-------------------------------------------------------------------
+'''Ativando motor'''
+def modeBuffer():
     while (conexao.inWaiting() == 0):
         pass
-    print(conexao.readline())
+    a = conexao.readline()
+    print a
+    if a[0] == 'F':
+        print "asadas"
+        return True
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
@@ -189,23 +210,18 @@ def modeMotor(p2):
         while (conexao.inWaiting() == 0):
             pass
         a = conexao.readline()
+        print a
         try:
             if a[0] == "o":
                 contadorOK += 1
                 if contadorOK == 25: #contadorOK igual a 25
-                    conexao.write(str(-1))
-                    while (conexao.inWaiting() == 0):
-                        pass
-                    print(conexao.readline())
+                    conexao.write(str(1))
                     return "p2ok"
                     break
-            if a[0] == "n": #if apenas para testes
+            '''if a[0] == "n": #if apenas para testes
                 conexao.write(str(-1))
-                while (conexao.inWaiting() == 0):
-                    pass
-                print(conexao.readline())
                 return "p2ok"
-                break
+                break'''
         except:
             pass
 

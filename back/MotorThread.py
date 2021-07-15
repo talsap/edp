@@ -38,9 +38,14 @@ class MotorThread(Thread):
             wx.CallAfter(pub.sendMessage, "update", msg="     golpe teste...")
             con.modeG(1,1)
             time.sleep(10)
+            while True:
+                a = con.modeBuffer()
+                if a == True:
+                    break
+
             val = con.ColetaI()
             print val[4]
-            if val[4] < (10*self.p2 - 1*self.p2):
+            if val[4] < (self.p2 - self.p2/10):
                 cond = True
                 wx.CallAfter(pub.sendMessage, "update", msg="  Ativando motor...")
                 time.sleep(1)
