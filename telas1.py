@@ -7,10 +7,10 @@ import threading
 import matplotlib
 import numpy as np
 import bancodedados
-import back.save as s
 import back.connection as con
 import matplotlib.pyplot as plt
 import back.MyProgressDialog as My
+import back.SaveThread as SaveThread
 import back.MotorThread as MotorThread
 import back.CamaraThread as CamaraThread
 import back.ConexaoThread as ConexaoThread
@@ -37,10 +37,17 @@ global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 A2 = 0.007854
 A1 = 0.007854
 H = 200
+idt = '-DNIT134-01-'
 X = np.array([])
 Y = np.array([])
-xz = []
-yz = []
+xz1 = []
+yz1 = []
+pc1 = []
+pg1 = []
+xmr = []
+ymr = []
+pcmr = []
+pgmr = []
 Fase = ''
 
 VETOR_COND = [[0.070,0.070],
@@ -236,7 +243,6 @@ class TopPanel(wx.Panel):
         def INICIO(self, event):
             global condition
             global conditionEnsaio
-            global Ti
             self.fim_inicio.Disable()
             self.avanca.Disable()
             condition = False
@@ -247,14 +253,14 @@ class TopPanel(wx.Panel):
             #time.sleep(0.5)
             condition = True
             conditionEnsaio = True
-            Ti = time.time()
             self._self.bottom.timer.Start(int('3000'))
             self.pausa.Enable()
             self.fim_inicio.SetLabel('FIM')
             self.Bind(wx.EVT_BUTTON, self.FIM, self.fim_inicio)
             #--------------------------------------------------
-            '''def worker1(self):
+            def worker1(self):
                 global condition
+                global conditionEnsaio
                 global Fase
                 global X
                 global Y
@@ -263,12 +269,14 @@ class TopPanel(wx.Panel):
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == 500:
-                                print len(xz)
+                            if valorGolpe == 499:
+                                print len(xz1)
+                                time.sleep(2)
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
                                 condition = False
+                                conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
                                 self.axes.clear()
@@ -288,11 +296,14 @@ class TopPanel(wx.Panel):
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == 11:
+                            if valorGolpe == 9:
+                                print len(xz1)
+                                time.sleep(2)
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
                                 condition = False
+                                conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
                                 self.axes.clear()
@@ -309,7 +320,7 @@ class TopPanel(wx.Panel):
                             pass
             #--------------------------------------------------
             self.t1 = threading.Thread(target=worker1, args=(self,))
-            self.t1.start()'''
+            self.t1.start()
 
     #--------------------------------------------------
         '''Função FIM'''
@@ -885,15 +896,26 @@ class BottomPanel(wx.Panel):
                                     cont1 = 0
                             cont1 = cont1 + 1
 
-                            if conditionEnsaio == True:
-                                X = np.append(X, valores[6])
+                            if conditionEnsaio == True and valores[6] > 0:
+                                X = np.append(X, valores[6]/(float(self.freq.GetValue())))
                                 Y = np.append(Y, (valores[0]-self.leituraZerob1))
                                 cnt = len(X)
                                 if cnt >= 320:
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
-                                xz.append(valores[6])
-                                yz.append(valores[0])
+
+                                if Fase == 'CONDICIONAMENTO':
+                                    if int(valores[6]) > 489 and int(valores[6]) < 501:
+                                        xz1.append(valores[6]/(float(self.freq.GetValue())))
+                                        yz1.append(valores[0])
+                                        pc1.append(valores[5])
+                                        pg1.append(valores[4])
+                                if Fase == 'MR':
+                                    if int(valores[6]) > 0:
+                                        xmr.append(valores[6]/(float(self.freq.GetValue())))
+                                        ymr.append(valores[0])
+                                        pcmr.append(valores[5])
+                                        pgmr.append(valores[4])
 
                                 if cont >= 8:
                                     self.defElastica.Clear()
@@ -913,7 +935,8 @@ class BottomPanel(wx.Panel):
                                     GolpeAnterior = int(valores[6])
                                     self.GolpeAtual.Clear()
                                     self.GolpeAtual.AppendText(str(int(valores[6])))
-                                    print len(xz)
+                                    #print len(xz)
+
 
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
@@ -940,7 +963,6 @@ class BottomPanel(wx.Panel):
             self.leituraZerob2 = float(self.valorLeitura1)
             print self.leituraZerob1
             print self.leituraZerob2
-            print xz
 
     #--------------------------------------------------
         '''Função responsável em mostrar o quadro dinâmico de tensões'''
@@ -979,6 +1001,15 @@ class BottomPanel(wx.Panel):
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 dlg.ShowModal()
+
+            if self._ciclo > 0:
+                threadConection = SaveThread.SaveThread("COND"+idt+str(self._ciclo-1), xz1, yz1, pc1, pg1)
+                dlgC2 = My.MyProgressDialog(len(xz1))
+                dlgC2.ShowModal()
+                xz1 = []
+                yz1 = []
+                pc1 = []
+                pg1 = []
 
             if self._ciclo < 3:
                 condition = False
@@ -1061,6 +1092,15 @@ class BottomPanel(wx.Panel):
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 dlg.ShowModal()
+
+            if self._ciclo > 0:
+                threadConection = SaveThread.SaveThread("MR"+idt+str(self._ciclo-1), xmr, ymr, pcmr, pgmr)
+                dlgC2 = My.MyProgressDialog(len(xmr))
+                dlgC2.ShowModal()
+                xmr = []
+                ymr = []
+                pcmr = []
+                pgmr = []
 
             if self._ciclo < 17:
                 condition = False
