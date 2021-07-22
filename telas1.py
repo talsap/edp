@@ -31,6 +31,14 @@ global A1 #área da seção do cilindro pneumático
 global H  #Altura do corpo de prova
 global X  #valores X do gráfico
 global Y  #valores Y do gráfico
+global xz1
+global yz1
+global pc1
+global pg1
+global xmr
+global ymr
+global pcmr
+global pgmr
 global Ti #valor temporal
 global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 
@@ -211,9 +219,9 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função PAUSA'''
         def PAUSA(self, event):
-            global condition
+            global conditionEnsaio
             con.modeP()
-            condition = False
+            conditionEnsaio = False
             self._self.bottom.timer.Stop()
             self.continua.Enable()
             self.fim_inicio.Enable()
@@ -223,7 +231,7 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função CONTINUA'''
         def CONTINUA(self, event):
-            global condition
+            global conditionEnsaio
             global Ti
             global X
             k = len(X)-1
@@ -232,7 +240,7 @@ class TopPanel(wx.Panel):
             self._self.bottom.timer.Start(int('250'))
             time.sleep(1)
             Ti = time.time() - xt
-            condition = True
+            conditionEnsaio = True
             self.pausa.Enable()
             self.fim_inicio.Disable()
             self.continua.Disable()
@@ -270,8 +278,7 @@ class TopPanel(wx.Panel):
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             if valorGolpe == 499:
-                                print len(xz1)
-                                time.sleep(2)
+                                time.sleep(3)
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
@@ -297,8 +304,7 @@ class TopPanel(wx.Panel):
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             if valorGolpe == 9:
-                                print len(xz1)
-                                time.sleep(2)
+                                time.sleep(3)
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
@@ -866,6 +872,14 @@ class BottomPanel(wx.Panel):
                     global X
                     global Y
                     global H
+                    global xz1
+                    global yz1
+                    global pc1
+                    global pg1
+                    global xmr
+                    global ymr
+                    global pcmr
+                    global pgmr
                     condition = True
                     conditionEnsaio = False
                     cnt = 0
@@ -974,6 +988,10 @@ class BottomPanel(wx.Panel):
         def CONDIC(self, event):
             global condition
             global Fase
+            global xz1
+            global yz1
+            global pc1
+            global pg1
             Fase = 'CONDICIONAMENTO'
             self.erro == False
             print self._ciclo
@@ -1065,6 +1083,10 @@ class BottomPanel(wx.Panel):
         def MR(self, event):
             global condition
             global Fase
+            global xmr
+            global ymr
+            global pcmr
+            global pgmr
             Fase = 'MR'
             self.erro == False
             print self._ciclo
@@ -1158,7 +1180,7 @@ class BottomPanel(wx.Panel):
             dlgC1 = My.MyProgressDialog(3)
             dlgC1.ShowModal()
             time.sleep(1)
-            threadConection = MotorThread.MotorThread(0.013, A1, A2)  #0.013 é o menor valor de pressão admissível para SI do motor de passos
+            threadConection = MotorThread.MotorThread(0.034, A1, A2)  #0.034 é o menor valor de pressão admissível para SI do motor de passos
             dlg2 = My.MyProgressDialog(15)
             dlg2.ShowModal()
 

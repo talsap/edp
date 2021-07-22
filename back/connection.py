@@ -191,7 +191,7 @@ def modeBuffer():
     a = conexao.readline()
     print a
     if a[0] == 'F':
-        print "asadas"
+        print "BufferLimpo"
         return True
 
 #-------------------------------------------------------------------
