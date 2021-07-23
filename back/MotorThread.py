@@ -38,10 +38,49 @@ class MotorThread(Thread):
             wx.CallAfter(pub.sendMessage, "update", msg="     golpe teste...")
             con.modeG(1,1)
             time.sleep(10)
+            kj = 0
             while True:
+                kj += 1
                 a = con.modeBuffer()
                 if a == True:
                     break
+                if kj > 500:
+                    break
+
+            kj = 0
+            try:
+                val = con.ColetaI()
+            except:
+                while True:
+                    kj += 1
+                    a = con.modeBuffer()
+                    if a == True:
+                        break
+                    if kj > 500:
+                        break
+            kj = 0
+            try:
+                val = con.ColetaI()
+            except:
+                while True:
+                    kj += 1
+                    a = con.modeBuffer()
+                    if a == True:
+                        break
+                    if kj > 500:
+                        break
+
+            kj = 0
+            try:
+                val = con.ColetaI()
+            except:
+                while True:
+                    kj += 1
+                    a = con.modeBuffer()
+                    if a == True:
+                        break
+                    if kj > 500:
+                        break
 
             val = con.ColetaI()
             print val[4]

@@ -131,7 +131,7 @@ def modeG(qtd, freq):
         pass
     print (conexao.readline())
     time.sleep(1)
-    conexao.write(str(int(round(freq,0))))
+    conexao.write(str(int(round(freq,0)))+'\n')
     while (conexao.inWaiting() == 0):
         pass
     print (conexao.readline())
@@ -193,6 +193,8 @@ def modeBuffer():
     if a[0] == 'F':
         print "BufferLimpo"
         return True
+    else:
+        return False
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
@@ -226,24 +228,54 @@ def modeMotor(p2):
             pass
 
 #-------------------------------------------------------------------
+'''Limpando Buffer para coleta'''
+def Buffer():
+    while (conexao.inWaiting() == 0):
+        pass
+    a = conexao.readline()
+    print a
+    if a == '\n':
+        print "BufferLimpo"
+        return True
+    if a[0] == 'F':
+        print "BufferLimpo"
+        return True
+    else:
+        return False
+
+#-------------------------------------------------------------------
 def ColetaI():
     conexao.write(str(0))
     while (conexao.inWaiting() == 0):
         pass
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
+    try:
+        y1mm = float(Array[0])*A1+B1
+        y2mm = float(Array[1])*A2+B2
+        y1v = float(Array[2])
+        y2v = float(Array[3])
+        sen = float(Array[4])
+        cam = float(Array[5])
+        glp = float(Array[6])
+        sts = float(Array[7])
+        defE = float(Array[8])*A1+B1
+        defP = float(Array[9])*A1+B1
+        defAc = float(Array[10])*A1+B1
+        defMax = float(Array[11])*A1+B1
+    except:
+        y1mm = 0
+        y2mm = 0
+        y1v = 0
+        y2v = 0
+        sen = 0
+        cam = 0
+        glp = 0
+        sts = 0
+        defE = 0
+        defP = 0
+        defAc = 0
+        defMax = 0
 
-    y1mm = float(Array[0])*A1+B1
-    y2mm = float(Array[1])*A2+B2
-    y1v = float(Array[2])
-    y2v = float(Array[3])
-    sen = float(Array[4])
-    cam = float(Array[5])
-    glp = float(Array[6])
-    sts = float(Array[7])
-    defE = float(Array[8])*A1+B1
-    defP = float(Array[9])*A1+B1
-    defAc = float(Array[10])*A1+B1
-    defMax = float(Array[11])*A1+B1
 
     return y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, glp, sts, defE, defP, defAc, defMax

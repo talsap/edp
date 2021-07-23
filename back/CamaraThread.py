@@ -6,7 +6,7 @@ from pubsub import pub
 from threading import Thread
 
 ########################################################################
-'''MotorThread'''
+'''CamaraThread'''
 class CamaraThread(Thread):
     #-------------------------------------------------------------------
     def __init__(self, p1, p1Ant):
@@ -35,7 +35,7 @@ class CamaraThread(Thread):
         return self._return
 
 ########################################################################
-'''MotorThread'''
+'''CamaraThread'''
 class CamaraThreadZero(Thread):
     #-------------------------------------------------------------------
     def __init__(self, p1, p1Sen):

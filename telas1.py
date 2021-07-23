@@ -21,7 +21,7 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 '''plt.style.use('ggplot')'''
-frequencias = ['1', '2', '3', '4', '5']
+frequencias = ['1', '2', '3', '4']
 
 '''Variáveis Globais'''
 global leituraZerob1
@@ -45,7 +45,7 @@ global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 A2 = 0.007854
 A1 = 0.007854
 H = 200
-idt = '-DNIT134-01-'
+idt = 'DNIT134-01-'
 X = np.array([])
 Y = np.array([])
 xz1 = []
@@ -58,28 +58,28 @@ pcmr = []
 pgmr = []
 Fase = ''
 
-VETOR_COND = [[0.070,0.070],
-              [0.070,0.210],
-              [0.105,0.315]]
+VETOR_COND = [[0.070,0.140],
+              [0.070,0.280],
+              [0.105,0.420]]
 
-VETOR_MR =  [[0.020,0.020],
-             [0.020,0.040],
+VETOR_MR =  [[0.020,0.040],
              [0.020,0.060],
-             [0.035,0.035],
+             [0.020,0.080],
              [0.035,0.070],
              [0.035,0.105],
-             [0.050,0.050],
+             [0.035,0.140],
              [0.050,0.100],
              [0.050,0.150],
-             [0.070,0.070],
+             [0.050,0.200],
              [0.070,0.140],
              [0.070,0.210],
-             [0.105,0.105],
+             [0.070,0.280],
              [0.105,0.210],
              [0.105,0.315],
-             [0.140,0.140],
+             [0.105,0.420],
              [0.140,0.280],
-             [0.140,0.420]]
+             [0.140,0.420],
+             [0.140,0.560]]
 
 ########################################################################
 '''Painel Superior'''
@@ -182,7 +182,7 @@ class TopPanel(wx.Panel):
                     self._self.bottom.SigmaAlvo.AppendText(str(VETOR_COND[self._ciclo][1]))
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
-                    threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1], A1, A2)
+                    threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0], A1, A2)
                     dlg2 = MotorThread.MyProgressDialog(14)
                     dlg2.ShowModal()
 
@@ -200,7 +200,7 @@ class TopPanel(wx.Panel):
                     self._self.bottom.SigmaAlvo.AppendText(str(VETOR_MR[self._ciclo][1]))
                     self._self.bottom.Ciclo.AppendText(str(self._ciclo+1))
 
-                    threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1], A1, A2)
+                    threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][1], A1, A2)
                     dlg2 = MotorThread.MyProgressDialog(14)
                     dlg2.ShowModal()
 
@@ -258,7 +258,7 @@ class TopPanel(wx.Panel):
             gl = self._self.bottom.NGolpes.GetValue()
             freq = self._self.bottom.freq.GetValue()
             con.modeG(int(gl), int(freq))
-            #time.sleep(0.5)
+            time.sleep(2)
             condition = True
             conditionEnsaio = True
             self._self.bottom.timer.Start(int('3000'))
@@ -282,7 +282,6 @@ class TopPanel(wx.Panel):
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
-                                condition = False
                                 conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
@@ -308,7 +307,6 @@ class TopPanel(wx.Panel):
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
-                                condition = False
                                 conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
@@ -331,6 +329,8 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função FIM'''
         def FIM(self, event):
+            global condition
+            global conditionEnsaio
             global Fase
             '''Diálogo se deseja realmente finalizar o CONDICIONAMENTO'''
             dlg = wx.MessageDialog(None, 'Deseja realmente finalizar o '+Fase+'?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
@@ -343,7 +343,7 @@ class TopPanel(wx.Panel):
                 self.avanca.Disable()
                 self.continua.Disable()
 
-                condition = False
+                conditionEnsaio = False
                 self._self.bottom.timer.Stop()
                 self.axes.clear()
                 self.axes.set_xlabel("TEMPO (seg)")
@@ -357,10 +357,10 @@ class TopPanel(wx.Panel):
                 self._self.bottom.mr.Enable()
                 self.fim_inicio.SetLabel('INICIO')
                 self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
-                self._self.bottom.pressao_zero()
+                self._self.bottom.pressao_zero(VETOR_COND[self._ciclo][0])
 
             if Fase == 'MR':
-                self._self.bottom.pressao_zero()
+                self._self.bottom.pressao_zero(VETOR_MR[self._ciclo][0])
                 dlg3 = dialogoDinamico(3, info, "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
 
@@ -905,7 +905,7 @@ class BottomPanel(wx.Panel):
                                 self.y1V.AppendText(str(round((valores[2]), 2)))
                                 self.y2V.AppendText(str(round((valores[3]), 2)))
                                 self.PCreal.AppendText(str(round((valores[5]), 3)))
-                                self.SigmaReal.AppendText(str(round((valores[4]), 3)))
+                                self.SigmaReal.AppendText(str(round((valores[4]-valores[5]), 3)))
                                 if cont1 == 5:
                                     cont1 = 0
                             cont1 = cont1 + 1
@@ -914,20 +914,20 @@ class BottomPanel(wx.Panel):
                                 X = np.append(X, valores[6]/(float(self.freq.GetValue())))
                                 Y = np.append(Y, (valores[0]-self.leituraZerob1))
                                 cnt = len(X)
-                                if cnt >= 320:
+                                if cnt >= 260:
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
 
                                 if Fase == 'CONDICIONAMENTO':
                                     if int(valores[6]) > 489 and int(valores[6]) < 501:
                                         xz1.append(valores[6]/(float(self.freq.GetValue())))
-                                        yz1.append(valores[0])
+                                        yz1.append(valores[0]-self.leituraZerob1)
                                         pc1.append(valores[5])
-                                        pg1.append(valores[4])
+                                        pg1.append(valores[4]-valores[5])
                                 if Fase == 'MR':
                                     if int(valores[6]) > 0:
                                         xmr.append(valores[6]/(float(self.freq.GetValue())))
-                                        ymr.append(valores[0])
+                                        ymr.append(valores[0]-self.leituraZerob1)
                                         pcmr.append(valores[5])
                                         pgmr.append(valores[4])
 
@@ -996,6 +996,15 @@ class BottomPanel(wx.Panel):
             self.erro == False
             print self._ciclo
 
+            if self._ciclo > 0:
+                threadConection = SaveThread.SaveThread(idt+"COND-"+str(self._ciclo), xz1, yz1, pc1, pg1)
+                dlgC2 = My.MyProgressDialog(len(xz1))
+                dlgC2.ShowModal()
+                xz1 = []
+                yz1 = []
+                pc1 = []
+                pg1 = []
+
             if self._ciclo < 3:
                 self.LZero.Disable()
                 self.freq.Disable()
@@ -1006,8 +1015,8 @@ class BottomPanel(wx.Panel):
                 self.Ciclo.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
-                self.PCalvo.AppendText(str(VETOR_COND[self._ciclo][0]))
-                self.SigmaAlvo.AppendText(str(VETOR_COND[self._ciclo][1]))
+                self.PCalvo.AppendText(str(VETOR_COND[self._ciclo][0])+'0')
+                self.SigmaAlvo.AppendText(str(VETOR_COND[self._ciclo][1]-VETOR_COND[self._ciclo][0])+'0')
                 self.NGolpes.AppendText(str(500))
                 self.Ciclo.AppendText(str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
@@ -1019,15 +1028,6 @@ class BottomPanel(wx.Panel):
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 dlg.ShowModal()
-
-            if self._ciclo > 0:
-                threadConection = SaveThread.SaveThread("COND"+idt+str(self._ciclo-1), xz1, yz1, pc1, pg1)
-                dlgC2 = My.MyProgressDialog(len(xz1))
-                dlgC2.ShowModal()
-                xz1 = []
-                yz1 = []
-                pc1 = []
-                pg1 = []
 
             if self._ciclo < 3:
                 condition = False
@@ -1091,6 +1091,15 @@ class BottomPanel(wx.Panel):
             self.erro == False
             print self._ciclo
 
+            if self._ciclo > 0:
+                threadConection = SaveThread.SaveThread(idt+"MR-"+str(self._ciclo), xmr, ymr, pcmr, pgmr)
+                dlgC2 = My.MyProgressDialog(len(xmr))
+                dlgC2.ShowModal()
+                xmr = []
+                ymr = []
+                pcmr = []
+                pgmr = []
+
             if self._ciclo < 17:
                 self.LZero.Disable()
                 self.freq.Disable()
@@ -1101,8 +1110,8 @@ class BottomPanel(wx.Panel):
                 self.Ciclo.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
-                self.PCalvo.AppendText(str(VETOR_MR[self._ciclo][0]))
-                self.SigmaAlvo.AppendText(str(VETOR_MR[self._ciclo][1]))
+                self.PCalvo.AppendText(str(VETOR_MR[self._ciclo][0])+'0')
+                self.SigmaAlvo.AppendText(str(VETOR_MR[self._ciclo][1]-VETOR_MR[self._ciclo][0])+'0')
                 self.NGolpes.AppendText(str(10))
                 self.Ciclo.AppendText(str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
@@ -1114,15 +1123,6 @@ class BottomPanel(wx.Panel):
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 dlg.ShowModal()
-
-            if self._ciclo > 0:
-                threadConection = SaveThread.SaveThread("MR"+idt+str(self._ciclo-1), xmr, ymr, pcmr, pgmr)
-                dlgC2 = My.MyProgressDialog(len(xmr))
-                dlgC2.ShowModal()
-                xmr = []
-                ymr = []
-                pcmr = []
-                pgmr = []
 
             if self._ciclo < 17:
                 condition = False
@@ -1161,15 +1161,15 @@ class BottomPanel(wx.Panel):
                 self.graph.fim_inicio.Enable()
                 self.graph.avanca.Enable()
 
-            if self._ciclo > 0 and self._ciclo < 17 and self.erro == False:
+            if self._ciclo > 0 and self._ciclo < 18 and self.erro == False:
                 self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                 wx.PostEvent(self.graph.fim_inicio, evt)
 
-            if self._ciclo == 17 and self.erro == False:
-                self._ciclo = 0
+            if self._ciclo == 18 and self.erro == False:
                 self.mr.Disable()
-                self.pressao_zero()
+                self.pressao_zero(VETOR_MR[self._ciclo-1][0])
+                self._ciclo = 0
                 dlg3 = dialogoDinamico(3, info, "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
 
