@@ -23,7 +23,7 @@ T = []          #Array tempo grafico'''
 '''Port Serial'''
 portlist = [port for port,desc,hwin in list_ports.comports()]
 conexao = serial.Serial()
-conexao.baudrate = 250000
+conexao.baudrate = 115200
 
 '''Coeficientes da calibracao'''
 L = bancodedados.LVDT()
@@ -100,21 +100,34 @@ def modeD():
 '''Ativando camara'''
 def modeE():
     conexao.write(opcaoE)
-    while (conexao.inWaiting() == 0):
-        pass
-    print (conexao.readline())
-    while (conexao.inWaiting() == 0):
-        pass
-    print(conexao.readline())
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
+        if a[0] == 'C':
+            print a
+            break
+
+#-------------------------------------------------------------------
+'''Ativando motor'''
+def modeM():
+    conexao.write(opcaoM)
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
+        if a[0] == 'M':
+            print a
+            break
 
 #-------------------------------------------------------------------
 '''Conecxao com a DNIT134'''
 def modeI():
     conexao.write(opcaoC)
-    conexao.write(opcaoI)
     while (conexao.inWaiting() == 0):
         pass
     print(conexao.readline())
+    conexao.write(opcaoI)
     while (conexao.inWaiting() == 0):
         pass
     print(conexao.readline())
@@ -123,15 +136,23 @@ def modeI():
 '''Aplica os Golpes'''
 def modeG(qtd, freq):
     conexao.write(opcaoG)
-    while (conexao.inWaiting() == 0):
-        pass
-    print (conexao.readline())
+    conexao.flushOutput()
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
+        print a
+        if a[0] == 'G':
+            print a
+            break
+
+    time.sleep(3)
     conexao.write(str(int(round(qtd,0))))
     while (conexao.inWaiting() == 0):
         pass
     print (conexao.readline())
     time.sleep(1)
-    conexao.write(str(int(round(freq,0)))+'\n')
+    conexao.write(str(int(round(freq,0))))
     while (conexao.inWaiting() == 0):
         pass
     print (conexao.readline())
@@ -142,6 +163,8 @@ def modeCAMZERO(p1, p1Sen):
     incremental = p1Sen/5
     i = 4
     time.sleep(1)
+    #conexao.flushInput()
+
     while i <= 4 and i >= 0:
         conexao.write(str(int(round((p1 + incremental*i),0))))
         while (conexao.inWaiting() == 0):
@@ -150,10 +173,7 @@ def modeCAMZERO(p1, p1Sen):
         time.sleep(1)
         i = i - 1
         if i == 0:
-            conexao.write(str(-1))
-            while (conexao.inWaiting() == 0):
-                pass
-            print (conexao.readline())
+            conexao.write(str(-3))
             return "p1ok"
             break
 
@@ -163,6 +183,8 @@ def modeCAM(p1, p1Ant):
     incremental = (p1 - p1Ant)/5
     i = 1
     time.sleep(1)
+    #conexao.flushInput()
+
     while i <= 6:
         conexao.write(str(int(round((p1Ant + incremental*i),0))))
         while (conexao.inWaiting() == 0):
@@ -171,35 +193,15 @@ def modeCAM(p1, p1Ant):
         time.sleep(1)
         i += 1
         if i == 6:
-            conexao.write(str(-1))
+            conexao.write(str(-3))
             return "p1ok"
             break
-
-#-------------------------------------------------------------------
-'''Ativando motor'''
-def modeM():
-    conexao.write(opcaoM)
-    while (conexao.inWaiting() == 0):
-        pass
-    print (conexao.readline())
-
-#-------------------------------------------------------------------
-'''Ativando motor'''
-def modeBuffer():
-    while (conexao.inWaiting() == 0):
-        pass
-    a = conexao.readline()
-    print a
-    if a[0] == 'F':
-        print "BufferLimpo"
-        return True
-    else:
-        return False
 
 #-------------------------------------------------------------------
 '''Ativacao do motor de passos'''
 def modeMotor(p2):
     conexao.write(str(int(round(p2,0))))
+    conexao.flushInput()        #linha que foi adicionada
     while (conexao.inWaiting() == 0):
         pass
     print(conexao.readline())
@@ -217,65 +219,42 @@ def modeMotor(p2):
             if a[0] == "o":
                 contadorOK += 1
                 if contadorOK == 25: #contadorOK igual a 25
-                    conexao.write(str(1))
+                    conexao.write(str(-3))
                     return "p2ok"
                     break
             '''if a[0] == "n": #if apenas para testes
-                conexao.write(str(-1))
+                conexao.write(str(-3))
                 return "p2ok"
                 break'''
         except:
             pass
 
 #-------------------------------------------------------------------
-'''Limpando Buffer para coleta'''
-def Buffer():
-    while (conexao.inWaiting() == 0):
-        pass
-    a = conexao.readline()
-    print a
-    if a == '\n':
-        print "BufferLimpo"
-        return True
-    if a[0] == 'F':
-        print "BufferLimpo"
-        return True
-    else:
-        return False
-
-#-------------------------------------------------------------------
-def ColetaI():
-    conexao.write(str(0))
+def ColetaI(valores):
     while (conexao.inWaiting() == 0):
         pass
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
     try:
-        y1mm = float(Array[0])*A1+B1
-        y2mm = float(Array[1])*A2+B2
-        y1v = float(Array[2])
-        y2v = float(Array[3])
-        sen = float(Array[4])
-        cam = float(Array[5])
-        glp = float(Array[6])
-        sts = float(Array[7])
-        defE = float(Array[8])*A1+B1
-        defP = float(Array[9])*A1+B1
-        defAc = float(Array[10])*A1+B1
-        defMax = float(Array[11])*A1+B1
+        temp = float(Array[0])
+        y1mm = float(Array[1])*A1+B1
+        y2mm = float(Array[2])*A2+B2
+        y1v = float(Array[3])
+        y2v = float(Array[4])
+        sen = float(Array[5])
+        cam = float(Array[6])
+        sts = int(Array[7])
+        glp = int(Array[8])
+
     except:
-        y1mm = 0
-        y2mm = 0
-        y1v = 0
-        y2v = 0
-        sen = 0
-        cam = 0
-        glp = 0
-        sts = 0
-        defE = 0
-        defP = 0
-        defAc = 0
-        defMax = 0
+        temp = valores[0]
+        y1mm = valores[1]
+        y2mm = valores[2]
+        y1v = valores[3]
+        y2v = valores[4]
+        sen = valores[5]
+        cam = valores[6]
+        sts = valores[7]
+        glp = valores[8]
 
-
-    return y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, glp, sts, defE, defP, defAc, defMax
+    return temp, y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, sts, glp
