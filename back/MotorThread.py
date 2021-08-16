@@ -127,3 +127,29 @@ class MotorThread(Thread):
     def ret(self):
         Thread.join(self)
         return self._return
+
+########################################################################
+'''MotorThread'''
+class MotorThreadZero(Thread):
+    #-------------------------------------------------------------------
+    def __init__(self, p2, A1, A2):
+        Thread.__init__(self)
+        self.start()
+        self.p2 = p2
+        self.a1 = A1
+        self.a2 = A2
+        self._return = True
+
+    #-------------------------------------------------------------------
+    def run(self):
+        wx.CallAfter(pub.sendMessage, "update", msg="  Ativando motor...")
+        time.sleep(1)
+        con.modeM()
+        time.sleep(1)
+        wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
+        valor = con.modeMotorZero((10000*self.a2/self.a1)*self.p2)
+        if valor == 'p2ok':
+            print 'PRESSAO GOLPES OK'
+            wx.CallAfter(pub.sendMessage, "update", msg="        σd - Zerado")
+            time.sleep(1)
+            wx.CallAfter(pub.sendMessage, "update", msg="")

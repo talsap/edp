@@ -35,14 +35,14 @@ class CamaraThread(Thread):
         return self._return
 
 ########################################################################
-'''CamaraThread'''
+'''CamaraThreadZero'''
 class CamaraThreadZero(Thread):
     #-------------------------------------------------------------------
     def __init__(self, p1, p1Sen):
         Thread.__init__(self)
         self.start()
         self.p1 = p1
-        self.p1Sen = p1Ant
+        self.p1Sen = p1Sen
         self._return = True
 
     #-------------------------------------------------------------------
@@ -57,6 +57,7 @@ class CamaraThreadZero(Thread):
             print 'PRESSAO CAMARA ZERADA'
             wx.CallAfter(pub.sendMessage, "update", msg="       σ3 - Zerado!")
             time.sleep(1)
+            wx.CallAfter(pub.sendMessage, "update", msg="")
 
     #-------------------------------------------------------------------
     def ret(self):

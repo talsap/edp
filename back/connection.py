@@ -121,6 +121,18 @@ def modeM():
             break
 
 #-------------------------------------------------------------------
+'''Ativando golpes'''
+def modeG():
+    conexao.write(opcaoG)
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
+        if a[0] == 'G':
+            print a
+            break
+
+#-------------------------------------------------------------------
 '''Conecxao com a DNIT134'''
 def modeI():
     conexao.write(opcaoC)
@@ -134,25 +146,13 @@ def modeI():
 
 #-------------------------------------------------------------------
 '''Aplica os Golpes'''
-def modeG(qtd, freq):
-    conexao.write(opcaoG)
-    conexao.flushOutput()
-    while True:
-        while (conexao.inWaiting() == 0):
-            pass
-        a = conexao.readline()
-        print a
-        if a[0] == 'G':
-            print a
-            break
-
-    time.sleep(3)
+def modeGOLPES(qtd, freq):
     conexao.write(str(int(round(qtd,0))))
     while (conexao.inWaiting() == 0):
         pass
     print (conexao.readline())
     time.sleep(1)
-    conexao.write(str(int(round(freq,0))))
+    conexao.write(str(int(round(freq,0)))+'\n')
     while (conexao.inWaiting() == 0):
         pass
     print (conexao.readline())
@@ -198,10 +198,10 @@ def modeCAM(p1, p1Ant):
             break
 
 #-------------------------------------------------------------------
-'''Ativacao do motor de passos'''
+'''Modo motor de passos'''
 def modeMotor(p2):
     conexao.write(str(int(round(p2,0))))
-    conexao.flushInput()        #linha que foi adicionada
+    #conexao.flushInput()        #linha que foi adicionada
     while (conexao.inWaiting() == 0):
         pass
     print(conexao.readline())
@@ -229,6 +229,32 @@ def modeMotor(p2):
         except:
             pass
 
+#-------------------------------------------------------------------
+'''Modo motor pressao zero'''
+def modeMotorZero(p2):
+    conexao.write(str(int(round(p2,0))))
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
+    contadorOK = 0
+    time.sleep(.5)
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
+        print a
+        try:
+            if a[0] == "o":
+                contadorOK += 1
+                if contadorOK == 2: #contadorOK igual a 25
+                    conexao.write(str(-3))
+                    return "p2ok"
+                    break
+        except:
+            pass
 #-------------------------------------------------------------------
 def ColetaI(valores):
     while (conexao.inWaiting() == 0):

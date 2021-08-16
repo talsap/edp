@@ -113,28 +113,28 @@ void loop(void) {
         //****************************//
         sensorLVDTDNIT134:
         Serial.println("DNIT134");
-        Serial.flush();
+        serialFlush();
         while(true){
           if(Serial.available()>0){
             leitura = Serial.read();
             if(leitura == 'B'){
               Serial.println("BREAK");
-              Serial.flush();
+              serialFlush();
               goto conexao;
             }
             if(leitura == 'E'){
               Serial.println("CAMARA");
-              Serial.flush();
+              serialFlush();
               goto camara;
             }
             if(leitura == 'M'){              
               Serial.println("MOTOR");
-              Serial.flush();
+              serialFlush();
               goto motor;
             }
             if(leitura == 'G'){              
               Serial.println("GOLPES");
-              Serial.flush();
+              serialFlush();
               goto golpes;
             }
           }
@@ -158,7 +158,7 @@ void loop(void) {
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
               Serial.println(vd3*3.3f);
-              Serial.flush();
+              serialFlush();
               setpointC = setpoint2*255/3300;   //valor em contagem
               analogWrite(DAC0, setpointC);
             }
@@ -186,7 +186,7 @@ void loop(void) {
               Serial.print(setpoint1);
               Serial.print("/SENSOR=");
               Serial.println(vd2*3.3f);
-              Serial.flush();
+              serialFlush();
               condicao = 1;
             }
             if(setpoint1 == -3){
@@ -224,14 +224,14 @@ void loop(void) {
           //INTERVALO DE PRESSAO OK//
           if(vd2 < 1.02*setpointM && vd2 > 0.98*setpointM){
             Serial.println("o");
-            Serial.flush();
+            serialFlush();
             mp.step(0);
             condicao = 1;
           }         
             
           if(condicao == 0){
             Serial.println("n");
-            Serial.flush();
+            serialFlush();
             mp.step(floor((setpointM - vd2)));
           }
         }
@@ -246,7 +246,7 @@ void loop(void) {
             if(ntotalGolpes > 0){
               Serial.print("NGOLPES="); 
               Serial.println(ntotalGolpes);
-              Serial.flush();
+              serialFlush();
               break;
             }
             if(ntotalGolpes == -3){
@@ -261,7 +261,7 @@ void loop(void) {
             if(frequencia > 0){
               Serial.print("FREQ="); 
               Serial.println(frequencia);
-              Serial.flush();
+              serialFlush();
               break;
             }
             if(frequencia == -3){
@@ -325,6 +325,8 @@ void loop(void) {
               nGolpe = 0;
               nTime = 0;
               statuS = 0;
+              currentMillis = millis();
+              initialMillis = currentMillis;
               goto sensorLVDTDNIT134;
             }
             //aguarda o valor na serial. e se for -4 pausa o ensaio//
@@ -356,7 +358,7 @@ void loop(void) {
       //caso receba G (acessa o ensaio da norma ...)
       if(condConect == 1){
         Serial.println("Ainda falta complementar");
-        Serial.flush();
+        serialFlush();
       }
       break;
     
@@ -401,9 +403,14 @@ void imprimir(){
   Serial.print(statuS);
   Serial.print(",");
   Serial.println(nGolpe);
-  Serial.flush();
 }/* Imprimir dados na tela */
 
+/* Limpa o buffer serial */
+void serialFlush(){
+  while(Serial.available() > 0) {
+    char t = Serial.read();
+  }
+}/* Limpa o buffer serial */
 
 /* Intervalo de tempo do aplicador */
 S tempo(int nTime, int frequencia, long initialMillis){
