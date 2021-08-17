@@ -3,17 +3,18 @@
 import wx
 import matplotlib
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-from matplotlib.figure import Figure
 import numpy as np
 import serial
 import time
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 class TopPanel(wx.Panel):
 	def __init__(self, parent):
 		wx.Panel.__init__(self, parent = parent)
 
-		self.figure = Figure()
+		self.figure = plt.figure()
+		plt.ion()
 		self.axes = self.figure.add_subplot(111)
 		self.canvas = FigureCanvas(self, -1, self.figure)
 		self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -25,9 +26,12 @@ class TopPanel(wx.Panel):
 	def draw(self,x,y):
 		#x = np.arange(0,3,0.01)
 		#y = np.sin(np.pi*x)
-		self.axes.clear()
-		self.axes.plot(x,y, '-o')
-		self.canvas.draw()
+		#self.axes.clear()
+		plt.plot(x, y, '-o')
+		#plt.show()
+		#self.axes.plot(x,y, '-o')
+		#self.canvas.draw()
+		print time.time()
 
 	def changeAxes(self, min, max):
 		self.axes.set_ylim(float(min), float(max))

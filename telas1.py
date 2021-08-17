@@ -18,7 +18,6 @@ from drawnow import *
 from front.quadrotensoes import quadro
 from front.dialogoDinamico import dialogoDinamico
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 '''plt.style.use('ggplot')'''
 frequencias = ['1', '2', '3', '4']
@@ -42,10 +41,14 @@ global pgmr
 global Ti #valor temporal
 global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 global Automatico #idica se o ensaio será automático ou não
+global amplitudeMax
+global amplitudeMin
 
 A2 = 0.007854
 A1 = 0.007854
-H = 0
+H = 0.01
+amplitudeMax = 0.06
+amplitudeMin = 0
 idt = 'DNIT134-01-'
 X = np.array([])
 Y = np.array([])
@@ -97,6 +100,7 @@ class TopPanel(wx.Panel):
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
             self.figure = plt.figure(constrained_layout=True)
+            plt.ion()
             self.axes = self.figure.add_subplot(111)
             self.canvas = FigureCanvas(self, -1, self.figure)
             #self.axes.set_xlabel("TEMPO (seg)")
@@ -218,14 +222,9 @@ class TopPanel(wx.Panel):
         def CONTINUA(self, event):
             global conditionEnsaio
             global Ti
-            global X
-            k = len(X)-1
-            xt = X[k]
             con.modeC()
-            self._self.bottom.timer.Start(int('250'))
-            time.sleep(1)
-            Ti = time.time() - xt
             conditionEnsaio = True
+            self._self.bottom.timer.Start(int('2500'))
             self.pausa.Enable()
             self.fim_inicio.Disable()
             self.continua.Disable()
@@ -243,7 +242,7 @@ class TopPanel(wx.Panel):
             time.sleep(1)
 
             if Fase == 'CONDICIONAMENTO':
-                condition = False
+                '''condition = False
                 if self._ciclo > 0:
                     if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0]:
                         threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo-1][0])
@@ -255,10 +254,6 @@ class TopPanel(wx.Panel):
                     dlgC1 = My.MyProgressDialog(3)
                     dlgC1.ShowModal()
                     time.sleep(1)
-
-                condition = True
-                time.sleep(2)
-                '''condition = False
 
                 threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][1], A1, A2)
                 dlgC2 = My.MyProgressDialog(15)
@@ -281,7 +276,7 @@ class TopPanel(wx.Panel):
                     time.sleep(1)
 
             if Fase == 'MR':
-                condition = False
+                '''condition = False
                 if self._ciclo > 0:
                     if VETOR_MR[self._ciclo][0] != VETOR_MR[self._ciclo - 1][0]:
                         threadConection = CamaraThread.CamaraThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo-1][0])
@@ -294,7 +289,7 @@ class TopPanel(wx.Panel):
                     dlgC1.ShowModal()
                     time.sleep(1)
 
-                '''threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][1], A1, A2)
+                threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][1], A1, A2)
                 dlgC2 = My.MyProgressDialog(15)
                 dlgC2.ShowModal()
 
@@ -321,7 +316,7 @@ class TopPanel(wx.Panel):
             con.modeGOLPES(int(gl), int(freq))
             condition = True
             conditionEnsaio = True
-            '''self._self.bottom.timer.Start(int('3000'))'''
+            self._self.bottom.timer.Start(int('2500'))
             self.pausa.Enable()
             self.fim_inicio.SetLabel('FIM')
             self.Bind(wx.EVT_BUTTON, self.FIM, self.fim_inicio)
@@ -346,12 +341,11 @@ class TopPanel(wx.Panel):
                                 conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
-                                self.axes.clear()
-                                self.axes.set_xlabel("TEMPO (seg)")
-                                self.axes.set_ylabel("DESLOCAMENTO (mm)")
-                                self.canvas.draw()
                                 X = np.array([])
                                 Y = np.array([])
+                                amplitudeMax = 0.06
+                                amplitudeMin = 0
+                                self.draw()
                                 self.pausa.Disable()
                                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.condic.GetId())
                                 wx.PostEvent(self._self.bottom.condic, evt)
@@ -371,12 +365,9 @@ class TopPanel(wx.Panel):
                                 conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
-                                self.axes.clear()
-                                self.axes.set_xlabel("TEMPO (seg)")
-                                self.axes.set_ylabel("DESLOCAMENTO (mm)")
-                                self.canvas.draw()
                                 X = np.array([])
                                 Y = np.array([])
+                                self.draw()
                                 self.pausa.Disable()
                                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.mr.GetId())
                                 wx.PostEvent(self._self.bottom.mr, evt)
@@ -393,6 +384,9 @@ class TopPanel(wx.Panel):
             global condition
             global conditionEnsaio
             global Fase
+            global amplitudeMax
+            global amplitudeMin
+
             '''Diálogo se deseja realmente finalizar o CONDICIONAMENTO'''
             dlg = wx.MessageDialog(None, 'Deseja realmente finalizar o '+Fase+'?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
             result = dlg.ShowModal()
@@ -412,6 +406,9 @@ class TopPanel(wx.Panel):
                 self.canvas.draw()
                 X = np.array([])
                 Y = np.array([])
+                amplitudeMax = 0.06
+                amplitudeMin = 0
+                self.draw()
 
             if Fase == 'CONDICIONAMENTO':
                 self._self.bottom._ciclo = 0
@@ -446,13 +443,19 @@ class TopPanel(wx.Panel):
         def draw(self):
             self.axes.clear()
             #self.axes.set_ylim(float(0), float(10))
-            self.axes.set_xlabel("TEMPO (seg)")
-            self.axes.set_ylabel("DESLOCAMENTO (mm)")
+            #self.axes.set_xlabel("TEMPO (seg)")
+            #self.axes.set_ylabel("DESLOCAMENTO (mm)")
             #rect1 = self.axes.patch
             #rect1.set_facecolor('#A0BA8C')
-            self.axes.plot(Y, 'r-')
+            #self.axes.plot(Y, 'r-')
             #self.axes.plot(X, Y, 'xkcd:off white')
-            self.canvas.draw()
+            #self.canvas.draw()
+            plt.ylim(round(0.7*amplitudeMin), round(1.5*amplitudeMax,3))
+            plt.xlabel('TEMPO (seg)')
+            plt.ylabel('DESLOCAMENTO (mm)')
+            plt.plot(X, Y, 'r-')
+            plt.draw()
+            #pass
 
 '''Painel Inferior'''
 class BottomPanel(wx.Panel):
@@ -949,6 +952,8 @@ class BottomPanel(wx.Panel):
                     global X
                     global Y
                     global H
+                    global amplitudeMax
+                    global amplitudeMin
                     global xz1
                     global yz1
                     global pc1
@@ -992,12 +997,20 @@ class BottomPanel(wx.Panel):
                             '''if conditionEnsaio == True:'''
                             if conditionEnsaio == True and valores[0] > 0:
                                 X = np.append(X, valores[0])
-                                Y = np.append(Y, (valores[1]-self.leituraZerob1)+H)
-                                if self.x_counter >= 200:
+                                Y = np.append(Y, valores[1]-self.leituraZerob1+H)
+                                if valores[1]-self.leituraZerob1+H > amplitudeMax:
+                                    amplitudeMax = valores[1]-self.leituraZerob1+H
+                                if valores[1]-self.leituraZerob1+H < amplitudeMin:
+                                    amplitudeMin = valores[1]-self.leituraZerob1+H
+                                if self.x_counter >= 249:
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
+                                    if self.x_counter == 0:
+                                        amplitudeMin = valores[1]-self.leituraZerob1+H
                                 self.x_counter += 1
-                                #print valores
+                                print valores[0]
+                                #drawnow(self.graph.draw)
+
                                 if Fase == 'CONDICIONAMENTO':
                                     if int(valores[0]) > 489 and int(valores[0]) < 501:
                                         xz1.append(valores[0]/(float(self.freq.GetValue())))
@@ -1240,7 +1253,8 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             self.bottom = BottomPanel(splitter, top)
             splitter.SplitHorizontally(top, self.bottom, 0)
             splitter.SetMinimumPaneSize(390)
-            top.draww()
+            top.draw()
+            #top.draw(X,Y)
             '''plt.ion()'''
 
             self.Centre()

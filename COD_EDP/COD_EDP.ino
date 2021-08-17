@@ -331,11 +331,16 @@ void loop(void) {
             }
             //aguarda o valor na serial. e se for -4 pausa o ensaio//
             if(botoes == -4){
+              float guardavalor;
+              guardavalor = float(currentMillis - initialMillis);
               while(true){
+                imprimir();
                 if (Serial.available()> 1){
                   botoes = Serial.parseInt();
                   //aguarda o valor na serial. e se for -2 continua o ensaio de onde parou//
                   if(botoes == -2){
+                    currentMillis = millis();
+                    initialMillis = currentMillis-guardavalor;
                     break;
                   }
                   //aguarda o valor na serial. e se for -3 "para" o ensaio//
