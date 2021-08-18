@@ -365,15 +365,12 @@ class TopPanel(wx.Panel):
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
-                                conditionEnsaio = False
                                 valorGolpe = 0
+                                conditionEnsaio = False
                                 self._self.bottom.timer.Stop()
-                                self.axes.clear()
-                                self.axes.set_xlabel("TEMPO (seg)")
-                                self.axes.set_ylabel("DESLOCAMENTO (mm)")
-                                self.canvas.draw()
                                 X = np.array([])
                                 Y = np.array([])
+                                self.draww()
                                 self.pausa.Disable()
                                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.mr.GetId())
                                 wx.PostEvent(self._self.bottom.mr, evt)
@@ -414,7 +411,6 @@ class TopPanel(wx.Panel):
                 Y = np.array([])
                 amplitudeMax = 0.06
                 amplitudeMin = 0
-                self.draw()
 
             if Fase == 'CONDICIONAMENTO':
                 self._self.bottom._ciclo = 0
@@ -441,9 +437,13 @@ class TopPanel(wx.Panel):
     		self.canvas.draw()
     #--------------------------------------------------
         def draww(self):
+            self.axes.clear()
+            self.axes.set_xlim(float(0), float(1))
+            self.axes.set_ylim(float(0), float(0.01))
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             self.canvas.draw()
+            print 'chegou'
 
     #--------------------------------------------------
         def draw(self):
@@ -456,7 +456,8 @@ class TopPanel(wx.Panel):
             self.axes.plot(X, Y, 'r-')
             #self.axes.plot(X, Y, 'xkcd:off white')
             self.canvas.draw()
-            #plt.ylim(round(0.7*amplitudeMin), round(1.5*amplitudeMax,3))
+            #self.axes.clear()
+            #plt.ylim(round(0.7*amplitudeMin,3), round(1.5*amplitudeMax,3))
             #plt.xlabel('TEMPO (seg)')
             #plt.ylabel('DESLOCAMENTO (mm)')
             #plt.plot(X, Y, 'r-')
@@ -1259,7 +1260,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             self.bottom = BottomPanel(splitter, top)
             splitter.SplitHorizontally(top, self.bottom, 0)
             splitter.SetMinimumPaneSize(390)
-            top.draw()
+            top.draww()
             #top.draw(X,Y)
             '''plt.ion()'''
 
