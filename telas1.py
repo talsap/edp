@@ -43,12 +43,14 @@ global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 global Automatico #idica se o ensaio será automático ou não
 global amplitudeMax
 global amplitudeMin
+global mult
 
 A2 = 0.007854
 A1 = 0.007854
 H = 0.01
-amplitudeMax = 0.06
-amplitudeMin = 0.01
+amplitudeMax = 0.084
+amplitudeMin = 0.02
+mult = 0
 idt = 'DNIT134-01-'
 X = np.array([])
 Y = np.array([])
@@ -100,7 +102,8 @@ class TopPanel(wx.Panel):
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
             self.figure = plt.figure(constrained_layout=True)
-            plt.ion()
+            #plt.subplot()
+            #plt.ion()
             self.axes = self.figure.add_subplot(111)
             self.canvas = FigureCanvas(self, -1, self.figure)
             #self.axes.set_xlabel("TEMPO (seg)")
@@ -150,6 +153,7 @@ class TopPanel(wx.Panel):
             global Fase
             global X
             global Y
+            global mult
 
             '''Diálogo se deseja realmente avancar um ciclo'''
             dlg = wx.MessageDialog(None, 'Deseja realmente avancar um CICLO?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
@@ -172,6 +176,7 @@ class TopPanel(wx.Panel):
                 self._self.bottom.timer.Stop()
                 X = np.array([])
                 Y = np.array([])
+                mult = 0
                 self.draww()
                 self._self.bottom.PCalvo.Clear()
                 self._self.bottom.SigmaAlvo.Clear()
@@ -221,7 +226,7 @@ class TopPanel(wx.Panel):
             global Ti
             con.modeC()
             conditionEnsaio = True
-            self._self.bottom.timer.Start(int('2500'))
+            self._self.bottom.timer.Start(int('5000'))
             self.pausa.Enable()
             self.fim_inicio.Disable()
             self.continua.Disable()
@@ -313,7 +318,8 @@ class TopPanel(wx.Panel):
             con.modeGOLPES(int(gl), int(freq))
             condition = True
             conditionEnsaio = True
-            self._self.bottom.timer.Start(int('2500'))
+            time.sleep(0.08)
+            self._self.bottom.timer.Start(int('5000'))
             self.pausa.Enable()
             self.fim_inicio.SetLabel('FIM')
             self.Bind(wx.EVT_BUTTON, self.FIM, self.fim_inicio)
@@ -325,12 +331,13 @@ class TopPanel(wx.Panel):
                 global Fase
                 global X
                 global Y
+                global mult
 
                 if Fase == 'CONDICIONAMENTO':
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == 501:
+                            if valorGolpe == 500:
                                 time.sleep(3)
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
@@ -340,6 +347,7 @@ class TopPanel(wx.Panel):
                                 self._self.bottom.timer.Stop()
                                 X = np.array([])
                                 Y = np.array([])
+                                mult = 0
                                 self.draww()
                                 self.pausa.Disable()
                                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.condic.GetId())
@@ -352,7 +360,7 @@ class TopPanel(wx.Panel):
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == 11:
+                            if valorGolpe == 10:
                                 time.sleep(3)
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
@@ -362,6 +370,7 @@ class TopPanel(wx.Panel):
                                 self._self.bottom.timer.Stop()
                                 X = np.array([])
                                 Y = np.array([])
+                                mult = 0
                                 self.draww()
                                 self.pausa.Disable()
                                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.mr.GetId())
@@ -380,7 +389,7 @@ class TopPanel(wx.Panel):
             global conditionEnsaio
             global Fase
             global amplitudeMax
-            global amplitudeMin
+            global mult
 
             '''Diálogo se deseja realmente finalizar o CONDICIONAMENTO'''
             dlg = wx.MessageDialog(None, 'Deseja realmente finalizar o '+Fase+'?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
@@ -397,6 +406,7 @@ class TopPanel(wx.Panel):
                 self._self.bottom.timer.Stop()
                 X = np.array([])
                 Y = np.array([])
+                mult = 0
                 self.draww()
 
             if Fase == 'CONDICIONAMENTO':
@@ -433,21 +443,22 @@ class TopPanel(wx.Panel):
 
     #--------------------------------------------------
         def draw(self):
+            global mult
+            global amplitudeMin
             self.axes.clear()
-            self.axes.set_ylim(round(0.7*amplitudeMin,3), round(1.5*amplitudeMax,3))
+            #self.axes.set_ylim(round(amplitudeMin,3), round(1.2*amplitudeMax,3))
+            self.axes.set_xlim(mult*5-5, mult*5)
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
-            #rect1 = self.axes.patch
-            #rect1.set_facecolor('#A0BA8C')
             self.axes.plot(X, Y, 'r-')
-            #self.axes.plot(X, Y, 'xkcd:off white')
             self.canvas.draw()
-            #self.axes.clear()
-            #plt.ylim(round(0.7*amplitudeMin,3), round(1.5*amplitudeMax,3))
-            #plt.xlabel('TEMPO (seg)')
-            #plt.ylabel('DESLOCAMENTO (mm)')
-            #plt.plot(X, Y, 'r-')
-            #plt.draw()
+            '''self.axes.clear()
+            plt.ylim(None, round(1.2*amplitudeMax,3))
+            plt.ylim(None, mult*5)
+            plt.xlabel('TEMPO (seg)')
+            plt.ylabel('DESLOCAMENTO (mm)')
+            plt.plot(X, Y, 'r-')
+            plt.draw()'''
             #pass
 
 '''Painel Inferior'''
@@ -982,7 +993,7 @@ class BottomPanel(wx.Panel):
                                 self.y1V.AppendText(str(round((valores[3]), 2)))
                                 self.y2V.AppendText(str(round((valores[4]), 2)))
                                 self.PCreal.AppendText(str(round((valores[6]), 3)))
-                                self.SigmaReal.AppendText(str(round((valores[5]-valores[6]), 3)))
+                                self.SigmaReal.AppendText(str(round(valores[5]-valores[6], 3)))
                                 if cont1 == 10:
                                     cont1 = 0
                             cont1 = cont1 + 1
@@ -996,7 +1007,7 @@ class BottomPanel(wx.Panel):
                                 if valores[1]-self.leituraZerob1+H < amplitudeMin:
                                     amplitudeMin = valores[1]-self.leituraZerob1+H
                                 self.x_counter = len(X)
-                                if self.x_counter >= 249:
+                                if self.x_counter >= 1000:
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
                                     if self.x_counter == 1:
@@ -1005,7 +1016,7 @@ class BottomPanel(wx.Panel):
                                 #drawnow(self.graph.draw)
 
                                 if Fase == 'CONDICIONAMENTO':
-                                    if int(valores[0]) > 489 and int(valores[0]) < 501:
+                                    if int(valores[0]) > 489 and int(valores[0]) < 500:
                                         xz1.append(valores[0]/(float(self.freq.GetValue())))
                                         yz1.append(valores[1]-self.leituraZerob1)
                                         pc1.append(valores[6])
@@ -1224,6 +1235,8 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável pela plotagem'''
         def TimeInterval(self, event):
+            global mult
+            mult += 1
             self.graph.draw()
 
 

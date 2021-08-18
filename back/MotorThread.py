@@ -28,16 +28,19 @@ class MotorThread(Thread):
         if valor == 'p2ok':
             print 'PRESSAO GOLPES OK'
             wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
-            time.sleep(1)
+            #time.sleep(.5)
 
         i = 0
         cond = True
+        valores = [0,0,0,0,0,0,0,0,0]
         while i < 3 and cond == True:
             i = i+1
-            time.sleep(1)
+            #time.sleep(1)
+            con.modeG()
             wx.CallAfter(pub.sendMessage, "update", msg="     golpe teste...")
+            time.sleep(0.5)
             con.modeGOLPES(1,1)
-            time.sleep(10)
+            time.sleep(5)
             kj = 0
             while True:
                 kj += 1
@@ -49,7 +52,7 @@ class MotorThread(Thread):
 
             kj = 0
             try:
-                val = con.ColetaI()
+                val = con.ColetaI(valores)
             except:
                 while True:
                     kj += 1
@@ -60,7 +63,7 @@ class MotorThread(Thread):
                         break
             kj = 0
             try:
-                val = con.ColetaI()
+                val = con.ColetaI(valores)
             except:
                 while True:
                     kj += 1
@@ -72,7 +75,7 @@ class MotorThread(Thread):
 
             kj = 0
             try:
-                val = con.ColetaI()
+                val = con.ColetaI(valores)
             except:
                 while True:
                     kj += 1
@@ -82,7 +85,7 @@ class MotorThread(Thread):
                     if kj > 500:
                         break
 
-            val = con.ColetaI()
+            val = con.ColetaI(valores)
             print val[4]
             if val[4] < (self.p2 - self.p2/10):
                 cond = True
@@ -101,6 +104,7 @@ class MotorThread(Thread):
                 wx.CallAfter(pub.sendMessage, "update", msg=" teste realizado...")
                 wx.CallAfter(pub.sendMessage, "update", msg="               _ok_")
                 wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
+                break
 
         if i == 1:
             wx.CallAfter(pub.sendMessage, "update", msg="")

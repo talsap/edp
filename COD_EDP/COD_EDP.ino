@@ -162,7 +162,7 @@ void loop(void) {
               setpointC = setpoint2*255/3300;   //valor em contagem
               analogWrite(DAC0, setpointC);
             }
-            if(setpoint2 == -3){
+            if(setpoint2 == 3){
               goto sensorLVDTDNIT134;
             }
           }
@@ -179,7 +179,7 @@ void loop(void) {
           ad2 = analogRead(A2);
           vd2 = ad2*bit12_Voltage*1000;
           
-          if(Serial.available()>1){
+          if(Serial.available()>0){
             setpoint1 = Serial.parseInt();
             if(setpoint1 > 5){   
               Serial.print("CHEGOU="); 
@@ -189,7 +189,7 @@ void loop(void) {
               serialFlush();
               condicao = 1;
             }
-            if(setpoint1 == -3){
+            if(setpoint1 == 3 || setpoint1 == 0){
               digitalWrite(8, LOW);
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
@@ -197,7 +197,7 @@ void loop(void) {
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
-            if(setpoint1 == -2){
+            if(setpoint1 == 2){
               digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
               delay(100);
               digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
@@ -224,14 +224,12 @@ void loop(void) {
           //INTERVALO DE PRESSAO OK//
           if(vd2 < 1.02*setpointM && vd2 > 0.98*setpointM){
             Serial.println("o");
-            serialFlush();
             mp.step(0);
             condicao = 1;
           }         
             
           if(condicao == 0){
             Serial.println("n");
-            serialFlush();
             mp.step(floor((setpointM - vd2)));
           }
         }
@@ -289,7 +287,7 @@ void loop(void) {
           initialMillis = resultTempo.t;
           nTime = resultTempo.n;
           
-          if(nGolpe == ntotalGolpes+1){
+          if(nGolpe == ntotalGolpes){
             imprimir();
             currentMillis = millis();
             imprimir();
@@ -317,10 +315,10 @@ void loop(void) {
           }        
           
           
-          if (Serial.available()> 1){  
-            //aguarda o valor na serial e se for -3 "para" o ensaio//
+          if (Serial.available()> 0){  
+            //aguarda o valor na serial e se for 3 "para" o ensaio//
             botoes = Serial.parseInt();
-            if(botoes == -3){
+            if(botoes == 3){
               pararEnsaio:
               nGolpe = 0;
               nTime = 0;
@@ -329,22 +327,22 @@ void loop(void) {
               initialMillis = currentMillis;
               goto sensorLVDTDNIT134;
             }
-            //aguarda o valor na serial. e se for -4 pausa o ensaio//
-            if(botoes == -4){
+            //aguarda o valor na serial. e se for 4 pausa o ensaio//
+            if(botoes == 4){
               float guardavalor;
               guardavalor = float(currentMillis - initialMillis);
               while(true){
                 imprimir();
-                if (Serial.available()> 1){
+                if (Serial.available()> 0){
                   botoes = Serial.parseInt();
-                  //aguarda o valor na serial. e se for -2 continua o ensaio de onde parou//
-                  if(botoes == -2){
+                  //aguarda o valor na serial. e se for 2 continua o ensaio de onde parou//
+                  if(botoes == 2){
                     currentMillis = millis();
                     initialMillis = currentMillis-guardavalor;
                     break;
                   }
-                  //aguarda o valor na serial. e se for -3 "para" o ensaio//
-                  if(botoes == -3){
+                  //aguarda o valor na serial. e se for 3 "para" o ensaio//
+                  if(botoes == 3){
                     goto pararEnsaio;
                   }
                 }
