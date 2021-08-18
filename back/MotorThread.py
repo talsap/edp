@@ -36,7 +36,7 @@ class MotorThread(Thread):
             i = i+1
             time.sleep(1)
             wx.CallAfter(pub.sendMessage, "update", msg="     golpe teste...")
-            con.modeG(1,1)
+            con.modeGOLPES(1,1)
             time.sleep(10)
             kj = 0
             while True:

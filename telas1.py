@@ -239,7 +239,7 @@ class TopPanel(wx.Panel):
             #time.sleep(1)
 
             if Fase == 'CONDICIONAMENTO':
-                '''condition = False
+                condition = False
                 if self._ciclo > 0:
                     if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0]:
                         threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo-1][0])
@@ -263,7 +263,7 @@ class TopPanel(wx.Panel):
                     if self._ciclo == 0:
                         self._self.bottom.mr.Enable()
                         self._self.bottom.condic.Enable()
-                time.sleep(.5)'''
+                time.sleep(.5)
 
                 if self._self.bottom.Automatico == False:
                     condition = True
@@ -273,7 +273,7 @@ class TopPanel(wx.Panel):
                     time.sleep(1)
 
             if Fase == 'MR':
-                '''condition = False
+                condition = False
                 if self._ciclo > 0:
                     if VETOR_MR[self._ciclo][0] != VETOR_MR[self._ciclo - 1][0]:
                         threadConection = CamaraThread.CamaraThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo-1][0])
@@ -296,7 +296,7 @@ class TopPanel(wx.Panel):
                     self._self.bottom.erro = True
                     if self._ciclo == 0:
                         self._self.bottom.mr.Enable()
-                time.sleep(.5)'''
+                time.sleep(.5)
 
                 if self._self.bottom.Automatico == False:
                     condition = True
@@ -1015,7 +1015,7 @@ class BottomPanel(wx.Panel):
                                         xmr.append(valores[0]/(float(self.freq.GetValue())))
                                         ymr.append(valores[1]-self.leituraZerob1)
                                         pcmr.append(valores[6])
-                                        pgmr.append(valores[4])
+                                        pgmr.append(valores[5]-valores[6])
 
                                 '''if cont >= 8:
                                     self.defElastica.Clear()
