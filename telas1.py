@@ -48,7 +48,7 @@ A2 = 0.007854
 A1 = 0.007854
 H = 0.01
 amplitudeMax = 0.06
-amplitudeMin = 0
+amplitudeMin = 0.01
 idt = 'DNIT134-01-'
 X = np.array([])
 Y = np.array([])
@@ -100,7 +100,7 @@ class TopPanel(wx.Panel):
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
             self.figure = plt.figure(constrained_layout=True)
-            #plt.ion()
+            plt.ion()
             self.axes = self.figure.add_subplot(111)
             self.canvas = FigureCanvas(self, -1, self.figure)
             #self.axes.set_xlabel("TEMPO (seg)")
@@ -170,12 +170,9 @@ class TopPanel(wx.Panel):
                 self._self.bottom._ciclo = self._ciclo
 
                 self._self.bottom.timer.Stop()
-                self.axes.clear()
-                self.axes.set_xlabel("TEMPO (seg)")
-                self.axes.set_ylabel("DESLOCAMENTO (mm)")
-                self.canvas.draw()
                 X = np.array([])
                 Y = np.array([])
+                self.draww()
                 self._self.bottom.PCalvo.Clear()
                 self._self.bottom.SigmaAlvo.Clear()
                 self._self.bottom.Ciclo.Clear()
@@ -239,7 +236,7 @@ class TopPanel(wx.Panel):
             self.fim_inicio.Disable()
             self.avanca.Disable()
             self._ciclo = self._self.bottom._ciclo
-            time.sleep(1)
+            #time.sleep(1)
 
             if Fase == 'CONDICIONAMENTO':
                 '''condition = False
@@ -341,14 +338,9 @@ class TopPanel(wx.Panel):
                                 conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
-                                self.axes.clear()
-                                self.axes.set_xlabel("TEMPO (seg)")
-                                self.axes.set_ylabel("DESLOCAMENTO (mm)")
-                                self.canvas.draw()
                                 X = np.array([])
                                 Y = np.array([])
-                                amplitudeMax = 0.06
-                                amplitudeMin = 0
+                                self.draww()
                                 self.pausa.Disable()
                                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.condic.GetId())
                                 wx.PostEvent(self._self.bottom.condic, evt)
@@ -403,14 +395,9 @@ class TopPanel(wx.Panel):
 
                 conditionEnsaio = False
                 self._self.bottom.timer.Stop()
-                self.axes.clear()
-                self.axes.set_xlabel("TEMPO (seg)")
-                self.axes.set_ylabel("DESLOCAMENTO (mm)")
-                self.canvas.draw()
                 X = np.array([])
                 Y = np.array([])
-                amplitudeMax = 0.06
-                amplitudeMin = 0
+                self.draww()
 
             if Fase == 'CONDICIONAMENTO':
                 self._self.bottom._ciclo = 0
@@ -443,12 +430,11 @@ class TopPanel(wx.Panel):
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             self.canvas.draw()
-            print 'chegou'
 
     #--------------------------------------------------
         def draw(self):
             self.axes.clear()
-            #self.axes.set_ylim(round(0.7*amplitudeMin), round(1.5*amplitudeMax,3))
+            self.axes.set_ylim(round(0.7*amplitudeMin,3), round(1.5*amplitudeMax,3))
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             #rect1 = self.axes.patch
@@ -1009,12 +995,12 @@ class BottomPanel(wx.Panel):
                                     amplitudeMax = valores[1]-self.leituraZerob1+H
                                 if valores[1]-self.leituraZerob1+H < amplitudeMin:
                                     amplitudeMin = valores[1]-self.leituraZerob1+H
+                                self.x_counter = len(X)
                                 if self.x_counter >= 249:
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
-                                    if self.x_counter == 0:
+                                    if self.x_counter == 1:
                                         amplitudeMin = valores[1]-self.leituraZerob1+H
-                                self.x_counter += 1
                                 print valores[0]
                                 #drawnow(self.graph.draw)
 
