@@ -18,11 +18,12 @@ class CamaraThread(Thread):
 
     #-------------------------------------------------------------------
     def run(self):
+        con.modeS()
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
-        time.sleep(1)
+        time.sleep(.5)
         con.modeE()
         wx.CallAfter(pub.sendMessage, "update", msg="       Regulando...")
-        time.sleep(1)
+        time.sleep(.5)
         valor2 = con.modeCAM(10000*self.p1, 10000*self.p1Ant)
         if valor2 == 'p1ok':
             print 'PRESSAO CAMARA OK'
@@ -48,10 +49,10 @@ class CamaraThreadZero(Thread):
     #-------------------------------------------------------------------
     def run(self):
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
-        time.sleep(1)
+        time.sleep(.5)
         con.modeE()
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
-        time.sleep(1)
+        time.sleep(.5)
         valor2 = con.modeCAMZERO(10000*self.p1, 10000*self.p1Sen)
         if valor2 == 'p1ok':
             print 'PRESSAO CAMARA ZERADA'

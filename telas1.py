@@ -943,7 +943,7 @@ class BottomPanel(wx.Panel):
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                 menssagError.ShowModal()
                 menssagError.Destroy()
-                con.modeI()
+                con.modeConectDNIT134()
                 self.LTeste.Disable()
                 self.LZero.Enable()
 
@@ -966,6 +966,7 @@ class BottomPanel(wx.Panel):
                     global ymr
                     global pcmr
                     global pgmr
+                    con.modeI()
                     condition = True
                     conditionEnsaio = False
                     cnt = 0

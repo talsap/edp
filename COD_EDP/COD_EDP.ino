@@ -137,9 +137,25 @@ void loop(void) {
               serialFlush();
               goto golpes;
             }
-          }
-          else{
-            imprimir();
+            if(leitura == 'J'){              
+              imprimir();
+              serialFlush();
+            }
+            if(leitura == 'I'){
+              Serial.println("IMPRIMIR");
+              serialFlush();
+              while(true){
+                if(Serial.available()>0){
+                  leitura = Serial.read();
+                  if(leitura == 'S'){
+                    goto sensorLVDTDNIT134;  
+                  }
+                }
+                else{
+                  imprimir();
+                }
+              }
+            }
           }
         }
         break;
@@ -189,7 +205,7 @@ void loop(void) {
               serialFlush();
               condicao = 1;
             }
-            if(setpoint1 == 3 || setpoint1 == 0){
+            if(setpoint1 == 3){
               digitalWrite(8, LOW);
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
@@ -406,6 +422,7 @@ void imprimir(){
   Serial.print(statuS);
   Serial.print(",");
   Serial.println(nGolpe);
+  Serial.flush();
 }/* Imprimir dados na tela */
 
 /* Limpa o buffer serial */

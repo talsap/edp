@@ -12,11 +12,13 @@ from serial.tools import list_ports
 '''Variaveis Globais'''
 opcaoC = "C"    '''conectado'''
 opcaoD = "D"    '''desconectado'''
-opcaoI = "I"    '''DNIT134'''
+opcaoI = "I"    '''DNIT134 e imprimir diversos'''
 opcaoE = "E"    '''CAMARA DE PRESSAO'''
 opcaoM = "M"    '''MOTOR DE PASSOS'''
 opcaoB = "B"    '''Break'''
 opcaoG = "G"    '''Golpes'''
+opcaoJ = "J"    '''Imprimir 1 valor'''
+opcaoS = "S"    '''Stoped'''
 Y = []          #Array Deformações
 T = []          #Array tempo grafico'''
 
@@ -77,6 +79,30 @@ def connect():
             return "0", "notconnectado"
 
 #-------------------------------------------------------------------
+'''modo Break'''
+def modeB():
+    print 'modeB'
+    conexao.write(opcaoB)
+
+#-------------------------------------------------------------------
+'''Desconectando'''
+def modeD():
+    print 'modeD'
+    conexao.write(opcaoD)
+
+#-------------------------------------------------------------------
+'''Modo Imprimir'''
+def modeI():
+    print 'modeI'
+    conexao.write(opcaoI)
+
+#-------------------------------------------------------------------
+'''Modo Imprimir 1 valor'''
+def modeJ():
+    print 'modeJ'
+    conexao.write(opcaoJ)
+
+#-------------------------------------------------------------------
 '''Fim'''
 def modeF():
     print 'modeF'
@@ -95,10 +121,23 @@ def modeP():
     conexao.write(str(4))  #O valor responsável em pausar o ensaio é 4
 
 #-------------------------------------------------------------------
-'''Desconectando'''
-def modeD():
-    print 'modeD'
-    conexao.write(opcaoD)
+'''Pede para parar de imprimir'''
+def modeS():
+    print 'modoS'
+    conexao.write(opcaoS)
+
+#-------------------------------------------------------------------
+'''Pede para parar de imprimir'''
+def modeStoped():
+    print 'modoStoped'
+    conexao.write(opcaoS)
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
+        if a[0] == 'D':
+            print a
+            break
 
 #-------------------------------------------------------------------
 '''Ativando camara'''
@@ -123,9 +162,9 @@ def modeM():
         while (conexao.inWaiting() == 0):
             pass
         a = conexao.readline()
-        print a
+        #print a
         if a[0] == 'M':
-            #print a
+            print a
             break
 
 #-------------------------------------------------------------------
@@ -133,19 +172,15 @@ def modeM():
 def modeG():
     print 'modeG'
     conexao.write(opcaoG)
-    while True:
-        while (conexao.inWaiting() == 0):
-            pass
-        a = conexao.readline()
-        print a
-        if a[0] == 'G':
-            print a
-            break
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
+
 
 #-------------------------------------------------------------------
 '''Conecxao com a DNIT134'''
-def modeI():
-    print 'modeI'
+def modeConectDNIT134():
+    #print 'modeConectDNIT134'
     conexao.write(opcaoC)
     while (conexao.inWaiting() == 0):
         pass
@@ -235,12 +270,18 @@ def modeMotor(p2):
                 contadorOK += 1
                 if contadorOK == 25: #contadorOK igual a 25
                     conexao.write(str(3))
+                    while (conexao.inWaiting() == 0):
+                        pass
+                    print(conexao.readline())
                     return "p2ok"
                     break
-            '''if a[0] == "n": #if apenas para testes
+            if a[0] == "n": #if apenas para testes
                 conexao.write(str(3))
+                while (conexao.inWaiting() == 0):
+                    pass
+                print(conexao.readline())
                 return "p2ok"
-                break'''
+                break
         except:
             pass
 
@@ -299,20 +340,22 @@ def Buffer():
 '''Ativando motor'''
 def modeBuffer():
     print 'modeBuffer'
-    while (conexao.inWaiting() == 0):
-        pass
-    a = conexao.readline()
-    #print a
-    if a[0] == 'F':
+    while True:
+        while (conexao.inWaiting() == 0):
+            pass
+        a = conexao.readline()
         print a
-        print "BufferLimpo"
-        return True
-    else:
-        return False
+        if a[0] == 'D':
+            print a
+            print "BufferLimpo"
+            return True
+            break
+        else:
+            return False
 
 #-------------------------------------------------------------------
 def ColetaI(valores):
-    print 'ColetaI'
+    #print 'ColetaI'
     while (conexao.inWaiting() == 0):
         pass
     arduinoString = conexao.readline()
@@ -329,6 +372,7 @@ def ColetaI(valores):
         glp = int(Array[8])
 
     except:
+        #print 'ColetaIexcept'
         temp = valores[0]
         y1mm = valores[1]
         y2mm = valores[2]
