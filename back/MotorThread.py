@@ -33,7 +33,6 @@ class MotorThread(Thread):
 
         i = 0
         cond = True
-        valores = [0,0,0,0,0,0,0,0,0]
         while i < 3 and cond == True:
             i = i+1
             time.sleep(1)
@@ -41,28 +40,59 @@ class MotorThread(Thread):
             wx.CallAfter(pub.sendMessage, "update", msg="     golpe teste...")
             con.modeGOLPES(1,1)
             time.sleep(5)
-            a = con.modeBuffer()
-            if a == True:
-                try:
-                    con.modeJ()
-                    time.sleep(.5)
-                    val = con.ColetaI(valores)
-                    print val[4]
-                except:
-                    print 'erro ao pegar valor do sensor'
+            kj = 0
+            while True:
+                kj += 1
+                a = con.modeBuffer()
+                if a == True:
+                    break
+                if kj > 500:
+                    break
 
-            if val[4] < (self.p2 - self.p2/10):
+            kj = 0
+            try:
+                con.modeJ()
+                time.sleep(1)
+                val = con.ColetaII()
+            except:
+                while True:
+                    kj += 1
+                    a = con.modeBuffer()
+                    if a == True:
+                        break
+                    if kj > 500:
+                        break
+            kj = 0
+            try:
+                con.modeJ()
+                time.sleep(1)
+                val = con.ColetaII()
+            except:
+                while True:
+                    kj += 1
+                    a = con.modeBuffer()
+                    if a == True:
+                        break
+                    if kj > 500:
+                        break
+
+            con.modeJ()
+            time.sleep(1)
+            val = con.ColetaII()
+            print val
+            if val < (self.p2 - self.p2/10):
                 cond = True
+                con.modeS()
                 wx.CallAfter(pub.sendMessage, "update", msg="  Ativando motor...")
-                time.sleep(1)
+                time.sleep(.5)
                 con.modeM()
-                time.sleep(1)
+                time.sleep(.5)
                 wx.CallAfter(pub.sendMessage, "update", msg="       Ajustando...")
                 valor = con.modeMotor((10000*self.a2/self.a1)*self.p2)
                 if valor == 'p2ok':
                     print 'PRESSAO GOLPES OK'
                     wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
-                    time.sleep(1)
+                    time.sleep(.2)
             else:
                 cond = False
                 wx.CallAfter(pub.sendMessage, "update", msg=" teste realizado...")
@@ -113,10 +143,11 @@ class MotorThreadZero(Thread):
 
     #-------------------------------------------------------------------
     def run(self):
+        con.modeS()
         wx.CallAfter(pub.sendMessage, "update", msg="  Ativando motor...")
-        time.sleep(1)
+        time.sleep(.5)
         con.modeM()
-        time.sleep(1)
+        time.sleep(.5)
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         valor = con.modeMotorZero((10000*self.a2/self.a1)*self.p2)
         if valor == 'p2ok':
@@ -124,3 +155,4 @@ class MotorThreadZero(Thread):
             wx.CallAfter(pub.sendMessage, "update", msg="        σd - Zerado")
             time.sleep(1)
             wx.CallAfter(pub.sendMessage, "update", msg="")
+            con.modeI()

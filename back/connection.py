@@ -144,13 +144,9 @@ def modeStoped():
 def modeE():
     print 'modeE'
     conexao.write(opcaoE)
-    while True:
-        while (conexao.inWaiting() == 0):
-            pass
-        a = conexao.readline()
-        if a[0] == 'C':
-            print a
-            break
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
 
 #-------------------------------------------------------------------
 '''Ativando motor'''
@@ -158,14 +154,9 @@ def modeM():
     print 'modeM'
     conexao.flushOutput()
     conexao.write(opcaoM)
-    while True:
-        while (conexao.inWaiting() == 0):
-            pass
-        a = conexao.readline()
-        #print a
-        if a[0] == 'M':
-            print a
-            break
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
 
 #-------------------------------------------------------------------
 '''Ativando golpes'''
@@ -275,13 +266,13 @@ def modeMotor(p2):
                     print(conexao.readline())
                     return "p2ok"
                     break
-            if a[0] == "n": #if apenas para testes
+            '''if a[0] == "n": #if apenas para testes
                 conexao.write(str(3))
                 while (conexao.inWaiting() == 0):
                     pass
                 print(conexao.readline())
                 return "p2ok"
-                break
+                break'''
         except:
             pass
 
@@ -340,18 +331,16 @@ def Buffer():
 '''Ativando motor'''
 def modeBuffer():
     print 'modeBuffer'
-    while True:
-        while (conexao.inWaiting() == 0):
-            pass
-        a = conexao.readline()
+    while (conexao.inWaiting() == 0):
+        pass
+    a = conexao.readline()
+    print a
+    if a[0] == 'D':
         print a
-        if a[0] == 'D':
-            print a
-            print "BufferLimpo"
-            return True
-            break
-        else:
-            return False
+        print "BufferLimpo"
+        return True
+    else:
+        return False
 
 #-------------------------------------------------------------------
 def ColetaI(valores):
@@ -384,3 +373,17 @@ def ColetaI(valores):
         glp = valores[8]
 
     return temp, y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, sts, glp
+
+#-------------------------------------------------------------------
+def ColetaII():
+    #print 'ColetaI'
+    while (conexao.inWaiting() == 0):
+        pass
+    arduinoString = conexao.readline()
+    Array = arduinoString.split(',')
+    try:
+        sen = float(Array[5])
+    except:
+        print "Error Coleta Sensor"
+
+    return sen

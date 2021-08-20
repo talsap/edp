@@ -48,6 +48,7 @@ class CamaraThreadZero(Thread):
 
     #-------------------------------------------------------------------
     def run(self):
+        con.modeS()
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
         time.sleep(.5)
         con.modeE()
