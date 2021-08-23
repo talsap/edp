@@ -27,17 +27,19 @@ global leituraZerob1
 global leituraZerob2
 global A2 #área do corpo de prova, vinda do banco de dados do Ensaio
 global A1 #área da seção do cilindro pneumático
-global H  #Altura do corpo de prova
+global H  #Altura do corpo de prova em milímetros
+global H0 #Altura de referência do medididor de deslocamento
 global X  #valores X do gráfico
 global Y  #valores Y do gráfico
 global xz1
 global yz1
+global yt1
+global yz2
+global yt2
 global pc1
 global pg1
-global xmr
-global ymr
-global pcmr
-global pgmr
+global REFERENCIA1
+global REFERENCIA2
 global Ti #valor temporal
 global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 global Automatico #idica se o ensaio será automático ou não
@@ -48,7 +50,8 @@ global mult
 
 A2 = 0.007854
 A1 = 0.007854
-H = 0.01
+H0 = 0.01
+H = 200
 amplitudeMax = 0.084
 amplitudeMin = 0.02
 mult = 0
@@ -58,12 +61,11 @@ X = np.array([])
 Y = np.array([])
 xz1 = []
 yz1 = []
+yt1 = []
+yz2 = []
+yt2 = []
 pc1 = []
 pg1 = []
-xmr = []
-ymr = []
-pcmr = []
-pgmr = []
 Fase = ''
 
 VETOR_COND = [[0.070,0.140],
@@ -150,6 +152,8 @@ class TopPanel(wx.Panel):
 
             self.sizer.Add(self.h_sizer, 0, wx.EXPAND | wx.ALL, 10)
             self.SetSizer(self.sizer)
+            self.CAMARA_ANTERIOR = 0
+            self.AVANCA = False
 
     #--------------------------------------------------
         '''Função AVANCA'''
@@ -185,6 +189,7 @@ class TopPanel(wx.Panel):
                 self._self.bottom.PCalvo.Clear()
                 self._self.bottom.SigmaAlvo.Clear()
                 self._self.bottom.Ciclo.Clear()
+                self.AVANCA = True
 
                 if Fase == 'CONDICIONAMENTO':
                     print '\nAVANCA.CICLO.COND='+str(self._ciclo+1)+'\n'
@@ -256,10 +261,19 @@ class TopPanel(wx.Panel):
             if Fase == 'CONDICIONAMENTO':
                 condition = False
                 if self._ciclo > 0:
-                    if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0]:
+                    if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0] and self.AVANCA == False:
                         threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo-1][0])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
+                        CAMARA_ANTERIOR = VETOR_COND[self._ciclo][0]
+                        time.sleep(1)
+
+                    if self.AVANCA == True:
+                        threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], self.CAMARA_ANTERIOR)
+                        dlgC1 = My.MyProgressDialog(3)
+                        dlgC1.ShowModal()
+                        self.CAMARA_ANTERIOR = VETOR_COND[self._ciclo][0]
+                        self.AVANCA = False
                         time.sleep(1)
                 else:
                     threadConection = CamaraThread.CamaraThread(VETOR_COND[self._ciclo][0], 0)
@@ -290,10 +304,18 @@ class TopPanel(wx.Panel):
             if Fase == 'MR':
                 condition = False
                 if self._ciclo > 0:
-                    if VETOR_MR[self._ciclo][0] != VETOR_MR[self._ciclo - 1][0]:
+                    if VETOR_MR[self._ciclo][0] != VETOR_MR[self._ciclo - 1][0] and self.AVANCA == False:
                         threadConection = CamaraThread.CamaraThread(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo-1][0])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
+                        time.sleep(1)
+
+                    if self.AVANCA == True:
+                        threadConection = CamaraThread.CamaraThread(VETOR_MR[self._ciclo][0], self.CAMARA_ANTERIOR)
+                        dlgC1 = My.MyProgressDialog(3)
+                        dlgC1.ShowModal()
+                        self.CAMARA_ANTERIOR = VETOR_MR[self._ciclo][0]
+                        self.AVANCA = False
                         time.sleep(1)
                 else:
                     threadConection = CamaraThread.CamaraThread(VETOR_MR[self._ciclo][0], 0)
@@ -974,12 +996,13 @@ class BottomPanel(wx.Panel):
                     global amplitudeMin
                     global xz1
                     global yz1
+                    global yt1
+                    global yz2
+                    global yt2
                     global pc1
                     global pg1
-                    global xmr
-                    global ymr
-                    global pcmr
-                    global pgmr
+                    global REFERENCIA1
+                    global REFERENCIA2
                     con.modeI()
                     condition = True
                     conditionEnsaio = False
@@ -1013,7 +1036,7 @@ class BottomPanel(wx.Panel):
                                     cont1 = 0
                             cont1 = cont1 + 1
 
-                            y1 = valores[2]-self.leituraZerob2
+                            y1 = valores[1]-self.leituraZerob2
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
                             ymedio = (y1 + y2)/2
 
@@ -1021,33 +1044,49 @@ class BottomPanel(wx.Panel):
                             '''if conditionEnsaio == True:'''
                             if conditionEnsaio == True and valores[0] > 0:
                                 X = np.append(X, valores[0])
-                                Y = np.append(Y, ymedio+H)
-                                if ymedio+H > amplitudeMax:
-                                    amplitudeMax = ymedio+H
-                                if ymedio+H < amplitudeMin:
-                                    amplitudeMin = ymedio+H
+                                Y = np.append(Y, ymedio+H0)
+                                if ymedio+H0 > amplitudeMax:
+                                    amplitudeMax = ymedio+H0
+                                if ymedio+H0 < amplitudeMin:
+                                    amplitudeMin = ymedio+H0
                                 self.x_counter = len(X)
                                 if self.x_counter >= 1500:
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
                                     if self.x_counter == 1:
-                                        amplitudeMin = ymedio+H
+                                        amplitudeMin = ymedio+H0
                                 #print valores[0]
                                 #drawnow(self.graph.draw)
 
                                 if Fase == 'CONDICIONAMENTO' and Pausa == False:
-                                    if int(valores[0]) > 494 and int(valores[0]) < 500:
+                                    if valores[0] == 0.01:
+                                        REFERENCIA1 = y1+H0
+                                        REFERENCIA2 = y2+H0
+                                    if int(valores[0]) > 494 and int(valores[0]) <= 500:
                                         xz1.append(valores[0])
-                                        yz1.append(ymedio+H)
+                                        yz1.append(y1+H0)
+                                        yz2.append(y2+H0)
                                         pc1.append(valores[6])
                                         pg1.append(valores[5]-valores[6])
-                                if Fase == 'MR' and Pausa == False:
-                                    if int(valores[0]) > 4 and int(valores[0]) <= 10.1:
-                                        xmr.append(valores[0])
-                                        ymr.append(ymedio+H)
-                                        pcmr.append(valores[6])
-                                        pgmr.append(valores[5]-valores[6])
+                                        yt1.append(valores[3])
+                                        yt2.append(valores[4])
 
+                                if Fase == 'MR' and Pausa == False:
+                                    if valores[0] == 0.01:
+                                        REFERENCIA1 = y1+H0
+                                        REFERENCIA2 = y2+H0
+                                    if int(valores[0]) > 4 and int(valores[0]) <= 10:
+                                        xz1.append(valores[0])
+                                        yz1.append(y1+H0)
+                                        yz2.append(y2+H0)
+                                        pc1.append(valores[6])
+                                        pg1.append(valores[5]-valores[6])
+                                        yt1.append(valores[3])
+                                        yt2.append(valores[4])
+
+                                if cont >= 8:
+                                    self.AlturaFinal.Clear()
+                                    self.AlturaFinal.AppendText(str(round(H-(ymedio-REFERENCIA1/2-REFERENCIA2/2), 2)))
                                 '''if cont >= 8:
                                     self.defElastica.Clear()
                                     self.defPlastica.Clear()
@@ -1106,19 +1145,27 @@ class BottomPanel(wx.Panel):
             global Fase
             global xz1
             global yz1
+            global yt1
+            global yz2
+            global yt2
             global pc1
             global pg1
+            global REFERENCIA1
+            global REFERENCIA2
             Fase = 'CONDICIONAMENTO'
             self.erro = False
             if self._ciclo < 3:
                 print '\nCICLO.COND='+str(self._ciclo+1)+'\n'
 
             if self._ciclo > 0:
-                threadConection = SaveThread.SaveThread(idt+"COND-"+str(self._ciclo), xz1, yz1, pc1, pg1)
-                dlgC2 = My.MyProgressDialog(len(xz1))
+                threadConection = SaveThread.SaveThread(idt+"COND-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
+                dlgC2 = My.MyProgressDialog(len(xz1)-1)
                 dlgC2.ShowModal()
                 xz1 = []
                 yz1 = []
+                yt1 = []
+                yz2 = []
+                yt2 = []
                 pc1 = []
                 pg1 = []
 
@@ -1173,23 +1220,31 @@ class BottomPanel(wx.Panel):
         def MR(self, event):
             global condition
             global Fase
-            global xmr
-            global ymr
-            global pcmr
-            global pgmr
+            global xz1
+            global yz1
+            global yt1
+            global yz2
+            global yt2
+            global pc1
+            global pg1
+            global REFERENCIA1
+            global REFERENCIA2
             Fase = 'MR'
             self.erro = False
             if self._ciclo < 18:
                 print '\nCICLO.MR='+str(self._ciclo+1)+'\n'
 
             if self._ciclo > 0:
-                threadConection = SaveThread.SaveThread(idt+"MR-"+str(self._ciclo), xmr, ymr, pcmr, pgmr)
-                dlgC2 = My.MyProgressDialog(len(xmr))
+                threadConection = SaveThread.SaveThread(idt+"MR-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
+                dlgC2 = My.MyProgressDialog(len(xz1)-1)
                 dlgC2.ShowModal()
-                xmr = []
-                ymr = []
-                pcmr = []
-                pgmr = []
+                xz1 = []
+                yz1 = []
+                yt1 = []
+                yz2 = []
+                yt2 = []
+                pc1 = []
+                pg1 = []
 
             if self._ciclo < 18:
                 self.LZero.Disable()

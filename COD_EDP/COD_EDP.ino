@@ -68,9 +68,9 @@ void setup(void) {
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
   analogWrite(DAC0, 1); //pino responsavel em alterar a pressao de (Camara)
   pinMode(A0, INPUT); //pino LVDT1
-  pinMode(A1, INPUT); //pino LVDT2
-  pinMode(A2, INPUT); //pino Sensor de pressão (Aplicador)
-  pinMode(A3, INPUT); //pino Sensor de pressão (Camara)
+  pinMode(A2, INPUT); //pino LVDT2
+  pinMode(A4, INPUT); //pino Sensor de pressão (Aplicador)
+  pinMode(A6, INPUT); //pino Sensor de pressão (Camara)
   pinMode(pinAplicador, OUTPUT);  //configura o pinAplicador
   mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
@@ -164,7 +164,7 @@ void loop(void) {
         camara:
         //CAMARA DE PRESSAO//
         while(true){
-          ad3 = analogRead(A3);
+          ad3 = analogRead(A6);
           vd3 = ad3*bit12_Voltage*1000;
           
           if (Serial.available()>1){
@@ -192,7 +192,7 @@ void loop(void) {
         motor:
         //MOTOR DE PASSOS//
         while(true){
-          ad2 = analogRead(A2);
+          ad2 = analogRead(A4);
           vd2 = ad2*bit12_Voltage*1000;
           
           if(Serial.available()>0){
@@ -304,29 +304,23 @@ void loop(void) {
           nTime = resultTempo.n;
           
           if(nGolpe == ntotalGolpes){
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
-            imprimir();
-            currentMillis = millis();
+            while(currentMillis - initialMillis <= 990){
+              currentMillis = millis(); //Tempo atual em ms
+              while(true){
+                if((currentMillis - initialMillis)% 10 == 0 && (currentMillis - initialMillis)!= 0){
+                  imprimir();
+                  break;
+                }
+                else{
+                  delay(1);
+                  currentMillis = millis(); //Tempo atual em ms
+                }
+              }
+            }
             initialMillis = currentMillis;
             nGolpe = 0;
             nTime = 0;
+            contadorG = 1;
             goto sensorLVDTDNIT134;
           }        
           
@@ -392,11 +386,11 @@ void loop(void) {
 /* Imprimir dados na tela */
 void imprimir(){
   ad0 = adc.read(A0); 
-  ad1 = adc.read(A1); 
+  ad1 = adc.read(A2); 
   vd0 = ad0*bit16_Voltage; 
   vd1 = ad1*bit16_Voltage; 
-  ad2 = analogRead(A2);  
-  ad3 = analogRead(A3); 
+  ad2 = analogRead(A4);  
+  ad3 = analogRead(A6); 
   vd2 = ad2*bit12_Voltage*1000; 
   vd3 = ad3*bit12_Voltage*1000;
   

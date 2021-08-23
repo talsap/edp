@@ -266,13 +266,15 @@ def modeMotor(p2):
                     print(conexao.readline())
                     return "p2ok"
                     break
-            '''if a[0] == "n": #if apenas para testes
-                conexao.write(str(3))
-                while (conexao.inWaiting() == 0):
-                    pass
-                print(conexao.readline())
-                return "p2ok"
-                break'''
+            '''if a[0] == "n": #apenas para situaçõs de teste
+                contadorOK += 1
+                if contadorOK == 25: #contadorOK igual a 25
+                    conexao.write(str(3))
+                    while (conexao.inWaiting() == 0):
+                        pass
+                    print(conexao.readline())
+                    return "p2ok"
+                    break'''
         except:
             pass
 
@@ -288,6 +290,8 @@ def modeMotorZero(p2):
         pass
     print(conexao.readline())
     contadorOK = 0
+    contadorNOK = 0
+    condic = True
     time.sleep(.5)
     while True:
         while (conexao.inWaiting() == 0):
@@ -297,10 +301,20 @@ def modeMotorZero(p2):
         try:
             if a[0] == "o":
                 contadorOK += 1
-                if contadorOK == 2: #contadorOK igual a 25
+                if contadorOK == 2:
                     conexao.write(str(3))
                     return "p2ok"
                     break
+            if a[0] == "n":
+                contadorNOK += 1
+                if contadorNOK == 5 and condic == True:
+                    contadorNOK = 0
+                    condic = False
+                    conexao.write(str(2))
+                    while (conexao.inWaiting() == 0):
+                        pass
+                    print(conexao.readline())
+                    conexao.write(str(int(round(p2,0))))
         except:
             pass
 
