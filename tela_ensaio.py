@@ -1159,7 +1159,7 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo > 0:
                 threadConection = SaveThread.SaveThread(idt+"COND-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
-                dlgC2 = My.MyProgressDialog(len(xz1)-1)
+                dlgC2 = My.MyProgressDialog(len(xz1)-2)
                 dlgC2.ShowModal()
                 xz1 = []
                 yz1 = []
@@ -1198,22 +1198,28 @@ class BottomPanel(wx.Panel):
                 self.graph.fim_inicio.Enable()
                 self.graph.avanca.Enable()
 
-            if self._ciclo > 0 and self.Automatico == False:
+            if self._ciclo > 0 and self._ciclo < 3 and self.Automatico == False:
                 self.graph.fim_inicio.SetLabel('INICIO')
                 self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                 self.graph.fim_inicio.Enable()
                 self.graph.avanca.Enable()
 
-            if self._ciclo > 0 and self.Automatico == True:
+            if self._ciclo > 0 and self._ciclo < 3 and self.Automatico == True:
                 self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                 wx.PostEvent(self.graph.fim_inicio, evt)
 
-            if self._ciclo >= 3 and self.erro == False:
+            if self._ciclo >= 3 and self.Automatico == False and self.erro == False:
                 self._ciclo = 0
                 self.mr.Enable()
                 self.condic.Disable()
                 #self.pressao_zero()
+
+            if self._ciclo >= 3 and self.Automatico == True and self.erro == False:
+                self._ciclo = 0
+                self.condic.Disable()
+                evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.mr.GetId())
+                wx.PostEvent(self.mr, evt)
 
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''
@@ -1236,7 +1242,7 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo > 0:
                 threadConection = SaveThread.SaveThread(idt+"MR-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
-                dlgC2 = My.MyProgressDialog(len(xz1)-1)
+                dlgC2 = My.MyProgressDialog(len(xz1)-2)
                 dlgC2.ShowModal()
                 xz1 = []
                 yz1 = []
@@ -1262,7 +1268,7 @@ class BottomPanel(wx.Panel):
                 self.Ciclo.AppendText(str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
 
-            if self._ciclo == 0:
+            if self._ciclo == 0 and self.Automatico == False:
                 info = "EDP 134/2018ME"
                 titulo = "Preparação da câmara triaxial."
                 message1 = "Verifique se está tudo certo!"
@@ -1275,13 +1281,13 @@ class BottomPanel(wx.Panel):
                 self.graph.fim_inicio.Enable()
                 self.graph.avanca.Enable()
 
-            if self._ciclo > 0 and self.Automatico == False:
+            if self._ciclo > 0 and self._ciclo < 18 and self.Automatico == False:
                 self.graph.fim_inicio.SetLabel('INICIO')
                 self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                 self.graph.fim_inicio.Enable()
                 self.graph.avanca.Enable()
 
-            if self._ciclo > 0 and self.Automatico == True:
+            if self._ciclo > 0 and self._ciclo < 18 and self.Automatico == True:
                 self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                 wx.PostEvent(self.graph.fim_inicio, evt)

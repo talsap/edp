@@ -30,7 +30,7 @@ class SaveThread(Thread):
         x =  self.x
         i = 0
         bancodedados.saveReferencia(self.idt, self.r1, self.r2)
-        while i < len(x)-1:
+        while i < len(x)-2:
             wx.CallAfter(pub.sendMessage, "update", msg="  Salvando dados...")
             bancodedados.saveDNIT134(self.idt, x[i], self.y1[i], self.yt1[i], self.y2[i], self.yt2[i], self.pc[i], self.pg[i])
             i += 1
