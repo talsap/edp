@@ -301,7 +301,7 @@ def modeMotorZero(p2):
         try:
             if a[0] == "o":
                 contadorOK += 1
-                if contadorOK == 2:
+                if contadorOK == 25:
                     conexao.write(str(3))
                     return "p2ok"
                     break
@@ -400,4 +400,4 @@ def ColetaII():
     except:
         print "Error Coleta Sensor"
 
-    return sen
+    return sen/10000

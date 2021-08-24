@@ -1213,11 +1213,13 @@ class BottomPanel(wx.Panel):
                 self._ciclo = 0
                 self.mr.Enable()
                 self.condic.Disable()
+                self.graph.fim_inicio.SetLabel('INICIO')
                 #self.pressao_zero()
 
             if self._ciclo >= 3 and self.Automatico == True and self.erro == False:
                 self._ciclo = 0
                 self.condic.Disable()
+                self.graph.fim_inicio.SetLabel('INICIO')
                 evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.mr.GetId())
                 wx.PostEvent(self.mr, evt)
 

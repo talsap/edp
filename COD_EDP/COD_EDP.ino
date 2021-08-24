@@ -405,9 +405,9 @@ void imprimir(){
   Serial.print(",");
   Serial.print(ad1);
   Serial.print(",");
-  Serial.print(vd0);
+  Serial.print(vd0,4);
   Serial.print(",");
-  Serial.print(vd1);
+  Serial.print(vd1,4);
   Serial.print(",");
   Serial.print(vd2*3.3f);
   Serial.print(",");
