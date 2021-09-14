@@ -286,7 +286,7 @@ class TopPanel(wx.Panel):
                 dlgC2.ShowModal()
 
                 if threadConection.ret() == False:
-                    dlgC3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
+                    dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "CONDICIONAMENTO", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
                     dlgC3.ShowModal()
                     self._self.bottom.erro = True
                     if self._ciclo == 0:
@@ -296,8 +296,7 @@ class TopPanel(wx.Panel):
 
                 if self._self.bottom.Automatico == False:
                     condition = True
-                    info = "EDP 134/2018ME"
-                    dlg3 = dialogoDinamico(3, info, "CONDICIONAMENTO", "Tudo pronto!", "Aperte INICIO.", "", None)
+                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "CONDICIONAMENTO", "Tudo pronto!", "Aperte INICIO.", "", None)
                     dlg3.ShowModal()
                     time.sleep(1)
 
@@ -328,7 +327,7 @@ class TopPanel(wx.Panel):
                 dlgC2.ShowModal()
 
                 if threadConection.ret() == False:
-                    dlgC3 = dialogoDinamico(3, info, "MÓDULO DE RESILIÊNCIA", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
+                    dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "MÓDULO DE RESILIÊNCIA", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
                     dlgC3.ShowModal()
                     self._self.bottom.erro = True
                     if self._ciclo == 0:
@@ -337,8 +336,7 @@ class TopPanel(wx.Panel):
 
                 if self._self.bottom.Automatico == False:
                     condition = True
-                    info = "EDP 134/2018ME"
-                    dlg3 = dialogoDinamico(3, info, "MÓDULO DE RESILIÊNCIA", "Tudo pronto!", "Aperte INICIO.", "", None)
+                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "MÓDULO DE RESILIÊNCIA", "Tudo pronto!", "Aperte INICIO.", "", None)
                     dlg3.ShowModal()
                     time.sleep(1)
 
@@ -453,7 +451,7 @@ class TopPanel(wx.Panel):
 
             if Fase == 'MR':
                 self._self.bottom.pressao_zero(VETOR_MR[self._ciclo][0])
-                dlg3 = dialogoDinamico(3, info, "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
+                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
 
     #--------------------------------------------------
@@ -1298,7 +1296,7 @@ class BottomPanel(wx.Panel):
                 self.mr.Disable()
                 self.pressao_zero(VETOR_MR[self._ciclo-1][0])
                 self._ciclo = 0
-                dlg3 = dialogoDinamico(3, info, "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
+                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
 
     #--------------------------------------------------
