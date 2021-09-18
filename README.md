@@ -82,5 +82,5 @@ cmd -> (Administrador)
  
 * **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
  
-Siga-nos no github e junte-se a nós!
+Siga-me no github e junte-se a essa criação!
 Obrigado por visitar e boa codificação!
