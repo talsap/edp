@@ -67,7 +67,7 @@ cmd -> (Administrador)
   Aqui será listados os recursos.
  
 ## Links
- - [Cronograma](https://drive.google.com/file/d/14ANMyzFSMZsLhsU12tyyPpHEQqWXQraC/view?usp=sharing)
+ - [Cronograma]$(https://drive.google.com/file/d/14ANMyzFSMZsLhsU12tyyPpHEQqWXQraC/view?usp=sharing)$
  - [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
  - Repository: https://github.com/talsap/edp
  - Em caso de bugs sensíveis, como vulnerabilidades de segurança, entre em contato
@@ -81,7 +81,6 @@ cmd -> (Administrador)
 ## Autores
  
 * **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
-* **Caio França**: @Foiac (https://github.com/Foiac)
  
 Siga-nos no github e junte-se a nós!
 Obrigado por visitar e boa codificação!
