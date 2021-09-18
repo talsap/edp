@@ -62,9 +62,9 @@ cmd -> (Administrador)
 
 ![home screen logo](https://github.com/talsap/etd/blob/main/readme_images/TelaInicial.png?raw=true)
 
-## Features
+## Futuro
  
-  Aqui será listados os recursos.
+  Aqui será listados os recursos futuros.
  
 ## Links
  - [Cronograma]
