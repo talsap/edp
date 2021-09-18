@@ -78,7 +78,7 @@ cmd -> (Administrador)
  
 1.0 BETA
  
-## Autores
+## Autor
  
 * **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
  
