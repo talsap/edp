@@ -64,7 +64,7 @@ cmd -> (Administrador)
 
 ## Futuro
  
-  Aqui será listados os recursos futuros.
+  Aqui será listado os recursos futuros.
  
 ## Links
  - [Cronograma]
