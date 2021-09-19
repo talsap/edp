@@ -81,6 +81,15 @@ cmd -> (Administrador)
 ## Autor
  
 * **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
- 
+
+## Orientadores
+
+* **Mario Sergio De Souza Almeida**: e-mail: (mario.almeida@ufrb.edu.br)
+* **Acbal Rucas Andrade**: e-mail: (acbal@ufrb.edu.br)
+
+## Parceiros
+
+* **Caio França**: @Foiac (https://github.com/Foiac)
+
 Siga-me no github e junte-se a essa criação!
 Obrigado por visitar e boa codificação!
