@@ -91,5 +91,4 @@ cmd -> (Administrador)
 
 * **Caio França**: @Foiac (https://github.com/Foiac)
 
-Siga-me no github e junte-se a essa criação!
 Obrigado por visitar e boa codificação!
