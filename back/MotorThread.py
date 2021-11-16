@@ -25,7 +25,7 @@ class MotorThread(Thread):
         con.modeM()
         time.sleep(.5)
         wx.CallAfter(pub.sendMessage, "update", msg="       Ajustando...")
-        valor = con.modeMotor((10000*self.a2/self.a1)*(self.p2+0.02)) #+0.02 é um incremento de pressão pra tentar desbugar a válvula debilitada
+        valor = con.modeMotor((10000*self.a2/self.a1)*(self.p2))
         if valor == 'p2ok':
             print 'PRESSAO GOLPES OK'
             wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
