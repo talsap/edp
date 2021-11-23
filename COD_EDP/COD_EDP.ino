@@ -67,10 +67,10 @@ void setup(void) {
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
   analogWrite(DAC0, 1); //pino responsavel em alterar a pressao de (Camara)
-  pinMode(A0, INPUT); //pino LVDT1
-  pinMode(A2, INPUT); //pino LVDT2
-  pinMode(A4, INPUT); //pino Sensor de pressão (Aplicador)
-  pinMode(A6, INPUT); //pino Sensor de pressão (Camara)
+  pinMode(A4, INPUT); //pino LVDT1
+  pinMode(A6, INPUT); //pino LVDT2
+  pinMode(A0, INPUT); //pino Sensor de pressão (Aplicador)
+  pinMode(A2, INPUT); //pino Sensor de pressão (Camara)
   pinMode(pinAplicador, OUTPUT);  //configura o pinAplicador
   mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
@@ -164,7 +164,7 @@ void loop(void) {
         camara:
         //CAMARA DE PRESSAO//
         while(true){
-          ad3 = analogRead(A6);
+          ad3 = analogRead(A2);
           vd3 = ad3*bit12_Voltage*1000;
           
           if (Serial.available()>1){
@@ -192,7 +192,7 @@ void loop(void) {
         motor:
         //MOTOR DE PASSOS//
         while(true){
-          ad2 = analogRead(A4);
+          ad2 = analogRead(A0);
           vd2 = ad2*bit12_Voltage*1000;
           
           if(Serial.available()>0){
@@ -385,12 +385,12 @@ void loop(void) {
 
 /* Imprimir dados na tela */
 void imprimir(){
-  ad0 = adc.read(A0); 
-  ad1 = adc.read(A2); 
+  ad0 = adc.read(A4); 
+  ad1 = adc.read(A6); 
   vd0 = ad0*bit16_Voltage; 
   vd1 = ad1*bit16_Voltage; 
-  ad2 = analogRead(A4);  
-  ad3 = analogRead(A6); 
+  ad2 = analogRead(A0);  
+  ad3 = analogRead(A2); 
   vd2 = ad2*bit12_Voltage*1000; 
   vd3 = ad3*bit12_Voltage*1000;
   
