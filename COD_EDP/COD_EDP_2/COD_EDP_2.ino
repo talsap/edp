@@ -6,13 +6,13 @@
 ********************************************************************/
 
 /* Bibliotecas */
-#include <Stepper.h>  //biblioteca para controlar motor de passos
 #include <Oversampling.h>  //biblioteca de alteração da resolução
+#include <waveforms.h> 
 
 #define AR_12BIT_MAX   4096 //valor da resolucao do arduino
 #define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
 
-Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit
+Oversampling adc(12, 16, 2); //aumenta a resolução do adc de 12bit para 16bit
 
 /* Variavéis */
 const int pinAplicador = 12; //pino do aplicador de golpes
@@ -59,25 +59,19 @@ struct S{
   int n;
 };
 
-Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
-
 /* Inicializacao da serial */
 void setup(void) {
   Serial.begin(115200); //velocidade da cominicacao com a porta serial
-  analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
+  analogReadResolution(12); //Altera a resolucao de leitura para 12bits (apenas no arduino due)
+  analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino due)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
-  analogWrite(DAC0, 1); //pino responsavel em alterar a pressao de (Camara)
-  pinMode(A4, INPUT); //pino LVDT1
-  pinMode(A6, INPUT); //pino LVDT2
-  pinMode(A0, INPUT); //pino Sensor de pressão (Aplicador)
-  pinMode(A2, INPUT); //pino Sensor de pressão (Camara)
-  pinMode(pinAplicador, OUTPUT);  //configura o pinAplicador
-  mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
-  mp.step(0);  //inicia o motor de passos com zero passos
+  analogWrite(DAC0, 1); //pino responsavel em alterar a tensão dos golpes
+  pinMode(A0, INPUT); //pino LVDT1
+  pinMode(A2, INPUT); //pino LVDT2
+  pinMode(A4, INPUT); //pino Sensor de pressão (Aplicador)
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
-  setpointM = 340/3.3f;   //setpointM inicia sendo o menor valor admissível (referente ao motor)
-  setpointC = 10*255/3300;   //setpoint inicia sendo o menor valor admissível (referente a camara)
+  setpointC = 160*4095/3300;   //setpoint inicia sendo o menor valor admissível (referente a válvula dinâmica)
 }
 
 /* Principal */
@@ -105,14 +99,14 @@ void loop(void) {
       break;
 
     /*******************************************************************/
-    /************************* norma DNIT134 ***************************/
+    /************************* norma DNIT135 ***************************/
     /*******************************************************************/
-    case 'I':
-      //caso receba I (acessa o ensaio da norma DNIT134)
+    case 'J':
+      //caso receba J (acessa o ensaio da norma DNIT135)
       if(condConect == 1){
         //****************************//
-        sensorLVDTDNIT134:
-        Serial.println("DNIT134");
+        sensorLVDTDNIT135:
+        Serial.println("DNIT135");
         serialFlush();
         while(true){
           if(Serial.available()>0){
@@ -121,16 +115,6 @@ void loop(void) {
               Serial.println("BREAK");
               serialFlush();
               goto conexao;
-            }
-            if(leitura == 'E'){
-              Serial.println("CAMARA");
-              serialFlush();
-              goto camara;
-            }
-            if(leitura == 'M'){
-              Serial.println("MOTOR");
-              serialFlush();
-              goto motor;
             }
             if(leitura == 'G'){
               Serial.println("GOLPES");
@@ -148,7 +132,7 @@ void loop(void) {
                 if(Serial.available()>0){
                   leitura = Serial.read();
                   if(leitura == 'S'){
-                    goto sensorLVDTDNIT134;
+                    goto sensorLVDTDNIT135;
                   }
                 }
                 else{
@@ -184,69 +168,6 @@ void loop(void) {
           }
           else{
             //imprimir();
-          }
-        }
-        break;
-
-        //***********************//
-        motor:
-        //MOTOR DE PASSOS//
-        while(true){
-          ad2 = analogRead(A0);
-          vd2 = ad2*bit12_Voltage*1000;
-
-          if(Serial.available()>0){
-            setpoint1 = Serial.parseInt();
-            if(setpoint1 > 5){
-              Serial.print("CHEGOU=");
-              Serial.print(setpoint1);
-              Serial.print("/SENSOR=");
-              Serial.println(vd2*3.3f);
-              serialFlush();
-              condicao = 1;
-            }
-            if(setpoint1 == 3){
-              digitalWrite(8, LOW);
-              digitalWrite(9, LOW);
-              digitalWrite(10, LOW);
-              digitalWrite(11, LOW);
-              condicao = 2;
-              goto sensorLVDTDNIT134;
-            }
-            if(setpoint1 == 2){
-              digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
-              delay(100);
-              digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
-              delay(900);
-              digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
-              delay(100);
-              digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
-              delay(900);
-              digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
-              delay(100);
-              digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
-              setpoint1 = 120;
-            }
-            else{
-              setpointM = setpoint1/3.3f;     //valor do setpoint em milibar (0 - 10.000)mBar
-            }
-          }
-
-          //INTERVALO DE PRESSAO NAO OK//
-          if((vd2 > 1.05*setpointM || vd2 < 0.95*setpointM) && condicao == 1){
-            condicao = 0;
-          }
-
-          //INTERVALO DE PRESSAO OK//
-          if(vd2 < 1.02*setpointM && vd2 > 0.98*setpointM){
-            Serial.println("o");
-            mp.step(0);
-            condicao = 1;
-          }
-
-          if(condicao == 0){
-            Serial.println("n");
-            mp.step(floor((setpointM - vd2)));
           }
         }
         break;
@@ -289,7 +210,7 @@ void loop(void) {
 
         while(true){
           while(true){
-            if((currentMillis - initialMillis)% 10 == 0 && (currentMillis - initialMillis)!= 0){
+            if((currentMillis - initialMillis)% 5 == 0 && (currentMillis - initialMillis)!= 0){
               imprimir();
               break;
             }
