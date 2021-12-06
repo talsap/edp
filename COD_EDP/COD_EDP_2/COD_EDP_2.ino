@@ -7,7 +7,7 @@
 
 /* Bibliotecas */
 #include <Oversampling.h>  //biblioteca de alteração da resolução
-#include <waveforms.h> 
+#include <waveforms.h>  //biblioteca que gera a função (1-cos)/2
 
 #define AR_12BIT_MAX   4096 //valor da resolucao do arduino
 #define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
@@ -31,12 +31,14 @@ int ad0; //valor analógico do LVDT1
 int ad1; //valor analógico do LVDT2
 int ad2; //valor analógico do sensor de pressão (Aplicador)
 int ad3; //valor analógico do sensor de pressão (Camara)
+int i; //indicador temporal da funcao waveforms
 float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
 float InputRange_code = 3.3f; //valor do ImputRange 3.3V
 float ValMilivolt; //Valor do sensor de pressao em mBar
 float setpointM; //Valor do setpointM
 float setpointC; //Valor do setpointC
+float setpointD; //Valor do setpointD
 float vd0; //valor em voltagem do LVDT1
 float vd1; //valor em voltagem do LVDT2
 float vd2; //valor do sensor de pressão em mBar (Aplicador)
@@ -145,34 +147,6 @@ void loop(void) {
         break;
 
         //***********************//
-        camara:
-        //CAMARA DE PRESSAO//
-        while(true){
-          ad3 = analogRead(A2);
-          vd3 = ad3*bit12_Voltage*1000;
-
-          if (Serial.available()>1){
-            setpoint2 = Serial.parseInt();    //valor em mbar
-            if(setpoint2 > 5){
-              Serial.print("CHEGOU=");
-              Serial.print(setpoint2);
-              Serial.print("/SENSOR=");
-              Serial.println(vd3*3.3f);
-              serialFlush();
-              setpointC = setpoint2*255/3300;   //valor em contagem
-              analogWrite(DAC0, setpointC);
-            }
-            if(setpoint2 == 3){
-              goto sensorLVDTDNIT134;
-            }
-          }
-          else{
-            //imprimir();
-          }
-        }
-        break;
-
-        //***********************//
         golpes:
         //RESPONSAVEL EM COLETAR A QUANTIDADE TOTAL DE GOLPES//
         while(true){
@@ -185,7 +159,7 @@ void loop(void) {
               break;
             }
             if(ntotalGolpes == -3){
-              goto sensorLVDTDNIT134;
+              goto sensorLVDTDNIT135;
             }
           }
         }
@@ -200,7 +174,7 @@ void loop(void) {
               break;
             }
             if(frequencia == -3){
-              goto sensorLVDTDNIT134;
+              goto sensorLVDTDNIT135;
             }
           }
         }
@@ -224,16 +198,16 @@ void loop(void) {
           initialMillis = resultTempo.t;
           nTime = resultTempo.n;
 
-          if(nGolpe == ntotalGolpes){
+          if(nGolpe == ntotalGolpes){ //CONDIÇAO DE PARAR O ENSAIO E IMPRIMIR 1S DE DADOS FINAIS
             while(currentMillis - initialMillis <= 990){
               currentMillis = millis(); //Tempo atual em ms
               while(true){
-                if((currentMillis - initialMillis)% 10 == 0 && (currentMillis - initialMillis)!= 0){
+                if((currentMillis - initialMillis)% 5 == 0 && (currentMillis - initialMillis)!= 0){
                   imprimir();
                   break;
                 }
                 else{
-                  delay(1);
+                  delayMicroseconds(1);
                   currentMillis = millis(); //Tempo atual em ms
                 }
               }
@@ -242,11 +216,11 @@ void loop(void) {
             nGolpe = 0;
             nTime = 0;
             contadorG = 1;
-            goto sensorLVDTDNIT134;
+            goto sensorLVDTDNIT135;
           }
 
 
-          if (Serial.available()> 0){
+          if (Serial.available()> 0){ //CONDICAO DE FUNCIONALIDADES AO DECORRER DO ENSAIO
             //aguarda o valor na serial e se for 3 "para" o ensaio//
             botoes = Serial.parseInt();
             if(botoes == 3){
@@ -256,7 +230,7 @@ void loop(void) {
               statuS = 0;
               currentMillis = millis();
               initialMillis = currentMillis;
-              goto sensorLVDTDNIT134;
+              goto sensorLVDTDNIT135;
             }
             //aguarda o valor na serial. e se for 4 pausa o ensaio//
             if(botoes == 4){
@@ -320,24 +294,24 @@ void imprimir(){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
   }
 
-  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3);
-  Serial.print(",");
-  Serial.print(ad0);
-  Serial.print(",");
-  Serial.print(ad1);
-  Serial.print(",");
-  Serial.print(vd0,4);
-  Serial.print(",");
-  Serial.print(vd1,4);
-  Serial.print(",");
-  Serial.print(vd2*3.3f);
-  Serial.print(",");
-  Serial.print(vd3*3.3f);
-  Serial.print(",");
-  Serial.print(statuS);
-  Serial.print(",");
-  Serial.println(nGolpe);
-  Serial.flush();
+  //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3);
+  //Serial.print(",");
+  //Serial.print(ad0);
+  //Serial.print(",");
+  //Serial.print(ad1);
+  //Serial.print(",");
+  //Serial.print(vd0,4);
+  //Serial.print(",");
+  //Serial.print(vd1,4);
+  //Serial.print(",");
+  //Serial.print(vd2*3.3f);
+  //Serial.print(",");
+  //Serial.print(vd3*3.3f);
+  //Serial.print(",");
+  //Serial.print(statuS);
+  //Serial.print(",");
+  //Serial.println(nGolpe);
+  Serial.println(setpointD);
 }/* Imprimir dados na tela */
 
 /* Limpa o buffer serial */
@@ -353,9 +327,12 @@ S tempo(int nTime, int frequencia, long initialMillis){
   switch(frequencia){
     case 1:
       if(currentMillis - initialMillis < intervalo01){
+        i = int(currentMillis - initialMillis);
+        setpointD = waveformsTable[0][i];
         digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
+        setpointD = 0;
         digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
         if(contadorG == 1){
           nGolpe++;

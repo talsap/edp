@@ -417,7 +417,6 @@ void imprimir(){
   Serial.print(statuS);
   Serial.print(",");
   Serial.println(nGolpe);
-  Serial.flush();
 }/* Imprimir dados na tela */
 
 /* Limpa o buffer serial */
