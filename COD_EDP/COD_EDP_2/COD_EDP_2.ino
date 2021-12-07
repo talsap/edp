@@ -2,7 +2,7 @@
 *             Arduino código para EDP software - Beta              *
 * ---------------------------------------------------------------- *
 * Criado por: Tarcisio Sapucaia - tarcisiosapucaia27@gmail.com     *
-* Data – 14/06/2021 - v 1.0                                        *
+* Data – 07/12/2021 - v 1.0                                        *
 ********************************************************************/
 
 /* Bibliotecas */
@@ -15,34 +15,30 @@
 Oversampling adc(12, 16, 2); //aumenta a resolução do adc de 12bit para 16bit
 
 /* Variavéis */
-const int pinAplicador = 12; //pino do aplicador de golpes
 int condConect = 0; //Condicao para conecxao com o software
-int condicao = 2; //Condicao para iniciar o motor de passos
 int frequencia; //Valor condicao para intervalo da frequencia
 int contadorG = 1; //Valor que conta os golpes dentro da função *Intervalo de tempo do aplicador*
-int nGolpe = 0; //numpero de golpes
+int nGolpe = 0; //numero de golpes
 int nTime = 0; //parte inteira do tempo
 int ntotalGolpes; //Numero total de golpes por estagio
 int statuS = 0; //(0 ou 1)(ok ou n_ok) mado de avisar erro de pressao do aplicador
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
+int setpointB; //Valor do setpointB
+int setpointC; //Valor do setpointC
+int setpointD; //Valor do setpointD
 int botoes; //Acoes do botoes pausar, parar e continuar o ensaio
 int ad0; //valor analógico do LVDT1
 int ad1; //valor analógico do LVDT2
 int ad2; //valor analógico do sensor de pressão (Aplicador)
-int ad3; //valor analógico do sensor de pressão (Camara)
 int i; //indicador temporal da funcao waveforms
 float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
 float InputRange_code = 3.3f; //valor do ImputRange 3.3V
 float ValMilivolt; //Valor do sensor de pressao em mBar
-float setpointM; //Valor do setpointM
-float setpointC; //Valor do setpointC
-float setpointD; //Valor do setpointD
 float vd0; //valor em voltagem do LVDT1
 float vd1; //valor em voltagem do LVDT2
 float vd2; //valor do sensor de pressão em mBar (Aplicador)
-float vd3; //valor do sensor de pressão em mBar (Camara)
 long intervalo01 = 100; //100 milseg Freq.
 long intervalo09 = 1000; //1Hz 01-09
 long intervalo05 = 500; //2Hz 01-04-01-04
@@ -73,7 +69,7 @@ void setup(void) {
   pinMode(A4, INPUT); //pino Sensor de pressão (Aplicador)
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
-  setpointC = 160*4095/3300;   //setpoint inicia sendo o menor valor admissível (referente a válvula dinâmica)
+  setpointC = int(10*4095/3300);   //setpoint inicia sendo o menor valor admissível (referente a válvula dinâmica)
 }
 
 /* Principal */
@@ -174,6 +170,36 @@ void loop(void) {
               break;
             }
             if(frequencia == -3){
+              goto sensorLVDTDNIT135;
+            }
+          }
+        }
+        //RESPONSAVEL EM COLETAR A CARGA CÍCLICA// valor em mbar
+        while(true){
+          if(Serial.available()>0){
+            setpoint1 = Serial.parseInt();
+            if(setpoint1 > 10){
+              Serial.print("CHEGOU=");
+              Serial.print(setpoint1);
+              serialFlush();
+              setpointB = int(setpoint1*4095/3300);   //valor em contagem
+            }
+            if(setpoint1 == -3){
+              goto sensorLVDTDNIT135;
+            }
+          }
+        }
+        //RESPONSAVEL EM COLETAR A PRESSAO DE CONTATO// variacao (29 ~ 100) mbar
+        while(true){
+          if(Serial.available()>0){
+            setpoint2 = Serial.parseInt();
+            if(setpoint2 > 10){
+              Serial.print("CHEGOU=");
+              Serial.print(setpoint2);
+              serialFlush();
+              setpointC = int(setpoint2*4095/3300);   //valor em contagem
+            }
+            if(setpoint2 == -3){
               goto sensorLVDTDNIT135;
             }
           }
@@ -285,14 +311,14 @@ void imprimir(){
   vd0 = ad0*bit16_Voltage;
   vd1 = ad1*bit16_Voltage;
   ad2 = analogRead(A0);
-  ad3 = analogRead(A2);
+  //ad3 = analogRead(A2);
   vd2 = ad2*bit12_Voltage*1000;
-  vd3 = ad3*bit12_Voltage*1000;
+  //vd3 = ad3*bit12_Voltage*1000;
 
   //INTERVALO DE PRESSAO NAO OK//
-  if(vd2 > 1.05*setpointM && vd2 < 0.95*setpointM){
+  /*if(vd2 > 1.05*setpointM && vd2 < 0.95*setpointM){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
-  }
+  }*/
 
   //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3);
   //Serial.print(",");
@@ -328,11 +354,12 @@ S tempo(int nTime, int frequencia, long initialMillis){
     case 1:
       if(currentMillis - initialMillis < intervalo01){
         i = int(currentMillis - initialMillis);
-        setpointD = waveformsTable[0][i];
+        setpointD = waveformsTable[0][i]*setpointB+setpointC;
+        analogWrite(DAC0, setpointD);
         digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
-        setpointD = 0;
+        analogWrite(DAC0, setpointC);
         digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
         if(contadorG == 1){
           nGolpe++;
