@@ -16,10 +16,11 @@
 Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit
 
 /* Variavéis */
-const int pinAplicador = 12; //pino do aplicador de golpes
+const int pinAplicador = 12; //pino do aplicador de golpes DNIT134
+const int pinAplicadorr = 7; //pino do aplicador de golpes DNIT135
 int condConect = 0; //Condicao para conecxao com o software
 int condicao = 2; //Condicao para iniciar o motor de passos
-int conditionEnsaio = 0; //Condicao de Ensaio (0 - Para Triaxial com camara de pressao | 1 - Para Trixial com estufa de temperatura)
+int conditionEnsaio = 0; //Condicao de Ensaio (0 - DNIT134 | 1 - DNIT135)
 int frequencia; //Valor condicao para intervalo da frequencia
 int contadorG = 1; //Valor que conta os golpes dentro da função *Intervalo de tempo do aplicador*
 int nGolpe = 0; //numpero de golpes
@@ -79,6 +80,8 @@ void setup(void) {
   pinMode(A0, INPUT); //pino Sensor de pressão (Aplicador)
   pinMode(A2, INPUT); //pino Sensor de pressão (Camara)
   pinMode(pinAplicador, OUTPUT);  //configura o pinAplicador
+  pinMode(pinAplicadorr, OUTPUT);  //configura o pinAplicadorr
+  digitalWrite(pinAplicadorr, HIGH);  //inicia com desativa o pinAplicador
   mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
@@ -344,7 +347,7 @@ void loop(void) {
             }
           }
           if((currentMillis - initialMillis)% 10 == 0 && (currentMillis - initialMillis)!= 0){
-            //imprimir();
+            imprimir();
           }
           else{
             delayMicroseconds(1);
@@ -455,8 +458,9 @@ void loop(void) {
             setpoint2 = Serial.parseInt();
             if(setpoint2 > 10){
               Serial.print("CHEGOU=");
-              Serial.print(setpoint2);
+              Serial.println(setpoint2);
               setpointC = setpoint2*4095/3300;   //valor em contagem
+              digitalWrite(pinAplicadorr, LOW);  //ativa o pinAplicador
               serialFlush();
               break;
             }
@@ -492,6 +496,8 @@ void loop(void) {
             nGolpe = 0;
             nTime = 0;
             contadorG = 1;
+            digitalWrite(pinAplicadorr, HIGH);  //desativa o pinAplicador
+            analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
             goto sensorLVDTDNIT135;
           }
           if (Serial.available()> 0){ //CONDICAO DE FUNCIONALIDADES AO DECORRER DO ENSAIO
@@ -503,6 +509,8 @@ void loop(void) {
               statuS = 0;
               currentMillis = millis();
               initialMillis = currentMillis;
+              digitalWrite(pinAplicadorr, HIGH);  //desativa o pinAplicador
+              analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
               goto sensorLVDTDNIT135;
             }
             if(botoes == 4){ //aguarda o valor na serial. e se for 4 pausa o ensaio//
@@ -569,7 +577,7 @@ void imprimir(){
   if(vd2 > 1.05*setpointM && vd2 < 0.95*setpointM){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
   }
-  /*Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3);
+  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3);
   Serial.print(",");
   Serial.print(ad0);
   Serial.print(",");
@@ -585,8 +593,8 @@ void imprimir(){
   Serial.print(",");
   Serial.print(statuS);
   Serial.print(",");
-  Serial.println(nGolpe);*/
-  Serial.println(setpointD);
+  Serial.println(nGolpe);
+  //Serial.println(setpointD);
 }/* Imprimir dados na tela */
 
 //**********************************************************************************//
