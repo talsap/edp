@@ -16,8 +16,8 @@
 Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit
 
 /* Variavéis */
-const int pinAplicador = 12; //pino do aplicador de golpes DNIT134
-const int pinAplicadorr = 7; //pino do aplicador de golpes DNIT135
+const int pinA = 12; //pino do aplicador de golpes DNIT134
+const int pinB = 7; //pino do aplicador de golpes DNIT135
 int condConect = 0; //Condicao para conecxao com o software
 int condicao = 2; //Condicao para iniciar o motor de passos
 int conditionEnsaio = 0; //Condicao de Ensaio (0 - DNIT134 | 1 - DNIT135)
@@ -33,11 +33,13 @@ int ad1; //valor analógico do LVDT2
 int ad2; //valor analógico do sensor de pressão (Aplicador)
 int ad3; //valor analógico do sensor de pressão (Camara)
 int i; //indicador temporal da funcao waveforms
+int tipoWave; //indicador do tipo da funcao waveforms
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
 float setpointB; //Valor do setpointB
 float setpointC; //Valor do setpointC
 float setpointD; //Valor do setpointD
+float setpointE; //Valor do setpointE
 float setpointM; //Valor do setpointM
 float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
@@ -74,14 +76,15 @@ void setup(void) {
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
   analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino due)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
-  analogWrite(DAC0, 1); //pino responsavel em alterar a pressao de (Camara)
+  analogWrite(DAC0, 1); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
+  analogWrite(DAC1, 2);
   pinMode(A4, INPUT); //pino LVDT1
   pinMode(A6, INPUT); //pino LVDT2
   pinMode(A0, INPUT); //pino Sensor de pressão (Aplicador)
   pinMode(A2, INPUT); //pino Sensor de pressão (Camara)
-  pinMode(pinAplicador, OUTPUT);  //configura o pinAplicador
-  pinMode(pinAplicadorr, OUTPUT);  //configura o pinAplicadorr
-  digitalWrite(pinAplicadorr, HIGH);  //inicia com desativa o pinAplicador
+  pinMode(pinA, OUTPUT);  //configura o pinA
+  pinMode(pinB, OUTPUT);  //configura o pinB
+  digitalWrite(pinB, HIGH);  //inicia desativado o pinB
   mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
@@ -223,17 +226,17 @@ void loop(void) {
               goto sensorLVDTDNIT134;
             }
             if(setpoint1 == 2){
-              digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+              digitalWrite(pinA, HIGH);  //ativa o pinA
               delay(100);
-              digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+              digitalWrite(pinA, LOW);  //desativa o pinA
               delay(900);
-              digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+              digitalWrite(pinA, HIGH);  //ativa o pinA
               delay(100);
-              digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+              digitalWrite(pinA, LOW);  //desativa o pinA
               delay(900);
-              digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+              digitalWrite(pinA, HIGH);  //ativa o pinA
               delay(100);
-              digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+              digitalWrite(pinA, LOW);  //desativa o pinA
               setpoint1 = 120;
             }
             else{
@@ -438,11 +441,25 @@ void loop(void) {
             }
           }
         }
+        while(true){ //RESPONSAVEL EM COLETAR O TIPO DA FUNÇÃO WAVE//
+          if(Serial.available()> 0){
+            tipoWave = Serial.parseInt();
+            if(tipoWave > 0){
+              Serial.print("Wave=");
+              Serial.println(tipoWave);
+              serialFlush();
+              break;
+            }
+            if(frequencia == -3){
+              goto sensorLVDTDNIT135;
+            }
+          }
+        }
         while(true){ //RESPONSAVEL EM COLETAR A CARGA CÍCLICA// valor em mbar
           if(Serial.available()> 0){
             setpoint1 = Serial.parseInt();
             if(setpoint1 > 10){
-              Serial.print("CHEGOU=");
+              Serial.print("CARGA_CICLICA=");
               Serial.println(setpoint1);
               setpointB = setpoint1*4095/3300;   //valor em contagem
               serialFlush();
@@ -453,14 +470,14 @@ void loop(void) {
             }
           }
         }
-        while(true){ //RESPONSAVEL EM COLETAR A PRESSAO DE CONTATO// variacao (29 ~ 100) mbar
+        while(true){ //RESPONSAVEL EM COLETAR A PRESSAO DE CONTATO// variacao (266 ~ 1599) mbar
           if(Serial.available()>0){
             setpoint2 = Serial.parseInt();
             if(setpoint2 > 10){
-              Serial.print("CHEGOU=");
+              Serial.print("P_CONTATO=");
               Serial.println(setpoint2);
               setpointC = setpoint2*4095/3300;   //valor em contagem
-              digitalWrite(pinAplicadorr, LOW);  //ativa o pinAplicador
+              digitalWrite(pinB, LOW);  //ativa o pinAplicador
               serialFlush();
               break;
             }
@@ -496,7 +513,7 @@ void loop(void) {
             nGolpe = 0;
             nTime = 0;
             contadorG = 1;
-            digitalWrite(pinAplicadorr, HIGH);  //desativa o pinAplicador
+            digitalWrite(pinB, HIGH);  //desativa o pinAplicador
             analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
             goto sensorLVDTDNIT135;
           }
@@ -509,7 +526,7 @@ void loop(void) {
               statuS = 0;
               currentMillis = millis();
               initialMillis = currentMillis;
-              digitalWrite(pinAplicadorr, HIGH);  //desativa o pinAplicador
+              digitalWrite(pinB, HIGH);  //desativa o pinAplicador
               analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
               goto sensorLVDTDNIT135;
             }
@@ -620,26 +637,29 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
+          setpointE = waveformsTable[0][i]*setpointB+setpointC;
+          analogWrite(DAC1, setpointE);
         }
         //Serial.println(currentMillis - initialMillis);
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
-          analogWrite(DAC0, setpointD);            
+          analogWrite(DAC0, setpointD);
+          analogWrite(DAC1, setpointD);             
         }      
         if(contadorG == 1){
           nGolpe++;
@@ -657,21 +677,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo05){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -685,21 +705,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo05 && (currentMillis - initialMillis) <= intervalo05 + intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo05);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo05 + intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -721,21 +741,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo04){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -749,21 +769,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo04 && (currentMillis - initialMillis) <= intervalo04 + intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo04);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo04 + intervalo01 && (currentMillis - initialMillis) <= 2*intervalo04){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -777,21 +797,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 2*intervalo04 && (currentMillis - initialMillis) <= 2*intervalo04+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo04);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo04+intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -813,21 +833,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo03){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -841,21 +861,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo03 && (currentMillis - initialMillis) <= intervalo03+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo03);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo03+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo03){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -869,21 +889,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 2*intervalo03 && (currentMillis - initialMillis) <= 2*intervalo03+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo03);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo03+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo03){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -897,21 +917,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 3*intervalo03 && (currentMillis - initialMillis) <= 3*intervalo03+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 3*intervalo03);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 3*intervalo03+intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -933,21 +953,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -961,21 +981,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo02 && (currentMillis - initialMillis) <= intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo02);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo02+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -989,21 +1009,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 2*intervalo02 && (currentMillis - initialMillis) <= 2*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo02);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -1017,21 +1037,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 3*intervalo02 && (currentMillis - initialMillis) <= 3*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 3*intervalo02);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 3*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 4*intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
@@ -1045,21 +1065,21 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 4*intervalo02 && (currentMillis - initialMillis) <= 4*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinAplicador, HIGH);  //ativa o pinAplicador
+            digitalWrite(pinA, HIGH);  //ativa o pinA
           }
           else{
-            digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+            digitalWrite(pinA, LOW);  //desativa o pinA
           }  
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 4*intervalo02);
-          setpointD = waveformsTable[0][i]*setpointB+setpointC;
+          setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
           analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 4*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinAplicador, LOW);  //desativa o pinAplicador
+          digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointD = setpointC;
