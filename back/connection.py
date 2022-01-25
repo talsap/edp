@@ -396,7 +396,7 @@ def ColetaII():
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
     try:
-        sen = float(Array[5])
+        sen = float(Array[9])
     except:
         print "Error Coleta Sensor"
 
