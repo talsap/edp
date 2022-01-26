@@ -639,10 +639,10 @@ class BottomPanel(wx.Panel):
             self.AlturaMM = wx.TextCtrl(self, -1, '200,00', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.DiametroMM = wx.TextCtrl(self, -1, '100,0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.DefCritica = wx.TextCtrl(self, -1, wx.EmptyString, size = (80, 41.5), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, -1), style = wx.TE_READONLY | wx.TE_CENTRE)
-            self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, style = wx.CB_READONLY)
+            self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTRE)
+            self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, size = (50, 35), style = wx.CB_READONLY)
             self.ensaioAuto = wx.CheckBox(self, -1, 'Ensaio automático', (20,0), (260,-1), style = wx.ALIGN_LEFT)
 
             self.y1V.Disable()
@@ -889,19 +889,18 @@ class BottomPanel(wx.Panel):
             self.h4_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
             self.v3_sizer.Add(texto24, 1, wx.ALL | wx.CENTER)
-            self.v3_sizer.Add(self.GolpeAtual, 2, wx.ALL | wx.CENTER)
+            self.v3_sizer.Add(self.GolpeAtual, 2, wx.ALL | wx.CENTER, 5)
 
             self.v4_sizer.Add(texto23, 1, wx.ALL | wx.CENTER)
-            self.v4_sizer.AddStretchSpacer(1)
-            self.v4_sizer.Add(self.freq, 1, wx.ALL | wx.CENTER)
+            self.v4_sizer.Add(self.freq, 2, wx.ALL | wx.CENTER, 5)
 
             self.v5_sizer.Add(texto22, 1, wx.ALL | wx.CENTER)
-            self.v5_sizer.Add(self.NGolpes, 2, wx.ALL | wx.CENTER)
+            self.v5_sizer.Add(self.NGolpes, 2, wx.ALL | wx.CENTER, 5)
 
             self.v6_sizer.Add(texto21, 1, wx.ALL | wx.CENTER)
-            self.v6_sizer.Add(self.Ciclo, 2, wx.ALL | wx.CENTER)
+            self.v6_sizer.Add(self.Ciclo, 2, wx.ALL | wx.CENTER, 5)
 
-            self.h2_sizer.Add(self.v4_sizer, 3, wx.EXPAND | wx.CENTER)
+            self.h2_sizer.Add(self.v4_sizer, 3, wx.CENTER)
             self.h2_sizer.AddStretchSpacer(1)
             self.h2_sizer.Add(self.v3_sizer, 4, wx.CENTER)
 
@@ -1325,7 +1324,7 @@ class BottomPanel(wx.Panel):
 class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME - Tela_Ensaio_Beta', size = (1000,700), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME - Tela_Ensaio_Beta', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
             try:
