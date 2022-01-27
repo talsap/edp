@@ -12,6 +12,7 @@
 
 #define AR_12BIT_MAX   4096 //valor da resolucao do arduino
 #define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
+#define num   100 //número de iterações da média móvel
 
 Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit
 
@@ -39,6 +40,9 @@ int i; //indicador temporal da funcao waveforms
 int tipoWave; //indicador do tipo da funcao waveforms
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
+int values[num]; //vetor com num posições, armazena os valores para cálculo da média móvel
+int adc_filter1; //armazena a leitura filtrada da entrada analógica 1
+int adc_filter2; //armazena a leitura filtrada da entrada analógica 2
 float setpointB; //Valor do setpointB
 float setpointC; //Valor do setpointC
 float setpointD; //Valor do setpointD
@@ -63,6 +67,7 @@ long intervalo04 = 333; //3Hz 01-0233-01-0233-01-0233
 long intervalo03 = 250; //4Hz 01-015-01-015-01-015-01-015
 long intervalo02 = 200; //5Hz 01-01-01-01-01-01-01-01-01-01
 long resultTempo[1];
+long moving_average(int sig);
 unsigned long currentMillis; //variacao do tempo em milisegundos
 unsigned long initialMillis; //tempo incial dinamico
 unsigned char conexao;  //tipos de conexoes
@@ -81,7 +86,7 @@ void setup(void) {
   Serial.begin(115200); //velocidade da cominicacao com a porta serial
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
   analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino due)
-  analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
+  //analogReference(AR_EXTERNAL); //Define a tensao de 3.3Volts como sendo a padrao
   analogWrite(DAC0, 1); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
   analogWrite(DAC1, 2);
   pinMode(A4, INPUT); //pino LVDT1
@@ -628,24 +633,30 @@ void imprimir(){
 void imprimir2(){
   ad2 = adc.read(A8);
   ad3 = adc.read(A9);
+  //adc_filter1 = moving_average(ad2);
+  //adc_filter2 = moving_average(ad3);
   ad6 = analogRead(A10);
   vd2 = ad2*bit16_Voltage;
   vd3 = ad3*bit16_Voltage;
   vd6 = ad6*bit12_Voltage*1000;
   
-  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
-  Serial.print(",");
-  Serial.print(ad2);      //y3mm
-  Serial.print(",");
-  Serial.print(ad3);      //y4mm
-  Serial.print(",");
-  Serial.print(vd2,4);    //y3v
-  Serial.print(",");
-  Serial.print(vd3,4);    //y4v
-  Serial.print(",");
-  Serial.print(vd6*3.3f); //est
-  Serial.print(",");
-  Serial.println(nGolpe); //glp
+  //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
+  //Serial.print(",");
+  //Serial.print(ad2);      //y3mm
+  //Serial.print(",");
+  //Serial.print(adc_filter1);      //y3mm c/ filtro
+  //Serial.print(",");
+  //Serial.print(ad3);      //y4mm
+  //Serial.print(",");
+  //Serial.println(adc_filter2);      //y4mm c/ filtro
+  //Serial.print(",");
+  //Serial.print(vd2,4);    //y3v
+  //Serial.print(",");
+  //Serial.print(vd3,4);    //y4v
+  //Serial.print(",");
+  //Serial.print(vd6*3.3f); //est
+  //Serial.print(",");
+  //Serial.println(nGolpe); //glp
   
 }/* Imprimir dados da 135 */
 
@@ -1134,6 +1145,31 @@ S tempo(int nTime, int frequencia, long initialMillis){
   }/*switch*/
   return {initialMillis, nTime};
 }/* Intervalo de tempo do aplicador */
+
+
+//**********************************************************************************//
+//**********************************************************************************//
+//**********************************************************************************//
+
+/* Função filtro média móvel */
+long moving_average(int sig)
+{
+  int i;               //variável auxiliar para iterações
+  long acc = 0;        //acumulador
+  
+  //Desloca o vetor completamente eliminando o valor mais antigo
+  for(i = num; i > 0; i--) values[i] = values[i-1];    
+  
+  values[0] = sig;           //carrega o sinal no primeiro elemento do vetor
+  
+ // long sum = 0;            //Variável para somatório
+  
+  for(i = 0; i < num; i++) acc += values[i];
+   
+  
+  return acc / num;         //Retorna a média móvel
+
+}/* end moving_average */
 
 //**********************************************************************************//
 //**********************************************************************************//
