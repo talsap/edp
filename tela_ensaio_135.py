@@ -453,15 +453,6 @@ class TelaRealizacaoEnsaioDNIT135(wx.Dialog):
             self.Show()
             self.Maximize(True)
 
-            '''Dialogo Inicial'''
-            info = "EDP 135/2018ME"
-            titulo = "Ajuste o Zero dos LVDTs"
-            message1 = "Com o valor entre:"
-            message2 = "1.0 e 1.5 Volts"
-            message3 = "realizando a L. TESTE"
-            dlg = dialogoDinamico(1, info, titulo, message1, message2, message3, None)
-            dlg.ShowModal()
-
 if __name__ == "__main__":
 	app = wx.App()
 	frame = TelaRealizacaoEnsaioDNIT135(None)
