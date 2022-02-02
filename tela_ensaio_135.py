@@ -140,8 +140,8 @@ class BottomPanel(wx.Panel):
             #self.Bind(wx.EVT_BUTTON, self.QT, self.qTensoes)
             #self.Bind(wx.EVT_BUTTON, self.CONDIC, self.condic)
             #self.Bind(wx.EVT_BUTTON, self.MR, self.mr)
-            #self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
-            #self.Bind(wx.EVT_BUTTON, self.LZERO, self.LZero)
+            self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
+            self.Bind(wx.EVT_BUTTON, self.LZERO, self.LZero)
 
             self.qTensoes.Disable()
             self.condic.Disable()
@@ -158,10 +158,10 @@ class BottomPanel(wx.Panel):
             texto2 = wx.StaticText(self, label = "T - Temperatura (ºC)", style = wx.ALIGN_CENTRE)
             texto3 = wx.StaticText(self, label = "Pc - Carga de Contato (N)", style = wx.ALIGN_CENTRE)
             texto4 = wx.StaticText(self, label = "P - Carga Cíclica (N)", style = wx.ALIGN_CENTRE)
-            texto5 = wx.StaticText(self, label = "X1 (V)", style = wx.ALIGN_CENTER)
-            texto6 = wx.StaticText(self, label = "X2 (V)", style = wx.ALIGN_CENTER)
-            texto7 = wx.StaticText(self, label = "X1 (mm)", style = wx.ALIGN_CENTER)
-            texto8 = wx.StaticText(self, label = "X2 (mm)", style = wx.ALIGN_CENTER)
+            texto5 = wx.StaticText(self, label = "Y1 (V)", style = wx.ALIGN_CENTER)
+            texto6 = wx.StaticText(self, label = "Y2 (V)", style = wx.ALIGN_CENTER)
+            texto7 = wx.StaticText(self, label = "Y1 (mm)", style = wx.ALIGN_CENTER)
+            texto8 = wx.StaticText(self, label = "Y2 (mm)", style = wx.ALIGN_CENTER)
             texto21 = wx.StaticText(self, label = "CICLO", style = wx.ALIGN_CENTER)
             texto22 = wx.StaticText(self, label = "Nº de Golpes", style = wx.ALIGN_CENTER)
             texto23 = wx.StaticText(self, label = "Freq. (Hz)", style = wx.ALIGN_CENTER)
@@ -193,10 +193,10 @@ class BottomPanel(wx.Panel):
             texto23.SetBackgroundColour(wx.Colour(215,215,215))
             texto24.SetBackgroundColour(wx.Colour(215,215,215))
 
-            self.x1V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.x2V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.x1mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.x2mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y1V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y2V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y1mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.y2mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.P = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.Pc = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.Temperatura = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -205,10 +205,10 @@ class BottomPanel(wx.Panel):
             self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTRE)
             self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, size = (50, 35), style = wx.CB_READONLY)
 
-            self.x1V.Disable()
-            self.x2V.Disable()
-            self.x1mm.Disable()
-            self.x2mm.Disable()
+            self.y1V.Disable()
+            self.y2V.Disable()
+            self.y1mm.Disable()
+            self.y2mm.Disable()
             self.P.Disable()
             self.Pc.Disable()
             self.Temperatura.Disable()
@@ -217,10 +217,10 @@ class BottomPanel(wx.Panel):
             self.GolpeAtual.Disable()
             self.freq.Disable()
 
-            self.x1V.SetFont(Fonttext)
-            self.x2V.SetFont(Fonttext)
-            self.x1mm.SetFont(Fonttext)
-            self.x2mm.SetFont(Fonttext)
+            self.y1V.SetFont(Fonttext)
+            self.y2V.SetFont(Fonttext)
+            self.y1mm.SetFont(Fonttext)
+            self.y2mm.SetFont(Fonttext)
             self.P.SetFont(Fonttext)
             self.Pc.SetFont(Fonttext)
             self.Temperatura.SetFont(Fonttext)
@@ -229,10 +229,10 @@ class BottomPanel(wx.Panel):
             self.GolpeAtual.SetFont(Fonttext)
             self.freq.SetFont(Fonttext)
 
-            self.x1V.SetForegroundColour((119,118,114))
-            self.x2V.SetForegroundColour((119,118,114))
-            self.x1mm.SetForegroundColour((119,118,114))
-            self.x2mm.SetForegroundColour((119,118,114))
+            self.y1V.SetForegroundColour((119,118,114))
+            self.y2V.SetForegroundColour((119,118,114))
+            self.y1mm.SetForegroundColour((119,118,114))
+            self.y2mm.SetForegroundColour((119,118,114))
             self.P.SetForegroundColour((119,118,114))
             self.Pc.SetForegroundColour((119,118,114))
             self.Temperatura.SetForegroundColour((119,118,114))
@@ -254,16 +254,16 @@ class BottomPanel(wx.Panel):
             self.h22_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
             self.v16_sizer.Add(texto8, 1, wx.CENTER)
-            self.v16_sizer.Add(self.x2mm, 2, wx.CENTER)
+            self.v16_sizer.Add(self.y2mm, 2, wx.CENTER)
 
             self.v17_sizer.Add(texto6, 1, wx.CENTER)
-            self.v17_sizer.Add(self.x2V, 2, wx.CENTER)
+            self.v17_sizer.Add(self.y2V, 2, wx.CENTER)
 
             self.v18_sizer.Add(texto7, 1, wx.CENTER)
-            self.v18_sizer.Add(self.x1mm, 2, wx.CENTER)
+            self.v18_sizer.Add(self.y1mm, 2, wx.CENTER)
 
             self.v19_sizer.Add(texto5, 1, wx.CENTER)
-            self.v19_sizer.Add(self.x1V, 2, wx.CENTER)
+            self.v19_sizer.Add(self.y1V, 2, wx.CENTER)
 
             self.h19_sizer.Add(self.v17_sizer, 5, wx.ALL | wx.CENTER)
             self.h19_sizer.AddStretchSpacer(1)
@@ -425,6 +425,165 @@ class BottomPanel(wx.Panel):
             self.erro = False  #indica se há erros na execução
             self.Automatico = True #inicia  com o ensaio Automatico sendo falso
             #self.ensaioAuto.SetValue(True)
+
+
+    #--------------------------------------------------
+        '''Função responsável em realizar a CONECÇÃO'''
+        def LTESTE(self, event):
+            threadConection = ConexaoThread.ConexaoThread()
+            dlg = My.MyProgressDialog(2)
+            dlg.ShowModal()
+            cond = threadConection.ret()
+            if cond[0] == 'connectado':
+                menssagError = wx.MessageDialog(self, 'CONECTADO!', 'EDP', wx.OK|wx.ICON_AUTH_NEEDED)
+                aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                menssagError.ShowModal()
+                menssagError.Destroy()
+                con.modeConectDNIT135() #acessa o ensaio da 135 no arduino
+                self.LTeste.Disable()
+                self.LZero.Enable()
+
+                #--------------------------------------------------
+                def worker(self):
+                    global condition
+                    global conditionEnsaio
+                    global Fase
+                    global Ti
+                    global Pausa
+                    global X
+                    global Y
+                    global H
+                    global amplitudeMax
+                    global amplitudeMin
+                    global xz1
+                    global yz1
+                    global yt1
+                    global yz2
+                    global yt2
+                    global pc1
+                    global pg1
+                    global tm1
+                    global REFERENCIA1
+                    global REFERENCIA2
+                    con.modeI()  #inicia o modo de impressão de dados
+                    condition = True
+                    conditionEnsaio = False
+                    cnt = 0
+                    cont = 0
+                    cont1 = 0
+                    GolpeAnterior = -1
+                    self.leituraZerob1 = 0
+                    self.leituraZerob2 = 0
+                    self.x_counter = 0
+                    valores = [0,0,0,0,0,0,0]
+                    while True:
+                        while condition == True:
+                            valores = con.ColetaJ(valores)
+                            if cont1 >= 10:
+                                self.y1mm.Clear()
+                                self.y2mm.Clear()
+                                self.y1V.Clear()
+                                self.y2V.Clear()
+                                self.Temperatura.Clear()
+                                self.y1mm.AppendText(str(round((valores[1]-self.leituraZerob1), 4)))
+                                self.y2mm.AppendText(str(round((valores[2]-self.leituraZerob2), 4)))
+                                self.y1V.AppendText(str(round((valores[3]), 2)))
+                                self.y2V.AppendText(str(round((valores[4]), 2)))
+                                self.Temperatura.AppendText(str(round((valores[5]), 3)))
+                                if cont1 == 10:
+                                    cont1 = 0
+                            cont1 = cont1 + 1
+
+                            y1 = valores[1]-self.leituraZerob2
+                            y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
+                            ymedio = (y1 + y2)/2
+
+                            #print ymedio
+                            '''if conditionEnsaio == True:'''
+                            if conditionEnsaio == True and valores[0] > 0:
+                                X = np.append(X, valores[0])
+                                Y = np.append(Y, ymedio+H0)
+                                if ymedio+H0 > amplitudeMax:
+                                    amplitudeMax = ymedio+H0
+                                if ymedio+H0 < amplitudeMin:
+                                    amplitudeMin = ymedio+H0
+                                self.x_counter = len(X)
+                                if self.x_counter >= 1500:
+                                    X = np.delete(X, 0, 0)
+                                    Y = np.delete(Y, 0, 0)
+                                    if self.x_counter == 1:
+                                        amplitudeMin = ymedio+H0
+                                #print valores[0]
+                                #drawnow(self.graph.draw)
+
+                                if Fase == 'CONDICIONAMENTO' and Pausa == False:
+                                    if valores[0] == 0.01:
+                                        REFERENCIA1 = y1+H0
+                                        REFERENCIA2 = y2+H0
+                                    if int(valores[0]) > 494 and int(valores[0]) <= 500:
+                                        xz1.append(valores[0])
+                                        yz1.append(y1+H0)
+                                        yz2.append(y2+H0)
+                                        tm1.append(valores[5])
+
+                                if Fase == 'MR' and Pausa == False:
+                                    if valores[0] == 0.01:
+                                        REFERENCIA1 = y1+H0
+                                        REFERENCIA2 = y2+H0
+                                    if int(valores[0]) > 4 and int(valores[0]) <= 10:
+                                        xz1.append(valores[0])
+                                        yz1.append(y1+H0)
+                                        yz2.append(y2+H0)
+                                        tm1.append(valores[5])
+
+                                if cont >= 8:
+                                    self.AlturaFinal.Clear()
+                                    self.AlturaFinal.AppendText(str(round(H-(ymedio-REFERENCIA1/2-REFERENCIA2/2), 2)))
+                                '''if cont >= 8:
+                                    self.defElastica.Clear()
+                                    self.defPlastica.Clear()
+                                    self.defPAcum.Clear()
+                                    self.AlturaFinal.Clear()
+                                    self.DefCritica.Clear()
+                                    self.defElastica.AppendText(str(round((valores[8]), 3)))
+                                    self.defPlastica.AppendText(str(round((valores[9]), 3)))
+                                    self.defPAcum.AppendText(str(round((valores[10]), 3)))
+                                    self.AlturaFinal.AppendText(str(round(H-(valores[0]-self.leituraZerob1), 2)))
+                                    self.DefCritica.AppendText(str(round((valores[10]), 3)))
+                                    if cont == 10:
+                                        cont = 0
+                                cont += 1'''
+
+                                if int(valores[6]) != GolpeAnterior:
+                                    GolpeAnterior = int(valores[6])
+                                    self.GolpeAtual.Clear()
+                                    self.GolpeAtual.AppendText(str(int(valores[6])))
+
+                #--------------------------------------------------
+                self.t = threading.Thread(target=worker, args=(self,))
+                self.t.start()
+
+            else:
+                menssagError = wx.MessageDialog(self, 'Não é possível manter uma conexão serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
+                aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                menssagError.ShowModal()
+                menssagError.Destroy()
+
+    #--------------------------------------------------
+        '''Função responsável pela leitura zero'''
+        def LZERO(self, event):
+            print 'LZERO'
+            self.freq.Enable()
+            self.qTensoes.Enable()
+            self.condic.Enable()
+            self.mr.Enable()
+            self.LTeste.Disable()
+            self.y1mmm = self.y1mm.GetValue()
+            self.y2mmm = self.y2mm.GetValue()
+            self.leituraZerob1 = float(self.valorLeitura0)
+            self.leituraZerob2 = float(self.valorLeitura1)
+            print self.leituraZerob1
+            print self.leituraZerob2
 
 '''Tela Realização do Ensaio'''
 class TelaRealizacaoEnsaioDNIT135(wx.Dialog):

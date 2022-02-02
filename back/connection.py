@@ -17,7 +17,7 @@ opcaoE = "E"    '''CAMARA DE PRESSAO'''
 opcaoM = "M"    '''MOTOR DE PASSOS'''
 opcaoB = "B"    '''Break'''
 opcaoG = "G"    '''Golpes'''
-opcaoJ = "J"    '''Imprimir 1 valor'''
+opcaoJ = "J"    '''DNIT134 e imprimir 1 valor'''
 opcaoS = "S"    '''Stoped'''
 Y = []          #Array Deformações
 T = []          #Array tempo grafico'''
@@ -177,6 +177,19 @@ def modeConectDNIT134():
         pass
     print(conexao.readline())
     conexao.write(opcaoI)
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
+
+#-------------------------------------------------------------------
+'''Conecxao com a DNIT135'''
+def modeConectDNIT135():
+    #print 'modeConectDNIT135'
+    conexao.write(opcaoC)
+    while (conexao.inWaiting() == 0):
+        pass
+    print(conexao.readline())
+    conexao.write(opcaoJ)
     while (conexao.inWaiting() == 0):
         pass
     print(conexao.readline())
@@ -358,7 +371,7 @@ def modeBuffer():
 
 #-------------------------------------------------------------------
 def ColetaI(valores):
-    #print 'ColetaI'
+    #print 'ColetaI' formatação dos dados da 134
     while (conexao.inWaiting() == 0):
         pass
     arduinoString = conexao.readline()
@@ -387,6 +400,34 @@ def ColetaI(valores):
         glp = valores[8]
 
     return temp, y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, sts, glp
+
+#-------------------------------------------------------------------
+def ColetaJ(valores):
+    #print 'ColetaJ' formatação dos dados da 135
+    while (conexao.inWaiting() == 0):
+        pass
+    arduinoString = conexao.readline()
+    Array = arduinoString.split(',')
+    try:
+        temp = float(Array[0])
+        y3mm = float(Array[1])*A1+B1
+        y4mm = float(Array[2])*A2+B2
+        y3v = float(Array[3])
+        y4v = float(Array[4])
+        est = float(Array[5])
+        glp = int(Array[6])
+
+    except:
+        #print 'ColetaIexcept'
+        temp = valores[0]
+        y3mm = valores[1]
+        y4mm = valores[2]
+        y3v = valores[3]
+        y4v = valores[4]
+        est = valores[5]
+        glp = valores[6]
+
+    return temp, y3mm, y4mm, y3v, y4v, est, glp
 
 #-------------------------------------------------------------------
 def ColetaII():

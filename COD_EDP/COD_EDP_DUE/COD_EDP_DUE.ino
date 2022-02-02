@@ -638,28 +638,28 @@ void imprimir2(){
   ad3 = adc.read(A9);
   //adc_filter1 = moving_average_1(ad2);
   //adc_filter2 = moving_average_2(ad3);
-  //ad6 = analogRead(A10);
+  ad6 = analogRead(A10);
   vd2 = ad2*bit16_Voltage;
   vd3 = ad3*bit16_Voltage;
-  //vd6 = ad6*bit12_Voltage*1000;
+  vd6 = ad6*bit12_Voltage*1000;
 
-  //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
-  //Serial.print(",");
-  //Serial.print(ad2);      //y3mm
-  //Serial.print(",");
+  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
+  Serial.print(",");
+  Serial.print(ad2);      //y3mm
+  Serial.print(",");
   //Serial.print(adc_filter1);      //y3mm c/ filtro
   //Serial.print(",");
-  Serial.println(ad3);      //y4mm
-  //Serial.print(",");
+  Serial.print(ad3);      //y4mm
+  Serial.print(",");
   //Serial.println(adc_filter2);      //y4mm c/ filtro
   //Serial.print(",");
-  //Serial.print(vd2,4);    //y3v
-  //Serial.print(",");
-  //Serial.print(vd3,4);    //y4v
-  //Serial.print(",");
-  //Serial.print(vd6*3.3f); //est
-  //Serial.print(",");
-  //Serial.println(nGolpe); //glp
+  Serial.print(vd2,4);    //y3v
+  Serial.print(",");
+  Serial.print(vd3,4);    //y4v
+  Serial.print(",");
+  Serial.print(vd6*3.3f); //est
+  Serial.print(",");
+  Serial.println(nGolpe); //glp
 
 }/* Imprimir dados da 135 */
 

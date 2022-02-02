@@ -976,7 +976,7 @@ class BottomPanel(wx.Panel):
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                 menssagError.ShowModal()
                 menssagError.Destroy()
-                con.modeConectDNIT134()
+                con.modeConectDNIT134() #acessa o ensaio da 134 no arduino
                 self.LTeste.Disable()
                 self.LZero.Enable()
 
@@ -1001,7 +1001,7 @@ class BottomPanel(wx.Panel):
                     global pg1
                     global REFERENCIA1
                     global REFERENCIA2
-                    con.modeI()
+                    con.modeI()  #inicia o modo de impressão de dados
                     condition = True
                     conditionEnsaio = False
                     cnt = 0
