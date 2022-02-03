@@ -87,7 +87,7 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
 
             v_sizer.Add(h3_sizer, 1, wx.EXPAND | wx.ALL)
 
-            texto9 = wx.StaticText(panel, label = "Data", style = wx.ALIGN_RIGHT)
+            texto9 = wx.StaticText(panel, label = "Data da coleta", style = wx.ALIGN_RIGHT)
             h4_sizer.Add(texto9, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.date = wx.adv.DatePickerCtrl(panel, id = wx.ID_ANY, dt = wx.DefaultDateTime, size = wx.DefaultSize, style = wx.adv.DP_SHOWCENTURY | wx.adv.DP_DROPDOWN , validator = wx.DefaultValidator, name = "datectrl")
             h4_sizer.Add(self.date, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
@@ -119,23 +119,12 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
 
             v_sizer.Add(h7_sizer, 3, wx.EXPAND | wx.ALL)
 
-            texto13 = wx.StaticText(panel, label = "Energia", style = wx.ALIGN_RIGHT)
-            h8_sizer.Add(texto13, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.energia = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
-            h8_sizer.Add(self.energia, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
-            texto14 = wx.StaticText(panel, label = "Dist.Ap.(mm)", style = wx.ALIGN_RIGHT)
-            h8_sizer.Add(texto14, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
-            self.distAp = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
-            h8_sizer.Add(self.distAp, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
-
-            v_sizer.Add(h8_sizer, 1, wx.EXPAND | wx.ALL)
-
             texto15 = wx.StaticText(panel, label = "Observações", style = wx.ALIGN_RIGHT)
             h9_sizer.Add(texto15, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.obs = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
             h9_sizer.Add(self.obs, 5, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
-            v_sizer.Add(h9_sizer, 1, wx.EXPAND | wx.ALL)
+            v_sizer.Add(h9_sizer, 2, wx.EXPAND | wx.ALL)
 
             continuar = wx.Button(panel, -1, 'Continuar')
             continuar.Bind(wx.EVT_BUTTON, self.Prosseguir)
@@ -164,20 +153,12 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
             altura = self.altura.GetValue()
             altura = format(altura).replace(',','.')
             altura = format(altura).replace('-','')
-            energia = self.energia.GetValue()
-            energia = format(energia).replace(',','.')
-            energia = format(energia).replace('-','')
-            distAp = self.distAp.GetValue()
-            distAp = format(distAp).replace(',','.')
-            distAp = format(distAp).replace('-','')
             obs = self.obs.GetValue()
             condicional = 1
 
             try:
                 diametro = float(diametro)
                 altura = float(altura)
-                energia = float(energia)
-                distAp = float(distAp)
 
             except ValueError:
                 print('Os valores digitados em algum dos campos nao esta da maneira esperada')
@@ -200,10 +181,10 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
                     dlg = wx.MessageDialog(None, 'Já existe um Ensaio com esse identificador.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                     result = dlg.ShowModal()
                 else:
-                    if diametro!='' and altura!='' and energia!='' and distAp!='':
-                        if diametro>0 and altura>0 and energia>0 and distAp>0:
+                    if diametro!='' and altura!='':
+                        if diametro>0 and altura>0:
                             '''Salva os dados iniciais de um ensaio'''
-                            bancodedados.data_save_dados(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, data, amostra, diametro, altura, energia, distAp, obs)
+                            bancodedados.data_save_dados_134(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, data, amostra, diametro, altura, obs)
                             self.Close(True)
                             frame = TelaRealizacaoEnsaioDNIT134().ShowModal()
                     else:

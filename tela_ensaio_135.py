@@ -497,24 +497,16 @@ class BottomPanel(wx.Panel):
                             y1 = valores[1]-self.leituraZerob2
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
                             ymedio = (y1 + y2)/2
-
                             #print ymedio
+                            
                             '''if conditionEnsaio == True:'''
                             if conditionEnsaio == True and valores[0] > 0:
                                 X = np.append(X, valores[0])
                                 Y = np.append(Y, ymedio+H0)
-                                if ymedio+H0 > amplitudeMax:
-                                    amplitudeMax = ymedio+H0
-                                if ymedio+H0 < amplitudeMin:
-                                    amplitudeMin = ymedio+H0
                                 self.x_counter = len(X)
                                 if self.x_counter >= 1500:
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
-                                    if self.x_counter == 1:
-                                        amplitudeMin = ymedio+H0
-                                #print valores[0]
-                                #drawnow(self.graph.draw)
 
                                 if Fase == 'CONDICIONAMENTO' and Pausa == False:
                                     if valores[0] == 0.01:
@@ -535,24 +527,6 @@ class BottomPanel(wx.Panel):
                                         yz1.append(y1+H0)
                                         yz2.append(y2+H0)
                                         tm1.append(valores[5])
-
-                                if cont >= 8:
-                                    self.AlturaFinal.Clear()
-                                    self.AlturaFinal.AppendText(str(round(H-(ymedio-REFERENCIA1/2-REFERENCIA2/2), 2)))
-                                '''if cont >= 8:
-                                    self.defElastica.Clear()
-                                    self.defPlastica.Clear()
-                                    self.defPAcum.Clear()
-                                    self.AlturaFinal.Clear()
-                                    self.DefCritica.Clear()
-                                    self.defElastica.AppendText(str(round((valores[8]), 3)))
-                                    self.defPlastica.AppendText(str(round((valores[9]), 3)))
-                                    self.defPAcum.AppendText(str(round((valores[10]), 3)))
-                                    self.AlturaFinal.AppendText(str(round(H-(valores[0]-self.leituraZerob1), 2)))
-                                    self.DefCritica.AppendText(str(round((valores[10]), 3)))
-                                    if cont == 10:
-                                        cont = 0
-                                cont += 1'''
 
                                 if int(valores[6]) != GolpeAnterior:
                                     GolpeAnterior = int(valores[6])

@@ -14,7 +14,7 @@ from Pdf import Pdf
 '''from Editar import Editar'''
 '''from Csv import Csv'''
 
-'''lista = [[1, ['DNIT134/2018ME - C.P. N XXX', '16:25:19  19/07/2019', '17:51:58  19/07/2019']], [2, ['DNIT134/2018ME - C.P. N XXX', '07:32:26  29/07/2019', '17:51:58  19/07/2019']], [3, ['DNIT134/2018ME - C.P. N XXX', '12:14:48  29/07/2019', '17:51:58  19/07/2019']], [4, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [5, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [6, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [7, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [8, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [9, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [10, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [11, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']]]'''
+lista = [[1, ['DNIT134/2018ME - C.P. N XXX', '16:25:19  19/07/2019', '17:51:58  19/07/2019']], [2, ['DNIT134/2018ME - C.P. N XXX', '07:32:26  29/07/2019', '17:51:58  19/07/2019']], [3, ['DNIT134/2018ME - C.P. N XXX', '12:14:48  29/07/2019', '17:51:58  19/07/2019']], [4, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [5, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [6, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [7, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [8, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [9, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [10, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [11, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']]]
 
 '''Classe da Lista editável'''
 class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -105,7 +105,7 @@ class Tela(wx.Frame):
          cabecalhosMenuitem = arquivoMenu.Append(wx.NewId(), 'Cabeçalhos', 'Cabeçalhos')
          arquivoMenu.AppendSeparator()
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
-         calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Calibração LVDT\tCtrl+T', 'Calibração LVDT')
+         calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Sensores de Deslocamento \tCtrl+T', 'Sensores de Deslocamento')
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')
          self.Bind(wx.EVT_MENU, self.NovoEnsaio, novoEnsaioMenuItem)
          self.Bind(wx.EVT_MENU, self.Cabecalhos, cabecalhosMenuitem)
