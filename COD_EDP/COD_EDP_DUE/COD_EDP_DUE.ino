@@ -601,6 +601,8 @@ void loop(void) {
 void imprimir(){
   ad0 = adc.read(A4);
   ad1 = adc.read(A6);
+  //adc_filter1 = moving_average_1(ad4);
+  //adc_filter2 = moving_average_2(ad6);
   ad4 = analogRead(A0);
   ad5 = analogRead(A2);
   vd0 = ad0*bit16_Voltage;
@@ -614,22 +616,26 @@ void imprimir(){
   }
   Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
   Serial.print(",");
-  Serial.print(ad0);      //y1mm
+  Serial.print(ad0);         //y1mm
   Serial.print(",");
-  Serial.print(ad1);      //y2mm
+  //Serial.print(adc_filter1); //y1mm c/ filtro
+  //Serial.print(",");
+  Serial.print(ad1);         //y2mm
   Serial.print(",");
-  Serial.print(vd0,4);    //y1v
+  //Serial.println(adc_filter2); //y2mm c/ filtro
+  //Serial.print(",");
+  Serial.print(vd0,4);       //y1v
   Serial.print(",");
-  Serial.print(vd1,4);    //y2v
+  Serial.print(vd1,4);       //y2v
   Serial.print(",");
-  Serial.print(vd4*3.3f); //sen
+  Serial.print(vd4*3.3f);    //sen
   Serial.print(",");
-  Serial.print(vd5*3.3f); //cam
+  Serial.print(vd5*3.3f);    //cam
   Serial.print(",");
-  Serial.print(statuS);   //sts
+  Serial.print(statuS);      //sts
   Serial.print(",");
-  Serial.println(nGolpe); //glp
-  //Serial.println(setpointD);
+  Serial.println(nGolpe);    //glp
+  Serial.println(setpointD);
 }/* Imprimir dados DA 134*/
 
 /* Imprimir dados na 135 */
@@ -645,21 +651,21 @@ void imprimir2(){
 
   Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
   Serial.print(",");
-  Serial.print(ad2);      //y3mm
+  Serial.print(ad2);            //y3mm
   Serial.print(",");
-  //Serial.print(adc_filter1);      //y3mm c/ filtro
+  //Serial.print(adc_filter1);  //y3mm c/ filtro
   //Serial.print(",");
-  Serial.print(ad3);      //y4mm
+  Serial.print(ad3);            //y4mm
   Serial.print(",");
-  //Serial.println(adc_filter2);      //y4mm c/ filtro
+  //Serial.println(adc_filter2);  //y4mm c/ filtro
   //Serial.print(",");
-  Serial.print(vd2,4);    //y3v
+  Serial.print(vd2,4);          //y3v
   Serial.print(",");
-  Serial.print(vd3,4);    //y4v
+  Serial.print(vd3,4);          //y4v
   Serial.print(",");
-  Serial.print(vd6*3.3f); //est
+  Serial.print(vd6*3.3f);       //est
   Serial.print(",");
-  Serial.println(nGolpe); //glp
+  Serial.println(nGolpe);       //glp
 
 }/* Imprimir dados da 135 */
 
