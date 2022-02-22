@@ -28,8 +28,8 @@ def saveDNIT134(idt, x, y1, yt1, y2, yt2, pc, pg):
 
 def data_entry():
     try:
-        c.execute("INSERT INTO calibrador134 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113340', -0.0002, 11.447, 'P2019113446', -0.0002, 11.362))
-        c.execute("INSERT INTO calibrador135 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0,'P1',0,0,'P2',0,0))
+        c.execute("INSERT INTO calibrador134 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113442', -0.0004, 25.394, 'P2019113443', -0.0004, 25.369))
+        c.execute("INSERT INTO calibrador135 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113340', -0.0002, 11.447, 'P2019113446', -0.0002, 11.362))
         connection.commit()
     except Exception:
         pass
