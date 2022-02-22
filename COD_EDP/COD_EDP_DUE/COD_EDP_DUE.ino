@@ -10,12 +10,12 @@
 #include <Oversampling.h>  //biblioteca de alteração da resolução
 #include <waveforms.h>  //biblioteca que gera a função (1-cos)/2
 
-#define AR_12BIT_MAX   4096 //valor da resolucao do arduino
+#define AR_12BIT_MAX   4096 //valor da resolucao do arduino DUE 12 bit
 #define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
-#define num1   100 //número de iterações da média móvel 1
-#define num2   100 //número de iterações da média móvel 2
+#define num1   10 //número de iterações da média móvel 1
+#define num2   10 //número de iterações da média móvel 2
 
-Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit
+Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit (apenas arduino DUE)
 
 /* Variavéis */
 const int pinA = 12; //pino do aplicador de golpes DNIT134
@@ -87,9 +87,9 @@ Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 /* Inicializacao da serial */
 void setup(void) {
   Serial.begin(115200); //velocidade da cominicacao com a porta serial
-  analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
-  analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino due)
-  analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao
+  analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino DUE)
+  analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino DUE)
+  analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao (apenas no arduino DUE)
   analogWrite(DAC0, 1); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
   analogWrite(DAC1, 2); //pino apenas para ver a função waveforms no osciloscopio (para testes)
   pinMode(A4, INPUT); //pino LVDT1
@@ -111,7 +111,6 @@ void setup(void) {
 }
 
 /* Principal */
-
 void loop(void) {
   conexao:
   conexao = Serial.read();
