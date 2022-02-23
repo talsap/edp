@@ -101,7 +101,8 @@ void setup(void) {
   pinMode(A10, INPUT); //pino Sendor de Temperatura (Estufa)
   pinMode(pinA, OUTPUT);  //configura o pinA
   pinMode(pinB, OUTPUT);  //configura o pinB
-  digitalWrite(pinB, HIGH);  //inicia desativado o pinB
+  digitalWrite(pinA, LOW); //inicia desativado o pinA
+  digitalWrite(pinB, LOW); //inicia desativado o pinB
   mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
@@ -207,7 +208,7 @@ void loop(void) {
               Serial.print("/SENSOR=");
               Serial.println(vd5*3.3f);
               serialFlush();
-              setpointC = setpoint2*4095/3300;   //valor em contagem
+              setpointC = int(setpoint2*4095/3300);   //valor em contagem
               analogWrite(DAC0, setpointC);
             }
             if(setpoint2 == 3){
@@ -238,6 +239,7 @@ void loop(void) {
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
               digitalWrite(11, LOW);
+              mp.setSpeed(30); //retorna a velocidade original do motor
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
@@ -259,15 +261,28 @@ void loop(void) {
               setpointM = setpoint1/3.3f;     //valor do setpoint em milibar (0 - 10.000)mBar
             }
           }
-          if((vd4 > 1.05*setpointM || vd4 < 0.95*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
+          if(vd4 > 1.3*setpointM || vd4 < 0.7*setpointM){ //condição para ajustar a velocidade de rotação do motor
+            mp.setSpeed(20); //deixa a rotacao do motor em 20 rpm
+          }
+          if(vd4 > 1.1*setpointM || vd4 < 0.9*setpointM){ //condição para ajustar a velocidade de rotação do motor
+            mp.setSpeed(10); //deixa a rotacao do motor em 10 rpm
+          }
+          if((vd4 > 1.02*setpointM || vd4 < 0.98*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
+            mp.setSpeed(5); //deixa o motor em um ajuste mais fino
             condicao = 0;
           }
-          if(vd4 < 1.02*setpointM && vd4 > 0.98*setpointM){ //INTERVALO DE PRESSAO OK//
+          if(vd4 < 1.05*setpointM && vd4 > 0.95*setpointM){ //INTERVALO DE PRESSAO OK//
+            ad4 = analogRead(A0);
+            vd4 = ad4*bit12_Voltage*1000;
+            Serial.print(vd4*3.3f);
             Serial.println("o");
             mp.step(0);
             condicao = 1;
           }
           if(condicao == 0){
+            ad4 = analogRead(A0);
+            vd4 = ad4*bit12_Voltage*1000;
+            Serial.print(vd4*3.3f);
             Serial.println("n");
             mp.step(floor((setpointM - vd4)));
           }
@@ -613,28 +628,28 @@ void imprimir(){
   if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
   }
-  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
-  Serial.print(",");
-  Serial.print(ad0);         //y1mm
-  Serial.print(",");
+  //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
+  //Serial.print(",");
+  Serial.println(ad0);         //y1mm
+  //Serial.print(",");
   //Serial.print(adc_filter1); //y1mm c/ filtro
   //Serial.print(",");
-  Serial.print(ad1);         //y2mm
-  Serial.print(",");
+  //Serial.print(ad1);         //y2mm
+  //Serial.print(",");
   //Serial.println(adc_filter2); //y2mm c/ filtro
   //Serial.print(",");
-  Serial.print(vd0,4);       //y1v
-  Serial.print(",");
-  Serial.print(vd1,4);       //y2v
-  Serial.print(",");
-  Serial.print(vd4*3.3f);    //sen
-  Serial.print(",");
-  Serial.print(vd5*3.3f);    //cam
-  Serial.print(",");
-  Serial.print(statuS);      //sts
-  Serial.print(",");
-  Serial.println(nGolpe);    //glp
-  Serial.println(setpointD);
+  //Serial.print(vd0,4);       //y1v
+  //Serial.print(",");
+  //Serial.print(vd1,4);       //y2v
+  //Serial.print(",");
+  //Serial.print(vd4*3.3f);    //sen
+  //Serial.print(",");
+  //Serial.print(vd5*3.3f);    //cam
+  //Serial.print(",");
+  //Serial.print(statuS);      //sts
+  //Serial.print(",");
+  //Serial.println(nGolpe);    //glp
+  //Serial.println(setpointD);
 }/* Imprimir dados DA 134*/
 
 /* Imprimir dados na 135 */
