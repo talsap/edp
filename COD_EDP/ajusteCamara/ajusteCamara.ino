@@ -13,10 +13,10 @@ void setup() {
 void loop() {
   //aguarda a entrada do setpoint//
   if (Serial.available()>1){  
-    valor = Serial.parseInt(); //valor em mbar
+    valor = Serial.parseInt(); //valor em contagem enviado ao DAC [0-4095]
     analogWrite(DAC0, valor);
   }
-  ad2 = analogRead(A2);
+  ad2 = analogRead(A2); // ler o sensor de pressão da valvula proporcional;
   Serial.println(ad2);
   delay(500);
 }

@@ -12,8 +12,6 @@
 
 #define AR_12BIT_MAX   4096 //valor da resolucao do arduino DUE 12 bit
 #define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
-#define num1   10 //número de iterações da média móvel 1
-#define num2   10 //número de iterações da média móvel 2
 
 Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit (apenas arduino DUE)
 
@@ -41,16 +39,14 @@ int i; //indicador temporal da funcao waveforms
 int tipoWave; //indicador do tipo da funcao waveforms
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
-int values1[num1]; //vetor com num posições, armazena os valores para cálculo da média móvel 1
-int values2[num2]; //vetor com num posições, armazena os valores para cálculo da média móvel 2
 int adc_filter1; //armazena a leitura filtrada da entrada analógica 1
 int adc_filter2; //armazena a leitura filtrada da entrada analógica 2
 float AM = 2.0677; //valor de A da calibração do motor de passos
 float BM = 10.01; //valor de B da calibração do motor de passos
-float AC1 = 2.0457;  //valor da A da calibração da camara AD2 para mBar
-float BC1 = 6.6138; //valor de B da calibração da camara AD2 para mBar
-float AC2 = 2.0457;  //valor da A da calibração da camara mBar para DAC
-float BC2 = 6.6138; //valor de B da calibração da camara mBar para DAC
+float AC1 = 2.0457;  //valor da A da calibração da camara AD2 para mBar (output)
+float BC1 = 6.6138; //valor de B da calibração da camara AD2 para mBar (output)
+float AC2 = 1.3612;  //valor da A da calibração da camara mBar para DAC (input)
+float BC2 = -13.944; //valor de B da calibração da camara mBar para DAC (input)
 float setpointB; //Valor do setpointB
 float setpointC; //Valor do setpointC
 float setpointD; //Valor do setpointD
@@ -75,8 +71,6 @@ long intervalo04 = 333; //3Hz 01-0233-01-0233-01-0233
 long intervalo03 = 250; //4Hz 01-015-01-015-01-015-01-015
 long intervalo02 = 200; //5Hz 01-01-01-01-01-01-01-01-01-01
 long resultTempo[1];
-long moving_average_1(int sig1); //Funcao de cálculo de filtro média móvel 1
-long moving_average_2(int sig2); //Funcao de cálculo de filtro média móvel 2
 unsigned long currentMillis; //variacao do tempo em milisegundos
 unsigned long initialMillis; //tempo incial dinamico
 unsigned char conexao;  //tipos de conexoes
@@ -108,8 +102,8 @@ void setup(void) {
   pinMode(pinA, OUTPUT);  //configura o pinA
   pinMode(pinB, OUTPUT);  //configura o pinB
   digitalWrite(pinA, LOW); //inicia desativado o pinA
-  digitalWrite(pinB, LOW); //inicia desativado o pinB
-  mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
+  digitalWrite(pinB, HIGH); //inicia desativado o pinB
+  mp.setSpeed(40); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
@@ -204,18 +198,19 @@ void loop(void) {
         //****************************** CAMARA DE PRESSAO *********************************//
         camaraDNIT134:
         while(true){
-          ad5 = analogRead(A2);
-          vd5 = ad5*AC1+BC1;
           if (Serial.available()>1){
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
+              setpointC = int(setpoint2*AC2+BC2);   //valor em contagem
+              analogWrite(DAC0, setpointC);
+              delay(500);
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
-              Serial.println(ad5);
+              ad5 = analogRead(A2);
+              vd5 = ad5*AC1+BC1; //mbar
+              Serial.println(vd5);
               serialFlush();
-              setpointC = int(setpoint2*AC2+BC2);   //valor em contagem
-              analogWrite(DAC0, setpointC);
             }
             if(setpoint2 == 3){
               goto sensorLVDTDNIT134;
@@ -230,12 +225,14 @@ void loop(void) {
         while(true){
           ad4 = analogRead(A0);
           vd4 = ad4*AM+BM; //mbar
-          if(Serial.available()>0){
+          if(Serial.available()>1){
             setpoint1 = Serial.parseInt();
             if(setpoint1 > 5){
               Serial.print("CHEGOU=");
               Serial.print(setpoint1);
               Serial.print("/SENSOR=");
+              ad4 = analogRead(A0);
+              vd4 = ad4*AM+BM; //mbar
               Serial.println(vd4);
               serialFlush();
               condicao = 1;
@@ -245,7 +242,7 @@ void loop(void) {
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
               digitalWrite(11, LOW);
-              mp.setSpeed(30); //retorna a velocidade original do motor
+              mp.setSpeed(50); //retorna a velocidade original do motor
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
@@ -267,17 +264,10 @@ void loop(void) {
               setpointM = setpoint1;     //valor do setpoint em milibar (0 - 10.000)mBar
             }
           }
-          if(vd4 > 1.3*setpointM || vd4 < 0.7*setpointM){ //condição para ajustar a velocidade de rotação do motor
-            mp.setSpeed(20); //deixa a rotacao do motor em 20 rpm
-          }
-          if(vd4 > 1.1*setpointM || vd4 < 0.9*setpointM){ //condição para ajustar a velocidade de rotação do motor
-            mp.setSpeed(10); //deixa a rotacao do motor em 10 rpm
-          }
-          if((vd4 > 1.02*setpointM || vd4 < 0.98*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
-            mp.setSpeed(5); //deixa o motor em um ajuste mais fino
+          if((vd4 > 1.03*setpointM || vd4 < 0.97*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
             condicao = 0;
           }
-          if(vd4 < 1.05*setpointM && vd4 > 0.95*setpointM){ //INTERVALO DE PRESSAO OK//
+          if(vd4 < 1.08*setpointM && vd4 > 0.92*setpointM){ //INTERVALO DE PRESSAO OK//
             ad4 = analogRead(A0);
             vd4 = ad4*AM+BM; //mbar
             Serial.print("o = ");
@@ -290,10 +280,19 @@ void loop(void) {
             vd4 = ad4*AM+BM; //mbar
             Serial.print("n = ");
             Serial.println(vd4);
-            if(setpointM - vd4 > 500){
-              mp.setSpeed(30); //deixa a rotacao do motor em 30 rpm
+            if(abs((setpointM - vd4)) > 500){
+              mp.setSpeed(40); //deixa a rotacao do motor em 40 rpm
             }
-            mp.step(floor((setpointM - vd4)));
+            if(abs((setpointM - vd4)) < 400){
+              mp.setSpeed(25); //deixa a rotacao do motor em 25 rpm
+            }
+            if(abs((setpointM - vd4)) < 200){
+              mp.setSpeed(5); //deixa a rotacao do motor em 5 rpm
+            }
+            if(abs((setpointM - vd4)) < 50){
+              mp.setSpeed(3); //deixa a rotacao do motor em 1 rpm
+            }
+            mp.step(floor((setpointM - vd4)/2));
           }
         }
         break;
@@ -321,6 +320,7 @@ void loop(void) {
             if(frequencia > 0){
               Serial.print("FREQ=");
               Serial.println(frequencia);
+              digitalWrite(pinB, LOW);  //ativa o pinAplicador
               serialFlush();
               break;
             }
@@ -617,15 +617,13 @@ void loop(void) {
 }/*void*/
 
 //**********************************************************************************//
-//**********************************************************************************//
+//****************************Imprimir dados na 134*********************************//
 //**********************************************************************************//
 
 /* Imprimir dados na 134 */
 void imprimir(){
   ad0 = adc.read(A4);
   ad1 = adc.read(A6);
-  //adc_filter1 = moving_average_1(ad4);
-  //adc_filter2 = moving_average_2(ad6);
   ad4 = analogRead(A0);
   ad5 = analogRead(A2);
   vd0 = ad0*bit16_Voltage;
@@ -639,13 +637,9 @@ void imprimir(){
   }
   //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
   //Serial.print(",");
-  Serial.println(ad0);         //y1mm
+  //Serial.print(ad0);         //y1mm
   //Serial.print(",");
-  //Serial.print(adc_filter1); //y1mm c/ filtro
-  //Serial.print(",");
-  //Serial.print(ad1);         //y2mm
-  //Serial.print(",");
-  //Serial.println(adc_filter2); //y2mm c/ filtro
+  Serial.println(ad1);         //y2mm
   //Serial.print(",");
   //Serial.print(vd0,4);       //y1v
   //Serial.print(",");
@@ -661,12 +655,13 @@ void imprimir(){
   //Serial.println(setpointD);
 }/* Imprimir dados DA 134*/
 
+//**********************************************************************************//
+//***************************Imprimir dados na 135**********************************//
+//**********************************************************************************//
 /* Imprimir dados na 135 */
 void imprimir2(){
   ad2 = adc.read(A8);
   ad3 = adc.read(A9);
-  //adc_filter1 = moving_average_1(ad2);
-  //adc_filter2 = moving_average_2(ad3);
   ad6 = analogRead(A10);
   vd2 = ad2*bit16_Voltage;
   vd3 = ad3*bit16_Voltage;
@@ -676,12 +671,8 @@ void imprimir2(){
   Serial.print(",");
   Serial.print(ad2);            //y3mm
   Serial.print(",");
-  //Serial.print(adc_filter1);  //y3mm c/ filtro
-  //Serial.print(",");
   Serial.print(ad3);            //y4mm
   Serial.print(",");
-  //Serial.println(adc_filter2);  //y4mm c/ filtro
-  //Serial.print(",");
   Serial.print(vd2,4);          //y3v
   Serial.print(",");
   Serial.print(vd3,4);          //y4v
@@ -693,9 +684,8 @@ void imprimir2(){
 }/* Imprimir dados da 135 */
 
 //**********************************************************************************//
+//**************************Limpa o buffer serial***********************************//
 //**********************************************************************************//
-//**********************************************************************************//
-
 /* Limpa o buffer serial */
 void serialFlush(){
   while(Serial.available() > 0) {
@@ -705,8 +695,10 @@ void serialFlush(){
 
 //**********************************************************************************//
 //**********************************************************************************//
+//*********************Intervalo de tempo do aplicador******************************//
 //**********************************************************************************//
-
+//**********************************************************************************//
+//**********************************************************************************//
 /* Intervalo de tempo do aplicador */
 S tempo(int nTime, int frequencia, long initialMillis){
   currentMillis = millis(); //Tempo atual em ms
@@ -714,11 +706,9 @@ S tempo(int nTime, int frequencia, long initialMillis){
     case 1:
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
-          if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
-          }
-          else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //ativa o pinA
+          if(currentMillis - initialMillis > intervalo00){
+            digitalWrite(pinB, HIGH);  //desativa o pinB
           }
         }
         if(conditionEnsaio == 1){
@@ -733,6 +723,9 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
         if(conditionEnsaio == 0){
           digitalWrite(pinA, LOW);  //desativa o pinA
+        }
+        if((currentMillis - initialMillis) > 900){
+          digitalWrite(pinB, LOW);  //ativa o pinB          
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
@@ -1182,47 +1175,6 @@ S tempo(int nTime, int frequencia, long initialMillis){
 //**********************************************************************************//
 //**********************************************************************************//
 //**********************************************************************************//
-
-/* Função filtro média móvel 1 */
-long moving_average_1(int sig1)
-{
-  int i1;               //variável auxiliar para iterações
-  long acc1 = 0;        //acumulador
-
-  //Desloca o vetor completamente eliminando o valor mais antigo
-  for(i1 = num1; i1 > 0; i1--) values1[i1] = values1[i1-1];
-
-  values1[0] = sig1;           //carrega o sinal no primeiro elemento do vetor
-
- // long sum = 0;            //Variável para somatório
-
-  for(i1 = 0; i1 < num1; i1++) acc1 += values1[i1];
-
-
-  return acc1 / num1;         //Retorna a média móvel
-
-}/* end moving_average */
-
-
-/* Função filtro média móvel 2 */
-long moving_average_2(int sig2)
-{
-  int i2;               //variável auxiliar para iterações
-  long acc2 = 0;        //acumulador
-
-  //Desloca o vetor completamente eliminando o valor mais antigo
-  for(i2 = num2; i2 > 0; i2--) values2[i2] = values2[i2-1];
-
-  values2[0] = sig2;           //carrega o sinal no primeiro elemento do vetor
-
- // long sum = 0;            //Variável para somatório
-
-  for(i2 = 0; i2 < num2; i2++) acc2 += values2[i2];
-
-
-  return acc2 / num2;         //Retorna a média móvel
-
-}/* end moving_average */
 //**********************************************************************************//
 //**********************************************************************************//
 //**********************************************************************************//
