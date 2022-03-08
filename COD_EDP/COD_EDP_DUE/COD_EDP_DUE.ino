@@ -43,8 +43,8 @@ int adc_filter1; //armazena a leitura filtrada da entrada analógica 1
 int adc_filter2; //armazena a leitura filtrada da entrada analógica 2
 float AM = 2.0677; //valor de A da calibração do motor de passos
 float BM = 10.01; //valor de B da calibração do motor de passos
-float AC1 = 2.0457;  //valor da A da calibração da camara AD2 para mBar (output)
-float BC1 = 6.6138; //valor de B da calibração da camara AD2 para mBar (output)
+float AC1 = 2.0119;  //valor da A da calibração da camara AD2 para mBar (output)
+float BC1 = 38.21; //valor de B da calibração da camara AD2 para mBar (output)
 float AC2 = 1.3612;  //valor da A da calibração da camara mBar para DAC (input)
 float BC2 = -13.944; //valor de B da calibração da camara mBar para DAC (input)
 float setpointB; //Valor do setpointB
@@ -102,7 +102,7 @@ void setup(void) {
   pinMode(pinA, OUTPUT);  //configura o pinA
   pinMode(pinB, OUTPUT);  //configura o pinB
   digitalWrite(pinA, LOW); //inicia desativado o pinA
-  digitalWrite(pinB, HIGH); //inicia desativado o pinB
+  digitalWrite(pinB, LOW); //inicia ativado o pinB
   mp.setSpeed(40); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
@@ -203,13 +203,13 @@ void loop(void) {
             if(setpoint2 > 10){
               setpointC = int(setpoint2*AC2+BC2);   //valor em contagem
               analogWrite(DAC0, setpointC);
-              delay(500);
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
               ad5 = analogRead(A2);
               vd5 = ad5*AC1+BC1; //mbar
               Serial.println(vd5);
+              
               serialFlush();
             }
             if(setpoint2 == 3){
@@ -242,7 +242,7 @@ void loop(void) {
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
               digitalWrite(11, LOW);
-              mp.setSpeed(50); //retorna a velocidade original do motor
+              mp.setSpeed(40); //retorna a velocidade original do motor
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
@@ -268,18 +268,18 @@ void loop(void) {
             condicao = 0;
           }
           if(vd4 < 1.08*setpointM && vd4 > 0.92*setpointM){ //INTERVALO DE PRESSAO OK//
-            ad4 = analogRead(A0);
-            vd4 = ad4*AM+BM; //mbar
-            Serial.print("o = ");
-            Serial.println(vd4);
+            //ad4 = analogRead(A0);
+            //vd4 = ad4*AM+BM; //mbar
+            Serial.println("o");
+            //Serial.println(vd4);
             mp.step(0);
             condicao = 1;
           }
           if(condicao == 0){
-            ad4 = analogRead(A0);
-            vd4 = ad4*AM+BM; //mbar
-            Serial.print("n = ");
-            Serial.println(vd4);
+            //ad4 = analogRead(A0);
+            //vd4 = ad4*AM+BM; //mbar
+            Serial.println("n");
+            //Serial.println(vd4);
             if(abs((setpointM - vd4)) > 500){
               mp.setSpeed(40); //deixa a rotacao do motor em 40 rpm
             }
@@ -637,8 +637,8 @@ void imprimir(){
   }
   //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
   //Serial.print(",");
-  //Serial.print(ad0);         //y1mm
-  //Serial.print(",");
+  Serial.print(ad0);         //y1mm
+  Serial.print(",");
   Serial.println(ad1);         //y2mm
   //Serial.print(",");
   //Serial.print(vd0,4);       //y1v

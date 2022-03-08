@@ -51,7 +51,7 @@ class CamaraThreadZero(Thread):
         con.modeS()
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
         time.sleep(.5)
-        con.modeE()
+        con.modeES()
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         time.sleep(.5)
         valor2 = con.modeCAMZERO(10000*self.p1, 10000*self.p1Sen)

@@ -158,6 +158,7 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função AVANCA'''
         def AVANCA(self, event):
+            print '\nTopPanel - AVANCA'
             global Fase
             global X
             global Y
@@ -219,6 +220,7 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função PAUSA'''
         def PAUSA(self, event):
+            print '\nTopPanel - PAUSA'
             global conditionEnsaio
             global Pausa
 
@@ -234,6 +236,7 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função CONTINUA'''
         def CONTINUA(self, event):
+            print '\nTopPanel - CONTINUA'
             global conditionEnsaio
             global Ti
             global Pausa
@@ -250,6 +253,7 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função INICIO'''
         def INICIO(self, event):
+            print '\nTopPanel - INICIO'
             global Fase
             global condition
             global conditionEnsaio
@@ -282,7 +286,7 @@ class TopPanel(wx.Panel):
                     time.sleep(1)
 
                 threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][1], A1, A2)
-                dlgC2 = My.MyProgressDialog(15)
+                dlgC2 = My.MyProgressDialog(4) #antes era 16
                 dlgC2.ShowModal()
 
                 if threadConection.ret() == False:
@@ -323,7 +327,7 @@ class TopPanel(wx.Panel):
                     time.sleep(1)
 
                 threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][1], A1, A2)
-                dlgC2 = My.MyProgressDialog(15)
+                dlgC2 = My.MyProgressDialog(4) #antes era 16
                 dlgC2.ShowModal()
 
                 if threadConection.ret() == False:
@@ -369,8 +373,8 @@ class TopPanel(wx.Panel):
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             if valorGolpe == 500:
-                                con.modeI()
                                 time.sleep(4)
+                                con.modeI()
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
@@ -393,8 +397,8 @@ class TopPanel(wx.Panel):
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             if valorGolpe == 10:
-                                con.modeI()
                                 time.sleep(4)
+                                con.modeI()
                                 self.pausa.Disable()
                                 self._ciclo = self._self.bottom._ciclo + 1
                                 self._self.bottom._ciclo = self._ciclo
@@ -418,6 +422,7 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Função FIM'''
         def FIM(self, event):
+            print '\nTopPanel - FIM'
             global condition
             global conditionEnsaio
             global Fase
@@ -457,16 +462,20 @@ class TopPanel(wx.Panel):
     #--------------------------------------------------
         '''Ajusta min e max EIXO X'''
         def changeAxesX(self, min, max):
-    		self.axes.set_xlim(float(min), float(max))
-    		self.canvas.draw()
+            print '\nTopPanel - changeAxesY'
+            self.axes.set_xlim(float(min), float(max))
+            self.canvas.draw()
 
     #--------------------------------------------------
         '''Ajusta min e max EIXO Y'''
         def changeAxesY(self, min, max):
-    		self.axes.set_ylim(float(min), float(max))
-    		self.canvas.draw()
+            print '\nTopPanel - changeAxesY'
+            self.axes.set_ylim(float(min), float(max))
+            self.canvas.draw()
+
     #--------------------------------------------------
         def draww(self):
+            print '\nTopPanel - draww'
             self.axes.clear()
             self.axes.set_xlim(float(0), float(1))
             self.axes.set_ylim(float(0), float(0.01))
@@ -476,6 +485,7 @@ class TopPanel(wx.Panel):
 
     #--------------------------------------------------
         def draw(self):
+            print '\nTopPanel - draw'
             global mult
             global amplitudeMin
             self.axes.clear()
@@ -958,6 +968,7 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função CheckBox'''
         def onCheck(self, event):
+            print '\nBottomPanel - onCheck'
             global Automatico
             if  self.ensaioAuto.GetValue() == False:
                 self.Automatico = False
@@ -967,6 +978,7 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em realizar a CONECÇÃO'''
         def LTESTE(self, event):
+            print '\nBottomPanel - LTESTE'
             threadConection = ConexaoThread.ConexaoThread()
             dlg = My.MyProgressDialog(2)
             dlg.ShowModal()
@@ -1118,7 +1130,7 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável pela leitura zero'''
         def LZERO(self, event):
-            print 'LZERO'
+            print '\nBottomPanel - LZERO'
             self.freq.Enable()
             self.qTensoes.Enable()
             self.condic.Enable()
@@ -1134,11 +1146,13 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em mostrar o quadro dinâmico de tensões'''
         def QT(self, event):
+            print '\nBottomPanel - QT'
             dlg = quadro().ShowModal()
 
     #--------------------------------------------------
         '''Função responsável em realizar o CONDICIONAMENTO'''
         def CONDIC(self, event):
+            print '\nBottomPanel - CONDIC'
             global condition
             global Fase
             global xz1
@@ -1224,6 +1238,7 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''
         def MR(self, event):
+            print '\nBottomPanel - MR'
             global condition
             global Fase
             global xz1
@@ -1302,13 +1317,14 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável em zera a pressão do sistema'''
         def pressao_zero(self, p1Sen):
+            print '\nBottomPanel - pressao_zero'
             global condition
             condition = False
-            threadConection = CamaraThread.CamaraThreadZero(0.001, p1Sen) #0.001 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = CamaraThread.CamaraThreadZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlgC1 = My.MyProgressDialog(4)
             dlgC1.ShowModal()
             time.sleep(1)
-            threadConection = MotorThread.MotorThreadZero(0.034, A1, A2)  #0.034 é o menor valor de pressão admissível para SI do motor de passos
+            threadConection = MotorThread.MotorThreadZero(0.0150, A1, A2)  #0.015 é o menor valor de pressão admissível para SI do motor de passos
             dlg2 = My.MyProgressDialog(4)
             dlg2.ShowModal()
             condition = True
@@ -1316,6 +1332,7 @@ class BottomPanel(wx.Panel):
     #--------------------------------------------------
         '''Função responsável pela plotagem'''
         def TimeInterval(self, event):
+            print '\nBottomPanel - TimeInterval'
             global mult
             mult += 1
             self.graph.draw()

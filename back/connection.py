@@ -29,20 +29,21 @@ conexao.baudrate = 115200
 
 '''Coeficientes da calibracao da 134'''
 L = bancodedados.LVDT_134()
-A1 = float(L[1])
-B1 = float(L[2])
-A2 = float(L[4])
-B2 = float(L[5])
+A1_DNIT134 = float(L[1])
+B1_DNIT134 = float(L[2])
+A2_DNIT134 = float(L[4])
+B2_DNIT134 = float(L[5])
 
 '''Coeficientes da calibracao da 135'''
 M = bancodedados.LVDT_135()
-A3 = float(M[1])
-B3 = float(M[2])
-A4 = float(M[4])
-B4 = float(M[5])
+A1_DNIT135 = float(M[1])
+B1_DNIT135 = float(M[2])
+A2_DNIT135 = float(M[4])
+B2_DNIT135 = float(M[5])
 
 #-------------------------------------------------------------------
 def connect():
+    print 'connect'
     i = 0
     condicaoConeccao = False
     try:
@@ -147,23 +148,53 @@ def modeStoped():
             break
 
 #-------------------------------------------------------------------
-'''Ativando camara'''
-def modeE():
-    print 'modeE'
+'''Ativando camara Saída'''
+def modeES():
+    print 'modeES'
     conexao.write(opcaoE)
+    while (conexao.inWaiting() == 0):
+            pass
+    print(conexao.readline())
+
+#-------------------------------------------------------------------
+'''Ativando motor Saída'''
+def modeMS():
+    print 'modeMS'
+    conexao.write(opcaoM)
     while (conexao.inWaiting() == 0):
         pass
     print(conexao.readline())
+
+#-------------------------------------------------------------------
+'''Ativando camara'''
+def modeE():
+    print 'modeE'
+    buf = modeBuffer()
+    while buf == False:
+        buf = modeBuffer()
+    if buf == True:
+        conexao.write(opcaoE)
+        while (conexao.inWaiting() == 0):
+            pass
+        print(conexao.readline())
+    else:
+        print '#Erro no modeE'
 
 #-------------------------------------------------------------------
 '''Ativando motor'''
 def modeM():
     print 'modeM'
     conexao.flushOutput()
-    conexao.write(opcaoM)
-    while (conexao.inWaiting() == 0):
-        pass
-    print(conexao.readline())
+    buf = modeBuffer()
+    while buf == False:
+        buf = modeBuffer()
+    if buf == True:
+        conexao.write(opcaoM)
+        while (conexao.inWaiting() == 0):
+            pass
+        print(conexao.readline())
+    else:
+        print '#Erro no modeM'
 
 #-------------------------------------------------------------------
 '''Ativando golpes'''
@@ -178,7 +209,7 @@ def modeG():
 #-------------------------------------------------------------------
 '''Conecxao com a DNIT134'''
 def modeConectDNIT134():
-    #print 'modeConectDNIT134'
+    print 'modeConectDNIT134'
     conexao.write(opcaoC)
     while (conexao.inWaiting() == 0):
         pass
@@ -191,7 +222,7 @@ def modeConectDNIT134():
 #-------------------------------------------------------------------
 '''Conecxao com a DNIT135'''
 def modeConectDNIT135():
-    #print 'modeConectDNIT135'
+    print 'modeConectDNIT135'
     conexao.write(opcaoC)
     while (conexao.inWaiting() == 0):
         pass
@@ -279,7 +310,7 @@ def modeMotor(p2):
         try:
             if a[0] == "o":
                 contadorOK += 1
-                if contadorOK == 25: #contadorOK igual a 25
+                if contadorOK == 50: #contadorOK igual a 25
                     conexao.write(str(3))
                     while (conexao.inWaiting() == 0):
                         pass
@@ -325,16 +356,6 @@ def modeMotorZero(p2):
                     conexao.write(str(3))
                     return "p2ok"
                     break
-            if a[0] == "n":
-                contadorNOK += 1
-                if contadorNOK == 5 and condic == True:
-                    contadorNOK = 0
-                    condic = False
-                    conexao.write(str(2))
-                    while (conexao.inWaiting() == 0):
-                        pass
-                    print(conexao.readline())
-                    conexao.write(str(int(round(p2,0))))
         except:
             pass
 
@@ -368,8 +389,8 @@ def modeBuffer():
     while (conexao.inWaiting() == 0):
         pass
     a = conexao.readline()
-    print a
-    if a[0] == 'D':
+    #print a
+    if a[0] == 'D' or a == '\n':
         print a
         print "BufferLimpo"
         return True
@@ -378,15 +399,15 @@ def modeBuffer():
 
 #-------------------------------------------------------------------
 def ColetaI(valores):
-    #print 'ColetaI' formatação dos dados da 134
+    #print 'ColetaI' #formatação dos dados da 134
     while (conexao.inWaiting() == 0):
         pass
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
     try:
         temp = float(Array[0])
-        y1mm = float(Array[1])*A1+B1
-        y2mm = float(Array[2])*A2+B2
+        y1mm = float(Array[1])*A1_DNIT134+B1_DNIT134
+        y2mm = float(Array[2])*A2_DNIT134+B2_DNIT134
         y1v = float(Array[3])
         y2v = float(Array[4])
         sen = float(Array[5])
@@ -395,7 +416,7 @@ def ColetaI(valores):
         glp = int(Array[8])
 
     except:
-        #print 'ColetaIexcept'
+        print 'ColetaI - except'
         temp = valores[0]
         y1mm = valores[1]
         y2mm = valores[2]
@@ -410,22 +431,22 @@ def ColetaI(valores):
 
 #-------------------------------------------------------------------
 def ColetaJ(valores):
-    #print 'ColetaJ' formatação dos dados da 135
+    print 'ColetaJ' #formatação dos dados da 135
     while (conexao.inWaiting() == 0):
         pass
     arduinoString = conexao.readline()
     Array = arduinoString.split(',')
     try:
         temp = float(Array[0])
-        y3mm = float(Array[1])*A1+B1
-        y4mm = float(Array[2])*A2+B2
+        y3mm = float(Array[1])*A1_DNIT135+B1_DNIT135
+        y4mm = float(Array[2])*A2_DNIT135+B2_DNIT135
         y3v = float(Array[3])
         y4v = float(Array[4])
         est = float(Array[5])
         glp = int(Array[6])
 
     except:
-        #print 'ColetaIexcept'
+        print 'ColetaJ - except'
         temp = valores[0]
         y3mm = valores[1]
         y4mm = valores[2]
@@ -438,7 +459,7 @@ def ColetaJ(valores):
 
 #-------------------------------------------------------------------
 def ColetaII():
-    #print 'ColetaI'
+    print 'ColetaII'
     while (conexao.inWaiting() == 0):
         pass
     arduinoString = conexao.readline()

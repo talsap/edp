@@ -30,8 +30,10 @@ class MotorThread(Thread):
             print 'PRESSAO GOLPES OK'
             wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
             time.sleep(.2)
+            wx.CallAfter(pub.sendMessage, "update", msg="")
 
-        i = 0
+        #Parte do golpe teste
+        '''i = 0
         cond = True
         while i < 3 and cond == True:
             i = i+1
@@ -122,8 +124,8 @@ class MotorThread(Thread):
 
         if i == 3:
             con.modeI()
-            self._return = False
-
+            self._return = False'''
+        #Parte do golpe teste
     #-------------------------------------------------------------------
     def ret(self):
         Thread.join(self)
@@ -146,7 +148,7 @@ class MotorThreadZero(Thread):
         con.modeS()
         wx.CallAfter(pub.sendMessage, "update", msg="  Ativando motor...")
         time.sleep(.5)
-        con.modeM()
+        con.modeMS()
         time.sleep(.5)
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         valor = con.modeMotorZero((10000*self.a2/self.a1)*self.p2)
