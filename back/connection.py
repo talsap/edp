@@ -263,6 +263,11 @@ def modeCAMZERO(p1, p1Sen):
         time.sleep(1)
         i = i - 1
         if i == 0:
+            conexao.write(str(int(round(p1,0))))
+            while (conexao.inWaiting() == 0):
+                pass
+            print (conexao.readline())
+            time.sleep(1)
             conexao.write(str(3))
             return "p1ok"
             break

@@ -9,12 +9,13 @@ from threading import Thread
 '''MotorThread'''
 class MotorThread(Thread):
     #-------------------------------------------------------------------
-    def __init__(self, p2, A1, A2):
+    def __init__(self, p2, A1, A2, golpeTeste):
         Thread.__init__(self)
         self.start()
         self.p2 = p2
         self.a1 = A1
         self.a2 = A2
+        self.golpeTeste = golpeTeste
         self._return = True
 
     #-------------------------------------------------------------------
@@ -33,6 +34,35 @@ class MotorThread(Thread):
             wx.CallAfter(pub.sendMessage, "update", msg="")
 
         #Parte do golpe teste
+        if self.golpeTeste == True:
+            time.sleep(.5)
+            con.modeG()
+            wx.CallAfter(pub.sendMessage, "update", msg="     golpe teste...")
+            con.modeGOLPES(1,1)
+            con.modeS()
+            time.sleep(2)
+            wx.CallAfter(pub.sendMessage, "update", msg="  Ativando motor...")
+            time.sleep(.5)
+            con.modeM()
+            time.sleep(.5)
+            wx.CallAfter(pub.sendMessage, "update", msg="       Ajustando...")
+            valor = con.modeMotor((10000*self.a2/self.a1)*self.p2)
+            if valor == 'p2ok':
+                print 'PRESSAO GOLPES OK'
+                wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
+                time.sleep(.2)
+                wx.CallAfter(pub.sendMessage, "update", msg="")
+                con.modeI()
+                self._return = True
+        else:
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+            con.modeI()
+            self._return = True
+
         '''i = 0
         cond = True
         while i < 3 and cond == True:

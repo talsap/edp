@@ -225,7 +225,7 @@ void loop(void) {
         while(true){
           ad4 = analogRead(A0);
           vd4 = ad4*AM+BM; //mbar
-          if(Serial.available()>1){
+          if(Serial.available()>0){
             setpoint1 = Serial.parseInt();
             if(setpoint1 > 5){
               Serial.print("CHEGOU=");
@@ -264,22 +264,16 @@ void loop(void) {
               setpointM = setpoint1;     //valor do setpoint em milibar (0 - 10.000)mBar
             }
           }
-          if((vd4 > 1.03*setpointM || vd4 < 0.97*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
+          if((vd4 > 1.1*setpointM || vd4 < 0.97*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
             condicao = 0;
           }
-          if(vd4 < 1.08*setpointM && vd4 > 0.92*setpointM){ //INTERVALO DE PRESSAO OK//
-            //ad4 = analogRead(A0);
-            //vd4 = ad4*AM+BM; //mbar
+          if(vd4 < 1.1*setpointM && vd4 > 0.98*setpointM){ //INTERVALO DE PRESSAO OK//
             Serial.println("o");
-            //Serial.println(vd4);
             mp.step(0);
             condicao = 1;
           }
           if(condicao == 0){
-            //ad4 = analogRead(A0);
-            //vd4 = ad4*AM+BM; //mbar
             Serial.println("n");
-            //Serial.println(vd4);
             if(abs((setpointM - vd4)) > 500){
               mp.setSpeed(40); //deixa a rotacao do motor em 40 rpm
             }
@@ -287,10 +281,10 @@ void loop(void) {
               mp.setSpeed(25); //deixa a rotacao do motor em 25 rpm
             }
             if(abs((setpointM - vd4)) < 200){
-              mp.setSpeed(5); //deixa a rotacao do motor em 5 rpm
+              mp.setSpeed(10); //deixa a rotacao do motor em 10 rpm
             }
             if(abs((setpointM - vd4)) < 50){
-              mp.setSpeed(3); //deixa a rotacao do motor em 1 rpm
+              mp.setSpeed(5); //deixa a rotacao do motor em 5 rpm
             }
             mp.step(floor((setpointM - vd4)/2));
           }
@@ -628,30 +622,30 @@ void imprimir(){
   ad5 = analogRead(A2);
   vd0 = ad0*bit16_Voltage;
   vd1 = ad1*bit16_Voltage;
-  vd4 = ad4*bit12_Voltage*1000;
-  vd5 = ad5*bit12_Voltage*1000;
-
+  vd4 = ad4*AM+BM; //mbar
+  vd5 = ad5*AC1+BC1; //mbar
+  
   //INTERVALO DE PRESSAO NAO OK//
   if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
   }
-  //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
-  //Serial.print(",");
+  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
+  Serial.print(",");
   Serial.print(ad0);         //y1mm
   Serial.print(",");
-  Serial.println(ad1);         //y2mm
-  //Serial.print(",");
-  //Serial.print(vd0,4);       //y1v
-  //Serial.print(",");
-  //Serial.print(vd1,4);       //y2v
-  //Serial.print(",");
-  //Serial.print(vd4*3.3f);    //sen
-  //Serial.print(",");
-  //Serial.print(vd5*3.3f);    //cam
-  //Serial.print(",");
-  //Serial.print(statuS);      //sts
-  //Serial.print(",");
-  //Serial.println(nGolpe);    //glp
+  Serial.print(ad1);         //y2mm
+  Serial.print(",");
+  Serial.print(vd0,4);       //y1v
+  Serial.print(",");
+  Serial.print(vd1,4);       //y2v
+  Serial.print(",");
+  Serial.print(vd4,4);       //sen
+  Serial.print(",");
+  Serial.print(vd5,4);       //cam
+  Serial.print(",");
+  Serial.print(statuS);      //sts
+  Serial.print(",");
+  Serial.println(nGolpe);    //glp
   //Serial.println(setpointD);
 }/* Imprimir dados DA 134*/
 
