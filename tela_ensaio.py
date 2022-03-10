@@ -23,8 +23,8 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 frequencias = ['1', '2', '3', '4']
 
 '''Variáveis Globais'''
-global leituraZerob1
-global leituraZerob2
+global leituraZerob1 #leitura zero do sensor 1
+global leituraZerob2 #leitura zero do sensor 2
 global A2 #área do corpo de prova, vinda do banco de dados do Ensaio
 global A1 #área da seção do cilindro pneumático
 global H  #Altura do corpo de prova em milímetros
@@ -38,22 +38,18 @@ global yz2
 global yt2
 global pc1
 global pg1
-global REFERENCIA1
-global REFERENCIA2
+global REFERENCIA1 #referencia de ponto de partida para o sensor 1
+global REFERENCIA2 #referencia de ponto de partida para o sensor 2
 global Ti #valor temporal
 global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 global Automatico #idica se o ensaio será automático ou não
 global Pausa #indica se o ensaio foi pausado
-global amplitudeMax
-global amplitudeMin
-global mult
+global mult  #Multiplo de 5 que ajuda a arrumar o gráfico em 5 em 5
 
 A2 = 0.007854
 A1 = 0.007854
 H0 = 0.01
 H = 200
-amplitudeMax = 0.084
-amplitudeMin = 0.02
 mult = 0
 Pausa = False
 idt = 'DNIT134-01-'  #identificador do ensaio no banco de dados
@@ -439,7 +435,6 @@ class TopPanel(wx.Panel):
             global condition
             global conditionEnsaio
             global Fase
-            global amplitudeMax
             global mult
 
             '''Diálogo se deseja realmente finalizar o CONDICIONAMENTO'''
@@ -502,22 +497,12 @@ class TopPanel(wx.Panel):
         def draw(self):
             print '\nTopPanel - draw'
             global mult
-            global amplitudeMin
             self.axes.clear()
-            #self.axes.set_ylim(round(amplitudeMin,3), round(1.2*amplitudeMax,3))
             self.axes.set_xlim(mult*5-5, mult*5)
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             self.axes.plot(X, Y, 'r-')
             self.canvas.draw()
-            '''self.axes.clear()
-            plt.ylim(None, round(1.2*amplitudeMax,3))
-            plt.ylim(None, mult*5)
-            plt.xlabel('TEMPO (seg)')
-            plt.ylabel('DESLOCAMENTO (mm)')
-            plt.plot(X, Y, 'r-')
-            plt.draw()'''
-            #pass
 
 '''Painel Inferior'''
 class BottomPanel(wx.Panel):
@@ -1017,8 +1002,6 @@ class BottomPanel(wx.Panel):
                     global X
                     global Y
                     global H
-                    global amplitudeMax
-                    global amplitudeMin
                     global xz1
                     global yz1
                     global yt1
@@ -1037,7 +1020,7 @@ class BottomPanel(wx.Panel):
                     GolpeAnterior = -1
                     self.leituraZerob1 = 0
                     self.leituraZerob2 = 0
-                    self.x_counter = 0
+                    x_counter = 0
                     valores = [0,0,0,0,0,0,0,0,0]
                     while True:
                         while condition == True:
@@ -1063,35 +1046,43 @@ class BottomPanel(wx.Panel):
 
                             y1 = valores[1]-self.leituraZerob1
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
-                            ymedio = (y1 + y2)/2
+                            ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
 
                             #print ymedio
                             '''if conditionEnsaio == True:'''
                             if conditionEnsaio == True and valores[0] > 0:
                                 X = np.append(X, valores[0])
-                                Y = np.append(Y, ymedio+H0)
-                                if ymedio+H0 > amplitudeMax:
-                                    amplitudeMax = ymedio+H0
-                                if ymedio+H0 < amplitudeMin:
-                                    amplitudeMin = ymedio+H0
-                                self.x_counter = len(X)
-                                if self.x_counter >= 1500:
+                                Y = np.append(Y, ymedio)
+                                x_counter = len(X)
+                                if x_counter >= 1000: #antes era 1500
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
-                                    if self.x_counter == 1:
-                                        amplitudeMin = ymedio+H0
-                                #print valores[0]
-                                #drawnow(self.graph.draw)
-
                                 if Fase == 'CONDICIONAMENTO' and Pausa == False:
                                     if valores[0] == 0.01:
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
-
                                 if Fase == 'MR' and Pausa == False:
                                     if valores[0] == 0.01:
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
+                                        discrepancia = 5
+
+                                    if valores[0] > 4 and valores[0] < 4.2:
+                                        if valores[0] == 4.01:
+                                            amplitudeMax4 = ymedio
+                                        if ymedio > amplitudeMax4:
+                                            amplitudeMax4 = ymedio
+                                            intervaloSup1 = amplitudeMax4 + 0.05*amplitudeMax4
+                                            intervaloInf1 = amplidudeMax4 - 0.05*amplitudeMax4
+
+                                    if valores[0] > 5 and valores[0] < 5.2:
+                                        if valores[0] == 5.01:
+                                            amplitudeMax5 = ymedio
+                                        if ymedio > amplitudeMax5:
+                                            amplitudeMax5 = ymedio
+                                            intervaloSup2 = amplitudeMax5 + 0.05*amplitudeMax5
+                                            intervaloInf2 = amplidudeMax5 - 0.05*amplitudeMax5
+
                                     if int(valores[0]) > 4 and int(valores[0]) <= 10:
                                         xz1.append(valores[0])
                                         yz1.append(y1+H0)

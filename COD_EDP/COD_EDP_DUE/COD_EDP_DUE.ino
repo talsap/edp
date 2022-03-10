@@ -39,14 +39,12 @@ int i; //indicador temporal da funcao waveforms
 int tipoWave; //indicador do tipo da funcao waveforms
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
-int adc_filter1; //armazena a leitura filtrada da entrada analógica 1
-int adc_filter2; //armazena a leitura filtrada da entrada analógica 2
 float AM = 2.0677; //valor de A da calibração do motor de passos
 float BM = 10.01; //valor de B da calibração do motor de passos
 float AC1 = 2.0119;  //valor da A da calibração da camara AD2 para mBar (output)
 float BC1 = 38.21; //valor de B da calibração da camara AD2 para mBar (output)
-float AC2 = 1.3612;  //valor da A da calibração da camara mBar para DAC (input)
-float BC2 = -13.944; //valor de B da calibração da camara mBar para DAC (input)
+float AC2 = 1.361;  //valor da A da calibração da camara mBar para DAC (input)
+float BC2 = -14.258; //valor de B da calibração da camara mBar para DAC (input)
 float setpointB; //Valor do setpointB
 float setpointC; //Valor do setpointC
 float setpointD; //Valor do setpointD
@@ -629,23 +627,23 @@ void imprimir(){
   if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
   }
-  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
+  //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
+  //Serial.print(",");
+  Serial.print(ad0);         //y1
   Serial.print(",");
-  Serial.print(ad0);         //y1mm
-  Serial.print(",");
-  Serial.print(ad1);         //y2mm
-  Serial.print(",");
-  Serial.print(vd0,4);       //y1v
-  Serial.print(",");
-  Serial.print(vd1,4);       //y2v
-  Serial.print(",");
-  Serial.print(vd4,4);       //sen
-  Serial.print(",");
-  Serial.print(vd5,4);       //cam
-  Serial.print(",");
-  Serial.print(statuS);      //sts
-  Serial.print(",");
-  Serial.println(nGolpe);    //glp
+  Serial.println(ad1);         //y2
+  //Serial.print(",");
+  //Serial.print(vd0,4);       //y1v
+  //Serial.print(",");
+  //Serial.print(vd1,4);       //y2v
+  //Serial.print(",");
+  //Serial.print(vd4,4);       //sen
+  //Serial.print(",");
+  //Serial.print(vd5,4);       //cam
+  //Serial.print(",");
+  //Serial.print(statuS);      //sts
+  //Serial.print(",");
+  //Serial.println(nGolpe);    //glp
   //Serial.println(setpointD);
 }/* Imprimir dados DA 134*/
 
@@ -689,7 +687,7 @@ void serialFlush(){
 
 //**********************************************************************************//
 //**********************************************************************************//
-//*********************Intervalo de tempo do aplicador******************************//
+//**********************Intervalo de tempo do aplicador*****************************//
 //**********************************************************************************//
 //**********************************************************************************//
 //**********************************************************************************//
@@ -1164,7 +1162,6 @@ S tempo(int nTime, int frequencia, long initialMillis){
   }/*switch*/
   return {initialMillis, nTime};
 }/* Intervalo de tempo do aplicador */
-
 
 //**********************************************************************************//
 //**********************************************************************************//
