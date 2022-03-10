@@ -627,23 +627,23 @@ void imprimir(){
   if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
   }
-  //Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
-  //Serial.print(",");
+  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
+  Serial.print(",");
   Serial.print(ad0);         //y1
   Serial.print(",");
-  Serial.println(ad1);         //y2
-  //Serial.print(",");
-  //Serial.print(vd0,4);       //y1v
-  //Serial.print(",");
-  //Serial.print(vd1,4);       //y2v
-  //Serial.print(",");
-  //Serial.print(vd4,4);       //sen
-  //Serial.print(",");
-  //Serial.print(vd5,4);       //cam
-  //Serial.print(",");
-  //Serial.print(statuS);      //sts
-  //Serial.print(",");
-  //Serial.println(nGolpe);    //glp
+  Serial.print(ad1);         //y2
+  Serial.print(",");
+  Serial.print(vd0,4);       //y1v
+  Serial.print(",");
+  Serial.print(vd1,4);       //y2v
+  Serial.print(",");
+  Serial.print(vd4,4);       //sen
+  Serial.print(",");
+  Serial.print(vd5,4);       //cam
+  Serial.print(",");
+  Serial.print(statuS);      //sts
+  Serial.print(",");
+  Serial.println(nGolpe);    //glp
   //Serial.println(setpointD);
 }/* Imprimir dados DA 134*/
 

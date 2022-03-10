@@ -315,7 +315,7 @@ def modeMotor(p2):
         try:
             if a[0] == "o":
                 contadorOK += 1
-                if contadorOK == 50: #contadorOK igual a 25
+                if contadorOK == 200: #contadorOK igual a 200
                     conexao.write(str(3))
                     while (conexao.inWaiting() == 0):
                         pass

@@ -285,10 +285,10 @@ class TopPanel(wx.Panel):
                     dlgC1.ShowModal()
                     time.sleep(1)
 
-                golpeTeste = False
                 threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][1], A1, A2, golpeTeste)
                 dlgC2 = My.MyProgressDialog(9) #antes era 16
                 dlgC2.ShowModal()
+                golpeTeste = False
 
                 if threadConection.ret() == False:
                     dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "CONDICIONAMENTO", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
@@ -338,6 +338,7 @@ class TopPanel(wx.Panel):
                 threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][1], A1, A2, golpeTeste)
                 dlgC2 = My.MyProgressDialog(9) #antes era 16
                 dlgC2.ShowModal()
+                golpeTeste = False
 
                 if threadConection.ret() == False:
                     dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "MÓDULO DE RESILIÊNCIA", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
@@ -1065,9 +1066,9 @@ class BottomPanel(wx.Panel):
                                     if valores[0] == 0.01:
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
-                                        discrepancia = 5
+                                        '''discrepancia = 5'''
 
-                                    if valores[0] > 4 and valores[0] < 4.2:
+                                    '''if valores[0] > 4 and valores[0] < 4.2:
                                         if valores[0] == 4.01:
                                             amplitudeMax4 = ymedio
                                         if ymedio > amplitudeMax4:
@@ -1081,7 +1082,7 @@ class BottomPanel(wx.Panel):
                                         if ymedio > amplitudeMax5:
                                             amplitudeMax5 = ymedio
                                             intervaloSup2 = amplitudeMax5 + 0.05*amplitudeMax5
-                                            intervaloInf2 = amplidudeMax5 - 0.05*amplitudeMax5
+                                            intervaloInf2 = amplidudeMax5 - 0.05*amplitudeMax5'''
 
                                     if int(valores[0]) > 4 and int(valores[0]) <= 10:
                                         xz1.append(valores[0])
