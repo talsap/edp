@@ -61,7 +61,7 @@ float vd3; //valor em voltagem do LVDT4
 float vd4; //valor do sensor de pressão em mBar (Aplicador)
 float vd5; //valor do sensor de pressão em mBar (Camara)
 float vd6; //valor do sensor de temperatura em graus celsius (Estufa)
-long intervalo00 = 50; // 50 miliseg
+long intervalo00 = 60; // 50 miliseg
 long intervalo01 = 100; //100 milise
 long intervalo09 = 1000; //1Hz 01-09
 long intervalo05 = 500; //2Hz 01-04-01-04

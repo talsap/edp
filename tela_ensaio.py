@@ -52,8 +52,8 @@ H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
-idt = 'DNIT134-01-'  #identificador do ensaio no banco de dados
-subleito = True     #recebe valor de True ou False
+idt = 'DNIT134-03-'  #identificador do ensaio no banco de dados
+subleito = False    #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
 xz1 = []
@@ -285,10 +285,10 @@ class TopPanel(wx.Panel):
                     dlgC1.ShowModal()
                     time.sleep(1)
 
+                golpeTeste = False
                 threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][1], A1, A2, golpeTeste)
                 dlgC2 = My.MyProgressDialog(9) #antes era 16
                 dlgC2.ShowModal()
-                golpeTeste = False
 
                 if threadConection.ret() == False:
                     dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "CONDICIONAMENTO", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
