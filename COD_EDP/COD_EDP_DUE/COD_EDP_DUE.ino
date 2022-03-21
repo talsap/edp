@@ -89,8 +89,8 @@ void setup(void) {
   analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino DUE)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao (apenas no arduino DUE)
   //analogWrite(DAC0, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
-  analogWrite(DAC2, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
-  analogWrite(DAC1, 0); //pino apenas para ver a função waveforms no osciloscopio (para testes)
+  analogWrite(DAC1, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
+  //analogWrite(DAC1, 0); //pino apenas para ver a função waveforms no osciloscopio (para testes)
   pinMode(A4, INPUT); //pino LVDT1
   pinMode(A6, INPUT); //pino LVDT2
   pinMode(A8, INPUT); //pino LVDT3
@@ -201,7 +201,7 @@ void loop(void) {
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
               setpointC = int(setpoint2*AC2+BC2);   //valor em contagem
-              analogWrite(DAC2, setpointC);
+              analogWrite(DAC1, setpointC);
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
@@ -547,7 +547,7 @@ void loop(void) {
             nTime = 0;
             contadorG = 1;
             digitalWrite(pinB, HIGH);  //desativa o pinAplicador
-            analogWrite(DAC2, 0);  //SETA UM VALOR ZERO NO DAC2
+            analogWrite(DAC1, 0);  //SETA UM VALOR ZERO NO DAC1
             goto sensorLVDTDNIT135;
           }
           if (Serial.available()> 0){ //CONDICAO DE FUNCIONALIDADES AO DECORRER DO ENSAIO
@@ -560,7 +560,7 @@ void loop(void) {
               currentMillis = millis();
               initialMillis = currentMillis;
               digitalWrite(pinB, HIGH);  //desativa o pinAplicador
-              analogWrite(DAC2, 0);  //SETA UM VALOR ZERO NO DAC2
+              analogWrite(DAC1, 0);  //SETA UM VALOR ZERO NO DAC1
               goto sensorLVDTDNIT135;
             }
             if(botoes == 4){ //aguarda o valor na serial. e se for 4 pausa o ensaio//
@@ -707,7 +707,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
           //setpointE = (waveformsTable[0][i]*setpointB+setpointC)*4095/3300;
           //analogWrite(DAC1, setpointE);
         }
@@ -722,7 +722,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
           //analogWrite(DAC1, setpointD);
         }
         if(contadorG == 1){
@@ -750,7 +750,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo05){
@@ -759,7 +759,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -778,7 +778,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo05);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo05 + intervalo01){
@@ -787,7 +787,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -814,7 +814,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo04){
@@ -823,7 +823,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -842,7 +842,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo04);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo04 + intervalo01 && (currentMillis - initialMillis) <= 2*intervalo04){
@@ -851,7 +851,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -870,7 +870,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo04);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo04+intervalo01){
@@ -879,7 +879,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 3){
           nGolpe++;
@@ -906,7 +906,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo03){
@@ -915,7 +915,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -934,7 +934,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo03);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo03+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo03){
@@ -943,7 +943,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -962,7 +962,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo03);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo03+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo03){
@@ -971,7 +971,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 3){
           nGolpe++;
@@ -990,7 +990,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 3*intervalo03);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 3*intervalo03+intervalo01){
@@ -999,7 +999,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 4){
           nGolpe++;
@@ -1026,7 +1026,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo02){
@@ -1035,7 +1035,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -1054,7 +1054,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo02);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > intervalo02+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo02){
@@ -1063,7 +1063,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -1082,7 +1082,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo02);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo02){
@@ -1091,7 +1091,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 3){
           nGolpe++;
@@ -1110,7 +1110,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 3*intervalo02);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 3*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 4*intervalo02){
@@ -1119,7 +1119,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 4){
           nGolpe++;
@@ -1138,7 +1138,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 4*intervalo02);
           setpointD = (waveformsTable[tipoWave-1][i]*setpointB+setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
       }
       if((currentMillis - initialMillis) > 4*intervalo02+intervalo01){
@@ -1147,7 +1147,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           setpointD = (setpointC)*4095/3300;
-          analogWrite(DAC0, setpointD);
+          //analogWrite(DAC0, setpointD);
         }
         if(contadorG == 5){
           nGolpe++;
