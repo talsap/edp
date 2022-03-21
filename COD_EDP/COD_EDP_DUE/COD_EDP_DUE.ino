@@ -88,8 +88,9 @@ void setup(void) {
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino DUE)
   analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino DUE)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao (apenas no arduino DUE)
-  analogWrite(DAC0, 1); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
-  analogWrite(DAC1, 2); //pino apenas para ver a função waveforms no osciloscopio (para testes)
+  //analogWrite(DAC0, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
+  analogWrite(DAC2, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
+  analogWrite(DAC1, 0); //pino apenas para ver a função waveforms no osciloscopio (para testes)
   pinMode(A4, INPUT); //pino LVDT1
   pinMode(A6, INPUT); //pino LVDT2
   pinMode(A8, INPUT); //pino LVDT3
@@ -200,7 +201,7 @@ void loop(void) {
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
               setpointC = int(setpoint2*AC2+BC2);   //valor em contagem
-              analogWrite(DAC0, setpointC);
+              analogWrite(DAC2, setpointC);
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
@@ -546,7 +547,7 @@ void loop(void) {
             nTime = 0;
             contadorG = 1;
             digitalWrite(pinB, HIGH);  //desativa o pinAplicador
-            analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
+            analogWrite(DAC2, 0);  //SETA UM VALOR ZERO NO DAC2
             goto sensorLVDTDNIT135;
           }
           if (Serial.available()> 0){ //CONDICAO DE FUNCIONALIDADES AO DECORRER DO ENSAIO
@@ -559,7 +560,7 @@ void loop(void) {
               currentMillis = millis();
               initialMillis = currentMillis;
               digitalWrite(pinB, HIGH);  //desativa o pinAplicador
-              analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
+              analogWrite(DAC2, 0);  //SETA UM VALOR ZERO NO DAC2
               goto sensorLVDTDNIT135;
             }
             if(botoes == 4){ //aguarda o valor na serial. e se for 4 pausa o ensaio//
