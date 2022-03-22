@@ -13,7 +13,7 @@ from serial.tools import list_ports
 opcaoC = "C"    '''conectado'''
 opcaoD = "D"    '''desconectado'''
 opcaoI = "I"    '''DNIT134 e imprimir diversos'''
-opcaoE = "E"    '''CAMARA DE PRESSAO'''
+opcaoE = "E"    '''VALVULA DINÂMICA DE PRESSAO'''
 opcaoM = "M"    '''MOTOR DE PASSOS'''
 opcaoB = "B"    '''Break'''
 opcaoG = "G"    '''Golpes'''
@@ -148,7 +148,7 @@ def modeStoped():
             break
 
 #-------------------------------------------------------------------
-'''Ativando camara Saída'''
+'''Ativando válvula dinamica - saída'''
 def modeES():
     print 'modeES'
     conexao.write(opcaoE)
@@ -166,7 +166,7 @@ def modeMS():
     print(conexao.readline())
 
 #-------------------------------------------------------------------
-'''Ativando camara'''
+'''Ativando valvula dinamica'''
 def modeE():
     print 'modeE'
     buf = modeBuffer()
@@ -247,42 +247,42 @@ def modeGOLPES(qtd, freq):
     print (conexao.readline())
 
 #-------------------------------------------------------------------
-'''Camara de ar pressao zero'''
-def modeCAMZERO(p1, p1Sen):
-    print 'modeCAMZERO'
-    incremental = p1Sen/5
+'''Válvula dinamica pressao zero'''
+def modeDINZERO(p2, p2Sen):
+    print 'modeDINZERO'
+    incremental = p2Sen/5
     i = 4
     time.sleep(1)
     #conexao.flushInput()
 
     while i <= 4 and i >= 0:
-        conexao.write(str(int(round((p1 + incremental*i),0))))
+        conexao.write(str(int(round((p2 + incremental*i),0))))
         while (conexao.inWaiting() == 0):
             pass
         print (conexao.readline())
         time.sleep(1)
         i = i - 1
         if i == 0:
-            conexao.write(str(int(round(p1,0))))
+            conexao.write(str(int(round(p2,0))))
             while (conexao.inWaiting() == 0):
                 pass
             print (conexao.readline())
             time.sleep(1)
             conexao.write(str(3))
-            return "p1ok"
+            return "p2ok"
             break
 
 #-------------------------------------------------------------------
-'''Camara de ar'''
-def modeCAM(p1, p1Ant):
-    print 'modeCAM'
-    incremental = (p1 - p1Ant)/5
+'''Válvula dinâmica'''
+def modeDIN(p2, p2Ant):
+    print 'modeDIN'
+    incremental = (p2 - p2Ant)/5
     i = 1
     time.sleep(1)
     #conexao.flushInput()
 
     while i <= 6:
-        conexao.write(str(int(round((p1Ant + incremental*i),0))))
+        conexao.write(str(int(round((p2Ant + incremental*i),0))))
         while (conexao.inWaiting() == 0):
             pass
         print (conexao.readline())
@@ -290,14 +290,14 @@ def modeCAM(p1, p1Ant):
         i += 1
         if i == 6:
             conexao.write(str(3))
-            return "p1ok"
+            return "p2ok"
             break
 
 #-------------------------------------------------------------------
 '''Modo motor de passos'''
-def modeMotor(p2):
+def modeMotor(p1):
     print 'modeMotor'
-    conexao.write(str(int(round(p2,0))))
+    conexao.write(str(int(round(p1,0))))
     #conexao.flushInput()        #linha que foi adicionada
     while (conexao.inWaiting() == 0):
         pass
@@ -320,7 +320,7 @@ def modeMotor(p2):
                     while (conexao.inWaiting() == 0):
                         pass
                     print(conexao.readline())
-                    return "p2ok"
+                    return "p1ok"
                     break
             '''if a[0] == "n": #apenas para situaçõs de teste
                 contadorOK += 1
@@ -329,16 +329,16 @@ def modeMotor(p2):
                     while (conexao.inWaiting() == 0):
                         pass
                     print(conexao.readline())
-                    return "p2ok"
+                    return "p1ok"
                     break'''
         except:
             pass
 
 #-------------------------------------------------------------------
 '''Modo motor pressao zero'''
-def modeMotorZero(p2):
+def modeMotorZero(p1):
     print 'modeMotorZero'
-    conexao.write(str(int(round(p2,0))))
+    conexao.write(str(int(round(p1,0))))
     while (conexao.inWaiting() == 0):
         pass
     print(conexao.readline())
@@ -359,7 +359,7 @@ def modeMotorZero(p2):
                 contadorOK += 1
                 if contadorOK == 25:
                     conexao.write(str(3))
-                    return "p2ok"
+                    return "p1ok"
                     break
         except:
             pass

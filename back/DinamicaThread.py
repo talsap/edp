@@ -5,15 +5,20 @@ import back.connection as con
 from pubsub import pub
 from threading import Thread
 
+global A2 #área do corpo de prova, vinda do banco de dados do Ensaio
+global A1 #área da seção do cilindro pneumático
+
 ########################################################################
-'''CamaraThread'''
-class CamaraThread(Thread):
+'''DinamicaThread'''
+class DinamicaThread(Thread):
     #-------------------------------------------------------------------
-    def __init__(self, p1, p1Ant):
+    def __init__(self, p2, p2Ant):
         Thread.__init__(self)
         self.start()
-        self.p1 = p1
-        self.p1Ant = p1Ant
+        self.p2 = p2
+        self.p2Ant = p2Ant
+        self.A1 = 0.007854
+        self.A2 = 0.007854
         self._return = True
 
     #-------------------------------------------------------------------
@@ -24,10 +29,10 @@ class CamaraThread(Thread):
         con.modeE()
         wx.CallAfter(pub.sendMessage, "update", msg="       Regulando...")
         time.sleep(.5)
-        valor2 = con.modeCAM(10000*self.p1, 10000*self.p1Ant)
-        if valor2 == 'p1ok':
-            print 'PRESSAO CAMARA OK'
-            wx.CallAfter(pub.sendMessage, "update", msg="            σ3 - ok")
+        valor2 = con.modeDIN((10000*self.A2/self.A1)*self.p2, (10000*self.A2/self.A1)*self.p2Ant)
+        if valor2 == 'p2ok':
+            print 'PRESSAO GOLPE OK'
+            wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
             time.sleep(1)
 
     #-------------------------------------------------------------------
@@ -36,14 +41,14 @@ class CamaraThread(Thread):
         return self._return
 
 ########################################################################
-'''CamaraThreadZero'''
-class CamaraThreadZero(Thread):
+'''DinamicaThreadZero'''
+class DinamicaThreadZero(Thread):
     #-------------------------------------------------------------------
-    def __init__(self, p1, p1Sen):
+    def __init__(self, p2, p2Sen):
         Thread.__init__(self)
         self.start()
-        self.p1 = p1
-        self.p1Sen = p1Sen
+        self.p2 = p2
+        self.p2Sen = p2Sen
         self._return = True
 
     #-------------------------------------------------------------------
@@ -54,10 +59,10 @@ class CamaraThreadZero(Thread):
         con.modeES()
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         time.sleep(.5)
-        valor2 = con.modeCAMZERO(10000*self.p1, 10000*self.p1Sen)
-        if valor2 == 'p1ok':
-            print 'PRESSAO CAMARA ZERADA'
-            wx.CallAfter(pub.sendMessage, "update", msg="       σ3 - Zerado!")
+        valor2 = con.modeDINZERO(10000*self.p2, 10000*self.p2Sen)
+        if valor2 == 'p2ok':
+            print 'PRESSAO GOLPE ZERADO'
+            wx.CallAfter(pub.sendMessage, "update", msg="       σd - Zerado!")
             time.sleep(1)
             wx.CallAfter(pub.sendMessage, "update", msg="")
 
