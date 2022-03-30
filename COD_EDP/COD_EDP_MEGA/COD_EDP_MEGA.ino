@@ -2,7 +2,7 @@
 *             Arduino código para EDP software - Beta              *
 * ---------------------------------------------------------------- *
 * Criado por: Tarcisio Sapucaia - tarcisiosapucaia27@gmail.com     *
-* Data – 01/02/2022 - v 1.0                                        *
+* Data – 22/03/2022 - v 1.0                                        *
 ********************************************************************/
 
 /* Bibliotecas */
@@ -10,17 +10,15 @@
 #include <Oversampling.h>  //biblioteca de alteração da resolução
 #include <waveforms.h>  //biblioteca que gera a função (1-cos)/2
 
-#define AR_10BIT_MAX   1024 //valor da resolucao do arduino de 10bit
-#define AR_12BIT_MAX   4096 //valor da resolucao do arduino de 12bit
+#define AR_10BIT_MAX   1024 //valor da resolucao do arduino MEGA 10 bit
 #define ADC_16BIT_MAX   65536 //valor da resolucao do arduino com Oversampling
-#define num   100 //número de iterações da média móvel
 
-//Oversampling adc(10, 16, 2); //aumentar a resolução do adc de 10bit para 16bit
+Oversampling adc(10, 16, 2); //aumentar a resolução do adc de 10bit para 16bit
 
 /* Variavéis */
 const int pinA = 12; //pino do aplicador de golpes DNIT134
 const int pinB = 7; //pino do aplicador de golpes DNIT135
-int condConect = 0; //Condicao para conecxao com o software
+int condConect = 0; //Condicao para conexao com o software
 int condicao = 2; //Condicao para iniciar o motor de passos
 int conditionEnsaio = 0; //Condicao de Ensaio (0 - DNIT134 | 1 - DNIT135)
 int frequencia; //Valor condicao para intervalo da frequencia
@@ -34,42 +32,44 @@ int ad0; //valor analógico do LVDT1
 int ad1; //valor analógico do LVDT2
 int ad2; //valor analógico do LVDT3
 int ad3; //valor analógico do LVDT4
-int ad4; //valor analógico do sensor de pressão (Aplicador)
-int ad5; //valor analógico do sensor de pressão (Camara)
+int ad4; //valor analógico do sensor de pressão (Válvula do Motor)
+int ad5; //valor analógico do sensor de pressão (Válvula Dinâmica)
 int ad6; //valor analógico do sensor de temperatura (Estufa)
 int i; //indicador temporal da funcao waveforms
-int tipoWave; //indicador do tipo da funcao waveforms (no nosso caso é 1)
+int tipoWave; //indicador do tipo da funcao waveforms
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
-int values[num]; //vetor com num posições, armazena os valores para cálculo da média móvel
-int adc_filter1; //armazena a leitura filtrada da entrada analógica 1
-int adc_filter2; //armazena a leitura filtrada da entrada analógica 2
+float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
+float BM = 10.01; //valor de B da calibração da válvula do motor de passos
+float AD1 = 2.0119;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output)
+float BD1 = 38.21; //valor de B da calibração da válvula dinâmica AD2 para mBar (output)
+float AD2 = 1.361;  //valor da A da calibração da válvula dinâmica mBar para DAC (input)
+float BD2 = -14.258; //valor de B da calibração da válvula dinâmica mBar para DAC (input)
+float setpointA; //Valor do setpointA
 float setpointB; //Valor do setpointB
-float setpointC; //Valor do setpointC
+float setpointC; //Valor do setpointB
 float setpointD; //Valor do setpointD
 float setpointE; //Valor do setpointE
 float setpointM; //Valor do setpointM
 float bit10_Voltage; //Usado para a conversao de bits ~ volts
-float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
-float InputRange_code = 3.3f; //valor do ImputRange 3.3V
+float InputRange_code = 5.0f; //valor do ImputRange 5.0V
 float ValMilivolt; //Valor do sensor de pressao em mBar
 float vd0; //valor em voltagem do LVDT1
 float vd1; //valor em voltagem do LVDT2
 float vd2; //valor em voltagem do LVDT3
 float vd3; //valor em voltagem do LVDT4
-float vd4; //valor do sensor de pressão em mBar (Aplicador)
-float vd5; //valor do sensor de pressão em mBar (Camara)
+float vd4; //valor do sensor de pressão em mBar (válvula do motor)
+float vd5; //valor do sensor de pressão em mBar (válvula dinâmica)
 float vd6; //valor do sensor de temperatura em graus celsius (Estufa)
-long intervalo00 = 50; // 50 miliseg
-long intervalo01 = 100; //100 milise
+long intervalo00 = 90; // 90 miliseg
+long intervalo01 = 100; //100 miliseg
 long intervalo09 = 1000; //1Hz 01-09
 long intervalo05 = 500; //2Hz 01-04-01-04
 long intervalo04 = 333; //3Hz 01-0233-01-0233-01-0233
 long intervalo03 = 250; //4Hz 01-015-01-015-01-015-01-015
 long intervalo02 = 200; //5Hz 01-01-01-01-01-01-01-01-01-01
 long resultTempo[1];
-long moving_average(int sig);
 unsigned long currentMillis; //variacao do tempo em milisegundos
 unsigned long initialMillis; //tempo incial dinamico
 unsigned char conexao;  //tipos de conexoes
@@ -86,32 +86,26 @@ Stepper mp(200, 8, 9, 10, 11); //Funcao definicao do motor de passos
 /* Inicializacao da serial */
 void setup(void) {
   Serial.begin(115200); //velocidade da cominicacao com a porta serial
-  //analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino due)
-  //analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino due)
-  //analogReference(EXTERNAL); //Define a tensao aplicada no pino AREF como sendo a referência (Usar a 3.3V)
-  //analogWrite(DAC0, 1); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
-  //analogWrite(DAC1, 2); //pino apenas para ver a função no osciloscopio (para testes)
   pinMode(A4, INPUT); //pino LVDT1
   pinMode(A6, INPUT); //pino LVDT2
   pinMode(A8, INPUT); //pino LVDT3
   pinMode(A9, INPUT); //pino LVDT4
-  pinMode(A0, INPUT); //pino Sensor de pressão (Aplicador)
-  pinMode(A2, INPUT); //pino Sensor de pressão (Camara)
+  pinMode(A0, INPUT); //pino Sensor de pressão (válvula do motor)
+  pinMode(A2, INPUT); //pino Sensor de pressão (válvula dinâmica)
   pinMode(A10, INPUT); //pino Sendor de Temperatura (Estufa)
   pinMode(pinA, OUTPUT);  //configura o pinA
   pinMode(pinB, OUTPUT);  //configura o pinB
-  digitalWrite(pinB, HIGH);  //inicia desativado o pinB
-  mp.setSpeed(30); //velocidade de rotacao do motor de passos em rpm
+  digitalWrite(pinA, LOW); //inicia desativado o pinA
+  digitalWrite(pinB, LOW); //inicia ativado o pinB
+  mp.setSpeed(40); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
-  bit10_Voltage = (InputRange_code)/(AR_10BIT_MAX - 1); //fator de convercao bit~voltagem
-  bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
-  bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
-  setpointM = 340/InputRange_code;   //setpointM inicia sendo o menor valor admissível (referente ao motor)
-  setpointC = int(10*(AR_10BIT_MAX-1)/3300);   //setpoint inicia sendo o menor valor admissível (referente a camara)
+  bit10_Voltage = (InputRange_code)/(AR_10BIT_MAX - 1); //fator de conversão bit~voltagem
+  bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de conversão bit~voltagem
+  setpointM = 340/InputRange_code;   //setpointM inicia sendo o menor valor admissível (referente a v. do motor)
+  setpointD = int(10*1024/5000);   //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica)
 }
 
 /* Principal */
-
 void loop(void) {
   conexao:
   conexao = Serial.read();
@@ -157,9 +151,9 @@ void loop(void) {
               goto conexao;
             }
             if(leitura == 'E'){
-              Serial.println("CAMARA");
+              Serial.println("DINAMICA");
               serialFlush();
-              goto camaraDNIT134;
+              goto dinamicaDNIT134;
             }
             if(leitura == 'M'){
               Serial.println("MOTOR");
@@ -195,21 +189,20 @@ void loop(void) {
         break;
 
         //**********************************************************************************//
-        //****************************** CAMARA DE PRESSAO *********************************//
-        camaraDNIT134:
+        //******************************* VÁLVULA DINÂMICA *********************************//
+        dinamicaDNIT134:
         while(true){
-          ad5 = analogRead(A2);
-          vd5 = ad5*bit10_Voltage*1000;
           if (Serial.available()>1){
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
+              setpointD = int(setpoint2*AD2+BD2);   //valor em contagem
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
-              Serial.println(vd5*3.3f);
+              ad5 = analogRead(A2);
+              vd5 = ad5*AD1+BD1; //mbar
+              Serial.println(vd5);
               serialFlush();
-              setpointC = setpoint2*1023/3300;   //valor em contagem
-              //analogWrite(DAC0, setpointC);
             }
             if(setpoint2 == 3){
               goto sensorLVDTDNIT134;
@@ -219,18 +212,20 @@ void loop(void) {
         break;
 
         //**********************************************************************************//
-        //************************** MOTOR DE PASSOS - APLICADOR ***************************//
+        //******************************* MOTOR DE PASSOS **********************************//
         motorDNIT134:
         while(true){
           ad4 = analogRead(A0);
-          vd4 = ad4*bit10_Voltage*1000;
+          vd4 = ad4*AM+BM; //mbar
           if(Serial.available()>0){
             setpoint1 = Serial.parseInt();
             if(setpoint1 > 5){
               Serial.print("CHEGOU=");
               Serial.print(setpoint1);
               Serial.print("/SENSOR=");
-              Serial.println(vd4*3.3f);
+              ad4 = analogRead(A0);
+              vd4 = ad4*AM+BM; //mbar
+              Serial.println(vd4);
               serialFlush();
               condicao = 1;
             }
@@ -239,6 +234,7 @@ void loop(void) {
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
               digitalWrite(11, LOW);
+              mp.setSpeed(40); //retorna a velocidade original do motor
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
@@ -257,20 +253,32 @@ void loop(void) {
               setpoint1 = 120;
             }
             else{
-              setpointM = setpoint1/3.3f;     //valor do setpoint em milibar (0 - 10.000)mBar
+              setpointM = setpoint1;     //valor do setpoint em milibar (0 - 10.000)mBar
             }
           }
-          if((vd4 > 1.05*setpointM || vd4 < 0.95*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
+          if((vd4 > 1.1*setpointM || vd4 < 0.97*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
             condicao = 0;
           }
-          if(vd4 < 1.02*setpointM && vd4 > 0.98*setpointM){ //INTERVALO DE PRESSAO OK//
+          if(vd4 < 1.1*setpointM && vd4 > 0.98*setpointM){ //INTERVALO DE PRESSAO OK//
             Serial.println("o");
             mp.step(0);
             condicao = 1;
           }
           if(condicao == 0){
             Serial.println("n");
-            mp.step(floor((setpointM - vd4)));
+            if(abs((setpointM - vd4)) > 500){
+              mp.setSpeed(40); //deixa a rotacao do motor em 40 rpm
+            }
+            if(abs((setpointM - vd4)) < 400){
+              mp.setSpeed(25); //deixa a rotacao do motor em 25 rpm
+            }
+            if(abs((setpointM - vd4)) < 200){
+              mp.setSpeed(10); //deixa a rotacao do motor em 10 rpm
+            }
+            if(abs((setpointM - vd4)) < 50){
+              mp.setSpeed(5); //deixa a rotacao do motor em 5 rpm
+            }
+            mp.step(floor((setpointM - vd4)/2));
           }
         }
         break;
@@ -298,6 +306,7 @@ void loop(void) {
             if(frequencia > 0){
               Serial.print("FREQ=");
               Serial.println(frequencia);
+              digitalWrite(pinB, LOW);  //ativa o pinAplicador
               serialFlush();
               break;
             }
@@ -478,7 +487,7 @@ void loop(void) {
             if(setpoint1 > 10){
               Serial.print("CARGA_CICLICA=");
               Serial.println(setpoint1);
-              setpointB = setpoint1*1023/3300;   //valor em contagem
+              setpointA = setpoint1*1095/3300;   //valor em contagem
               serialFlush();
               break;
             }
@@ -493,7 +502,7 @@ void loop(void) {
             if(setpoint2 > 10){
               Serial.print("P_CONTATO=");
               Serial.println(setpoint2);
-              setpointC = setpoint2*1023/3300;   //valor em contagem
+              setpointB = setpoint2*1095/3300;   //valor em contagem
               digitalWrite(pinB, LOW);  //ativa o pinAplicador
               serialFlush();
               break;
@@ -531,7 +540,7 @@ void loop(void) {
             nTime = 0;
             contadorG = 1;
             digitalWrite(pinB, HIGH);  //desativa o pinAplicador
-            //analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
+            //analogWrite(DAC1, 0);  //SETA UM VALOR ZERO NO DAC1
             goto sensorLVDTDNIT135;
           }
           if (Serial.available()> 0){ //CONDICAO DE FUNCIONALIDADES AO DECORRER DO ENSAIO
@@ -544,7 +553,7 @@ void loop(void) {
               currentMillis = millis();
               initialMillis = currentMillis;
               digitalWrite(pinB, HIGH);  //desativa o pinAplicador
-              //analogWrite(DAC0, 0);  //SETA UM VALOR ZERO NO DAC0
+              //analogWrite(DAC1, 0);  //SETA UM VALOR ZERO NO DAC1
               goto sensorLVDTDNIT135;
             }
             if(botoes == 4){ //aguarda o valor na serial. e se for 4 pausa o ensaio//
@@ -594,7 +603,7 @@ void loop(void) {
 }/*void*/
 
 //**********************************************************************************//
-//**********************************************************************************//
+//*************************** Imprimir dados na 134 ********************************//
 //**********************************************************************************//
 
 /* Imprimir dados na 134 */
@@ -603,10 +612,10 @@ void imprimir(){
   ad1 = analogRead(A6);
   ad4 = analogRead(A0);
   ad5 = analogRead(A2);
-  vd0 = ad0*bit10_Voltage;
-  vd1 = ad1*bit10_Voltage;
-  vd4 = ad4*bit10_Voltage*1000;
-  vd5 = ad5*bit10_Voltage*1000;
+  vd0 = ad0*bit16_Voltage;
+  vd1 = ad1*bit16_Voltage;
+  vd4 = ad4*AM+BM; //mbar
+  vd5 = ad5*AD1+BD1; //mbar
 
   //INTERVALO DE PRESSAO NAO OK//
   if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
@@ -614,55 +623,54 @@ void imprimir(){
   }
   Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
   Serial.print(",");
-  Serial.print(ad0);      //y1mm
+  Serial.print(ad0);         //y1
   Serial.print(",");
-  Serial.print(ad1);      //y2mm
+  Serial.print(ad1);         //y2
   Serial.print(",");
-  Serial.print(vd0,4);    //y1v
+  Serial.print(vd0,4);       //y1v
   Serial.print(",");
-  Serial.print(vd1,4);    //y2v
+  Serial.print(vd1,4);       //y2v
   Serial.print(",");
-  Serial.print(vd4*3.3f); //sen
+  Serial.print(vd4,4);       //motor
   Serial.print(",");
-  Serial.print(vd5*3.3f); //cam
+  Serial.print(vd5,4);       //dinamica
   Serial.print(",");
-  Serial.print(statuS);   //sts
+  Serial.print(statuS);      //sts
   Serial.print(",");
-  Serial.println(nGolpe); //glp
-  //Serial.println(setpointD);
+  Serial.println(nGolpe);    //glp
 }/* Imprimir dados DA 134*/
 
+//**********************************************************************************//
+//************************** Imprimir dados na 135 *********************************//
+//**********************************************************************************//
 /* Imprimir dados na 135 */
 void imprimir2(){
-  ad2 = analogRead(A8);
-  ad3 = analogRead(A9);
-  //adc_filter1 = moving_average(ad2);
-  //adc_filter2 = moving_average(ad3);
+  ad2 = adc.read(A8);
+  ad3 = adc.read(A9);
   ad6 = analogRead(A10);
-  vd2 = ad2*bit10_Voltage;
-  vd3 = ad3*bit10_Voltage;
+  vd2 = ad2*bit16_Voltage;
+  vd3 = ad3*bit16_Voltage;
   vd6 = ad6*bit10_Voltage*1000;
 
-  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3);   //temp
+  Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
   Serial.print(",");
-  Serial.print(ad2);      //y3mm
+  Serial.print(ad2);            //y3mm
   Serial.print(",");
-  Serial.print(ad3);      //y4mm
+  Serial.print(ad3);            //y4mm
   Serial.print(",");
-  Serial.print(vd2,4);    //y3v
+  Serial.print(vd2,4);          //y3v
   Serial.print(",");
-  Serial.print(vd3,4);    //y4v
+  Serial.print(vd3,4);          //y4v
   Serial.print(",");
-  Serial.print(vd6*3.3f); //est
+  Serial.print(vd6*5.0f);       //est
   Serial.print(",");
-  Serial.println(nGolpe); //glp
+  Serial.println(nGolpe);       //glp
 
 }/* Imprimir dados da 135 */
 
 //**********************************************************************************//
+//**************************Limpa o buffer serial***********************************//
 //**********************************************************************************//
-//**********************************************************************************//
-
 /* Limpa o buffer serial */
 void serialFlush(){
   while(Serial.available() > 0) {
@@ -672,8 +680,10 @@ void serialFlush(){
 
 //**********************************************************************************//
 //**********************************************************************************//
+//********************* Intervalo de tempo do aplicador ****************************//
 //**********************************************************************************//
-
+//**********************************************************************************//
+//**********************************************************************************//
 /* Intervalo de tempo do aplicador */
 S tempo(int nTime, int frequencia, long initialMillis){
   currentMillis = millis(); //Tempo atual em ms
@@ -681,18 +691,16 @@ S tempo(int nTime, int frequencia, long initialMillis){
     case 1:
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
-          if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
-          }
-          else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //ativa o pinA
+          if(currentMillis - initialMillis > intervalo00){
+            digitalWrite(pinB, HIGH);  //desativa o pinB
           }
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
-          //setpointE = waveformsTable[0][i]*setpointB+setpointC;
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
+          //setpointE = (waveformsTable[0][i]*setpointA+setpointB)*4095/3300;
           //analogWrite(DAC1, setpointE);
         }
         //Serial.println(currentMillis - initialMillis);
@@ -701,10 +709,13 @@ S tempo(int nTime, int frequencia, long initialMillis){
         if(conditionEnsaio == 0){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
+        if((currentMillis - initialMillis) > 900){
+          digitalWrite(pinB, LOW);  //ativa o pinB
+        }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
-          //analogWrite(DAC1, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
+          //analogWrite(DAC1, setpointC);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -730,8 +741,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo05){
@@ -739,8 +750,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -758,8 +769,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo05);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo05 + intervalo01){
@@ -767,8 +778,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -794,8 +805,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo04){
@@ -803,8 +814,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -822,8 +833,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo04);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo04 + intervalo01 && (currentMillis - initialMillis) <= 2*intervalo04){
@@ -831,8 +842,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -850,8 +861,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo04);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo04+intervalo01){
@@ -859,8 +870,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 3){
           nGolpe++;
@@ -886,8 +897,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo03){
@@ -895,8 +906,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -914,8 +925,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo03);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo03+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo03){
@@ -923,8 +934,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -942,8 +953,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo03);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo03+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo03){
@@ -951,8 +962,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 3){
           nGolpe++;
@@ -970,8 +981,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 3*intervalo03);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > 3*intervalo03+intervalo01){
@@ -979,8 +990,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 4){
           nGolpe++;
@@ -1006,8 +1017,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo02){
@@ -1015,8 +1026,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 1){
           nGolpe++;
@@ -1034,8 +1045,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo02);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > intervalo02+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo02){
@@ -1043,8 +1054,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 2){
           nGolpe++;
@@ -1062,8 +1073,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 2*intervalo02);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > 2*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo02){
@@ -1071,8 +1082,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 3){
           nGolpe++;
@@ -1090,8 +1101,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 3*intervalo02);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > 3*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 4*intervalo02){
@@ -1099,8 +1110,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 4){
           nGolpe++;
@@ -1118,8 +1129,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - 4*intervalo02);
-          //setpointD = waveformsTable[tipoWave-1][i]*setpointB+setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
+          //analogWrite(DAC0, setpointC);
         }
       }
       if((currentMillis - initialMillis) > 4*intervalo02+intervalo01){
@@ -1127,8 +1138,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
           digitalWrite(pinA, LOW);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
-          //setpointD = setpointC;
-          //analogWrite(DAC0, setpointD);
+          setpointC = (setpointB)*1025/5000;
+          //analogWrite(DAC0, setpointC);
         }
         if(contadorG == 5){
           nGolpe++;
@@ -1145,31 +1156,9 @@ S tempo(int nTime, int frequencia, long initialMillis){
   return {initialMillis, nTime};
 }/* Intervalo de tempo do aplicador */
 
-
 //**********************************************************************************//
 //**********************************************************************************//
 //**********************************************************************************//
-
-/* Função filtro média móvel */
-long moving_average(int sig)
-{
-  int i;               //variável auxiliar para iterações
-  long acc = 0;        //acumulador
-
-  //Desloca o vetor completamente eliminando o valor mais antigo
-  for(i = num; i > 0; i--) values[i] = values[i-1];
-
-  values[0] = sig;           //carrega o sinal no primeiro elemento do vetor
-
- // long sum = 0;            //Variável para somatório
-
-  for(i = 0; i < num; i++) acc += values[i];
-
-
-  return acc / num;         //Retorna a média móvel
-
-}/* end moving_average */
-
 //**********************************************************************************//
 //**********************************************************************************//
 //**********************************************************************************//

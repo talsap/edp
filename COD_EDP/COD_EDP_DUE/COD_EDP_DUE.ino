@@ -62,7 +62,7 @@ float vd3; //valor em voltagem do LVDT4
 float vd4; //valor do sensor de pressão em mBar (válvula do motor)
 float vd5; //valor do sensor de pressão em mBar (válvula dinâmica)
 float vd6; //valor do sensor de temperatura em graus celsius (Estufa)
-long intervalo00 = 60; // 50 miliseg
+long intervalo00 = 90; // 90 miliseg
 long intervalo01 = 100; //100 miliseg
 long intervalo09 = 1000; //1Hz 01-09
 long intervalo05 = 500; //2Hz 01-04-01-04
@@ -105,8 +105,8 @@ void setup(void) {
   digitalWrite(pinB, LOW); //inicia ativado o pinB
   mp.setSpeed(40); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
-  bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de convercao bit~voltagem
-  bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de convercao bit~voltagem
+  bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de conversão bit~voltagem
+  bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de conversão bit~voltagem
   setpointM = 340/InputRange_code;   //setpointM inicia sendo o menor valor admissível (referente a v. do motor)
   setpointD = int(10*4095/3300);   //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica)
 }
@@ -209,7 +209,6 @@ void loop(void) {
               ad5 = analogRead(A2);
               vd5 = ad5*AD1+BD1; //mbar
               Serial.println(vd5);
-
               serialFlush();
             }
             if(setpoint2 == 3){
@@ -623,7 +622,7 @@ void imprimir(){
   vd0 = ad0*bit16_Voltage;
   vd1 = ad1*bit16_Voltage;
   vd4 = ad4*AM+BM; //mbar
-  vd5 = ad5*AC1+BC1; //mbar
+  vd5 = ad5*AD1+BD1; //mbar
 
   //INTERVALO DE PRESSAO NAO OK//
   if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
@@ -688,7 +687,7 @@ void serialFlush(){
 
 //**********************************************************************************//
 //**********************************************************************************//
-//**********************Intervalo de tempo do aplicador*****************************//
+//********************* Intervalo de tempo do aplicador ****************************//
 //**********************************************************************************//
 //**********************************************************************************//
 //**********************************************************************************//
