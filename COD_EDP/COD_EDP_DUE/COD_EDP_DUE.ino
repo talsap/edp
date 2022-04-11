@@ -21,6 +21,7 @@ const int pinB = 7; //pino do aplicador de golpes DNIT135
 int condConect = 0; //Condicao para conexao com o software
 int condicao = 2; //Condicao para iniciar o motor de passos
 int conditionEnsaio = 0; //Condicao de Ensaio (0 - DNIT134 | 1 - DNIT135)
+int conditionMR = 1; //Condicao de Ensaio (0 - MR | 1 - COND)
 int frequencia; //Valor condicao para intervalo da frequencia
 int contadorG = 1; //Valor que conta os golpes dentro da função *Intervalo de tempo do aplicador*
 int nGolpe = 0; //numpero de golpes
@@ -39,6 +40,19 @@ int i; //indicador temporal da funcao waveforms
 int tipoWave; //indicador do tipo da funcao waveforms
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
+//**********************************************************************************//
+//*******************  VARIAVEIS PARA A CONDIÇÃO DE 5% DAS  ************************//
+//*******************     CONSTÂNCIAS DAS LEITURAS PARA A   ************************//
+//*******************         DEFORMAÇÃO RESILIENTE         ************************//
+//**********************************************************************************//
+float adMin;  //valor do adMin
+float admedio; //valor do admedio
+float adMediaMovel; //valor do adMediaMovel
+float defResiliente; //valor da deformação Resiliente
+float defResilienteAnterior; //valor da deformação Resiliente anterior
+//**********************************************************************************//
+//**********************************************************************************//
+//**********************************************************************************//
 float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
 float BM = 10.01; //valor de B da calibração da válvula do motor de passos
 float AD1 = 2.0119;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output)
@@ -297,6 +311,11 @@ void loop(void) {
           if(Serial.available()> 0){
             ntotalGolpes = Serial.parseInt();
             if(ntotalGolpes > 0){
+              if(ntotalGolpes<=10){
+                conditionMR = 0;   //entende-se que tá se executando o MR
+              }else{
+                conditionMR = 1;
+              }
               Serial.print("NGOLPES=");
               Serial.println(ntotalGolpes);
               serialFlush();
@@ -623,10 +642,56 @@ void imprimir(){
   vd1 = ad1*bit16_Voltage;
   vd4 = ad4*AM+BM; //mbar
   vd5 = ad5*AD1+BD1; //mbar
+  admedio = (ad0+ad1)/2; //admedio
 
   //INTERVALO DE PRESSAO NAO OK//
   if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
      statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
+  }
+  //CONDICAO DE 5% DAS CONSTÂNCIAS//
+  if(conditionMR == 0){
+    if(nTime == 4){
+      if((currentMillis - initialMillis) == 10){
+        adMediaMovel = admedio;
+        adMin = admedio;
+      }
+      if((currentMillis - initialMillis) > 10 && (currentMillis - initialMillis) < 200){
+        if(admedio < adMin){
+          adMin = admedio;
+        }
+      }
+      if((currentMillis - initialMillis) > 200 && (currentMillis - initialMillis) < 1000){
+        adMediaMovel = (adMediaMovel + admedio)/2;
+        defResilienteAnterior = adMediaMovel - adMin;
+      }
+    }
+    if(nTime >= 5){
+      if((currentMillis - initialMillis) == 10){
+        adMin = admedio;
+      }
+      if((currentMillis - initialMillis) > 10 && (currentMillis - initialMillis) < 200){
+        if(admedio < adMin){
+          adMin = admedio;
+        }
+      }
+      if((currentMillis - initialMillis) > 200 && (currentMillis - initialMillis) < 1000){
+        adMediaMovel = (adMediaMovel + admedio)/2
+        defResiliente = adMediaMovel - adMin;
+      }
+      if((currentMillis - initialMillis) == 990){
+        if(defResiliente > defResilienteAnterior){
+          if(defResiliente/defResilienteAnterior > 1.05){
+            ntotalGolpes++;
+          }
+        }
+        if(defResiliente < defResilienteAnterior){
+          if(defResilienteAnterior/defResiliente > 1.05){
+            ntotalGolpes++;
+          }
+        }
+        defResilienteAnterior = defResiliente;
+      }
+    }
   }
   Serial.print(float(nTime)+float(currentMillis - initialMillis)/1000, 3); //temp
   Serial.print(",");
