@@ -2,7 +2,7 @@
 *             Arduino código para EDP software - Beta              *
 * ---------------------------------------------------------------- *
 * Criado por: Tarcisio Sapucaia - tarcisiosapucaia27@gmail.com     *
-* Data – 22/03/2022 - v 1.0                                        *
+* Data – 12/04/2022 - v 1.0                                        *
 ********************************************************************/
 
 /* Bibliotecas */
@@ -55,10 +55,16 @@ float defResilienteAnterior; //valor da deformação Resiliente anterior
 //**********************************************************************************//
 float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
 float BM = 10.01; //valor de B da calibração da válvula do motor de passos
-float AD1 = 2.0119;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output)
-float BD1 = 38.21; //valor de B da calibração da válvula dinâmica AD2 para mBar (output)
-float AD2 = 1.361;  //valor da A da calibração da válvula dinâmica mBar para DAC (input)
-float BD2 = -14.258; //valor de B da calibração da válvula dinâmica mBar para DAC (input)
+//float AD1 = 2.0119;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output)
+//float BD1 = 38.21; //valor de B da calibração da válvula dinâmica AD2 para mBar (output)
+//float AD2 = 1.361;  //valor da A da calibração da válvula dinâmica mBar para DAC (input)
+//float BD2 = -14.258; //valor de B da calibração da válvula dinâmica mBar para DAC (input)
+
+float AD1 = 2.0384;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output) 23-03
+float BD1 = -2.7918; //valor de B da calibração da válvula dinâmica AD2 para mBar (output) 23-03
+float AD2 = 0.6021;  //valor da A da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+float BD2 = 62.652; //valor de B da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+
 float setpointA; //Valor do setpointA
 float setpointB; //Valor do setpointB
 float setpointC; //Valor do setpointB
@@ -77,7 +83,7 @@ float vd4; //valor do sensor de pressão em mBar (válvula do motor)
 float vd5; //valor do sensor de pressão em mBar (válvula dinâmica)
 float vd6; //valor do sensor de temperatura em graus celsius (Estufa)
 long intervalo00 = 90; // 90 miliseg
-long intervalo01 = 100; //100 miliseg
+long intervalo01 = 90; //100 miliseg
 long intervalo09 = 1000; //1Hz 01-09
 long intervalo05 = 500; //2Hz 01-04-01-04
 long intervalo04 = 333; //3Hz 01-0233-01-0233-01-0233
@@ -675,7 +681,7 @@ void imprimir(){
         }
       }
       if((currentMillis - initialMillis) > 200 && (currentMillis - initialMillis) < 1000){
-        adMediaMovel = (adMediaMovel + admedio)/2
+        adMediaMovel = (adMediaMovel + admedio)/2;
         defResiliente = adMediaMovel - adMin;
       }
       if((currentMillis - initialMillis) == 990){
@@ -763,9 +769,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
     case 1:
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, HIGH);  //ativa o pinA
+          //digitalWrite(pinA, HIGH);  //ativa o pinA
+          digitalWrite(pinB, LOW);  //desativa o pinB (linha acrescentada em 12/04)
           if(currentMillis - initialMillis > intervalo00){
-            digitalWrite(pinB, HIGH);  //desativa o pinB
+            //digitalWrite(pinB, HIGH);  //desativa o pinB
           }
         }
         if(conditionEnsaio == 1){
@@ -779,10 +786,11 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          //digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinB, HIGH);  //desativa o pinB (linha acrescentada em 12/04)
         }
         if((currentMillis - initialMillis) > 900){
-          digitalWrite(pinB, LOW);  //ativa o pinB
+          //digitalWrite(pinB, LOW);  //ativa o pinB
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
