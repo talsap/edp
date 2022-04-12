@@ -770,7 +770,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           //digitalWrite(pinA, HIGH);  //ativa o pinA
-          digitalWrite(pinB, LOW);  //desativa o pinB (linha acrescentada em 12/04)
+          digitalWrite(pinB, LOW);  //ativa o pinB (linha acrescentada em 12/04)
           if(currentMillis - initialMillis > intervalo00){
             //digitalWrite(pinB, HIGH);  //desativa o pinB
           }
