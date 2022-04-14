@@ -60,10 +60,15 @@ float BM = 10.01; //valor de B da calibração da válvula do motor de passos
 //float AD2 = 1.361;  //valor da A da calibração da válvula dinâmica mBar para DAC (input)
 //float BD2 = -14.258; //valor de B da calibração da válvula dinâmica mBar para DAC (input)
 
-float AD1 = 2.0384;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output) 23-03
-float BD1 = -2.7918; //valor de B da calibração da válvula dinâmica AD2 para mBar (output) 23-03
-float AD2 = 0.6021;  //valor da A da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
-float BD2 = 62.652; //valor de B da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+float AD1 = 1.0476;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output) 23-03
+float BD1 = -1296; //valor de B da calibração da válvula dinâmica AD2 para mBar (output) 23-03
+float AD2 = 2.7668;  //valor da A da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+float BD2 = 84.886; //valor de B da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+
+//float AD1 = 2.0384;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output) 23-03
+//float BD1 = -2.7918; //valor de B da calibração da válvula dinâmica AD2 para mBar (output) 23-03
+//float AD2 = 0.6021;  //valor da A da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+//float BD2 = 62.652; //valor de B da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
 
 float setpointA; //Valor do setpointA
 float setpointB; //Valor do setpointB
