@@ -14,6 +14,7 @@ opcaoC = "C"    '''conectado'''
 opcaoD = "D"    '''desconectado'''
 opcaoI = "I"    '''DNIT134 e imprimir diversos'''
 opcaoE = "E"    '''VALVULA DINÂMICA DE PRESSAO'''
+opcaoF = "F"    '''VALVULA DINÂMICA DE PRESSAO 2'''
 opcaoM = "M"    '''MOTOR DE PASSOS'''
 opcaoB = "B"    '''Break'''
 opcaoG = "G"    '''Golpes'''
@@ -157,6 +158,15 @@ def modeES():
     print(conexao.readline())
 
 #-------------------------------------------------------------------
+'''Ativando válvula dinamica 2 - saída'''
+def modeFS():
+    print 'modeFS'
+    conexao.write(opcaoF)
+    while (conexao.inWaiting() == 0):
+            pass
+    print(conexao.readline())
+
+#-------------------------------------------------------------------
 '''Ativando motor Saída'''
 def modeMS():
     print 'modeMS'
@@ -179,6 +189,21 @@ def modeE():
         print(conexao.readline())
     else:
         print '#Erro no modeE'
+
+#-------------------------------------------------------------------
+'''Ativando valvula dinamica 2'''
+def modeF():
+    print 'modeF'
+    buf = modeBuffer()
+    while buf == False:
+        buf = modeBuffer()
+    if buf == True:
+        conexao.write(opcaoF)
+        while (conexao.inWaiting() == 0):
+            pass
+        print(conexao.readline())
+    else:
+        print '#Erro no modeF'
 
 #-------------------------------------------------------------------
 '''Ativando motor'''

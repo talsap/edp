@@ -1,9 +1,9 @@
-/*******************************************************************
-*             Arduino código para EDP software - Beta              *
-* ---------------------------------------------------------------- *
-* Criado por: Tarcisio Sapucaia - tarcisiosapucaia27@gmail.com     *
-* Data – 12/04/2022 - v 1.0                                        *
-********************************************************************/
+/**********************************************************************************
+*              Arduino DUE - código para software EDP - v. Beta                   *
+* ------------------------------------------------------------------------------- *
+* Criado por: Tarcisio Sapucaia - tarcisiosapucaia27@gmail.com                    *
+* Data – 18/04/2022 - v 1.0                                                       *
+***********************************************************************************/
 
 /* Bibliotecas */
 #include <Stepper.h>  //biblioteca para controlar motor de passos
@@ -50,31 +50,28 @@ float admedio; //valor do admedio
 float adMediaMovel; //valor do adMediaMovel
 float defResiliente; //valor da deformação Resiliente
 float defResilienteAnterior; //valor da deformação Resiliente anterior
-//**********************************************************************************//
-//**********************************************************************************//
-//**********************************************************************************//
+
+//************************************** (MOTOR) *******************************************//
 float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
 float BM = 10.01; //valor de B da calibração da válvula do motor de passos
-//float AD1 = 2.0119;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output)
-//float BD1 = 38.21; //valor de B da calibração da válvula dinâmica AD2 para mBar (output)
-//float AD2 = 1.361;  //valor da A da calibração da válvula dinâmica mBar para DAC (input)
-//float BD2 = -14.258; //valor de B da calibração da válvula dinâmica mBar para DAC (input)
 
-float AD1 = 1.0476;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output) 23-03
-float BD1 = -1296; //valor de B da calibração da válvula dinâmica AD2 para mBar (output) 23-03
-float AD2 = 2.7668;  //valor da A da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
-float BD2 = 84.886; //valor de B da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+//*********************************** (DINAMICA1) *****************************************//
+float AE1 = 2.0384;  //valor da A da calibração da válvula dinâmica 1 AD2 para mBar (output)
+float BE1 = -2.7918; //valor de B da calibração da válvula dinâmica 1 AD2 para mBar (output)
+float AE2 = 0.6021;  //valor da A da calibração da válvula dinâmica 1 mBar para DAC1 (input)
+float BE2 = 62.652; //valor de B da calibração da válvula dinâmica 1 mBar para DAC1 (input)
 
-//float AD1 = 2.0384;  //valor da A da calibração da válvula dinâmica AD2 para mBar (output) 23-03
-//float BD1 = -2.7918; //valor de B da calibração da válvula dinâmica AD2 para mBar (output) 23-03
-//float AD2 = 0.6021;  //valor da A da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
-//float BD2 = 62.652; //valor de B da calibração da válvula dinâmica mBar para DAC1 (input) 23-03
+//*********************************** (DINAMICA2) *****************************************//
+float AF1 = 1.0476;  //valor da A da calibração da válvula dinâmica 2 AD2 para mBar (output)
+float BF1 = -1296; //valor de B da calibração da válvula dinâmica 2 AD2 para mBar (output)
+float AF2 = 2.7668;  //valor da A da calibração da válvula dinâmica 2 mBar para DAC1 (input)
+float BF2 = 84.886; //valor de B da calibração da válvula dinâmica 2 mBar para DAC1 (input)
 
 float setpointA; //Valor do setpointA
 float setpointB; //Valor do setpointB
 float setpointC; //Valor do setpointB
-float setpointD; //Valor do setpointD
 float setpointE; //Valor do setpointE
+float setpointF; //Valor do setpointF
 float setpointM; //Valor do setpointM
 float bit12_Voltage; //Usado para a conversao de bits ~ volts
 float bit16_Voltage; //Usado para a conversao de bits ~ volts
@@ -114,7 +111,7 @@ void setup(void) {
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino DUE)
   analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino DUE)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao (apenas no arduino DUE)
-  //analogWrite(DAC0, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
+  analogWrite(DAC0, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
   analogWrite(DAC1, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
   //analogWrite(DAC1, 0); //pino apenas para ver a função waveforms no osciloscopio (para testes)
   pinMode(A4, INPUT); //pino LVDT1
@@ -133,7 +130,8 @@ void setup(void) {
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de conversão bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de conversão bit~voltagem
   setpointM = 340/InputRange_code;   //setpointM inicia sendo o menor valor admissível (referente a v. do motor)
-  setpointD = int(10*4095/3300);   //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica)
+  setpointE = int(10*4095/3300);   //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica1)
+  setpointF = int(10*4095/3300);   //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica2)
 }
 
 /* Principal */
@@ -182,9 +180,14 @@ void loop(void) {
               goto conexao;
             }
             if(leitura == 'E'){
-              Serial.println("DINAMICA");
+              Serial.println("DINAMICA1");
               serialFlush();
-              goto dinamicaDNIT134;
+              goto dinamica1DNIT134;
+            }
+            if(leitura == 'F'){
+              Serial.println("DINAMICA2");
+              serialFlush();
+              goto dinamica2DNIT134;
             }
             if(leitura == 'M'){
               Serial.println("MOTOR");
@@ -220,19 +223,43 @@ void loop(void) {
         break;
 
         //**********************************************************************************//
-        //******************************* VÁLVULA DINÂMICA *********************************//
-        dinamicaDNIT134:
+        //************************** VÁLVULA DINÂMICA 1 (pistão) ***************************//
+        dinamica1DNIT134:
+        while(true){
+          if (Serial.available()>1){
+            setpoint1 = Serial.parseInt();    //valor em mbar
+            if(setpoint1 > 10){
+              setpointE = int(setpoint1*AE2+BE2);   //valor em contagem
+              analogWrite(DAC1, setpointE);
+              Serial.print("CHEGOU=");
+              Serial.print(setpoint1);
+              Serial.print("/SENSOR=");
+              ad5 = analogRead(A2);
+              vd5 = ad5*AE1+BE1; //mbar
+              Serial.println(vd5);
+              serialFlush();
+            }
+            if(setpoint2 == 3){
+              goto sensorLVDTDNIT134;
+            }
+          }
+        }
+        break;
+
+        //**********************************************************************************//
+        //************************* VÁLVULA DINÂMICA 2 (camara) ****************************//
+        dinamica2DNIT134:
         while(true){
           if (Serial.available()>1){
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
-              setpointD = int(setpoint2*AD2+BD2);   //valor em contagem
-              analogWrite(DAC1, setpointD);
+              setpointF = int(setpoint2*AF2+BF2);   //valor em contagem
+              analogWrite(DAC0, setpointF);
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
               ad5 = analogRead(A2);
-              vd5 = ad5*AD1+BD1; //mbar
+              vd5 = ad5*AF1+BF1; //mbar
               Serial.println(vd5);
               serialFlush();
             }
@@ -250,10 +277,10 @@ void loop(void) {
           ad4 = analogRead(A0);
           vd4 = ad4*AM+BM; //mbar
           if(Serial.available()>0){
-            setpoint1 = Serial.parseInt();
-            if(setpoint1 > 5){
+            setpoint2 = Serial.parseInt();
+            if(setpoint2 > 5){
               Serial.print("CHEGOU=");
-              Serial.print(setpoint1);
+              Serial.print(setpoint2);
               Serial.print("/SENSOR=");
               ad4 = analogRead(A0);
               vd4 = ad4*AM+BM; //mbar
@@ -261,7 +288,7 @@ void loop(void) {
               serialFlush();
               condicao = 1;
             }
-            if(setpoint1 == 3){
+            if(setpoint2 == 3){
               digitalWrite(8, LOW);
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
@@ -270,7 +297,7 @@ void loop(void) {
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
-            if(setpoint1 == 2){
+            if(setpoint2 == 2){
               digitalWrite(pinA, HIGH);  //ativa o pinA
               delay(100);
               digitalWrite(pinA, LOW);  //desativa o pinA
@@ -282,10 +309,10 @@ void loop(void) {
               digitalWrite(pinA, HIGH);  //ativa o pinA
               delay(100);
               digitalWrite(pinA, LOW);  //desativa o pinA
-              setpoint1 = 120;
+              setpoint2 = 120;
             }
             else{
-              setpointM = setpoint1;     //valor do setpoint em milibar (0 - 10.000)mBar
+              setpointM = setpoint2;     //valor do setpoint em milibar (0 - 10.000)mBar
             }
           }
           if((vd4 > 1.1*setpointM || vd4 < 0.97*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//

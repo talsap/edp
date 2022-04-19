@@ -41,6 +41,36 @@ class DinamicaThread(Thread):
         return self._return
 
 ########################################################################
+'''DinamicaThreadTwo'''
+class DinamicaThreadTwo(Thread):
+    #-------------------------------------------------------------------
+    def __init__(self, p2, p2Ant):
+        Thread.__init__(self)
+        self.start()
+        self.p2 = p2
+        self.p2Ant = p2Ant
+        self._return = True
+
+    #-------------------------------------------------------------------
+    def run(self):
+        con.modeS()
+        wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
+        time.sleep(.5)
+        con.modeF()
+        wx.CallAfter(pub.sendMessage, "update", msg="       Regulando...")
+        time.sleep(.5)
+        valor2 = con.modeDIN(10000*self.p2, 10000*self.p2Ant)
+        if valor2 == 'p2ok':
+            print 'PRESSAO GOLPE OK'
+            wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
+            time.sleep(1)
+
+    #-------------------------------------------------------------------
+    def ret(self):
+        Thread.join(self)
+        return self._return
+
+########################################################################
 '''DinamicaThreadZero'''
 class DinamicaThreadZero(Thread):
     #-------------------------------------------------------------------
@@ -57,6 +87,37 @@ class DinamicaThreadZero(Thread):
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
         time.sleep(.5)
         con.modeES()
+        wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
+        time.sleep(.5)
+        valor2 = con.modeDINZERO(10000*self.p2, 10000*self.p2Sen)
+        if valor2 == 'p2ok':
+            print 'PRESSAO GOLPE ZERADO'
+            wx.CallAfter(pub.sendMessage, "update", msg="       σd - Zerado!")
+            time.sleep(1)
+            wx.CallAfter(pub.sendMessage, "update", msg="")
+
+    #-------------------------------------------------------------------
+    def ret(self):
+        Thread.join(self)
+        return self._return
+
+########################################################################
+'''DinamicaThreadZeroTwo'''
+class DinamicaThreadZeroTwo(Thread):
+    #-------------------------------------------------------------------
+    def __init__(self, p2, p2Sen):
+        Thread.__init__(self)
+        self.start()
+        self.p2 = p2
+        self.p2Sen = p2Sen
+        self._return = True
+
+    #-------------------------------------------------------------------
+    def run(self):
+        con.modeS()
+        wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
+        time.sleep(.5)
+        con.modeFS()
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         time.sleep(.5)
         valor2 = con.modeDINZERO(10000*self.p2, 10000*self.p2Sen)

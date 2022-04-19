@@ -146,6 +146,7 @@ class TopPanel(wx.Panel):
             self.sizer.Add(self.h_sizer, 0, wx.EXPAND | wx.ALL, 10)
             self.SetSizer(self.sizer)
             self.DINAMICA_ANTERIOR = 0
+            self.DINAMICA2_ANTERIOR = 0
             self.AVANCA = False
 
     #--------------------------------------------------
@@ -266,6 +267,7 @@ class TopPanel(wx.Panel):
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA_ANTERIOR = VETOR_COND[self._ciclo][1]
+                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._ciclo][0]
                         time.sleep(1)
 
                     if self.AVANCA == True:
@@ -273,6 +275,7 @@ class TopPanel(wx.Panel):
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA_ANTERIOR = VETOR_COND[self._ciclo][1]
+                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._ciclo][0]
                         self.AVANCA = False
                         time.sleep(1)
                 else:
@@ -283,11 +286,13 @@ class TopPanel(wx.Panel):
 
                 if self._ciclo > 0:
                     if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0]:
-                        threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0])
+                        #threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0])
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][0], self.DINAMICA2_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
                 else:
-                    threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0])
+                    #threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0])
+                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
                     dlgC2.ShowModal()
 
@@ -331,11 +336,13 @@ class TopPanel(wx.Panel):
 
                 if self._ciclo > 0:
                     if VETOR_MR[self._ciclo][0] != VETOR_MR[self._ciclo - 1][0]:
-                        threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0])
+                        #threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0])
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][0], self.DINAMICA2_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
                 else:
-                    threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0])
+                    #threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0])
+                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
                     dlgC2.ShowModal()
 
@@ -460,12 +467,12 @@ class TopPanel(wx.Panel):
                 self._self.bottom.mr.Enable()
                 self.fim_inicio.SetLabel('INICIO')
                 self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
-                self._self.bottom.pressao_zero(VETOR_COND[self._ciclo][1])
+                self._self.bottom.pressao_zero(VETOR_COND[self._ciclo][0], VETOR_COND[self._ciclo][1])
                 con.modeI()
 
             if Fase == 'MR':
                 con.modeI()
-                self._self.bottom.pressao_zero(VETOR_MR[self._ciclo][1])
+                self._self.bottom.pressao_zero(VETOR_MR[self._ciclo][0], VETOR_COND[self._ciclo][1])
                 dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
 
@@ -1222,7 +1229,6 @@ class BottomPanel(wx.Panel):
                 self.mr.Enable()
                 self.condic.Disable()
                 self.graph.fim_inicio.SetLabel('INICIO')
-                #self.pressao_zero()
 
             if self._ciclo >= ciclo and self.Automatico == True and self.erro == False:
                 self._ciclo = 0
@@ -1311,14 +1317,14 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo >= ciclo and self.erro == False:
                 self.mr.Disable()
-                self.pressao_zero(VETOR_MR[self._ciclo-1][1])
+                self.pressao_zero(VETOR_MR[self._ciclo-1][0], VETOR_MR[self._ciclo-1][1])
                 self._ciclo = 0
                 dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
 
     #--------------------------------------------------
         '''Função responsável em zera a pressão do sistema'''
-        def pressao_zero(self, p2Sen):
+        def pressao_zero(self, p1Sen ,p2Sen):
             print '\nBottomPanel - pressao_zero'
             global condition
             condition = False
@@ -1326,7 +1332,8 @@ class BottomPanel(wx.Panel):
             dlgC1 = My.MyProgressDialog(4)
             dlgC1.ShowModal()
             time.sleep(1)
-            threadConection = MotorThread.MotorThreadZero(0.030)  #0.030 é o menor valor de pressão admissível para SI do motor de passos
+            #threadConection = MotorThread.MotorThreadZero(0.030)  #0.030 é o menor valor de pressão admissível para SI do motor de passos
+            threadConection = DinamicaThread.DinamicaThreadZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlg2 = My.MyProgressDialog(4)
             dlg2.ShowModal()
             condition = True
