@@ -113,8 +113,8 @@ def modeJ():
 
 #-------------------------------------------------------------------
 '''Fim'''
-def modeF():
-    print 'modeF'
+def modeFIM():
+    print 'modeFIM'
     conexao.write(str(3))  #O valor responsável em parar o ensaio é 3
 
 #-------------------------------------------------------------------
@@ -420,7 +420,7 @@ def modeBuffer():
         pass
     a = conexao.readline()
     #print a
-    if a[0] == 'D' or a == '\n':
+    if a[0] == 'D' or a == '\n' or a == '':
         print a
         print "BufferLimpo"
         return True

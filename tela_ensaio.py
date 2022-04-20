@@ -48,7 +48,7 @@ H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
-idt = 'DNIT134-03-'  #identificador do ensaio no banco de dados
+idt = 'DNIT134-02_2004-' #identificador do ensaio no banco de dados
 subleito = False    #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
@@ -65,12 +65,12 @@ VETOR_COND = [[0.070,0.140],
               [0.070,0.280],
               [0.105,0.420]]
 
-VETOR_MR =  [[0.023,0.040],
-             [0.023,0.060],
-             [0.023,0.080],
-             [0.033,0.070],
-             [0.033,0.105],
-             [0.033,0.140],
+VETOR_MR =  [[0.020,0.040],
+             [0.020,0.060],
+             [0.020,0.080],
+             [0.035,0.070],
+             [0.035,0.105],
+             [0.035,0.140],
              [0.050,0.100],
              [0.050,0.150],
              [0.050,0.200],
@@ -164,7 +164,7 @@ class TopPanel(wx.Panel):
 
             if result == wx.ID_YES:
                 dlg.Destroy()
-                con.modeF()
+                con.modeFIM()
                 self.fim_inicio.Enable()
                 self.avanca.Enable()
                 self.continua.Disable()
@@ -451,7 +451,7 @@ class TopPanel(wx.Panel):
             if result == wx.ID_YES:
                 dlg.Destroy()
                 self.fim_inicio.Disable()
-                con.modeF()
+                con.modeFIM()
                 self.avanca.Disable()
                 self.continua.Disable()
 

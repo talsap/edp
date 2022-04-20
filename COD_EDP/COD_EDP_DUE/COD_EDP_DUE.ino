@@ -56,15 +56,15 @@ float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
 float BM = 10.01; //valor de B da calibração da válvula do motor de passos
 
 //*********************************** (DINAMICA1) *****************************************//
-float AE1 = 2.0384;  //valor da A da calibração da válvula dinâmica 1 AD2 para mBar (output)
+float AE1 = 2.0384;  //valor de A da calibração da válvula dinâmica 1 AD2 para mBar (output)
 float BE1 = -2.7918; //valor de B da calibração da válvula dinâmica 1 AD2 para mBar (output)
-float AE2 = 0.6021;  //valor da A da calibração da válvula dinâmica 1 mBar para DAC1 (input)
+float AE2 = 0.6021;  //valor de A da calibração da válvula dinâmica 1 mBar para DAC1 (input)
 float BE2 = 62.652; //valor de B da calibração da válvula dinâmica 1 mBar para DAC1 (input)
 
 //*********************************** (DINAMICA2) *****************************************//
-float AF1 = 1.0476;  //valor da A da calibração da válvula dinâmica 2 AD2 para mBar (output)
+float AF1 = 1.0476;  //valor de A da calibração da válvula dinâmica 2 AD2 para mBar (output)
 float BF1 = -1296; //valor de B da calibração da válvula dinâmica 2 AD2 para mBar (output)
-float AF2 = 2.7668;  //valor da A da calibração da válvula dinâmica 2 mBar para DAC1 (input)
+float AF2 = 2.7668;  //valor de A da calibração da válvula dinâmica 2 mBar para DAC1 (input)
 float BF2 = 84.886; //valor de B da calibração da válvula dinâmica 2 mBar para DAC1 (input)
 
 float setpointA; //Valor do setpointA
@@ -130,8 +130,8 @@ void setup(void) {
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de conversão bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de conversão bit~voltagem
   setpointM = 340/InputRange_code;   //setpointM inicia sendo o menor valor admissível (referente a v. do motor)
-  setpointE = int(10*4095/3300);   //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica1)
-  setpointF = int(10*4095/3300);   //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica2)
+  setpointE = int(12*AE2+BE2); //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica1)
+  setpointF = int(12*AF2+BF2);  //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica2) 
 }
 
 /* Principal */
@@ -239,7 +239,7 @@ void loop(void) {
               Serial.println(vd5);
               serialFlush();
             }
-            if(setpoint2 == 3){
+            if(setpoint1 == 3){
               goto sensorLVDTDNIT134;
             }
           }
@@ -258,9 +258,9 @@ void loop(void) {
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
-              ad5 = analogRead(A2);
-              vd5 = ad5*AF1+BF1; //mbar
-              Serial.println(vd5);
+              ad4 = analogRead(A0);
+              vd4 = ad4*AF1+BF1; //mbar
+              Serial.println(vd4);
               serialFlush();
             }
             if(setpoint2 == 3){
@@ -350,7 +350,7 @@ void loop(void) {
             ntotalGolpes = Serial.parseInt();
             if(ntotalGolpes > 0){
               if(ntotalGolpes<=10){
-                conditionMR = 0;   //entende-se que tá se executando o MR
+                conditionMR = 1;   //entende-se que tá se executando o MR (conditionMR = 0)
               }else{
                 conditionMR = 1;
               }
@@ -678,8 +678,8 @@ void imprimir(){
   ad5 = analogRead(A2);
   vd0 = ad0*bit16_Voltage;
   vd1 = ad1*bit16_Voltage;
-  vd4 = ad4*AM+BM; //mbar
-  vd5 = ad5*AD1+BD1; //mbar
+  vd4 = ad4*AF1+BF1; //mbar
+  vd5 = ad5*AE1+BE1; //mbar
   admedio = (ad0+ad1)/2; //admedio
 
   //INTERVALO DE PRESSAO NAO OK//
