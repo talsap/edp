@@ -732,10 +732,6 @@ void imprimir(){
   vd5 = ad5*AE1+BE1; //mbar (pistão)
   admedio = (ad0+ad1)/2; //admedio
 
-  //INTERVALO DE PRESSAO OK PARA OS GOLPES//
-  if(vd5 > 1.05*setpoint2 && vd5 < 0.95*setpoint2){
-     statuS = 1;  //INFORMA PARA FINALIZAR ENSAIO//
-  }
   //CONDICAO DE DISCREPÂNCIA// (OBS: O GRÁFICO AQUI É INVERTIDO)
   if(conditionMR == 0){
     if(nTime == 4){
