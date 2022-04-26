@@ -263,7 +263,7 @@ class TopPanel(wx.Panel):
                 condition = False
                 if self._ciclo > 0:
                     if VETOR_COND[self._ciclo][1] != VETOR_COND[self._ciclo - 1][1] and self.AVANCA == False:
-                        threadConection = DinamicaThread.DinamicaThread(VETOR_COND[self._ciclo][1], VETOR_COND[self._ciclo-1][1])
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][1], VETOR_COND[self._ciclo-1][1])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA_ANTERIOR = VETOR_COND[self._ciclo][1]
@@ -271,7 +271,7 @@ class TopPanel(wx.Panel):
                         time.sleep(1)
 
                     if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThread(VETOR_COND[self._ciclo][1], self.DINAMICA_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][1], self.DINAMICA_ANTERIOR)
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA_ANTERIOR = VETOR_COND[self._ciclo][1]
@@ -279,7 +279,7 @@ class TopPanel(wx.Panel):
                         self.AVANCA = False
                         time.sleep(1)
                 else:
-                    threadConection = DinamicaThread.DinamicaThread(VETOR_COND[self._ciclo][1], 0)
+                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][1], 0)
                     dlgC1 = My.MyProgressDialog(3)
                     dlgC1.ShowModal()
                     time.sleep(1)
@@ -287,12 +287,12 @@ class TopPanel(wx.Panel):
                 if self._ciclo > 0:
                     if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0]:
                         #threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0])
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][0], self.DINAMICA2_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._ciclo][0], self.DINAMICA2_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
                 else:
                     #threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0])
-                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][0], 0)
+                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._ciclo][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
                     dlgC2.ShowModal()
 
@@ -315,21 +315,21 @@ class TopPanel(wx.Panel):
                 condition = False
                 if self._ciclo > 0:
                     if VETOR_MR[self._ciclo][1] != VETOR_MR[self._ciclo - 1][1] and self.AVANCA == False:
-                        threadConection = DinamicaThread.DinamicaThread(VETOR_MR[self._ciclo][1], VETOR_MR[self._ciclo-1][1])
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][1], VETOR_MR[self._ciclo-1][1])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA_ANTERIOR = VETOR_MR[self._ciclo][1]
                         time.sleep(1)
 
                     if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThread(VETOR_MR[self._ciclo][1], self.DINAMICA_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][1], self.DINAMICA_ANTERIOR)
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA_ANTERIOR = VETOR_MR[self._ciclo][1]
                         self.AVANCA = False
                         time.sleep(1)
                 else:
-                    threadConection = DinamicaThread.DinamicaThread(VETOR_MR[self._ciclo][1], 0)
+                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][1], 0)
                     dlgC1 = My.MyProgressDialog(3)
                     dlgC1.ShowModal()
                     time.sleep(1)
@@ -337,12 +337,12 @@ class TopPanel(wx.Panel):
                 if self._ciclo > 0:
                     if VETOR_MR[self._ciclo][0] != VETOR_MR[self._ciclo - 1][0]:
                         #threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0])
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][0], self.DINAMICA2_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._ciclo][0], self.DINAMICA2_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
                 else:
                     #threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0])
-                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][0], 0)
+                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._ciclo][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
                     dlgC2.ShowModal()
 
@@ -1328,12 +1328,12 @@ class BottomPanel(wx.Panel):
             print '\nBottomPanel - pressao_zero'
             global condition
             condition = False
-            threadConection = DinamicaThread.DinamicaThreadZero(0.005, p2Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = DinamicaThread.DinamicaThreadTwoZero(0.005, p2Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlgC1 = My.MyProgressDialog(4)
             dlgC1.ShowModal()
             time.sleep(1)
             #threadConection = MotorThread.MotorThreadZero(0.030)  #0.030 é o menor valor de pressão admissível para SI do motor de passos
-            threadConection = DinamicaThread.DinamicaThreadZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = DinamicaThread.DinamicaThreadOneZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlg2 = My.MyProgressDialog(4)
             dlg2.ShowModal()
             condition = True
