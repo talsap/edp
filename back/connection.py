@@ -443,7 +443,7 @@ def ColetaI(valores):
         sen = float(Array[5])
         cam = float(Array[6])
         sts = int(Array[7])
-        glp = int(Array[8])
+        ntglp = int(Array[8])
 
     except:
         print 'ColetaI - except'
@@ -455,9 +455,9 @@ def ColetaI(valores):
         sen = valores[5]
         cam = valores[6]
         sts = valores[7]
-        glp = valores[8]
+        ntglp = valores[8]
 
-    return temp, y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, sts, glp
+    return temp, y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, sts, ntglp
 
 #-------------------------------------------------------------------
 def ColetaJ(valores):

@@ -38,18 +38,18 @@ int ad5; //valor analógico do sensor de pressão (Válvula Dinâmica)
 int ad6; //valor analógico do sensor de temperatura (Estufa)
 int i; //indicador temporal da funcao waveforms
 int tipoWave; //indicador do tipo da funcao waveforms
+int setpoint; //valor de entrada para o setpoint em porcentagem
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
-//**********************************************************************************//
-//*******************  VARIAVEIS PARA A CONDIÇÃO DE 5% DAS  ************************//
-//*******************     CONSTÂNCIAS DAS LEITURAS PARA A   ************************//
-//*******************         DEFORMAÇÃO RESILIENTE         ************************//
-//**********************************************************************************//
+
+//***************** VARIAVEIS PARA A CONDIÇÃO DE DISCREPÂNCIA  *********************//
+int lmt;  //valor limite para os golpes com a condicao de discrepância
 float adMin;  //valor do adMin
 float admedio; //valor do admedio
 float adMediaMovel; //valor do adMediaMovel
 float defResiliente; //valor da deformação Resiliente
 float defResilienteAnterior; //valor da deformação Resiliente anterior
+float discrep; //valor da discrepancia entre as leituras
 
 //************************************** (MOTOR) *******************************************//
 float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
@@ -111,15 +111,15 @@ void setup(void) {
   analogReadResolution(12); //Altera a resolucao para 12bits (apenas no arduino DUE)
   analogWriteResolution(12); //Altera a resolucao de escrita para 12bits (apenas no arduino DUE)
   analogReference(AR_DEFAULT); //Define a tensao de 3.3Volts como sendo a padrao (apenas no arduino DUE)
-  analogWrite(DAC0, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
-  analogWrite(DAC1, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional)
+  analogWrite(DAC0, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional 1) (valvula dinâmica 1)
+  analogWrite(DAC1, 0); //pino responsavel em alterar a pressao no (regulador de pressão proporcional 2) (valvula dinâmica 2)
   //analogWrite(DAC1, 0); //pino apenas para ver a função waveforms no osciloscopio (para testes)
   pinMode(A4, INPUT); //pino LVDT1
   pinMode(A6, INPUT); //pino LVDT2
   pinMode(A8, INPUT); //pino LVDT3
   pinMode(A9, INPUT); //pino LVDT4
-  pinMode(A0, INPUT); //pino Sensor de pressão (válvula do motor)
-  pinMode(A2, INPUT); //pino Sensor de pressão (válvula dinâmica)
+  pinMode(A0, INPUT); //pino Sensor de pressão (válvula do motor) (valvula dinâmica 1) (camara)
+  pinMode(A2, INPUT); //pino Sensor de pressão (válvula dinâmica 2) (pistao)
   pinMode(A10, INPUT); //pino Sendor de Temperatura (Estufa)
   pinMode(pinA, OUTPUT);  //configura o pinA
   pinMode(pinB, OUTPUT);  //configura o pinB
@@ -131,7 +131,9 @@ void setup(void) {
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de conversão bit~voltagem
   setpointM = 340/InputRange_code;   //setpointM inicia sendo o menor valor admissível (referente a v. do motor)
   setpointE = int(12*AE2+BE2); //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica1)
-  setpointF = int(12*AF2+BF2);  //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica2) 
+  setpointF = int(12*AF2+BF2);  //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica2)
+  lmt = 200;  //200 é considerado o valor padrão do limite de golpes para a discrepância
+  discrep = 1.05;  //inicia sendo o valor de 5%
 }
 
 /* Principal */
@@ -169,7 +171,7 @@ void loop(void) {
       if(condConect == 1){
         sensorLVDTDNIT134:
         Serial.println("DNIT134");
-        conditionEnsaio = 0;
+        conditionEnsaio = 1;
         serialFlush();
         while(true){
           if(Serial.available()>0){
@@ -180,14 +182,14 @@ void loop(void) {
               goto conexao;
             }
             if(leitura == 'E'){
-              Serial.println("DINAMICA1");
-              serialFlush();
-              goto dinamica1DNIT134;
-            }
-            if(leitura == 'F'){
               Serial.println("DINAMICA2");
               serialFlush();
               goto dinamica2DNIT134;
+            }
+            if(leitura == 'F'){
+              Serial.println("DINAMICA1");
+              serialFlush();
+              goto dinamica1DNIT134;
             }
             if(leitura == 'M'){
               Serial.println("MOTOR");
@@ -202,6 +204,16 @@ void loop(void) {
             if(leitura == 'J'){
               imprimir();
               serialFlush();
+            }
+            if(leitura == 'K'){
+              Serial.println("DISCREPANCIA");
+              serialFlush();
+              goto discrepancia;
+            }
+            if(leitura == 'L'){
+              Serial.println("LIMITE");
+              serialFlush();
+              goto limite;
             }
             if(leitura == 'I'){
               Serial.println("IMPRIMIR");
@@ -223,20 +235,58 @@ void loop(void) {
         break;
 
         //**********************************************************************************//
-        //************************** VÁLVULA DINÂMICA 1 (pistão) ***************************//
+        //********************************* DISCREPANCIA ***********************************//
+        discrepancia:
+        while(true){
+          if (Serial.available()>1){
+            setpoint = Serial.parseInt();    //valor em %
+            if(setpoint > 5){
+              discrep = 1 + setpoint/100;
+              Serial.print("DISCREP=");
+              Serial.println(discrep);
+              serialFlush();
+            }
+            if(setpoint == 3){
+              goto sensorLVDTDNIT134;
+            }
+          }
+        }
+        break;
+
+        //**********************************************************************************//
+        //*************************** LIMITE DOS GOLPES NO MR ******************************//
+        limite:
+        while(true){
+          if (Serial.available()>1){
+            setpoint = Serial.parseInt();    //numero limite dos glp no MR
+            if(setpoint > 5){
+              lmt = setpoint;
+              Serial.print("LIMITE=");
+              Serial.println(lmt);
+              serialFlush();
+            }
+            if(setpoint == 3){
+              goto sensorLVDTDNIT134;
+            }
+          }
+        }
+        break;
+
+        //**********************************************************************************//
+        //************************* VÁLVULA DINÂMICA 1 (camara) ****************************//
         dinamica1DNIT134:
         while(true){
           if (Serial.available()>1){
             setpoint1 = Serial.parseInt();    //valor em mbar
             if(setpoint1 > 10){
-              setpointE = int(setpoint1*AE2+BE2);   //valor em contagem
-              analogWrite(DAC1, setpointE);
+              setpointF = int(setpoint1*AF2+BF2);   //valor em contagem
+              analogWrite(DAC0, setpointF);
               Serial.print("CHEGOU=");
               Serial.print(setpoint1);
               Serial.print("/SENSOR=");
-              ad5 = analogRead(A2);
-              vd5 = ad5*AE1+BE1; //mbar
-              Serial.println(vd5);
+              ad4 = analogRead(A0);
+              vd4 = ad4*AF1+BF1; //mbar
+              Serial.println(vd4);
               serialFlush();
             }
             if(setpoint1 == 3){
@@ -247,20 +297,20 @@ void loop(void) {
         break;
 
         //**********************************************************************************//
-        //************************* VÁLVULA DINÂMICA 2 (camara) ****************************//
+        //************************** VÁLVULA DINÂMICA 2 (pistão) ***************************//
         dinamica2DNIT134:
         while(true){
           if (Serial.available()>1){
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
-              setpointF = int(setpoint2*AF2+BF2);   //valor em contagem
-              analogWrite(DAC0, setpointF);
+              setpointE = int(setpoint2*AE2+BE2);   //valor em contagem
+              analogWrite(DAC1, setpointE);
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
-              ad4 = analogRead(A0);
-              vd4 = ad4*AF1+BF1; //mbar
-              Serial.println(vd4);
+              ad5 = analogRead(A2);
+              vd5 = ad5*AE1+BE1; //mbar
+              Serial.println(vd5);
               serialFlush();
             }
             if(setpoint2 == 3){
@@ -277,10 +327,10 @@ void loop(void) {
           ad4 = analogRead(A0);
           vd4 = ad4*AM+BM; //mbar
           if(Serial.available()>0){
-            setpoint2 = Serial.parseInt();
-            if(setpoint2 > 5){
+            setpoint1 = Serial.parseInt();
+            if(setpoint1 > 5){
               Serial.print("CHEGOU=");
-              Serial.print(setpoint2);
+              Serial.print(setpoint1);
               Serial.print("/SENSOR=");
               ad4 = analogRead(A0);
               vd4 = ad4*AM+BM; //mbar
@@ -288,7 +338,7 @@ void loop(void) {
               serialFlush();
               condicao = 1;
             }
-            if(setpoint2 == 3){
+            if(setpoint1 == 3){
               digitalWrite(8, LOW);
               digitalWrite(9, LOW);
               digitalWrite(10, LOW);
@@ -297,7 +347,7 @@ void loop(void) {
               condicao = 2;
               goto sensorLVDTDNIT134;
             }
-            if(setpoint2 == 2){
+            if(setpoint1 == 2){
               digitalWrite(pinA, HIGH);  //ativa o pinA
               delay(100);
               digitalWrite(pinA, LOW);  //desativa o pinA
@@ -309,10 +359,10 @@ void loop(void) {
               digitalWrite(pinA, HIGH);  //ativa o pinA
               delay(100);
               digitalWrite(pinA, LOW);  //desativa o pinA
-              setpoint2 = 120;
+              setpoint1 = 120;
             }
             else{
-              setpointM = setpoint2;     //valor do setpoint em milibar (0 - 10.000)mBar
+              setpointM = setpoint1;     //valor do setpoint em milibar (0 - 10.000)mBar
             }
           }
           if((vd4 > 1.1*setpointM || vd4 < 0.97*setpointM) && condicao == 1){ //INTERVALO DE PRESSAO NAO OK//
@@ -678,15 +728,15 @@ void imprimir(){
   ad5 = analogRead(A2);
   vd0 = ad0*bit16_Voltage;
   vd1 = ad1*bit16_Voltage;
-  vd4 = ad4*AF1+BF1; //mbar
-  vd5 = ad5*AE1+BE1; //mbar
+  vd4 = ad4*AF1+BF1; //mbar (camara)
+  vd5 = ad5*AE1+BE1; //mbar (pistão)
   admedio = (ad0+ad1)/2; //admedio
 
-  //INTERVALO DE PRESSAO NAO OK//
-  if(vd4 > 1.05*setpointM && vd4 < 0.95*setpointM){
-     statuS = 1;  //INFORMA QUE O ENSAIO FOI PARADO//
+  //INTERVALO DE PRESSAO OK PARA OS GOLPES//
+  if(vd5 > 1.05*setpoint2 && vd5 < 0.95*setpoint2){
+     statuS = 1;  //INFORMA PARA FINALIZAR ENSAIO//
   }
-  //CONDICAO DE 5% DAS CONSTÂNCIAS//
+  //CONDICAO DE DISCREPÂNCIA// (OBS: O GRÁFICO AQUI É INVERTIDO)
   if(conditionMR == 0){
     if(nTime == 4){
       if((currentMillis - initialMillis) == 10){
@@ -718,13 +768,19 @@ void imprimir(){
       }
       if((currentMillis - initialMillis) == 990){
         if(defResiliente > defResilienteAnterior){
-          if(defResiliente/defResilienteAnterior > 1.05){
+          if(defResiliente/defResilienteAnterior > discrep){
             ntotalGolpes++;
+          }
+          if(ntotalGolpes >= lmt){
+            statuS = 1;
           }
         }
         if(defResiliente < defResilienteAnterior){
-          if(defResilienteAnterior/defResiliente > 1.05){
+          if(defResilienteAnterior/defResiliente > discrep){
             ntotalGolpes++;
+          }
+          if(ntotalGolpes >= lmt){
+            statuS = 1;
           }
         }
         defResilienteAnterior = defResiliente;
@@ -747,7 +803,7 @@ void imprimir(){
   Serial.print(",");
   Serial.print(statuS);      //sts
   Serial.print(",");
-  Serial.println(nGolpe);    //glp
+  Serial.println(ntotalGolpes); //ntglp
 }/* Imprimir dados DA 134*/
 
 //**********************************************************************************//

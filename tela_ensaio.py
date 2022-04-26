@@ -19,8 +19,8 @@ from front.quadrotensoes import quadro
 from front.dialogoDinamico import dialogoDinamico
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
-'''plt.style.use('ggplot')'''
-frequencias = ['1', '2', '3', '4']
+'''Frequencias para o ensaio'''
+frequencias = ['1']
 
 '''Variáveis Globais'''
 global leituraZerob1 #leitura zero do sensor 1
@@ -36,13 +36,18 @@ global yz2
 global yt2
 global pc1
 global pg1
+global yyy
 global REFERENCIA1 #referencia de ponto de partida para o sensor 1
 global REFERENCIA2 #referencia de ponto de partida para o sensor 2
+global REFERENCIA_MEDIA #referencia de ponto de partidada MÉDIA
 global Ti #valor temporal
 global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
 global Automatico #idica se o ensaio será automático ou não
 global Pausa #indica se o ensaio foi pausado
 global mult  #Multiplo de 5 que ajuda a arrumar o gráfico em 5 em 5
+global glpCOND #quantidade de golpes do CONDICIONAMENTO
+global ntglp #quantidade total de golpes disponíveis
+global modeADM #modo Administrador de salvar dados (apenas para dbug)
 
 H0 = 0.01
 H = 200
@@ -59,7 +64,10 @@ yz2 = []
 yt2 = []
 pc1 = []
 pg1 = []
+yyy = []
 Fase = ''
+glpCOND = 500
+modeADM = False
 
 VETOR_COND = [[0.070,0.140],
               [0.070,0.280],
@@ -383,12 +391,14 @@ class TopPanel(wx.Panel):
                 global X
                 global Y
                 global mult
+                global glpCOND
+                global ntglp
 
                 if Fase == 'CONDICIONAMENTO':
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == 500:
+                            if valorGolpe == glpCOND:
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
@@ -412,7 +422,7 @@ class TopPanel(wx.Panel):
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == 10:
+                            if valorGolpe == ntglp:
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
@@ -653,8 +663,8 @@ class BottomPanel(wx.Panel):
             self.PCalvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.SigmaReal = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.SigmaAlvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.AlturaMM = wx.TextCtrl(self, -1, '200,00', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.DiametroMM = wx.TextCtrl(self, -1, '100,0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.AlturaMM = wx.TextCtrl(self, -1, '200.0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.DiametroMM = wx.TextCtrl(self, -1, '100.0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             #self.DefCritica = wx.TextCtrl(self, -1, wx.EmptyString, size = (80, 41.5), style = wx.TE_READONLY | wx.TE_CENTER)
             self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
             self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -1016,8 +1026,11 @@ class BottomPanel(wx.Panel):
                     global yt2
                     global pc1
                     global pg1
+                    global yyy
                     global REFERENCIA1
                     global REFERENCIA2
+                    global REFERENCIA_MEDIA
+                    global ntglp
                     con.modeI()  #inicia o modo de impressão de dados
                     condition = True
                     conditionEnsaio = False
@@ -1032,31 +1045,36 @@ class BottomPanel(wx.Panel):
                     while True:
                         while condition == True:
                             valores = con.ColetaI(valores)
-                            if cont1 >= 10:
+                            if cont1 >= 20: #mede a frequencia da impressão de dados na tela
                                 self.y1mm.Clear()
                                 self.y2mm.Clear()
                                 self.y1V.Clear()
                                 self.y2V.Clear()
                                 self.PCreal.Clear()
                                 self.SigmaReal.Clear()
-                                self.valorLeitura0 = valores[1]
-                                self.valorLeitura1 = valores[2]
+                                self.AlturaFinal.Clear()
+                                self.valorLeitura0 = valores[1] #usado apenas no LZERO
+                                self.valorLeitura1 = valores[2] #usado apenas no LZERO
                                 self.y1mm.AppendText(str(round((valores[1]-self.leituraZerob1), 4)))
                                 self.y2mm.AppendText(str(round((valores[2]-self.leituraZerob2), 4)))
                                 self.y1V.AppendText(str(round((valores[3]), 2)))
                                 self.y2V.AppendText(str(round((valores[4]), 2)))
                                 self.PCreal.AppendText(str(round((valores[5]), 3)))
                                 self.SigmaReal.AppendText(str(round(valores[6]-valores[5], 3)))
-                                if cont1 == 10:
+                                if self.leituraZerob1 == 0:
+                                    self.AlturaFinal.AppendText(str(round(H, 3)))
+                                else:
+                                    self.AlturaFinal.AppendText(str(round(H-ymedio, 3)))
+                                if cont1 == 20:
                                     cont1 = 0
                             cont1 = cont1 + 1
 
+                            ntglp = int(valores[8]) #numero total de golpes
                             y1 = valores[1]-self.leituraZerob1
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
                             ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
 
-                            #print ymedio
-                            '''if conditionEnsaio == True:'''
+                            # Dados para a parte GRÁFICA #
                             if conditionEnsaio == True and valores[0] > 0:
                                 X = np.append(X, valores[0])
                                 Y = np.append(Y, ymedio)
@@ -1064,33 +1082,57 @@ class BottomPanel(wx.Panel):
                                 if x_counter >= 1000: #antes era 1500
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
+
+                                # Dados do CONDICIONAMENTO #
                                 if Fase == 'CONDICIONAMENTO' and Pausa == False:
-                                    if valores[0] == 0.01:
+                                    if valores[0] == (ntglp - 0.01):
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
+                                        REFERENCIAMEDIA = ymedio
+
+                                # Dados do MR #
                                 if Fase == 'MR' and Pausa == False:
+                                    ntglp = int(valores[8])
                                     if valores[0] == 0.01:
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
-                                        '''discrepancia = 5'''
+                                        REFERENCIAMEDIA = ymedio
 
-                                    '''if valores[0] > 4 and valores[0] < 4.2:
+                                    # DefResiliente incial de compararação (para condicao de discrepância)
+                                    if valores[0] > 4 and valores[0] < 4.2:
                                         if valores[0] == 4.01:
-                                            amplitudeMax4 = ymedio
-                                        if ymedio > amplitudeMax4:
-                                            amplitudeMax4 = ymedio
-                                            intervaloSup1 = amplitudeMax4 + 0.05*amplitudeMax4
-                                            intervaloInf1 = amplidudeMax4 - 0.05*amplitudeMax4
+                                            amplitudeMaxAnterior = ymedio
+                                            mediaMovel = ymedio
+                                        if ymedio > amplitudeMaxAnterior:
+                                            amplitudeMaxAnterior = ymedio
+                                    if valores[0] > 4.2 and valores[0] < 5:
+                                        mediaMovel = (mediaMovel+ymedio)/2
+                                        defResilienteAnterior = amplitudeMaxAnterior - mediaMovel
 
-                                    if valores[0] > 5 and valores[0] < 5.2:
-                                        if valores[0] == 5.01:
-                                            amplitudeMax5 = ymedio
-                                        if ymedio > amplitudeMax5:
-                                            amplitudeMax5 = ymedio
-                                            intervaloSup2 = amplitudeMax5 + 0.05*amplitudeMax5
-                                            intervaloInf2 = amplidudeMax5 - 0.05*amplitudeMax5'''
+                                    # Condição da analise de discrepância #
+                                    if valores[0] > 5:
+                                        valoreS = valores[0] - int(valores[0])
+                                        if valoreS > 0 and valoreS < 0.2:
+                                            if valoreS == 0.01:
+                                                amplitudeMax = ymedio
+                                                mediaMovel = ymedio
+                                            if ymedio > amplitudeMax:
+                                                amplitudeMax = ymedio
 
-                                    if int(valores[0]) > 4 and int(valores[0]) <= 10:
+                                        if valoreS > 0.2 and valoreS < 0.99:
+                                            mediaMovel = (mediaMovel+ymedio)/2
+                                            defResiliente = amplitudeMax - mediaMovel
+
+                                        if valoreS == 0.99:
+                                            if defResiliente > defResilienteAnterior:
+                                                if defResiliente/defResilienteAnterior < DISCREP:
+                                                    yyy.append(defResiliente)
+                                            if defResiliente < defResilienteAnterior:
+                                                if defResilienteAnterior/defResiliente < DISCREP:
+                                                    yyy.append(defResiliente)
+                                            defResilienteAnterior = defResiliente
+
+                                    if int(valores[0]) > 4 and int(valores[0]) <= int(valores[8]):
                                         xz1.append(valores[0])
                                         yz1.append(y1+H0)
                                         yz2.append(y2+H0)
@@ -1099,28 +1141,10 @@ class BottomPanel(wx.Panel):
                                         yt1.append(valores[3])
                                         yt2.append(valores[4])
 
-                                if cont >= 8:
-                                    self.AlturaFinal.Clear()
-                                    self.AlturaFinal.AppendText(str(round(H-(ymedio-REFERENCIA1/2-REFERENCIA2/2), 2)))
-                                '''if cont >= 8:
-                                    self.defElastica.Clear()
-                                    self.defPlastica.Clear()
-                                    self.defPAcum.Clear()
-                                    self.AlturaFinal.Clear()
-                                    self.DefCritica.Clear()
-                                    self.defElastica.AppendText(str(round((valores[8]), 3)))
-                                    self.defPlastica.AppendText(str(round((valores[9]), 3)))
-                                    self.defPAcum.AppendText(str(round((valores[10]), 3)))
-                                    self.AlturaFinal.AppendText(str(round(H-(valores[0]-self.leituraZerob1), 2)))
-                                    self.DefCritica.AppendText(str(round((valores[10]), 3)))
-                                    if cont == 10:
-                                        cont = 0
-                                cont += 1'''
-
-                                if int(valores[8]) != GolpeAnterior:
-                                    GolpeAnterior = int(valores[8])
+                                if int(valores[0]) != GolpeAnterior:
+                                    GolpeAnterior = int(valores[0])
                                     self.GolpeAtual.Clear()
-                                    self.GolpeAtual.AppendText(str(int(valores[8])))
+                                    self.GolpeAtual.AppendText(str(int(valores[0])))
 
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
@@ -1141,8 +1165,6 @@ class BottomPanel(wx.Panel):
             self.condic.Enable()
             self.mr.Enable()
             self.LTeste.Disable()
-            self.y1mmm = self.y1mm.GetValue()
-            self.y2mmm = self.y2mm.GetValue()
             self.leituraZerob1 = float(self.valorLeitura0)
             self.leituraZerob2 = float(self.valorLeitura1)
             print self.leituraZerob1
@@ -1169,6 +1191,8 @@ class BottomPanel(wx.Panel):
             global pg1
             global REFERENCIA1
             global REFERENCIA2
+            global REFERENCIA_MEDIA
+            global modeADM
             Fase = 'CONDICIONAMENTO'
             self.erro = False
 
@@ -1181,7 +1205,10 @@ class BottomPanel(wx.Panel):
                 print '\nCICLO.COND='+str(self._ciclo+1)+'\n'
 
             if self._ciclo > 0 and subleito == True:
-                bancodedados.saveReferencia(idt+"COND-"+str(self._ciclo), REFERENCIA1, REFERENCIA2)
+                if modeADM == True:
+                    bancodedados.saveReferencia(idt+"COND-"+str(self._ciclo), REFERENCIA1, REFERENCIA2)
+                else:
+                    print REFERENCIA_MEDIA
 
             if self._ciclo < ciclo:
                 self.LZero.Disable()
@@ -1195,7 +1222,7 @@ class BottomPanel(wx.Panel):
                 self.GolpeAtual.Clear()
                 self.PCalvo.AppendText(str(VETOR_COND[self._ciclo][0])+'0')
                 self.SigmaAlvo.AppendText(str(VETOR_COND[self._ciclo][1]-VETOR_COND[self._ciclo][0])+'0')
-                self.NGolpes.AppendText(str(500))
+                self.NGolpes.AppendText(str(glpCOND))
                 self.Ciclo.AppendText('C-'+str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
 
@@ -1250,8 +1277,10 @@ class BottomPanel(wx.Panel):
             global yt2
             global pc1
             global pg1
+            global yyy
             global REFERENCIA1
             global REFERENCIA2
+            global REFERENCIA_MEDIA
             Fase = 'MR'
             self.erro = False
 
@@ -1264,16 +1293,22 @@ class BottomPanel(wx.Panel):
                 print '\nCICLO.MR='+str(self._ciclo+1)+'\n'
 
             if self._ciclo > 0:
-                threadConection = SaveThread.SaveThread(idt+"MR-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
-                dlgC2 = My.MyProgressDialog(len(xz1)-2)
-                dlgC2.ShowModal()
-                xz1 = []
-                yz1 = []
-                yt1 = []
-                yz2 = []
-                yt2 = []
-                pc1 = []
-                pg1 = []
+                if modeADM == True:
+                    threadConection = SaveThread.SaveThread(idt+"MR-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
+                    dlgC2 = My.MyProgressDialog(len(xz1)-2)
+                    dlgC2.ShowModal()
+                    xz1 = []
+                    yz1 = []
+                    yt1 = []
+                    yz2 = []
+                    yt2 = []
+                    pc1 = []
+                    pg1 = []
+                else:
+                    ym  = sum(yyy)/len(yyy)
+                    pc = sum(pc1)/len(pc1)
+                    pg = sum(pg1)/len(pg1)
+                    print REFERENCIA_MEDIA, ym, pc, pg
 
             if self._ciclo < ciclo:
                 self.LZero.Disable()
