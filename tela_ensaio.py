@@ -53,7 +53,7 @@ H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
-idt = 'DNIT134-02_2004-' #identificador do ensaio no banco de dados
+idt = 'DNIT134-01_2704-' #identificador do ensaio no banco de dados
 subleito = False    #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
@@ -146,15 +146,14 @@ class TopPanel(wx.Panel):
             self.v_sizer.Add(self.continua, 1, wx.EXPAND | wx.ALL, 5)
             self.v_sizer.Add(self.fim_inicio, 1, wx.EXPAND | wx.ALL, 5)
 
-
             self.h_sizer.Add(self.canvas, 12, wx.EXPAND | wx.ALL, 5)
             self.h_sizer.Add(self.v_sizer, 1, wx.EXPAND | wx.ALL)
             self.h_sizer.AddStretchSpacer(4)
 
             self.sizer.Add(self.h_sizer, 0, wx.EXPAND | wx.ALL, 10)
             self.SetSizer(self.sizer)
-            self.DINAMICA_ANTERIOR = 0
             self.DINAMICA2_ANTERIOR = 0
+            self.DINAMICA1_ANTERIOR = 0
             self.AVANCA = False
 
     #--------------------------------------------------
@@ -274,16 +273,16 @@ class TopPanel(wx.Panel):
                         threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][1], VETOR_COND[self._ciclo-1][1])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
-                        self.DINAMICA_ANTERIOR = VETOR_COND[self._ciclo][1]
-                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._ciclo][0]
+                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._ciclo][1]
+                        self.DINAMICA1_ANTERIOR = VETOR_COND[self._ciclo][0]
                         time.sleep(1)
 
                     if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][1], self.DINAMICA_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._ciclo][1], self.DINAMICA2_ANTERIOR)
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
-                        self.DINAMICA_ANTERIOR = VETOR_COND[self._ciclo][1]
-                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._ciclo][0]
+                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._ciclo][1]
+                        self.DINAMICA1_ANTERIOR = VETOR_COND[self._ciclo][0]
                         self.AVANCA = False
                         time.sleep(1)
                 else:
@@ -295,7 +294,7 @@ class TopPanel(wx.Panel):
                 if self._ciclo > 0:
                     if VETOR_COND[self._ciclo][0] != VETOR_COND[self._ciclo - 1][0]:
                         #threadConection = MotorThread.MotorThread(VETOR_COND[self._ciclo][0])
-                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._ciclo][0], self.DINAMICA2_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._ciclo][0], self.DINAMICA1_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
                 else:
@@ -326,14 +325,14 @@ class TopPanel(wx.Panel):
                         threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][1], VETOR_MR[self._ciclo-1][1])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
-                        self.DINAMICA_ANTERIOR = VETOR_MR[self._ciclo][1]
+                        self.DINAMICA2_ANTERIOR = VETOR_MR[self._ciclo][1]
                         time.sleep(1)
 
                     if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][1], self.DINAMICA_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._ciclo][1], self.DINAMICA2_ANTERIOR)
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
-                        self.DINAMICA_ANTERIOR = VETOR_MR[self._ciclo][1]
+                        self.DINAMICA2_ANTERIOR = VETOR_MR[self._ciclo][1]
                         self.AVANCA = False
                         time.sleep(1)
                 else:
@@ -345,7 +344,7 @@ class TopPanel(wx.Panel):
                 if self._ciclo > 0:
                     if VETOR_MR[self._ciclo][0] != VETOR_MR[self._ciclo - 1][0]:
                         #threadConection = MotorThread.MotorThread(VETOR_MR[self._ciclo][0])
-                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._ciclo][0], self.DINAMICA2_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._ciclo][0], self.DINAMICA1_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
                 else:
@@ -1037,6 +1036,8 @@ class BottomPanel(wx.Panel):
                     cnt = 0
                     cont = 0
                     cont1 = 0
+                    amplitudeMax = 0
+                    amplitudeMaxAnterior = 0
                     GolpeAnterior = -1
                     self.leituraZerob1 = 0
                     self.leituraZerob2 = 0

@@ -294,7 +294,7 @@ def modeDINZERO(p2, p2Sen):
             print (conexao.readline())
             time.sleep(1)
             conexao.write(str(3))
-            return "p2ok"
+            return "p_ok"
             break
 
 #-------------------------------------------------------------------
@@ -315,7 +315,7 @@ def modeDIN(p2, p2Ant):
         i += 1
         if i == 6:
             conexao.write(str(3))
-            return "p2ok"
+            return "p_ok"
             break
 
 #-------------------------------------------------------------------

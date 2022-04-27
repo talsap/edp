@@ -28,7 +28,7 @@ class DinamicaThreadOne(Thread):
         wx.CallAfter(pub.sendMessage, "update", msg="       Regulando...")
         time.sleep(.5)
         valor1 = con.modeDIN(10000*self.p1, 10000*self.p1Ant)
-        if valor1 == 'p1ok':
+        if valor1 == 'p_ok':
             print 'PRESSAO CAMARA OK'
             wx.CallAfter(pub.sendMessage, "update", msg="            σ3 - ok")
             time.sleep(1)
@@ -60,7 +60,7 @@ class DinamicaThreadTwo(Thread):
         wx.CallAfter(pub.sendMessage, "update", msg="       Regulando...")
         time.sleep(.5)
         valor2 = con.modeDIN((10000*self.A2/self.A1)*self.p2, (10000*self.A2/self.A1)*self.p2Ant)
-        if valor2 == 'p2ok':
+        if valor2 == 'p_ok':
             print 'PRESSAO GOLPE OK'
             wx.CallAfter(pub.sendMessage, "update", msg="            σd - ok")
             time.sleep(1)
@@ -90,7 +90,7 @@ class DinamicaThreadOneZero(Thread):
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         time.sleep(.5)
         valor1 = con.modeDINZERO(10000*self.p1, 10000*self.p1Sen)
-        if valor1 == 'p1ok':
+        if valor1 == 'p_ok':
             print 'PRESSAO CAMARA ZERADO'
             wx.CallAfter(pub.sendMessage, "update", msg="       σ3 - Zerado!")
             time.sleep(1)
@@ -121,7 +121,7 @@ class DinamicaThreadTwoZero(Thread):
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         time.sleep(.5)
         valor2 = con.modeDINZERO(10000*self.p2, 10000*self.p2Sen)
-        if valor2 == 'p2ok':
+        if valor2 == 'p_ok':
             print 'PRESSAO GOLPE ZERADO'
             wx.CallAfter(pub.sendMessage, "update", msg="       σd - Zerado!")
             time.sleep(1)

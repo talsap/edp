@@ -182,12 +182,12 @@ void loop(void) {
               goto conexao;
             }
             if(leitura == 'E'){
-              Serial.println("DINAMICA2");
+              Serial.println("VDINAMICA2");
               serialFlush();
               goto dinamica2DNIT134;
             }
             if(leitura == 'F'){
-              Serial.println("DINAMICA1");
+              Serial.println("VDINAMICA1");
               serialFlush();
               goto dinamica1DNIT134;
             }
@@ -206,7 +206,7 @@ void loop(void) {
               serialFlush();
             }
             if(leitura == 'K'){
-              Serial.println("DISCREPANCIA");
+              Serial.println("VDISCREPANCIA");
               serialFlush();
               goto discrepancia;
             }
@@ -238,7 +238,7 @@ void loop(void) {
         //********************************* DISCREPANCIA ***********************************//
         discrepancia:
         while(true){
-          if (Serial.available()>1){
+          if (Serial.available()>0){
             setpoint = Serial.parseInt();    //valor em %
             if(setpoint > 5){
               discrep = 1 + setpoint/100;
@@ -257,7 +257,7 @@ void loop(void) {
         //*************************** LIMITE DOS GOLPES NO MR ******************************//
         limite:
         while(true){
-          if (Serial.available()>1){
+          if (Serial.available()>0){
             setpoint = Serial.parseInt();    //numero limite dos glp no MR
             if(setpoint > 5){
               lmt = setpoint;
@@ -276,7 +276,7 @@ void loop(void) {
         //************************* VÁLVULA DINÂMICA 1 (camara) ****************************//
         dinamica1DNIT134:
         while(true){
-          if (Serial.available()>1){
+          if (Serial.available()>0){
             setpoint1 = Serial.parseInt();    //valor em mbar
             if(setpoint1 > 10){
               setpointF = int(setpoint1*AF2+BF2);   //valor em contagem
@@ -300,7 +300,7 @@ void loop(void) {
         //************************** VÁLVULA DINÂMICA 2 (pistão) ***************************//
         dinamica2DNIT134:
         while(true){
-          if (Serial.available()>1){
+          if (Serial.available()>0){
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
               setpointE = int(setpoint2*AE2+BE2);   //valor em contagem
