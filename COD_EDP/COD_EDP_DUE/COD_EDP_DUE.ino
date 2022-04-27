@@ -124,7 +124,7 @@ void setup(void) {
   pinMode(pinA, OUTPUT);  //configura o pinA
   pinMode(pinB, OUTPUT);  //configura o pinB
   digitalWrite(pinA, LOW); //inicia desativado o pinA
-  digitalWrite(pinB, LOW); //inicia ativado o pinB
+  digitalWrite(pinB, LOW); //inicia desativado o pinB
   mp.setSpeed(40); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de conversão bit~voltagem
@@ -171,7 +171,7 @@ void loop(void) {
       if(condConect == 1){
         sensorLVDTDNIT134:
         Serial.println("DNIT134");
-        conditionEnsaio = 1;
+        conditionEnsaio = 0;
         serialFlush();
         while(true){
           if(Serial.available()>0){
@@ -182,12 +182,12 @@ void loop(void) {
               goto conexao;
             }
             if(leitura == 'E'){
-              Serial.println("VDINAMICA2");
+              Serial.println("DINAMICA2");
               serialFlush();
               goto dinamica2DNIT134;
             }
             if(leitura == 'F'){
-              Serial.println("VDINAMICA1");
+              Serial.println("DINAMICA1");
               serialFlush();
               goto dinamica1DNIT134;
             }
@@ -206,7 +206,7 @@ void loop(void) {
               serialFlush();
             }
             if(leitura == 'K'){
-              Serial.println("VDISCREPANCIA");
+              Serial.println("DISCREPANCIA");
               serialFlush();
               goto discrepancia;
             }
@@ -238,7 +238,7 @@ void loop(void) {
         //********************************* DISCREPANCIA ***********************************//
         discrepancia:
         while(true){
-          if (Serial.available()>0){
+          if (Serial.available()>1){
             setpoint = Serial.parseInt();    //valor em %
             if(setpoint > 5){
               discrep = 1 + setpoint/100;
@@ -257,7 +257,7 @@ void loop(void) {
         //*************************** LIMITE DOS GOLPES NO MR ******************************//
         limite:
         while(true){
-          if (Serial.available()>0){
+          if (Serial.available()>1){
             setpoint = Serial.parseInt();    //numero limite dos glp no MR
             if(setpoint > 5){
               lmt = setpoint;
@@ -276,7 +276,7 @@ void loop(void) {
         //************************* VÁLVULA DINÂMICA 1 (camara) ****************************//
         dinamica1DNIT134:
         while(true){
-          if (Serial.available()>0){
+          if (Serial.available()>1){
             setpoint1 = Serial.parseInt();    //valor em mbar
             if(setpoint1 > 10){
               setpointF = int(setpoint1*AF2+BF2);   //valor em contagem
@@ -300,7 +300,7 @@ void loop(void) {
         //************************** VÁLVULA DINÂMICA 2 (pistão) ***************************//
         dinamica2DNIT134:
         while(true){
-          if (Serial.available()>0){
+          if (Serial.available()>1){
             setpoint2 = Serial.parseInt();    //valor em mbar
             if(setpoint2 > 10){
               setpointE = int(setpoint2*AE2+BE2);   //valor em contagem
@@ -400,7 +400,7 @@ void loop(void) {
             ntotalGolpes = Serial.parseInt();
             if(ntotalGolpes > 0){
               if(ntotalGolpes<=10){
-                conditionMR = 1;   //entende-se que tá se executando o MR (conditionMR = 0)
+                conditionMR = 0;   //entende-se que tá se executando o MR (conditionMR = 0)
               }else{
                 conditionMR = 1;
               }

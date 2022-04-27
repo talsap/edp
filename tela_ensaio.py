@@ -48,6 +48,7 @@ global mult  #Multiplo de 5 que ajuda a arrumar o gráfico em 5 em 5
 global glpCOND #quantidade de golpes do CONDICIONAMENTO
 global ntglp #quantidade total de golpes disponíveis
 global modeADM #modo Administrador de salvar dados (apenas para dbug)
+global DISCREP #valor da discrepância
 
 H0 = 0.01
 H = 200
@@ -68,6 +69,7 @@ yyy = []
 Fase = ''
 glpCOND = 500
 modeADM = False
+DISCREP = 1.05 #corresponde a discrepância default de 5%
 
 VETOR_COND = [[0.070,0.140],
               [0.070,0.280],
@@ -397,7 +399,7 @@ class TopPanel(wx.Panel):
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == glpCOND:
+                            if valorGolpe == int(glpCOND):
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
@@ -421,7 +423,7 @@ class TopPanel(wx.Panel):
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            if valorGolpe == ntglp:
+                            if valorGolpe == int(ntglp-1):
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
@@ -481,9 +483,10 @@ class TopPanel(wx.Panel):
 
             if Fase == 'MR':
                 con.modeI()
-                self._self.bottom.pressao_zero(VETOR_MR[self._ciclo][0], VETOR_COND[self._ciclo][1])
+                self._self.bottom.pressao_zero(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1])
                 dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
+                con.modeI()
 
     #--------------------------------------------------
         '''Ajusta min e max EIXO X'''
@@ -1132,11 +1135,12 @@ class BottomPanel(wx.Panel):
                                             if ymedio > amplitudeMax:
                                                 amplitudeMax = ymedio
 
-                                        if valoreS > 0.2 and valoreS < 0.99:
+                                        if valoreS > 0.2 and valoreS < 0.90:
                                             mediaMovel = (mediaMovel+ymedio)/2
                                             defResiliente = amplitudeMax - mediaMovel
 
-                                        if valoreS == 0.99:
+                                        if valoreS > 0.90:
+                                            print defResiliente, defResilienteAnterior
                                             if defResiliente > defResilienteAnterior:
                                                 if defResiliente/defResilienteAnterior < DISCREP:
                                                     yyy.append(defResiliente)
@@ -1206,6 +1210,7 @@ class BottomPanel(wx.Panel):
             global REFERENCIA2
             global REFERENCIA_MEDIA
             global modeADM
+            global DISCREP
             Fase = 'CONDICIONAMENTO'
             self.erro = False
 
@@ -1319,11 +1324,11 @@ class BottomPanel(wx.Panel):
                     pc1 = []
                     pg1 = []
                 else:
-                    dr = sum(yyy)/len(yyy)
-                    pc = sum(pc1)/len(pc1)
-                    pg = sum(pg1)/len(pg1)
-                    print pc, pg, dr, REFERENCIA_MEDIA
-                    bancodedados.saveDNIT134(self.idt, pc, pg, dr, REFERENCIA_MEDIA)
+                    #dr = sum(yyy)/len(yyy)
+                    #pc = sum(pc1)/len(pc1)
+                    #pg = sum(pg1)/len(pg1)
+                    print yyy
+                    #bancodedados.saveDNIT134(self.idt, pc, pg, dr, REFERENCIA_MEDIA)
 
             if self._ciclo < ciclo:
                 self.LZero.Disable()
