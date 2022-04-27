@@ -1069,7 +1069,7 @@ class BottomPanel(wx.Panel):
                                     cont1 = 0
                             cont1 = cont1 + 1
 
-                            ntglp = int(valores[8]) #numero total de golpes
+                            ntglp = valores[8] #numero total de golpes
                             y1 = valores[1]-self.leituraZerob1
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
                             ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
@@ -1085,18 +1085,30 @@ class BottomPanel(wx.Panel):
 
                                 # Dados do CONDICIONAMENTO #
                                 if Fase == 'CONDICIONAMENTO' and Pausa == False:
-                                    if valores[0] == (ntglp - 0.01):
+                                    if valores[0] == (ntglp - 0.99):
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
                                         REFERENCIAMEDIA = ymedio
+                                    if valores[0] > (ntglp - 0.80) and valores[0] < ntglp:
+                                        REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
+                                        REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
+                                        REFERENCIAMEDIA = (REFERENCIAMEDIA + ymedio)/2
 
                                 # Dados do MR #
                                 if Fase == 'MR' and Pausa == False:
-                                    ntglp = int(valores[8])
+                                    #condicao de erro para o ensaio
+                                    if int(valores[7]) == 1:
+                                        print "ERRO NO ENSAIO"
+
+                                    #PEGA OS VALORES DE REFERENCIA
                                     if valores[0] == 0.01:
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
                                         REFERENCIAMEDIA = ymedio
+                                    if valores[0] > 0.2 and valores[0] < 1:
+                                        REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
+                                        REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
+                                        REFERENCIAMEDIA = (REFERENCIAMEDIA + ymedio)/2
 
                                     # DefResiliente incial de compararação (para condicao de discrepância)
                                     if valores[0] > 4 and valores[0] < 4.2:
