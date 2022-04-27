@@ -1206,9 +1206,10 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo > 0 and subleito == True:
                 if modeADM == True:
-                    bancodedados.saveReferencia(idt+"COND-"+str(self._ciclo), REFERENCIA1, REFERENCIA2)
+                    bancodedados.saveReferenciaADM(idt+"COND-"+str(self._ciclo), REFERENCIA1, REFERENCIA2)
                 else:
                     print REFERENCIA_MEDIA
+                    bancodedados.saveReferencia(idt+"COND-"+str(self._ciclo), REFERENCIA_MEDIA)
 
             if self._ciclo < ciclo:
                 self.LZero.Disable()
@@ -1294,7 +1295,7 @@ class BottomPanel(wx.Panel):
 
             if self._ciclo > 0:
                 if modeADM == True:
-                    threadConection = SaveThread.SaveThread(idt+"MR-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
+                    threadConection = SaveThread.SaveThreadADM(idt+"MR-"+str(self._ciclo), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
                     dlgC2 = My.MyProgressDialog(len(xz1)-2)
                     dlgC2.ShowModal()
                     xz1 = []
@@ -1305,10 +1306,11 @@ class BottomPanel(wx.Panel):
                     pc1 = []
                     pg1 = []
                 else:
-                    ym  = sum(yyy)/len(yyy)
+                    dr = sum(yyy)/len(yyy)
                     pc = sum(pc1)/len(pc1)
                     pg = sum(pg1)/len(pg1)
-                    print REFERENCIA_MEDIA, ym, pc, pg
+                    print pc, pg, dr, REFERENCIA_MEDIA
+                    bancodedados.saveDNIT134(self.idt, pc, pg, dr, REFERENCIA_MEDIA)
 
             if self._ciclo < ciclo:
                 self.LZero.Disable()

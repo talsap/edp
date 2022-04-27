@@ -15,15 +15,24 @@ def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, identificador text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, interesse text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text)")
     c.execute("CREATE TABLE IF NOT EXISTS calibrador134 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS calibrador135 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
-    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134 (idt text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
-    c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, r1 real, r2 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
+    c.execute("CREATE TABLE IF NOT EXISTS referenciaADM (idt text, r1 real, r2 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, r real)")
 
-def saveReferencia(idt, r1, r2):
-    c.execute("INSERT INTO referencia (idt, r1, r2) VALUES (?, ?, ?)", (idt, r1, r2))
+def saveReferencia(idt, r):
+    c.execute("INSERT INTO referencia (idt, r) VALUES (?, ?)", (idt, r))
     connection.commit()
 
-def saveDNIT134(idt, x, y1, yt1, y2, yt2, pc, pg):
-    c.execute("INSERT INTO dadosDNIT134 (idt, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (idt, x, y1, yt1, y2, yt2, pc, pg))
+def saveReferenciaADM(idt, r1, r2):
+    c.execute("INSERT INTO referenciaADM (idt, r1, r2) VALUES (?, ?, ?)", (idt, r1, r2))
+    connection.commit()
+
+def saveDNIT134(idt, pc, pg, dr, r):
+    c.execute("INSERT INTO dadosDNIT134 (idt, pc, pg, dr, r) VALUES (?, ?, ?, ?, ?)", (idt, pc, pg, dr, r))
+    connection.commit()
+
+def saveDNIT134ADM(idt, x, y1, yt1, y2, yt2, pc, pg):
+    c.execute("INSERT INTO dadosDNIT134ADM (idt, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (idt, x, y1, yt1, y2, yt2, pc, pg))
     connection.commit()
 
 def data_entry():

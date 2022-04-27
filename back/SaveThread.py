@@ -7,8 +7,8 @@ from pubsub import pub
 from threading import Thread
 
 ########################################################################
-'''SaveThread'''
-class SaveThread(Thread):
+'''SaveThreadADM'''
+class SaveThreadADM(Thread):
     #-------------------------------------------------------------------
     def __init__(self, idt, x, y1, yt1, y2, yt2, pc, pg, r1, r2):
         Thread.__init__(self)
@@ -29,10 +29,10 @@ class SaveThread(Thread):
     def run(self):
         x =  self.x
         i = 0
-        bancodedados.saveReferencia(self.idt, self.r1, self.r2)
+        bancodedados.saveReferenciaADM(self.idt, self.r1, self.r2)
         while i < len(x)-2:
             wx.CallAfter(pub.sendMessage, "update", msg="  Salvando dados...")
-            bancodedados.saveDNIT134(self.idt, x[i], self.y1[i], self.yt1[i], self.y2[i], self.yt2[i], self.pc[i], self.pg[i])
+            bancodedados.saveDNIT134ADM(self.idt, x[i], self.y1[i], self.yt1[i], self.y2[i], self.yt2[i], self.pc[i], self.pg[i])
             i += 1
 
     #-------------------------------------------------------------------
