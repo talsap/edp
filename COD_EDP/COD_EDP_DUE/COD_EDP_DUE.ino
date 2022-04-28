@@ -766,6 +766,7 @@ void imprimir(){
         if(defResiliente > defResilienteAnterior){
           if(defResiliente/defResilienteAnterior > discrep){
             ntotalGolpes++;
+            defResilienteAnterior = defResiliente;
           }
           if(ntotalGolpes >= lmt){
             statuS = 1;
@@ -774,12 +775,12 @@ void imprimir(){
         if(defResiliente < defResilienteAnterior){
           if(defResilienteAnterior/defResiliente > discrep){
             ntotalGolpes++;
+            defResilienteAnterior = defResiliente;
           }
           if(ntotalGolpes >= lmt){
             statuS = 1;
           }
         }
-        defResilienteAnterior = defResiliente;
       }
     }
   }

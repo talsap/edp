@@ -16,6 +16,7 @@ def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS calibrador134 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS calibrador135 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134 (idt text, pc real, pg real, dr real, r real)")
     c.execute("CREATE TABLE IF NOT EXISTS referenciaADM (idt text, r1 real, r2 real)")
     c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, r real)")
 

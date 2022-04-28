@@ -54,7 +54,7 @@ H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
-idt = 'DNIT134-01_2704-' #identificador do ensaio no banco de dados
+idt = 'DNIT134-01_2804-' #identificador do ensaio no banco de dados
 subleito = False    #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
@@ -1089,14 +1089,14 @@ class BottomPanel(wx.Panel):
 
                                 # Dados do CONDICIONAMENTO #
                                 if Fase == 'CONDICIONAMENTO' and Pausa == False:
-                                    if valores[0] == (ntglp - 0.99):
+                                    if valores[0] == (ntglp - 1):
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
-                                        REFERENCIAMEDIA = ymedio
-                                    if valores[0] > (ntglp - 0.80) and valores[0] < ntglp:
+                                        REFERENCIA_MEDIA = ymedio
+                                    if valores[0] > (ntglp - 0.80) and valores[0] < (ntglp - 0.1):
                                         REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
                                         REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                        REFERENCIAMEDIA = (REFERENCIAMEDIA + ymedio)/2
+                                        REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
 
                                 # Dados do MR #
                                 if Fase == 'MR' and Pausa == False:
@@ -1108,11 +1108,11 @@ class BottomPanel(wx.Panel):
                                     if valores[0] == 0.01:
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
-                                        REFERENCIAMEDIA = ymedio
-                                    if valores[0] > 0.2 and valores[0] < 1:
+                                        REFERENCIA_MEDIA = ymedio
+                                    if valores[0] > 0.2 and valores[0] < 0.9:
                                         REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
                                         REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                        REFERENCIAMEDIA = (REFERENCIAMEDIA + ymedio)/2
+                                        REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
 
                                     # DefResiliente incial de compararação (para condicao de discrepância)
                                     if valores[0] > 4 and valores[0] < 4.2:
@@ -1139,14 +1139,17 @@ class BottomPanel(wx.Panel):
                                             mediaMovel = (mediaMovel+ymedio)/2
                                             defResiliente = amplitudeMax - mediaMovel
 
-                                        if valoreS > 0.90:
-                                            print defResiliente, defResilienteAnterior
+                                        if valoreS > 0.98:
                                             if defResiliente > defResilienteAnterior:
                                                 if defResiliente/defResilienteAnterior < DISCREP:
-                                                    yyy.append(defResiliente)
+                                                    print defResiliente, defResilienteAnterior
+                                                    if len(yyy) < 5:
+                                                        yyy.append(defResiliente)
                                             if defResiliente < defResilienteAnterior:
                                                 if defResilienteAnterior/defResiliente < DISCREP:
-                                                    yyy.append(defResiliente)
+                                                    print defResiliente, defResilienteAnterior
+                                                    if len(yyy) < 5:
+                                                        yyy.append(defResiliente)
                                             defResilienteAnterior = defResiliente
 
                                     if int(valores[0]) > 4 and int(valores[0]) <= int(valores[8]):
@@ -1324,11 +1327,17 @@ class BottomPanel(wx.Panel):
                     pc1 = []
                     pg1 = []
                 else:
-                    #dr = sum(yyy)/len(yyy)
-                    #pc = sum(pc1)/len(pc1)
-                    #pg = sum(pg1)/len(pg1)
-                    print yyy
-                    #bancodedados.saveDNIT134(self.idt, pc, pg, dr, REFERENCIA_MEDIA)
+                    try:
+                        dr = sum(yyy)/len(yyy)
+                        pc = sum(pc1)/len(pc1)
+                        pg = sum(pg1)/len(pg1)
+                    except:
+                        dlg = dialogoDinamico(3, "EDP 134/2018ME", "SALVAMENTO", "Ocorreu algum problema com o salvamento dos dados!", "O Ensaio precisarar ser finalizado!", "", None)
+                        dlg.ShowModal()
+                    bancodedados.saveDNIT134(idt+"MR-"+str(self._ciclo), pc, pg, dr, REFERENCIA_MEDIA)
+                    yyy = []
+                    pc1 = []
+                    pg1 = []
 
             if self._ciclo < ciclo:
                 self.LZero.Disable()
