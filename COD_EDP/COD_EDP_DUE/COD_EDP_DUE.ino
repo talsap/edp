@@ -794,9 +794,9 @@ void imprimir(){
   Serial.print(",");
   Serial.print(vd1,4);       //y2v
   Serial.print(",");
-  Serial.print(vd4,4);       //motor
+  Serial.print(vd4,4);       //camara
   Serial.print(",");
-  Serial.print(vd5,4);       //dinamica
+  Serial.print(vd5,4);       //pistao
   Serial.print(",");
   Serial.print(statuS);      //sts
   Serial.print(",");

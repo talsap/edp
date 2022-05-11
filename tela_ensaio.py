@@ -1063,8 +1063,8 @@ class BottomPanel(wx.Panel):
                                 self.y2mm.AppendText(str(round((valores[2]-self.leituraZerob2), 4)))
                                 self.y1V.AppendText(str(round((valores[3]), 2)))
                                 self.y2V.AppendText(str(round((valores[4]), 2)))
-                                self.PCreal.AppendText(str(round((valores[5]), 3)))
-                                self.SigmaReal.AppendText(str(round(valores[6]-valores[5], 3)))
+                                self.PCreal.AppendText(str(round(abs((valores[5])), 3)))
+                                self.SigmaReal.AppendText(str(round(abs(valores[6]-valores[5]), 3)))
                                 if self.leituraZerob1 == 0:
                                     self.AlturaFinal.AppendText(str(round(H, 3)))
                                 else:
