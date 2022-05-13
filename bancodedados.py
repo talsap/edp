@@ -12,7 +12,7 @@ connection = sqlite3.connect('banco.db', check_same_thread = False)
 c = connection.cursor()
 
 def create_table():
-    c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, identificador text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, interesse text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, identificador text, tipo text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text)")
     c.execute("CREATE TABLE IF NOT EXISTS calibrador134 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS calibrador135 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
@@ -99,11 +99,11 @@ def LVDT_135():
     return list
 
 '''Salva os dados iniciais de um ensaio'''
-def data_save_dados_134(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, dataColeta, amostra, diametro, altura, obs):
+def data_save_dados_134(identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, amostra, diametro, altura, obs):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
-    c.execute("INSERT INTO dadosIniciais (id, identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs))
+    c.execute("INSERT INTO dadosIniciais (id, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs))
     connection.commit()
 
 '''Retorna uma lista com o identificadores de ensaios já Cadastrados'''

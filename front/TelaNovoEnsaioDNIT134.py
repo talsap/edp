@@ -6,6 +6,8 @@ import wx.adv
 import bancodedados
 from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 
+tipos = ['SIMPLES', 'COMPLETO']
+
 '''Tela Selecão de Ensaio'''
 class TelaNovoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
@@ -45,45 +47,46 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
 
             texto1 = wx.StaticText(panel, label = "Identificador", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto1, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.Identificador = wx.TextCtrl(panel, -1, 'DNIT134/2018', style = wx.TE_RIGHT)
+            self.Identificador = wx.TextCtrl(panel, -1, 'DNIT_134/2018ME', style = wx.TE_RIGHT)
             h_sizer.Add(self.Identificador, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
-            texto2 = wx.StaticText(panel, label = "C.P. Nº", style = wx.ALIGN_RIGHT)
+            texto2 = wx.StaticText(panel, label = "Tipo", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto2, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.cp = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
-            h_sizer.Add(self.cp, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
+            self.Tipo = wx.ComboBox(panel, choices = tipos, style = wx.EXPAND | wx.CB_READONLY)
+            self.Tipo.SetSelection(0)
+            h_sizer.Add(self.Tipo, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h_sizer, 1, wx.EXPAND | wx.ALL)
 
-            texto3 = wx.StaticText(panel, label = "Rodovia", style = wx.ALIGN_RIGHT)
+            texto3 = wx.StaticText(panel, label = "C.P. Nº", style = wx.ALIGN_RIGHT)
             h1_sizer.Add(texto3, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            self.cp = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            h1_sizer.Add(self.cp, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
+            texto4 = wx.StaticText(panel, label = "Rodovia", style = wx.ALIGN_RIGHT)
+            h1_sizer.Add(texto4, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.rodovia = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
             h1_sizer.Add(self.rodovia, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
-            texto4 = wx.StaticText(panel, label = "Origem", style = wx.ALIGN_RIGHT)
-            h1_sizer.Add(texto4, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.origem = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
-            h1_sizer.Add(self.origem, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h1_sizer, 1, wx.EXPAND | wx.ALL)
 
-            texto5 = wx.StaticText(panel, label = "Trecho", style = wx.ALIGN_RIGHT)
+            texto5 = wx.StaticText(panel, label = "Origem", style = wx.ALIGN_RIGHT)
             h2_sizer.Add(texto5, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            self.origem = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            h2_sizer.Add(self.origem, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
+            texto6 = wx.StaticText(panel, label = "Trecho", style = wx.ALIGN_RIGHT)
+            h2_sizer.Add(texto6, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.trecho = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
             h2_sizer.Add(self.trecho, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
-            texto6 = wx.StaticText(panel, label = "Est/km", style = wx.ALIGN_RIGHT)
-            h2_sizer.Add(texto6, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.est = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
-            h2_sizer.Add(self.est, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h2_sizer, 1, wx.EXPAND | wx.ALL)
 
-            texto7 = wx.StaticText(panel, label = "Operador", style = wx.ALIGN_RIGHT)
+            texto7 = wx.StaticText(panel, label = "Est/km", style = wx.ALIGN_RIGHT)
             h3_sizer.Add(texto7, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            self.est = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            h3_sizer.Add(self.est, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
+            texto8 = wx.StaticText(panel, label = "Operador", style = wx.ALIGN_RIGHT)
+            h3_sizer.Add(texto8, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.operador = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
             h3_sizer.Add(self.operador, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
-            texto8 = wx.StaticText(panel, label = "Interesse", style = wx.ALIGN_RIGHT)
-            h3_sizer.Add(texto8, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.interesse = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
-            h3_sizer.Add(self.interesse, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h3_sizer, 1, wx.EXPAND | wx.ALL)
 
@@ -94,12 +97,12 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
             v1_sizer.Add(h4_sizer, 1, wx.EXPAND | wx.ALL)
             texto10 = wx.StaticText(panel, label = "Diâmetro C.P. (mm)", style = wx.ALIGN_RIGHT)
             h5_sizer.Add(texto10, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.diametro = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.diametro = wx.TextCtrl(panel, -1, '100', style = wx.TE_RIGHT | wx.TE_READONLY)
             h5_sizer.Add(self.diametro, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             v1_sizer.Add(h5_sizer, 1, wx.EXPAND | wx.ALL)
             texto11 = wx.StaticText(panel, label = "Altura C.P. (mm)", style = wx.ALIGN_RIGHT)
             h6_sizer.Add(texto11, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.altura = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.altura = wx.TextCtrl(panel, -1, '200', style = wx.TE_RIGHT | wx.TE_READONLY)
             h6_sizer.Add(self.altura, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             v1_sizer.Add(h6_sizer, 1, wx.EXPAND | wx.ALL)
 
@@ -108,6 +111,7 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
             texto12 = wx.StaticText(panel, label = "Amostra", style = wx.ALIGN_RIGHT)
             tipoAmostras = ['Deformada', 'Indeformada']
             self.amostra = wx.RadioBox(panel, label = '', choices = tipoAmostras, majorDimension = 1, style = wx.RA_SPECIFY_COLS)
+            self.amostra.Bind(wx.EVT_RADIOBOX, self.RadioBoxEvent)
             v2_sizer.Add(texto12, 0, wx.ALL|wx.CENTER)
             v2_sizer.Add(self.amostra, 0, wx.ALL|wx.CENTER)
             staticboxSizer.Add(v2_sizer, 0, wx.ALL|wx.CENTER)
@@ -136,15 +140,31 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
             self.Show()
 
     #--------------------------------------------------
+        def RadioBoxEvent(self, event):
+            amostra = self.amostra.GetSelection()
+            if amostra == 1:
+                self.diametro.Clear()
+                self.altura.Clear()
+                self.diametro.SetEditable(True)
+                self.altura.SetEditable(True)
+            if amostra == 0:
+                self.diametro.Clear()
+                self.altura.Clear()
+                self.diametro.AppendText("100")
+                self.altura.AppendText("200")
+                self.diametro.SetEditable(False)
+                self.altura.SetEditable(False)
+
+    #--------------------------------------------------
         def Prosseguir(self, event):
             identificador = self.Identificador.GetValue()
+            tipo = self.Tipo.GetSelection()
             cp = self.cp.GetValue()
             rodovia = self.rodovia.GetValue()
             origem = self.origem.GetValue()
             trecho = self.trecho.GetValue()
             estKm = self.est.GetValue()
             operador = self.operador.GetValue()
-            interesse = self.interesse.GetValue()
             data = self.date.GetValue()
             amostra = self.amostra.GetSelection()
             diametro = self.diametro.GetValue()
@@ -173,7 +193,6 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
                 '''Diálogo para Forçar preenchimento do Identificador'''
                 dlg = wx.MessageDialog(None, 'É necessário que no mínimo o Identificador seja preenchido.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                 result = dlg.ShowModal()
-
             else:
                 cond = bancodedados.data_identificadores()
                 if identificador in cond:
@@ -184,7 +203,7 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
                     if diametro!='' and altura!='':
                         if diametro>0 and altura>0:
                             '''Salva os dados iniciais de um ensaio'''
-                            bancodedados.data_save_dados_134(identificador, cp, rodovia, origem, trecho, estKm, operador, interesse, data, amostra, diametro, altura, obs)
+                            bancodedados.data_save_dados_134(identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, data, amostra, diametro, altura, obs)
                             self.Close(True)
                             frame = TelaRealizacaoEnsaioDNIT134().ShowModal()
                     else:
