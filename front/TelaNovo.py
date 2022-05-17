@@ -3,9 +3,10 @@
 '''Bibliotecas'''
 import wx
 from TelaNovoEnsaioDNIT134 import TelaNovoEnsaioDNIT134
+from TelaNovoEnsaioDNIT179 import TelaNovoEnsaioDNIT179
 
 #normas = ['DNIT 134/2018ME', 'DNIT 135/2018ME', 'DNIT 179/2018IE', 'DNIT 184/2018ME', 'DNIT 416/2019ME']
-normas = ['DNIT 134/2018ME']
+normas = ['DNIT 134/2018ME', 'DNIT 179/2018IE']
 
 '''Tela Selecão de Ensaio'''
 class TelaNovo(wx.Dialog):
@@ -52,7 +53,12 @@ class TelaNovo(wx.Dialog):
     #--------------------------------------------------
         def Prosseguir(self, event):
             a = self.combo.GetSelection()
-            '''Acessa a DNIT 134/2018ME'''
+
             if a == 0:
+                '''Acessa a DNIT 134/2018ME'''
                 self.Close(True)
                 frame = TelaNovoEnsaioDNIT134().ShowModal()
+            if a == 1:
+                '''Acessa a DNIT 179/2018IE'''
+                self.Close(True)
+                frame = TelaNovoEnsaioDNIT179().ShowModal()
