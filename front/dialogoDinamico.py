@@ -28,7 +28,7 @@ class dialogoDinamico(wx.Dialog):
                 TextoCorpo2.SetForegroundColour((231,160,48))
                 TextoCorpo3 = wx.StaticText(self, label = texto3, style = wx.ALIGN_CENTRE)
                 TextoCorpo3.SetFont(FontCorpo1)
-                Button = wx.Button(self, label = "OK", style = wx.BORDER_NONE)
+                Button = wx.Button(self, id = wx.ID_CANCEL, label = "OK", style = wx.BORDER_NONE)
                 self.v_sizer.Add(TextoTitle, 1, wx.CENTER)
                 self.v_sizer.Add(TextoCorpo1, 1, wx.CENTER)
                 self.v_sizer.Add(TextoCorpo2, 1, wx.CENTER)
@@ -80,4 +80,4 @@ class dialogoDinamico(wx.Dialog):
             self.Show()
     #--------------------------------------------------
         def Button(self, event):
-            self.Close()
+            self.EndModal(wx.ID_OK)
