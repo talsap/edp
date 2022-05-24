@@ -738,7 +738,7 @@ void imprimir(){
     nGolpe = ntotalGolpes; //critério de parada
     statuS = 2; //status passa a valer 2
   }
-  
+
   //CONDICAO DE DISCREPÂNCIA// (OBS: O GRÁFICO AQUI É INVERTIDO)
   if(conditionMR == 0){
     if(nTime == 4){
@@ -907,11 +907,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
-          }
-          else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
-          }
+            digitalWrite(pinB, LOW);  //ativa o pinB
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
@@ -921,7 +917,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo05){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinB, HIGH);  //desativa o pinB
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -935,12 +931,8 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo05 && (currentMillis - initialMillis) <= intervalo05 + intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinB, LOW);  //ativa o pinB
           }
-          else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
-          }
-        }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo05);
           setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
@@ -949,7 +941,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo05 + intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinB, HIGH);  //desativa o pinB
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;

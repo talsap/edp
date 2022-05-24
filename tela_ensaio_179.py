@@ -167,7 +167,7 @@ class TopPanel(wx.Panel):
             global freq
             self.fim_inicio.Disable()
 
-            '''if Fase == 'CONDICIONAMENTO':
+            if Fase == 'CONDICIONAMENTO':
                 condition = False
                 threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
                 dlgC1 = My.MyProgressDialog(3)
@@ -191,7 +191,7 @@ class TopPanel(wx.Panel):
                 dlgC2.ShowModal()
                 time.sleep(1)
                 self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]
-                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]'''
+                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]
 
             condition = False
             con.modeStoped()
