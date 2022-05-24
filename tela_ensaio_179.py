@@ -92,20 +92,11 @@ class TopPanel(wx.Panel):
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
             self.figure = plt.figure(constrained_layout=True)
-            #plt.subplot()
-            #plt.ion()
             self.axes = self.figure.add_subplot(111)
             self.canvas = FigureCanvas(self, -1, self.figure)
-            #self.axes.set_xlabel("TEMPO (seg)")
-            #self.axes.set_ylabel("DESLOCAMENTO (mm)")
-            #self.axes.set_ylim(float(0), float(5))
-            #self.axes.set_xlim(float(0), float(5))
 
             rect = self.figure.patch
             rect.set_facecolor('#D7D7D7')
-
-            #rect1 = self.axes.patch
-            #rect1.set_facecolor('#A0BA8C')
 
             self.pausa = wx.Button(self, -1, 'PAUSA')
             self.Bind(wx.EVT_BUTTON, self.PAUSA, self.pausa)
@@ -176,7 +167,7 @@ class TopPanel(wx.Panel):
             global freq
             self.fim_inicio.Disable()
 
-            if Fase == 'CONDICIONAMENTO':
+            '''if Fase == 'CONDICIONAMENTO':
                 condition = False
                 threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
                 dlgC1 = My.MyProgressDialog(3)
@@ -200,7 +191,7 @@ class TopPanel(wx.Panel):
                 dlgC2.ShowModal()
                 time.sleep(1)
                 self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]
-                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]
+                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]'''
 
             condition = False
             con.modeStoped()
@@ -211,7 +202,7 @@ class TopPanel(wx.Panel):
             con.modeGOLPES(int(gl), int(freq))
             condition = True
             conditionEnsaio = True
-            time.sleep(4)
+            time.sleep(2)
             self._self.bottom.timer.Start(int('5000'))
             self.pausa.Enable()
             self.fim_inicio.SetLabel('FIM')
@@ -270,7 +261,6 @@ class TopPanel(wx.Panel):
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             if valorGolpe != valorGolpeAnterior:
                                 valorGolpeAnterior = valorGolpe
-                                print golpe
                                 if valorGolpe in temposDNIT179_02:
                                     bancodedados.saveDNIT179(idt+"DP", valorGolpe, DefResiliente, DefPermanente, DefPermanenteAcumulada)
                                 if valorGolpe in temposDNIT179_01:
@@ -881,14 +871,24 @@ class BottomPanel(wx.Panel):
                                     Y = np.delete(Y, 0, 0)
 
                                 # Dados do dp #
-                                if Fase == 'dp' and Pausa == False:
+                                if Fase == 'DP' and Pausa == False:
+                                    #PEGA OS VALORES DE REFERENCIA
+                                    if valores[0] == 0.01:
+                                        REFERENCIA1 = y1+H0
+                                        REFERENCIA2 = y2+H0
+                                        REFERENCIA_MEDIA = ymedio
+                                    if valores[0] > 0.2 and valores[0] < 0.5:
+                                        REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
+                                        REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
+                                        REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
+
                                     #condicao de erro para o ensaio
                                     if int(valores[7]) == 1:
                                         print "ERRO NO ENSAIO"
 
                                     D = valores[0] - int(valores[0])
-                                    if freq == 1:
-                                        #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE
+                                    #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE FREQ 1
+                                    if freq == '1':
                                         if D == 0.01:
                                             patamar = ymedio
                                             amplitudeMax = ymedio
@@ -899,22 +899,13 @@ class BottomPanel(wx.Panel):
                                             patamar = (patamar + ymedio)/2
                                         if D > 0.9:
                                             DefResiliente  = amplitudeMax - patamar
-                                            DefPermanente = patamar - patamarAnterior
+                                            DefPermanente = patamar
                                             DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
                                             patamarAnterior = patamar
-                                            amplitudeMax = patamar
+                                        #print D, DefResiliente, DefPermanente, DefPermanenteAcumulada, REFERENCIA_MEDIA
 
-                                    if freq == 2:
-                                        #PEGA OS VALORES DE REFERENCIA
-                                        if valores[0] == 0.01:
-                                            REFERENCIA1 = y1+H0
-                                            REFERENCIA2 = y2+H0
-                                            REFERENCIA_MEDIA = ymedio
-                                        if valores[0] > 0.2 and valores[0] < 0.5:
-                                            REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
-                                            REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                            REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
-                                        #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE
+                                    #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE FREQ 2
+                                    if freq == '2':
                                         if D == 0.01:
                                             patamar = ymedio
                                             amplitudeMax = ymedio
@@ -928,19 +919,15 @@ class BottomPanel(wx.Panel):
                                             if ymedio > amplitudeMax2:
                                                 amplitudeMax2 = ymedio
                                             DefResiliente  = amplitudeMax - patamar
-                                            DefPermanente = patamar - patamarAnterior
+                                            DefPermanente = patamar
                                             DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
-                                            patamarAnterior = patamar
-                                            amplitudeMax = patamar
                                         if D > 0.6 and D < 0.9:
                                             patamar = (patamar + ymedio)/2
                                         if D > 0.9:
                                             DefResiliente  = amplitudeMax2 - patamar
-                                            DefPermanente = patamar - patamarAnterior
+                                            DefPermanente = patamar
                                             DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
-                                            patamarAnterior = patamar
-                                            amplitudeMax2 = patamar
-
+                                        #print D, DefResiliente, DefPermanente, DefPermanenteAcumulada, REFERENCIA_MEDIA
                                 if int(valores[8]) != GolpeAnterior:
                                     GolpeAnterior = int(valores[8])
                                     self.GolpeAtual.Clear()

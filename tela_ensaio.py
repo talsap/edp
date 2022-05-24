@@ -378,7 +378,7 @@ class TopPanel(wx.Panel):
             con.modeGOLPES(int(gl), int(freq))
             condition = True
             conditionEnsaio = True
-            time.sleep(4)
+            time.sleep(2)
             self._self.bottom.timer.Start(int('5000'))
             self.pausa.Enable()
             self.fim_inicio.SetLabel('FIM')

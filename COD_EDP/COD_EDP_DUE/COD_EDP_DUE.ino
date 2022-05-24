@@ -22,12 +22,14 @@ int condConect = 0; //Condicao para conexao com o software
 int condicao = 2; //Condicao para iniciar o motor de passos
 int conditionEnsaio = 0; //Condicao de Ensaio (0 - DNIT134 | 1 - DNIT135)
 int conditionMR = 1; //Condicao de Ensaio (0 - MR | 1 - COND)
-int frequencia; //Valor condicao para intervalo da frequencia
 int contadorG = 1; //Valor que conta os golpes dentro da função *Intervalo de tempo do aplicador*
 int nGolpe = 0; //numpero de golpes
 int nTime = 0; //parte inteira do tempo
-int ntotalGolpes; //Numero total de golpes por estagio
 int statuS = 0; //(0 ou 1)(ok ou n_ok) mado de avisar erro de pressao do aplicador
+int margemSup = 63000; //margem superior
+int margemInf = 25000; //margem inferior
+int ntotalGolpes; //Numero total de golpes por estagio
+int frequencia; //Valor condicao para intervalo da frequencia
 int botoes; //Acoes do botoes pausar, parar e continuar o ensaio
 int ad0; //valor analógico do LVDT1
 int ad1; //valor analógico do LVDT2
@@ -42,7 +44,7 @@ int setpoint; //valor de entrada para o setpoint em porcentagem
 int setpoint1; //Valor de entrada para o setpoint1 em milibar (0 - 10.000)mBar
 int setpoint2; //Valor de entrada para o setpoint2 em milibar (0 - 10.000)mBar
 
-//***************** VARIAVEIS PARA A CONDIÇÃO DE DISCREPÂNCIA  *********************//
+//********************* VARIAVEIS PARA A CONDIÇÃO DE DISCREPÂNCIA  ************************//
 int lmt;  //valor limite para os golpes com a condicao de discrepância
 float adMin;  //valor do adMin
 float admedio; //valor do admedio
@@ -51,7 +53,7 @@ float defResiliente; //valor da deformação Resiliente
 float defResilienteAnterior; //valor da deformação Resiliente anterior
 float discrep; //valor da discrepancia entre as leituras
 
-//************************************** (MOTOR) *******************************************//
+//************************************* (MOTOR) *******************************************//
 float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
 float BM = 10.01; //valor de B da calibração da válvula do motor de passos
 
@@ -438,7 +440,7 @@ void loop(void) {
           initialMillis = resultTempo.t;
           nTime = resultTempo.n;
 
-          if(nGolpe == ntotalGolpes){
+          if(nGolpe >= ntotalGolpes){
             while(currentMillis - initialMillis <= 990){
               currentMillis = millis(); //Tempo atual em ms
               while(true){
@@ -731,7 +733,12 @@ void imprimir(){
   vd4 = ad4*AF1+BF1; //mbar (camara)
   vd5 = ad5*AE1+BE1; //mbar (pistão)
   admedio = (ad0+ad1)/2; //admedio
-
+  //CONDICAO DE DE MARGEM DE SEGURANÇA PARA OS SENSORES//
+  if(ad0 > margemSup or ad1 > margemSup or ad0 < margemInf or ad1 < margemInf){
+    nGolpe = ntotalGolpes; //critério de parada
+    statuS = 2; //status passa a valer 2
+  }
+  
   //CONDICAO DE DISCREPÂNCIA// (OBS: O GRÁFICO AQUI É INVERTIDO)
   if(conditionMR == 0){
     if(nTime == 4){
