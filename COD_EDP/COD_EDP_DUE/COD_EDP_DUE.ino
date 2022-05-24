@@ -906,8 +906,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
     case 2:
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
+          digitalWrite(pinB, LOW);  //ativa o pinB
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinB, LOW);  //ativa o pinB
+            //digitalWrite(pinB, HIGH);  //desativa o pinB
+          }
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
@@ -930,9 +932,11 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo05 && (currentMillis - initialMillis) <= intervalo05 + intervalo01){
         if(conditionEnsaio == 0){
+          digitalWrite(pinB, LOW);  //ativa o pinB
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinB, LOW);  //ativa o pinB
+            //digitalWrite(pinB, LOW);  //ativa o pinB
           }
+        }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo05);
           setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
