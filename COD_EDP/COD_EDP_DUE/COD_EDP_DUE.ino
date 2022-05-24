@@ -800,6 +800,8 @@ void imprimir(){
   Serial.print(",");
   Serial.print(statuS);      //sts
   Serial.print(",");
+  Serial.print(nGolpe);      //glp
+  Serial.print(",");
   Serial.println(ntotalGolpes); //ntglp
 }/* Imprimir dados DA 134*/
 

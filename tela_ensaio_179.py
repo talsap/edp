@@ -29,14 +29,9 @@ global H  #Altura do corpo de prova em milímetros
 global H0 #Altura de referência do medididor de deslocamento
 global X  #valores X do gráfico
 global Y  #valores Y do gráfico
-global xz1
-global yz1
-global yt1
-global yz2
-global yt2
-global pc1
-global pg1
-global yyy
+global DefResiliente #Deformação resiliente ou recuperável
+global DefPermanente #Deformação Permanente
+global DefPermanenteAcumulada #Deformação permanenente acumulada
 global REFERENCIA1 #referencia de ponto de partida para o sensor 1
 global REFERENCIA2 #referencia de ponto de partida para o sensor 2
 global REFERENCIA_MEDIA #referencia de ponto de partidada MÉDIA
@@ -48,33 +43,39 @@ global mult  #Multiplo de 5 que ajuda a arrumar o gráfico em 5 em 5
 global glpCOND #quantidade de golpes do CONDICIONAMENTO
 global ntglp #quantidade total de golpes disponíveis
 global modeADM #modo Administrador de salvar dados (apenas para dbug)
-global DISCREP #valor da discrepância
+global freq #frequencia do ensaio
+global idt
+global temposDNIT179_01
+global temposDNIT179_02
 
 H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
 idt = 'DNIT179-' #identificador do ensaio no banco de dados
-subleito = False    #recebe valor de True ou False
+subleito = False  #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
-xz1 = []
-yz1 = []
-yt1 = []
-yz2 = []
-yt2 = []
-pc1 = []
-pg1 = []
-yyy = []
 Fase = ''
 glpCOND = 50 #número total de golpes do condicionamento
 glpDP = 150000 #número total de golpes da deformação permanente
 modeADM = False
-DISCREP = 1.05 #corresponde a discrepância default de 5%
+freq = 1  #a frequencia inicia sendo 1 (default)
 
 VETOR_COND = [[0.030,0.060]]
 
 VETOR_DP =  [[0.040,0.080]]
+
+temposDNIT179_01 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,
+                    100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950]
+temposDNIT179_02 = [1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000,
+                    10500,11000,11500,12000,12500,13000,13500,14000,14500,15000,15500,16000,16500,17000,17500,18000,
+                    18500,19000,19500,20000,20500,21000,21500,22000,22500,23000,23500,24000,24500,25000,25500,26000,
+                    26500,27000,27500,28000,28500,29000,29500,30000,30500,31000,31500,32000,32500,33000,33500,34000,
+                    34500,35000,35500,36000,36500,37000,37500,38000,38500,39000,39500,40000,40500,41000,41500,42000,
+                    42500,43000,43500,44000,44500,45000,45500,46000,46500,47000,47500,48000,48500,49000,49500,50000,
+                    52500,55000,57500,60000,62500,65000,67500,70000,72500,75000,77500,80000,82500,85000,87500,90000,
+                    92500,95000,97500,100000,105000,110000,115000,120000,125000,130000,135000,140000,145000,150000]
 
 ########################################################################
 '''Painel Superior'''
@@ -172,6 +173,7 @@ class TopPanel(wx.Panel):
             global Fase
             global condition
             global conditionEnsaio
+            global freq
             self.fim_inicio.Disable()
 
             if Fase == 'CONDICIONAMENTO':
@@ -199,6 +201,7 @@ class TopPanel(wx.Panel):
                 time.sleep(1)
                 self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]
                 self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]
+                self._self.bottom.gDP.Enable()
 
             condition = False
             con.modeStoped()
@@ -216,7 +219,9 @@ class TopPanel(wx.Panel):
             self.Bind(wx.EVT_BUTTON, self.FIM, self.fim_inicio)
 
             #--------------------------------------------------
+            #-------- Thread de parada e de salvamento --------
             def worker1(self):
+                import bancodedados
                 global condition
                 global conditionEnsaio
                 global Fase
@@ -225,6 +230,18 @@ class TopPanel(wx.Panel):
                 global mult
                 global glpCOND
                 global ntglp
+                global DefResiliente
+                global DefPermanente
+                global DefPermanenteAcumulada
+                global REFERENCIA_MEDIA
+                global idt
+                global temposDNIT179_01
+                global temposDNIT179_02
+                valorGolpeAnterior = 0
+                golpe = []
+                vDR = []
+                vDP = []
+                vDPA = []
 
                 if Fase == 'CONDICIONAMENTO':
                     while True:
@@ -242,7 +259,7 @@ class TopPanel(wx.Panel):
                                 mult = 0
                                 self.draww()
                                 self.pausa.Disable()
-                                evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.condic.GetId())
+                                evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.dp.GetId())
                                 wx.PostEvent(self._self.bottom.condic, evt)
                                 break
                         except:
@@ -252,6 +269,37 @@ class TopPanel(wx.Panel):
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
+                            if valorGolpe != valorGolpeAnterior:
+                                valorGolpeAnterior = valorGolpe
+                                print golpe
+                                if valorGolpe in temposDNIT179_02:
+                                    bancodedados.saveDNIT179(idt+"DP", valorGolpe, DefResiliente, DefPermanente, DefPermanenteAcumulada)
+                                if valorGolpe in temposDNIT179_01:
+                                    golpe.append(valorGolpe)
+                                    vDR.append(DefResiliente)
+                                    vDP.append(DefPermanente)
+                                    vDPA.append(DefPermanenteAcumulada)
+                                    if valorGolpe == 200:
+                                        self._self.bottom.gDP.Enable()
+                                    if valorGolpe == 100:
+                                        ix = 0
+                                        while ix < len(golpe):
+                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], vDPA[ix])
+                                            ix += 1
+                                        golpe *= 0 #limpa a lista
+                                        vDR *= 0 #limpa a lista
+                                        vDP *= 0 #limpa a lista
+                                        vDPA *= 0 #limpa a lista
+                                    if valorGolpe == 950:
+                                        ix = 0
+                                        while ix < len(golpe):
+                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], vDPA[ix])
+                                            ix += 1
+                                        golpe *= 0 #limpa a lista
+                                        vDR *= 0 #limpa a lista
+                                        vDP *= 0 #limpa a lista
+                                        vDPA *= 0 #limpa a lista
+
                             if valorGolpe == int(ntglp-1):
                                 time.sleep(4)
                                 con.modeI()
@@ -312,7 +360,7 @@ class TopPanel(wx.Panel):
             if Fase == 'DP':
                 con.modeI()
                 self._self.bottom.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
-                dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
+                dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
                 con.modeI()
 
@@ -766,18 +814,14 @@ class BottomPanel(wx.Panel):
                     global X
                     global Y
                     global H
-                    global xz1
-                    global yz1
-                    global yt1
-                    global yz2
-                    global yt2
-                    global pc1
-                    global pg1
-                    global yyy
+                    global DefResiliente
+                    global DefPermanente
+                    global DefPermanenteAcumulada
                     global REFERENCIA1
                     global REFERENCIA2
                     global REFERENCIA_MEDIA
                     global ntglp
+                    global freq
                     con.modeI()  #inicia o modo de impressão de dados
                     condition = True
                     conditionEnsaio = False
@@ -785,12 +829,17 @@ class BottomPanel(wx.Panel):
                     cont = 0
                     cont1 = 0
                     amplitudeMax = 0
-                    amplitudeMaxAnterior = 0
+                    amplitudeMax2 = 0
+                    patamarAnterior = 0
+                    patamar = 0
+                    DefResiliente = 0
+                    DefPermanente = 0
+                    DefPermanenteAcumulada = 0
                     GolpeAnterior = -1
                     self.leituraZerob1 = 0
                     self.leituraZerob2 = 0
                     x_counter = 0
-                    valores = [0,0,0,0,0,0,0,0,0]
+                    valores = [0,0,0,0,0,0,0,0,0,0]
                     while True:
                         while condition == True:
                             valores = con.ColetaI(valores)
@@ -818,7 +867,7 @@ class BottomPanel(wx.Panel):
                                     cont1 = 0
                             cont1 = cont1 + 1
 
-                            ntglp = valores[8] #numero total de golpes
+                            ntglp = valores[9] #numero total de golpes
                             y1 = valores[1]-self.leituraZerob1
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
                             ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
@@ -832,84 +881,71 @@ class BottomPanel(wx.Panel):
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
 
-                                # Dados do CONDICIONAMENTO #
-                                if Fase == 'CONDICIONAMENTO' and Pausa == False:
-                                    if valores[0] == (ntglp - 1):
-                                        REFERENCIA1 = y1+H0
-                                        REFERENCIA2 = y2+H0
-                                        REFERENCIA_MEDIA = ymedio
-                                    if valores[0] > (ntglp - 0.80) and valores[0] < (ntglp - 0.1):
-                                        REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
-                                        REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                        REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
-
                                 # Dados do dp #
                                 if Fase == 'dp' and Pausa == False:
                                     #condicao de erro para o ensaio
                                     if int(valores[7]) == 1:
                                         print "ERRO NO ENSAIO"
 
-                                    #PEGA OS VALORES DE REFERENCIA
-                                    if valores[0] == 0.01:
-                                        REFERENCIA1 = y1+H0
-                                        REFERENCIA2 = y2+H0
-                                        REFERENCIA_MEDIA = ymedio
-                                    if valores[0] > 0.2 and valores[0] < 0.9:
-                                        REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
-                                        REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                        REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
-
-                                    # DefResiliente incial de compararação (para condicao de discrepância)
-                                    if valores[0] > 4 and valores[0] < 4.2:
-                                        if valores[0] == 4.01:
-                                            amplitudeMaxAnterior = ymedio
-                                            mediaMovel = ymedio
-                                        if ymedio > amplitudeMaxAnterior:
-                                            amplitudeMaxAnterior = ymedio
-                                    if valores[0] > 4.2 and valores[0] < 5:
-                                        mediaMovel = (mediaMovel+ymedio)/2
-                                        defResilienteAnterior = amplitudeMaxAnterior - mediaMovel
-
-                                    # Condição da analise de discrepância #
-                                    if valores[0] > 5:
-                                        valoreS = valores[0] - int(valores[0])
-                                        if valoreS > 0 and valoreS < 0.2:
-                                            if valoreS == 0.01:
-                                                amplitudeMax = ymedio
-                                                mediaMovel = ymedio
+                                    D = valores[0] - int(valores[0])
+                                    if freq == 1:
+                                        #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE
+                                        if D == 0.01:
+                                            patamar = ymedio
+                                            amplitudeMax = ymedio
+                                        if D < 0.2:
                                             if ymedio > amplitudeMax:
                                                 amplitudeMax = ymedio
+                                        if D > 0.2 and D < 0.9:
+                                            patamar = (patamar + ymedio)/2
+                                        if D > 0.9:
+                                            DefResiliente  = amplitudeMax - patamar
+                                            DefPermanente = patamar - patamarAnterior
+                                            DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
+                                            patamarAnterior = patamar
+                                            amplitudeMax = patamar
 
-                                        if valoreS > 0.2 and valoreS < 0.90:
-                                            mediaMovel = (mediaMovel+ymedio)/2
-                                            defResiliente = amplitudeMax - mediaMovel
+                                    if freq == 2:
+                                        #PEGA OS VALORES DE REFERENCIA
+                                        if valores[0] == 0.01:
+                                            REFERENCIA1 = y1+H0
+                                            REFERENCIA2 = y2+H0
+                                            REFERENCIA_MEDIA = ymedio
+                                        if valores[0] > 0.2 and valores[0] < 0.5:
+                                            REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
+                                            REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
+                                            REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
+                                        #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE
+                                        if D == 0.01:
+                                            patamar = ymedio
+                                            amplitudeMax = ymedio
+                                            amplitudeMax2 = ymedio
+                                        if D < 0.2:
+                                            if ymedio > amplitudeMax:
+                                                amplitudeMax = ymedio
+                                        if D > 0.2 and D < 0.5:
+                                            patamar = (patamar + ymedio)/2
+                                        if D > 0.5 and D < 0.65:
+                                            if ymedio > amplitudeMax2:
+                                                amplitudeMax2 = ymedio
+                                            DefResiliente  = amplitudeMax - patamar
+                                            DefPermanente = patamar - patamarAnterior
+                                            DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
+                                            patamarAnterior = patamar
+                                            amplitudeMax = patamar
+                                        if D > 0.6 and D < 0.9:
+                                            patamar = (patamar + ymedio)/2
+                                        if D > 0.9:
+                                            DefResiliente  = amplitudeMax2 - patamar
+                                            DefPermanente = patamar - patamarAnterior
+                                            DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
+                                            patamarAnterior = patamar
+                                            amplitudeMax2 = patamar
 
-                                        if valoreS > 0.98:
-                                            if defResiliente > defResilienteAnterior:
-                                                if defResiliente/defResilienteAnterior < DISCREP:
-                                                    print defResiliente, defResilienteAnterior
-                                                    if len(yyy) < 5:
-                                                        yyy.append(defResiliente)
-                                            if defResiliente < defResilienteAnterior:
-                                                if defResilienteAnterior/defResiliente < DISCREP:
-                                                    print defResiliente, defResilienteAnterior
-                                                    if len(yyy) < 5:
-                                                        yyy.append(defResiliente)
-                                            defResilienteAnterior = defResiliente
-
-                                    if int(valores[0]) > 4 and int(valores[0]) <= int(valores[8]):
-                                        xz1.append(valores[0])
-                                        yz1.append(y1+H0)
-                                        yz2.append(y2+H0)
-                                        pc1.append(valores[5])
-                                        pg1.append(valores[6]-valores[5])
-                                        yt1.append(valores[3])
-                                        yt2.append(valores[4])
-
-                                if int(valores[0]) != GolpeAnterior:
-                                    GolpeAnterior = int(valores[0])
+                                if int(valores[8]) != GolpeAnterior:
+                                    GolpeAnterior = int(valores[8])
                                     self.GolpeAtual.Clear()
-                                    self.GolpeAtual.AppendText(str(int(valores[0])))
+                                    self.GolpeAtual.AppendText(str(int(valores[8])))
 
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
@@ -945,18 +981,10 @@ class BottomPanel(wx.Panel):
             print '\nBottomPanel - CONDIC'
             global condition
             global Fase
-            global xz1
-            global yz1
-            global yt1
-            global yz2
-            global yt2
-            global pc1
-            global pg1
             global REFERENCIA1
             global REFERENCIA2
             global REFERENCIA_MEDIA
             global modeADM
-            global DISCREP
             Fase = 'CONDICIONAMENTO'
             self.erro = False
 
@@ -972,7 +1000,7 @@ class BottomPanel(wx.Panel):
             self.PCalvo.AppendText(str(VETOR_COND[0][0])+'0')
             self.SigmaAlvo.AppendText(str(VETOR_COND[0][1]-VETOR_COND[0][0])+'0')
             self.NGolpes.AppendText(str(glpCOND))
-            self.Ciclo.AppendText('C-1')
+            self.Ciclo.AppendText('1')
             self.GolpeAtual.AppendText(str(0))
 
             info = "EDP 179/2018IE"
@@ -997,18 +1025,9 @@ class BottomPanel(wx.Panel):
             print '\nBottomPanel - DP'
             global condition
             global Fase
-            global xz1
-            global yz1
-            global yt1
-            global yz2
-            global yt2
-            global pc1
-            global pg1
-            global yyy
             global REFERENCIA1
             global REFERENCIA2
             global REFERENCIA_MEDIA
-            Fase = 'DP'
             self.erro = False
             ciclo = 1
 
@@ -1016,7 +1035,6 @@ class BottomPanel(wx.Panel):
             self.freq.Disable()
             self.dp.Disable()
             self.condic.Disable()
-            self.gDP.Enable()
             self.PCalvo.Clear()
             self.SigmaAlvo.Clear()
             self.Ciclo.Clear()
@@ -1025,20 +1043,35 @@ class BottomPanel(wx.Panel):
             self.PCalvo.AppendText(str(VETOR_DP[0][0])+'0')
             self.SigmaAlvo.AppendText(str(VETOR_DP[0][1]-VETOR_DP[0][0])+'0')
             self.NGolpes.AppendText(str(glpDP))
-            self.Ciclo.AppendText('DP-1')
+            self.Ciclo.AppendText('1')
             self.GolpeAtual.AppendText(str(0))
 
+            if Fase == '':
+                info = "EDP 179/2018ME"
+                titulo = "Preparação da câmara triaxial."
+                message1 = "Verifique se está tudo certo!"
+                message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
+                dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
+                if dlg.ShowModal() == wx.ID_OK:
+                    Fase = 'DP'
+                    if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == False:
+                        self.graph.fim_inicio.SetLabel('INICIO')
+                        self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                        self.graph.fim_inicio.Enable()
 
-            info = "EDP 179/2018ME"
-            titulo = "Preparação da câmara triaxial."
-            message1 = "Verifique se está tudo certo!"
-            message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
-            dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
-            if dlg.ShowModal() == wx.ID_OK:
-                if self._ciclo == 0:
-                    self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
-                    self.graph.fim_inicio.Enable()
+                    if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == True:
+                        self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                        evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
+                        wx.PostEvent(self.graph.fim_inicio, evt)
 
+                    if self._ciclo >= ciclo and self.erro == False:
+                        self.dp.Disable()
+                        self.pressao_zero(VETOR_DP[0][0], VETOR_MR[0][1])
+                        self._ciclo = 0
+                        dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
+                        dlg3.ShowModal()
+            else:
+                Fase = 'DP'
                 if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == False:
                     self.graph.fim_inicio.SetLabel('INICIO')
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
@@ -1053,7 +1086,7 @@ class BottomPanel(wx.Panel):
                     self.dp.Disable()
                     self.pressao_zero(VETOR_DP[0][0], VETOR_MR[0][1])
                     self._ciclo = 0
-                    dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
+                    dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
                     dlg3.ShowModal()
 
     #--------------------------------------------------

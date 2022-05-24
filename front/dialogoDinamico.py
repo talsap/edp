@@ -8,7 +8,7 @@ import wx
 class dialogoDinamico(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, indicador, info, texto0, texto1, texto2, texto3, texto4, *args, **kwargs):
-            wx.Dialog.__init__(self, None, -1, "%s" %info)
+            wx.Dialog.__init__(self, None, -1, "%s" %info, style = wx.CLOSE_BOX)
 
             self.v_sizer = wx.BoxSizer(wx.VERTICAL)
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)

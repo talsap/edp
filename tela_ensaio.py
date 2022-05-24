@@ -484,7 +484,7 @@ class TopPanel(wx.Panel):
             if Fase == 'MR':
                 con.modeI()
                 self._self.bottom.pressao_zero(VETOR_MR[self._ciclo][0], VETOR_MR[self._ciclo][1])
-                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
+                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
                 dlg3.ShowModal()
                 con.modeI()
 
@@ -1045,7 +1045,7 @@ class BottomPanel(wx.Panel):
                     self.leituraZerob1 = 0
                     self.leituraZerob2 = 0
                     x_counter = 0
-                    valores = [0,0,0,0,0,0,0,0,0]
+                    valores = [0,0,0,0,0,0,0,0,0,0]
                     while True:
                         while condition == True:
                             valores = con.ColetaI(valores)
@@ -1073,7 +1073,7 @@ class BottomPanel(wx.Panel):
                                     cont1 = 0
                             cont1 = cont1 + 1
 
-                            ntglp = valores[8] #numero total de golpes
+                            ntglp = valores[9] #numero total de golpes
                             y1 = valores[1]-self.leituraZerob1
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
                             ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
@@ -1152,7 +1152,7 @@ class BottomPanel(wx.Panel):
                                                         yyy.append(defResiliente)
                                             defResilienteAnterior = defResiliente
 
-                                    if int(valores[0]) > 4 and int(valores[0]) <= int(valores[8]):
+                                    if int(valores[0]) > 4 and int(valores[0]) <= int(valores[9]):
                                         xz1.append(valores[0])
                                         yz1.append(y1+H0)
                                         yz2.append(y2+H0)
@@ -1161,10 +1161,10 @@ class BottomPanel(wx.Panel):
                                         yt1.append(valores[3])
                                         yt2.append(valores[4])
 
-                                if int(valores[0]) != GolpeAnterior:
-                                    GolpeAnterior = int(valores[0])
+                                if int(valores[8]) != GolpeAnterior:
+                                    GolpeAnterior = int(valores[8])
                                     self.GolpeAtual.Clear()
-                                    self.GolpeAtual.AppendText(str(int(valores[0])))
+                                    self.GolpeAtual.AppendText(str(int(valores[8])))
 
                 #--------------------------------------------------
                 self.t = threading.Thread(target=worker, args=(self,))
@@ -1245,7 +1245,7 @@ class BottomPanel(wx.Panel):
                 self.PCalvo.AppendText(str(VETOR_COND[self._ciclo][0])+'0')
                 self.SigmaAlvo.AppendText(str(VETOR_COND[self._ciclo][1]-VETOR_COND[self._ciclo][0])+'0')
                 self.NGolpes.AppendText(str(glpCOND))
-                self.Ciclo.AppendText('C-'+str(self._ciclo+1))
+                self.Ciclo.AppendText(str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
 
             if self._ciclo == 0:
@@ -1302,7 +1302,6 @@ class BottomPanel(wx.Panel):
             global REFERENCIA1
             global REFERENCIA2
             global REFERENCIA_MEDIA
-            Fase = 'MR'
             self.erro = False
 
             if subleito == True:
@@ -1351,21 +1350,17 @@ class BottomPanel(wx.Panel):
                 self.PCalvo.AppendText(str(VETOR_MR[self._ciclo][0])+'0')
                 self.SigmaAlvo.AppendText(str(VETOR_MR[self._ciclo][1]-VETOR_MR[self._ciclo][0])+'0')
                 self.NGolpes.AppendText(str(10))
-                self.Ciclo.AppendText('MR-'+str(self._ciclo+1))
+                self.Ciclo.AppendText(str(self._ciclo+1))
                 self.GolpeAtual.AppendText(str(0))
 
-            if self._ciclo == 0 and self.Automatico == False:
+            if Fase == '':
                 info = "EDP 134/2018ME"
                 titulo = "Preparação da câmara triaxial."
                 message1 = "Verifique se está tudo certo!"
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 if dlg.ShowModal() == wx.ID_OK:
-                    if self._ciclo == 0:
-                        self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
-                        self.graph.fim_inicio.Enable()
-                        self.graph.avanca.Enable()
-
+                    Fase = 'MR'
                     if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == False:
                         self.graph.fim_inicio.SetLabel('INICIO')
                         self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
@@ -1383,6 +1378,25 @@ class BottomPanel(wx.Panel):
                         self._ciclo = 0
                         dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                         dlg3.ShowModal()
+            else:
+                Fase = 'MR'
+                if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == False:
+                    self.graph.fim_inicio.SetLabel('INICIO')
+                    self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                    self.graph.fim_inicio.Enable()
+                    self.graph.avanca.Enable()
+
+                if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == True:
+                    self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                    evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
+                    wx.PostEvent(self.graph.fim_inicio, evt)
+
+                if self._ciclo >= ciclo and self.erro == False:
+                    self.mr.Disable()
+                    self.pressao_zero(VETOR_MR[self._ciclo-1][0], VETOR_MR[self._ciclo-1][1])
+                    self._ciclo = 0
+                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
+                    dlg3.ShowModal()
 
     #--------------------------------------------------
         '''Função responsável em zera a pressão do sistema'''
