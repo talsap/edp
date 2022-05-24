@@ -201,7 +201,6 @@ class TopPanel(wx.Panel):
                 time.sleep(1)
                 self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]
                 self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]
-                self._self.bottom.gDP.Enable()
 
             condition = False
             con.modeStoped()
