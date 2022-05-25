@@ -52,7 +52,7 @@ H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
-idt = 'DNIT179-2405-' #identificador do ensaio no banco de dados
+idt = 'DNIT179-2505-' #identificador do ensaio no banco de dados
 subleito = False  #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
@@ -152,7 +152,7 @@ class TopPanel(wx.Panel):
             con.modeC()
             conditionEnsaio = True
             Pausa = False
-            self._self.bottom.timer.Start(int('5000'))
+            self._self.bottom.timer.Start(int('2500'))
             self.pausa.Enable()
             self.fim_inicio.Disable()
             self.continua.Disable()
@@ -167,7 +167,7 @@ class TopPanel(wx.Panel):
             global freq
             self.fim_inicio.Disable()
 
-            if Fase == 'CONDICIONAMENTO':
+            '''if Fase == 'CONDICIONAMENTO':
                 condition = False
                 threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
                 dlgC1 = My.MyProgressDialog(3)
@@ -191,7 +191,7 @@ class TopPanel(wx.Panel):
                 dlgC2.ShowModal()
                 time.sleep(1)
                 self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]
-                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]
+                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]'''
 
             condition = False
             con.modeStoped()
@@ -199,11 +199,11 @@ class TopPanel(wx.Panel):
             freq = self._self.bottom.freq.GetValue()
             con.modeG()
             time.sleep(0.5)
-            con.modeGOLPES(int(gl), int(freq))
+            con.modeGOLPES(int(gl)+1, int(freq))
             condition = True
             conditionEnsaio = True
-            time.sleep(2)
-            self._self.bottom.timer.Start(int('5000'))
+            time.sleep(0.5)
+            self._self.bottom.timer.Start(int('2500'))
             self.pausa.Enable()
             self.fim_inicio.SetLabel('FIM')
             self.Bind(wx.EVT_BUTTON, self.FIM, self.fim_inicio)
@@ -289,7 +289,7 @@ class TopPanel(wx.Panel):
                                         vDP *= 0 #limpa a lista
                                         vDPA *= 0 #limpa a lista
 
-                            if valorGolpe == int(ntglp-1):
+                            if valorGolpe == int(ntglp):
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
@@ -382,7 +382,7 @@ class TopPanel(wx.Panel):
             print '\nTopPanel - draw'
             global mult
             self.axes.clear()
-            self.axes.set_xlim(mult*5-5, mult*5)
+            #self.axes.set_xlim(mult*5-5, mult*5)
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             self.axes.plot(X, Y, 'r-')
@@ -862,11 +862,11 @@ class BottomPanel(wx.Panel):
                             ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
 
                             # Dados para a parte GRÁFICA #
-                            if conditionEnsaio == True and valores[0] > 0:
+                            if conditionEnsaio == True and valores[8] >= 0:
                                 X = np.append(X, valores[0])
                                 Y = np.append(Y, ymedio)
                                 x_counter = len(X)
-                                if x_counter >= 1000: #antes era 1500
+                                if x_counter >= 500: #antes era 1500
                                     X = np.delete(X, 0, 0)
                                     Y = np.delete(Y, 0, 0)
 
@@ -1052,7 +1052,7 @@ class BottomPanel(wx.Panel):
 
                     if self._ciclo >= ciclo and self.erro == False:
                         self.dp.Disable()
-                        self.pressao_zero(VETOR_DP[0][0], VETOR_MR[0][1])
+                        self.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
                         self._ciclo = 0
                         dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
                         dlg3.ShowModal()
@@ -1070,7 +1070,7 @@ class BottomPanel(wx.Panel):
 
                 if self._ciclo >= ciclo and self.erro == False:
                     self.dp.Disable()
-                    self.pressao_zero(VETOR_DP[0][0], VETOR_MR[0][1])
+                    self.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
                     self._ciclo = 0
                     dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
                     dlg3.ShowModal()
