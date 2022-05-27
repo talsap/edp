@@ -20,7 +20,7 @@ def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS calibrador135 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134 (idt text, pc real, pg real, dr real, r real)")
-    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT179 (idt text, glp int, DR real, DP real, DPA real)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT179 (idt text, glp int, DR real, DP real, pc real, pg real)")
     c.execute("CREATE TABLE IF NOT EXISTS referenciaADM (idt text, r1 real, r2 real)")
     c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, r real)")
 
@@ -219,6 +219,6 @@ def data_save_dados_179(identificador, cp, rodovia, origem, trecho, estKm, opera
     c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs))
     connection.commit()
 
-def saveDNIT179(idt, glp, DR, DP, DPA):
-    c.execute("INSERT INTO dadosDNIT179 (idt, glp, DR, DP, DPA) VALUES (?, ?, ?, ?, ?)", (idt, glp, DR, DP, DPA))
+def saveDNIT179(idt, glp, DR, DP, pc, pg):
+    c.execute("INSERT INTO dadosDNIT179 (idt, glp, DR, DP, pc, pg) VALUES (?, ?, ?, ?, ?, ?)", (idt, glp, DR, DP, pc, pg))
     connection.commit()

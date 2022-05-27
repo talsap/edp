@@ -29,9 +29,10 @@ global H  #Altura do corpo de prova em milímetros
 global H0 #Altura de referência do medididor de deslocamento
 global X  #valores X do gráfico
 global Y  #valores Y do gráfico
+global pc #pressão confinante
+global pg #pressão dos golpes (desvio)
 global DefResiliente #Deformação resiliente ou recuperável
 global DefPermanente #Deformação Permanente
-global DefPermanenteAcumulada #Deformação permanenente acumulada
 global REFERENCIA1 #referencia de ponto de partida para o sensor 1
 global REFERENCIA2 #referencia de ponto de partida para o sensor 2
 global REFERENCIA_MEDIA #referencia de ponto de partidada MÉDIA
@@ -52,7 +53,7 @@ H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
-idt = 'DNIT179-2505-' #identificador do ensaio no banco de dados
+idt = 'DNIT179-2605-' #identificador do ensaio no banco de dados
 subleito = False  #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
@@ -64,7 +65,7 @@ freq = 1  #a frequencia inicia sendo 1 (default)
 
 VETOR_COND = [[0.030,0.060]]
 
-VETOR_DP =  [[0.040,0.080]]
+VETOR_DP =  [[0.040,0.120]]
 
 temposDNIT179_01 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,
                     100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950]
@@ -217,12 +218,13 @@ class TopPanel(wx.Panel):
                 global Fase
                 global X
                 global Y
+                global pc
+                global pg
                 global mult
                 global glpCOND
                 global ntglp
                 global DefResiliente
                 global DefPermanente
-                global DefPermanenteAcumulada
                 global REFERENCIA_MEDIA
                 global idt
                 global temposDNIT179_01
@@ -231,7 +233,8 @@ class TopPanel(wx.Panel):
                 golpe = []
                 vDR = []
                 vDP = []
-                vDPA = []
+                ppc = []
+                ppg = []
 
                 if Fase == 'CONDICIONAMENTO':
                     while True:
@@ -262,32 +265,35 @@ class TopPanel(wx.Panel):
                             if valorGolpe != valorGolpeAnterior:
                                 valorGolpeAnterior = valorGolpe
                                 if valorGolpe in temposDNIT179_02:
-                                    bancodedados.saveDNIT179(idt+"DP", valorGolpe, DefResiliente, DefPermanente, DefPermanenteAcumulada)
+                                    bancodedados.saveDNIT179(idt+"DP", valorGolpe, DefResiliente, DefPermanente, pc, pg)
                                 if valorGolpe in temposDNIT179_01:
                                     golpe.append(valorGolpe)
                                     vDR.append(DefResiliente)
                                     vDP.append(DefPermanente)
-                                    vDPA.append(DefPermanenteAcumulada)
+                                    ppc.append(pc)
+                                    ppg.append(pg)
                                     if valorGolpe == 200:
                                         self._self.bottom.gDP.Enable()
                                     if valorGolpe == 100:
                                         ix = 0
                                         while ix < len(golpe):
-                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], vDPA[ix])
+                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
                                             ix += 1
                                         golpe *= 0 #limpa a lista
                                         vDR *= 0 #limpa a lista
                                         vDP *= 0 #limpa a lista
-                                        vDPA *= 0 #limpa a lista
+                                        ppc *= 0 #limpa a lista
+                                        ppg *= 0 #limpa a lista
                                     if valorGolpe == 950:
                                         ix = 0
                                         while ix < len(golpe):
-                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], vDPA[ix])
+                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
                                             ix += 1
                                         golpe *= 0 #limpa a lista
                                         vDR *= 0 #limpa a lista
                                         vDP *= 0 #limpa a lista
-                                        vDPA *= 0 #limpa a lista
+                                        ppc *= 0 #limpa a lista
+                                        ppg *= 0 #limpa a lista
 
                             if valorGolpe == int(ntglp):
                                 time.sleep(4)
@@ -805,7 +811,8 @@ class BottomPanel(wx.Panel):
                     global H
                     global DefResiliente
                     global DefPermanente
-                    global DefPermanenteAcumulada
+                    global pc
+                    global pg
                     global REFERENCIA1
                     global REFERENCIA2
                     global REFERENCIA_MEDIA
@@ -823,7 +830,8 @@ class BottomPanel(wx.Panel):
                     patamar = 0
                     DefResiliente = 0
                     DefPermanente = 0
-                    DefPermanenteAcumulada = 0
+                    pc = 0
+                    pg = 0
                     GolpeAnterior = -1
                     self.leituraZerob1 = 0
                     self.leituraZerob2 = 0
@@ -886,6 +894,10 @@ class BottomPanel(wx.Panel):
                                     if int(valores[7]) == 1:
                                         print "ERRO NO ENSAIO"
 
+                                    #PRESSÕES DO ENSAIO
+                                    pc = (pc + valores[5])/2
+                                    pg = (pg + (valores[6]-valores[5]))/2
+
                                     D = valores[0] - int(valores[0])
                                     #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE FREQ 1
                                     if freq == '1':
@@ -900,9 +912,8 @@ class BottomPanel(wx.Panel):
                                         if D > 0.9:
                                             DefResiliente  = amplitudeMax - patamar
                                             DefPermanente = patamar
-                                            DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
                                             patamarAnterior = patamar
-                                        #print D, DefResiliente, DefPermanente, DefPermanenteAcumulada, REFERENCIA_MEDIA
+                                        #print D, DefResiliente, DefPermanente, REFERENCIA_MEDIA
 
                                     #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE FREQ 2
                                     if freq == '2':
@@ -920,14 +931,12 @@ class BottomPanel(wx.Panel):
                                                 amplitudeMax2 = ymedio
                                             DefResiliente  = amplitudeMax - patamar
                                             DefPermanente = patamar
-                                            DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
                                         if D > 0.6 and D < 0.9:
                                             patamar = (patamar + ymedio)/2
                                         if D > 0.9:
                                             DefResiliente  = amplitudeMax2 - patamar
                                             DefPermanente = patamar
-                                            DefPermanenteAcumulada = patamar - REFERENCIA_MEDIA
-                                        #print D, DefResiliente, DefPermanente, DefPermanenteAcumulada, REFERENCIA_MEDIA
+                                        #print D, DefResiliente, DefPermanente, REFERENCIA_MEDIA
                                 if int(valores[8]) != GolpeAnterior:
                                     GolpeAnterior = int(valores[8])
                                     self.GolpeAtual.Clear()
