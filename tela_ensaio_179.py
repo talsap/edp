@@ -53,7 +53,7 @@ H0 = 0.01
 H = 200
 mult = 0
 Pausa = False
-idt = 'DNIT179-2705-' #identificador do ensaio no banco de dados
+idt = 'DNIT179-0106-' #identificador do ensaio no banco de dados
 subleito = False  #recebe valor de True ou False
 X = np.array([])
 Y = np.array([])
@@ -170,29 +170,29 @@ class TopPanel(wx.Panel):
 
             if Fase == 'CONDICIONAMENTO':
                 condition = False
-                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][1]-0.0015, self.DINAMICA2_ANTERIOR)
                 dlgC1 = My.MyProgressDialog(3)
                 dlgC1.ShowModal()
                 time.sleep(1)
-                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[0][0], self.DINAMICA1_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[0][0]+0.0015, self.DINAMICA1_ANTERIOR)
                 dlgC2 = My.MyProgressDialog(3)
                 dlgC2.ShowModal()
                 time.sleep(1)
-                self.DINAMICA2_ANTERIOR = VETOR_COND[0][1]
-                self.DINAMICA1_ANTERIOR = VETOR_COND[0][0]
+                self.DINAMICA2_ANTERIOR = VETOR_COND[0][1]-0.0015
+                self.DINAMICA1_ANTERIOR = VETOR_COND[0][0]+0.0015
 
             if Fase == 'DP':
                 condition = False
-                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_DP[0][1], self.DINAMICA2_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_DP[0][1]-0.0015, self.DINAMICA2_ANTERIOR)
                 dlgC1 = My.MyProgressDialog(3)
                 dlgC1.ShowModal()
                 time.sleep(1)
-                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_DP[0][0], self.DINAMICA1_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_DP[0][0]+0.0015, self.DINAMICA1_ANTERIOR)
                 dlgC2 = My.MyProgressDialog(3)
                 dlgC2.ShowModal()
                 time.sleep(1)
-                self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]
-                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]
+                self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]-0.0015
+                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]+0.0015
 
             condition = False
             con.modeStoped()
