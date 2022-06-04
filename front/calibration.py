@@ -27,8 +27,8 @@ class Cal(wx.Frame):
                 page02 = Page02(nb, id)
 
                 # adicione as páginas ao caderno com o rótulo para mostrar na guia
-                nb.AddPage(page01, "DNIT 134")
-                nb.AddPage(page02, "DNIT 135")
+                nb.AddPage(page01, "S1-S2")
+                nb.AddPage(page02, "S3-S4")
 
                 sizer = wx.BoxSizer()
                 sizer.Add(nb, 1, wx.EXPAND)
@@ -44,7 +44,7 @@ class Page01(wx.Panel):
                 self.id = id
 
                 '''Dados do bancodedados'''
-                self.lista = bancodedados.LVDT_134()
+                self.lista = bancodedados.S1S2()
 
                 FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
                 title0 = wx.StaticText(self, -1, "SENSOR DE DESLOCAMENTO 1", (20,20), (-1,-1), wx.ALIGN_CENTER)
@@ -130,7 +130,7 @@ class Page01(wx.Panel):
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_dados_LVDT_134(II0, AA0, BB0, II1, AA1, BB1)
+                        bancodedados.update_dados_S1S2(II0, AA0, BB0, II1, AA1, BB1)
                         self.editar1.Enable()
                         self.Salvar1.Disable()
                         self.ilvdt0.Disable()
@@ -149,7 +149,7 @@ class Page02(wx.Panel):
                 self.id = id
 
                 '''Dados do bancodedados'''
-                self.lista = bancodedados.LVDT_135()
+                self.lista = bancodedados.S3S4()
 
                 FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
                 title0 = wx.StaticText(self, -1, "SENSOR DE DESLOCAMENTO 3", (20,20), (-1,-1), wx.ALIGN_CENTER)
@@ -235,7 +235,7 @@ class Page02(wx.Panel):
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_dados_LVDT_135(II0, AA0, BB0, II1, AA1, BB1)
+                        bancodedados.update_dados_S3S4(II0, AA0, BB0, II1, AA1, BB1)
                         self.editar2.Enable()
                         self.Salvar2.Disable()
                         self.ilvdt0.Disable()

@@ -299,8 +299,8 @@ class TopPanel(wx.Panel):
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
-                                self._ciclo = self._self.bottom._ciclo + 1
-                                self._self.bottom._ciclo = self._ciclo
+                                self._fase = self._self.bottom._fase + 1
+                                self._self.bottom._fase = self._fase
                                 valorGolpe = 0
                                 conditionEnsaio = False
                                 self._self.bottom.timer.Stop()
@@ -345,7 +345,7 @@ class TopPanel(wx.Panel):
                 self.draww()
 
             if Fase == 'CONDICIONAMENTO':
-                self._self.bottom._ciclo = 0
+                self._self.bottom._fase = 0
                 self._self.bottom.dp.Enable()
                 self.fim_inicio.SetLabel('INICIO')
                 self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
@@ -426,11 +426,11 @@ class BottomPanel(wx.Panel):
             staticbox5.SetBackgroundColour(wx.Colour(215,215,215))
             staticbox6.SetBackgroundColour(wx.Colour(215,215,215))
 
-            self.gDP = wx.Button(self, -1, 'TEMPO\nX\nDEF.P.')
+            self.gDP = wx.Button(self, -1, 'GOLPE\nX\nD. P.')
             self.Bind(wx.EVT_BUTTON, self.GDP, self.gDP)
             self.condic = wx.Button(self, -1, 'CONDIC.')
             self.Bind(wx.EVT_BUTTON, self.CONDIC, self.condic)
-            self.dp = wx.Button(self, -1, 'DEF.P.')
+            self.dp = wx.Button(self, -1, 'D. P.')
             self.Bind(wx.EVT_BUTTON, self.DP, self.dp)
             self.LTeste = wx.Button(self, -1, "L. TESTE", size = wx.DefaultSize)
             self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
@@ -462,10 +462,10 @@ class BottomPanel(wx.Panel):
             texto17 = wx.StaticText(self, label = "ALVO", style = wx.ALIGN_CENTER)
             texto18 = wx.StaticText(self, label = "Altura (mm)", style = wx.ALIGN_LEFT)
             texto19 = wx.StaticText(self, label = "Diâmetro (mm)", style = wx.ALIGN_LEFT)
-            texto21 = wx.StaticText(self, label = "CICLO", style = wx.ALIGN_CENTER)
-            texto22 = wx.StaticText(self, label = "Nº de Golpes", style = wx.ALIGN_CENTER)
+            texto21 = wx.StaticText(self, label = "FASE", style = wx.ALIGN_CENTER)
+            texto22 = wx.StaticText(self, label = "Nº de CICLOs", style = wx.ALIGN_CENTER)
             texto23 = wx.StaticText(self, label = "Freq. (Hz)", style = wx.ALIGN_CENTER)
-            texto24 = wx.StaticText(self, label = "Golpe Atual", style = wx.ALIGN_CENTER)
+            texto24 = wx.StaticText(self, label = "CICLO Atual", style = wx.ALIGN_CENTER)
 
             texto1.SetFont(FontTitle)
             texto3.SetFont(FontTitle)
@@ -516,7 +516,7 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.AlturaMM = wx.TextCtrl(self, -1, '200.0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.DiametroMM = wx.TextCtrl(self, -1, '100.0', size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.fase = wx.TextCtrl(self, -1, '1', size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
             self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (70, 35), style = wx.TE_READONLY | wx.TE_CENTER)
             self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (70, 35), style = wx.TE_READONLY | wx.TE_CENTRE)
             self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, size = (50, 35), style = wx.CB_READONLY)
@@ -533,7 +533,7 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo.Disable()
             self.AlturaMM.Disable()
             self.DiametroMM.Disable()
-            self.Ciclo.Disable()
+            self.fase.Disable()
             self.NGolpes.Disable()
             self.GolpeAtual.Disable()
             self.freq.Disable()
@@ -549,7 +549,7 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo.SetFont(Fonttext)
             self.AlturaMM.SetFont(Fonttext)
             self.DiametroMM.SetFont(Fonttext)
-            self.Ciclo.SetFont(Fonttext)
+            self.fase.SetFont(Fonttext)
             self.NGolpes.SetFont(Fonttext)
             self.GolpeAtual.SetFont(Fonttext)
             self.freq.SetFont(Fonttext)
@@ -565,7 +565,7 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo.SetForegroundColour((119,118,114))
             self.AlturaMM.SetForegroundColour((119,118,114))
             self.DiametroMM.SetForegroundColour((119,118,114))
-            self.Ciclo.SetForegroundColour((119,118,114))
+            self.fase.SetForegroundColour((119,118,114))
             self.NGolpes.SetForegroundColour((119,118,114))
             self.GolpeAtual.SetForegroundColour((119,118,114))
 
@@ -716,7 +716,7 @@ class BottomPanel(wx.Panel):
             self.v5_sizer.Add(self.NGolpes, 2, wx.ALL | wx.CENTER, 5)
 
             self.v6_sizer.Add(texto21, 1, wx.ALL | wx.CENTER)
-            self.v6_sizer.Add(self.Ciclo, 2, wx.ALL | wx.CENTER, 5)
+            self.v6_sizer.Add(self.fase, 2, wx.ALL | wx.CENTER, 5)
 
             self.h2_sizer.Add(self.v4_sizer, 3, wx.CENTER)
             self.h2_sizer.AddStretchSpacer(1)
@@ -767,7 +767,7 @@ class BottomPanel(wx.Panel):
             self.timer = wx.Timer(self)
             self.Bind(wx.EVT_TIMER, self.TimeInterval, self.timer)
             self.Bind(wx.EVT_CHECKBOX, self.onCheck, self.ensaioAuto)
-            self._ciclo = 0  #condicao dos ciclos inicia com zero
+            self._fase = 0  #condicao dos fases inicia com zero
             self.erro = False  #indica se há erros na execução
             self.Automatico = True #inicia  com o ensaio Automatico sendo true
             self.ensaioAuto.SetValue(True)
@@ -989,13 +989,13 @@ class BottomPanel(wx.Panel):
             self.condic.Disable()
             self.PCalvo.Clear()
             self.SigmaAlvo.Clear()
-            self.Ciclo.Clear()
+            self.fase.Clear()
             self.NGolpes.Clear()
             self.GolpeAtual.Clear()
             self.PCalvo.AppendText(str(VETOR_COND[0][0])+'0')
             self.SigmaAlvo.AppendText(str(VETOR_COND[0][1]-VETOR_COND[0][0])+'0')
             self.NGolpes.AppendText(str(glpCOND))
-            self.Ciclo.AppendText('1')
+            self.fase.AppendText('1')
             self.GolpeAtual.AppendText(str(0))
 
             info = "EDP 179/2018IE"
@@ -1024,7 +1024,7 @@ class BottomPanel(wx.Panel):
             global REFERENCIA2
             global REFERENCIA_MEDIA
             self.erro = False
-            ciclo = 1
+            fase = 1
 
             self.LZero.Disable()
             self.freq.Disable()
@@ -1032,13 +1032,13 @@ class BottomPanel(wx.Panel):
             self.condic.Disable()
             self.PCalvo.Clear()
             self.SigmaAlvo.Clear()
-            self.Ciclo.Clear()
+            self.fase.Clear()
             self.NGolpes.Clear()
             self.GolpeAtual.Clear()
             self.PCalvo.AppendText(str(VETOR_DP[0][0])+'0')
             self.SigmaAlvo.AppendText(str(VETOR_DP[0][1]-VETOR_DP[0][0])+'0')
             self.NGolpes.AppendText(str(glpDP))
-            self.Ciclo.AppendText('1')
+            self.fase.AppendText('1')
             self.GolpeAtual.AppendText(str(0))
 
             if Fase == '':
@@ -1049,38 +1049,38 @@ class BottomPanel(wx.Panel):
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 if dlg.ShowModal() == wx.ID_OK:
                     Fase = 'DP'
-                    if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == False:
+                    if self._fase >= 0 and self._fase < fase and self.Automatico == False:
                         self.graph.fim_inicio.SetLabel('INICIO')
                         self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                         self.graph.fim_inicio.Enable()
 
-                    if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == True:
+                    if self._fase >= 0 and self._fase < fase and self.Automatico == True:
                         self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                         evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                         wx.PostEvent(self.graph.fim_inicio, evt)
 
-                    if self._ciclo >= ciclo and self.erro == False:
+                    if self._fase >= fase and self.erro == False:
                         self.dp.Disable()
                         self.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
-                        self._ciclo = 0
+                        self._fase = 0
                         dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
                         dlg3.ShowModal()
             else:
                 Fase = 'DP'
-                if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == False:
+                if self._fase >= 0 and self._fase < fase and self.Automatico == False:
                     self.graph.fim_inicio.SetLabel('INICIO')
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                     self.graph.fim_inicio.Enable()
 
-                if self._ciclo >= 0 and self._ciclo < ciclo and self.Automatico == True:
+                if self._fase >= 0 and self._fase < fase and self.Automatico == True:
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                     evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                     wx.PostEvent(self.graph.fim_inicio, evt)
 
-                if self._ciclo >= ciclo and self.erro == False:
+                if self._fase >= fase and self.erro == False:
                     self.dp.Disable()
                     self.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
-                    self._ciclo = 0
+                    self._fase = 0
                     dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
                     dlg3.ShowModal()
 

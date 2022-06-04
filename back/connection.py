@@ -28,19 +28,19 @@ portlist = [port for port,desc,hwin in list_ports.comports()]
 conexao = serial.Serial()
 conexao.baudrate = 115200
 
-'''Coeficientes da calibracao da 134'''
-L = bancodedados.LVDT_134()
-A1_DNIT134 = float(L[1])
-B1_DNIT134 = float(L[2])
-A2_DNIT134 = float(L[4])
-B2_DNIT134 = float(L[5])
+'''Coeficientes da calibracao dos sensores S1 e S2'''
+L = bancodedados.S1S2()
+A1_S1 = float(L[1])
+B1_S1= float(L[2])
+A2_S2 = float(L[4])
+B2_S2 = float(L[5])
 
-'''Coeficientes da calibracao da 135'''
-M = bancodedados.LVDT_135()
-A1_DNIT135 = float(M[1])
-B1_DNIT135 = float(M[2])
-A2_DNIT135 = float(M[4])
-B2_DNIT135 = float(M[5])
+'''Coeficientes da calibracao dos sensores S3 e S4'''
+M = bancodedados.S3S4()
+A3_S3 = float(M[1])
+B3_S3 = float(M[2])
+A4_S4 = float(M[4])
+B4_S4 = float(M[5])
 
 #-------------------------------------------------------------------
 def connect():
@@ -436,8 +436,8 @@ def ColetaI(valores):
     Array = arduinoString.split(',')
     try:
         temp = float(Array[0])
-        y1mm = float(Array[1])*A1_DNIT134+B1_DNIT134
-        y2mm = float(Array[2])*A2_DNIT134+B2_DNIT134
+        y1mm = float(Array[1])*A1_S1+B1_S1
+        y2mm = float(Array[2])*A2_S2+B2_S2
         y1v = float(Array[3])
         y2v = float(Array[4])
         sen = float(Array[5])
@@ -470,8 +470,8 @@ def ColetaJ(valores):
     Array = arduinoString.split(',')
     try:
         temp = float(Array[0])
-        y3mm = float(Array[1])*A1_DNIT135+B1_DNIT135
-        y4mm = float(Array[2])*A2_DNIT135+B2_DNIT135
+        y3mm = float(Array[1])*A3_S3+B3_S3
+        y4mm = float(Array[2])*A4_S4+B4_S4
         y3v = float(Array[3])
         y4v = float(Array[4])
         est = float(Array[5])

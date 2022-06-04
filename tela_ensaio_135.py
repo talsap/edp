@@ -162,10 +162,10 @@ class BottomPanel(wx.Panel):
             texto6 = wx.StaticText(self, label = "Y2 (V)", style = wx.ALIGN_CENTER)
             texto7 = wx.StaticText(self, label = "Y1 (mm)", style = wx.ALIGN_CENTER)
             texto8 = wx.StaticText(self, label = "Y2 (mm)", style = wx.ALIGN_CENTER)
-            texto21 = wx.StaticText(self, label = "CICLO", style = wx.ALIGN_CENTER)
-            texto22 = wx.StaticText(self, label = "Nº de Golpes", style = wx.ALIGN_CENTER)
+            texto21 = wx.StaticText(self, label = "FASE", style = wx.ALIGN_CENTER)
+            texto22 = wx.StaticText(self, label = "Nº de CICLOs", style = wx.ALIGN_CENTER)
             texto23 = wx.StaticText(self, label = "Freq. (Hz)", style = wx.ALIGN_CENTER)
-            texto24 = wx.StaticText(self, label = "Golpe Atual", style = wx.ALIGN_CENTER)
+            texto24 = wx.StaticText(self, label = "CICLO Atual", style = wx.ALIGN_CENTER)
 
             texto1.SetFont(FontTitle)
             texto2.SetFont(FontTitle)
@@ -200,7 +200,7 @@ class BottomPanel(wx.Panel):
             self.P = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.Pc = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.Temperatura = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.Ciclo = wx.TextCtrl(self, -1, '1', size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.fase = wx.TextCtrl(self, -1, '1', size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
             self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
             self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTRE)
             self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, size = (50, 35), style = wx.CB_READONLY)
@@ -212,7 +212,7 @@ class BottomPanel(wx.Panel):
             self.P.Disable()
             self.Pc.Disable()
             self.Temperatura.Disable()
-            self.Ciclo.Disable()
+            self.fase.Disable()
             self.NGolpes.Disable()
             self.GolpeAtual.Disable()
             self.freq.Disable()
@@ -224,7 +224,7 @@ class BottomPanel(wx.Panel):
             self.P.SetFont(Fonttext)
             self.Pc.SetFont(Fonttext)
             self.Temperatura.SetFont(Fonttext)
-            self.Ciclo.SetFont(Fonttext)
+            self.fase.SetFont(Fonttext)
             self.NGolpes.SetFont(Fonttext)
             self.GolpeAtual.SetFont(Fonttext)
             self.freq.SetFont(Fonttext)
@@ -236,7 +236,7 @@ class BottomPanel(wx.Panel):
             self.P.SetForegroundColour((119,118,114))
             self.Pc.SetForegroundColour((119,118,114))
             self.Temperatura.SetForegroundColour((119,118,114))
-            self.Ciclo.SetForegroundColour((119,118,114))
+            self.fase.SetForegroundColour((119,118,114))
             self.NGolpes.SetForegroundColour((119,118,114))
             self.GolpeAtual.SetForegroundColour((119,118,114))
 
@@ -370,7 +370,7 @@ class BottomPanel(wx.Panel):
             self.v5_sizer.Add(self.NGolpes, 2, wx.ALL | wx.CENTER, 5)
 
             self.v6_sizer.Add(texto21, 1, wx.ALL | wx.CENTER)
-            self.v6_sizer.Add(self.Ciclo, 2, wx.ALL | wx.CENTER, 5)
+            self.v6_sizer.Add(self.fase, 2, wx.ALL | wx.CENTER, 5)
 
             self.h2_sizer.Add(self.v4_sizer, 3, wx.CENTER)
             self.h2_sizer.AddStretchSpacer(1)
@@ -421,7 +421,7 @@ class BottomPanel(wx.Panel):
             self.timer = wx.Timer(self)
             #self.Bind(wx.EVT_TIMER, self.TimeInterval, self.timer)
             #self.Bind(wx.EVT_CHECKBOX, self.onCheck, self.ensaioAuto)
-            self._ciclo = 0  #condicao dos ciclos inicia com zero
+            self._fase = 0  #condicao dos fases inicia com zero
             self.erro = False  #indica se há erros na execução
             self.Automatico = True #inicia  com o ensaio Automatico sendo falso
             #self.ensaioAuto.SetValue(True)
@@ -498,7 +498,7 @@ class BottomPanel(wx.Panel):
                             y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
                             ymedio = (y1 + y2)/2
                             #print ymedio
-                            
+
                             '''if conditionEnsaio == True:'''
                             if conditionEnsaio == True and valores[0] > 0:
                                 X = np.append(X, valores[0])
