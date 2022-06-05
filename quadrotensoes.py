@@ -3,6 +3,8 @@
 '''Bibliotecas'''
 
 import wx
+import math
+import bancodedados
 
 '''Tela Dialogo Dinamico'''
 class quadro(wx.Dialog):
@@ -19,29 +21,9 @@ class quadro(wx.Dialog):
 
             labels0 = [["  σ3 (MPa)          ","          σd (MPa)            ","             σ1/σ3     "]]
 
-            labels1 = [["0.070","0.070","2"],
-                        ["0.070","0.210","4"],
-                        ["0.105","0.315","4"]]
-
-            labels = [[["0.020","0.020","2"],
-                       ["0.020","0.040","3"],
-                       ["0.020","0.060","4"]],
-                       [["0.035","0.035","2"],
-                       ["0.035","0.070","3"],
-                       ["0.035","0.105","4"]],
-                       [["0.050","0.050","2"],
-                       ["0.050","0.100","3"],
-                       ["0.050","0.150","4"]],
-                       [["0.070","0.070","2"],
-                       ["0.070","0.140","3"],
-                       ["0.070","0.210","4"]],
-                       [["0.105","0.105","2"],
-                       ["0.105","0.210","3"],
-                       ["0.105","0.315","4"]],
-                       [["0.140","0.140","2"],
-                       ["0.140","0.280","3"],
-                       ["0.140","0.420","4"]]]
-
+            label = bancodedados.QD_134()
+            labels1 = label[0]
+            labels = label[1]
 
             v_sizer = wx.BoxSizer(wx.VERTICAL)
             TextoTitle = wx.StaticText(self, label = "QUADRO DE TENSÕES - CONDIC.", style = wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
@@ -58,7 +40,10 @@ class quadro(wx.Dialog):
             s2 = wx.GridBagSizer(hgap=3, vgap=3)
             for coll in range(3):
                 for roww in range(3):
-                    textCond = wx.TextCtrl(self, -1, labels1[roww][coll], style = wx.TE_READONLY | wx.TE_CENTER)
+                    if coll == 2:
+                        textCond = wx.TextCtrl(self, -1, "%.0f" % labels1[roww][coll], style = wx.TE_READONLY | wx.TE_CENTER)
+                    else:
+                        textCond = wx.TextCtrl(self, -1, "%.3f" % labels1[roww][coll], style = wx.TE_READONLY | wx.TE_CENTER)
                     textCond.Disable()
                     s2.Add(textCond, pos=(roww,coll))
             v_sizer.Add(s2, 1, wx.ALL, 4)
@@ -81,7 +66,10 @@ class quadro(wx.Dialog):
                 s4 = wx.GridBagSizer(hgap=3, vgap=3)
                 for coll in range(3):
                     for roww in range(3):
-                        text = wx.TextCtrl(self, -1, labels[row][roww][coll], style = wx.TE_READONLY | wx.TE_CENTER)
+                        if coll == 2:
+                            text = wx.TextCtrl(self, -1, "%.0f" % labels[row][roww][coll], style = wx.TE_READONLY | wx.TE_CENTER)
+                        else:
+                            text = wx.TextCtrl(self, -1, "%.3f" % labels[row][roww][coll], style = wx.TE_READONLY | wx.TE_CENTER)
                         text.Disable()
                         s4.Add(text, pos=(roww,coll))
                 sizer.Add(s4, pos=(row,0), flag= wx.ALL | wx.ALIGN_CENTER_VERTICAL, border=4)
@@ -111,28 +99,9 @@ class quadroEditavelDNIT134(wx.Dialog):
 
             labels0 = [["σ3 (MPa)","σd (MPa)","σ1/σ3"]]
 
-            labels1 = [["0.070","0.070","2"],
-                        ["0.070","0.210","4"],
-                        ["0.105","0.315","4"]]
-
-            labels = [[["0.020","0.020","2"],
-                       ["0.020","0.040","3"],
-                       ["0.020","0.060","4"]],
-                       [["0.035","0.035","2"],
-                       ["0.035","0.070","3"],
-                       ["0.035","0.105","4"]],
-                       [["0.050","0.050","2"],
-                       ["0.050","0.100","3"],
-                       ["0.050","0.150","4"]],
-                       [["0.070","0.070","2"],
-                       ["0.070","0.140","3"],
-                       ["0.070","0.210","4"]],
-                       [["0.105","0.105","2"],
-                       ["0.105","0.210","3"],
-                       ["0.105","0.315","4"]],
-                       [["0.140","0.140","2"],
-                       ["0.140","0.280","3"],
-                       ["0.140","0.420","4"]]]
+            label = bancodedados.QD_134()
+            labels1 = label[0]
+            labels = label[1]
 
             TextoTitle = wx.StaticText(self, label = "QUADRO DE TENSÕES - CONDIC.", style = wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
             TextoTitle.SetFont(FontTitle)
@@ -150,36 +119,42 @@ class quadroEditavelDNIT134(wx.Dialog):
 
             #---------------------------------------
             h0_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t01 = wx.StaticText(self, label = "1", style = wx.ALL | wx.ALIGN_RIGHT)
+            t01.SetForegroundColour((119,118,114))
+            h0_sizer.Add(t01, 1, wx.ALL | wx.CENTER, 5)
+            self.tL0C0 = wx.TextCtrl(self, -1, "%.3f" % labels1[0][0], style = wx.TE_CENTER)
+            self.tL0C0.Disable()
+            h0_sizer.Add(self.tL0C0, 1, wx.ALL | wx.CENTER)
             h0_sizer.AddStretchSpacer(1)
-            tL0C0 = wx.TextCtrl(self, -1, labels1[0][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tL0C0.Disable()
-            h0_sizer.Add(tL0C0, 1, wx.ALL | wx.CENTER)
-            h0_sizer.AddStretchSpacer(1)
-            tL0C1 = wx.TextCtrl(self, -1, labels1[0][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tL0C1.Disable()
-            h0_sizer.Add(tL0C1, 1, wx.ALL | wx.CENTER)
+            self.tL0C1 = wx.TextCtrl(self, -1, "%.3f" % labels1[0][1], style = wx.TE_CENTER)
+            self.tL0C1.Disable()
+            h0_sizer.Add(self.tL0C1, 1, wx.ALL | wx.CENTER)
             h0_sizer.AddStretchSpacer(1)
 
             h1_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t02 = wx.StaticText(self, label = "2", style = wx.ALL | wx.ALIGN_RIGHT)
+            t02.SetForegroundColour((119,118,114))
+            h1_sizer.Add(t02, 1, wx.ALL | wx.CENTER, 5)
+            self.tL1C0 = wx.TextCtrl(self, -1, "%.3f" % labels1[1][0], style = wx.TE_CENTER)
+            self.tL1C0.Disable()
+            h1_sizer.Add(self.tL1C0, 1, wx.ALL | wx.CENTER)
             h1_sizer.AddStretchSpacer(1)
-            tL1C0 = wx.TextCtrl(self, -1, labels1[1][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tL1C0.Disable()
-            h1_sizer.Add(tL1C0, 1, wx.ALL | wx.CENTER)
-            h1_sizer.AddStretchSpacer(1)
-            tL1C1 = wx.TextCtrl(self, -1, labels1[1][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tL1C1.Disable()
-            h1_sizer.Add(tL1C1, 1, wx.ALL | wx.CENTER)
+            self.tL1C1 = wx.TextCtrl(self, -1, "%.3f" % labels1[1][1], style = wx.TE_CENTER)
+            self.tL1C1.Disable()
+            h1_sizer.Add(self.tL1C1, 1, wx.ALL | wx.CENTER)
             h1_sizer.AddStretchSpacer(1)
 
             h2_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t03 = wx.StaticText(self, label = "3", style = wx.ALL | wx.ALIGN_RIGHT)
+            t03.SetForegroundColour((119,118,114))
+            h2_sizer.Add(t03, 1, wx.ALL | wx.CENTER, 5)
+            self.tL2C0 = wx.TextCtrl(self, -1, "%.3f" % labels1[2][0], style = wx.TE_CENTER)
+            self.tL2C0.Disable()
+            h2_sizer.Add(self.tL2C0, 1, wx.ALL | wx.CENTER)
             h2_sizer.AddStretchSpacer(1)
-            tL2C0 = wx.TextCtrl(self, -1, labels1[2][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tL2C0.Disable()
-            h2_sizer.Add(tL2C0, 1, wx.ALL | wx.CENTER)
-            h2_sizer.AddStretchSpacer(1)
-            tL2C1 = wx.TextCtrl(self, -1, labels1[2][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tL2C1.Disable()
-            h2_sizer.Add(tL2C1, 1, wx.ALL | wx.CENTER)
+            self.tL2C1 = wx.TextCtrl(self, -1, "%.3f" % labels1[2][1], style = wx.TE_CENTER)
+            self.tL2C1.Disable()
+            h2_sizer.Add(self.tL2C1, 1, wx.ALL | wx.CENTER)
             h2_sizer.AddStretchSpacer(1)
 
             #---------------------------------------
@@ -209,212 +184,250 @@ class quadroEditavelDNIT134(wx.Dialog):
 
             #---------------------------------------L1L2L3
             h4_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t1 = wx.StaticText(self, label = "1   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t1.SetForegroundColour((119,118,114))
+            h4_sizer.Add(t1, 1, wx.ALL | wx.CENTER)
+            self.tmL1C0 = wx.TextCtrl(self, -1, "%.3f" % labels[0][0][0], style = wx.TE_CENTER)
+            self.tmL1C0.Disable()
+            h4_sizer.Add(self.tmL1C0, 1, wx.ALL | wx.CENTER)
             h4_sizer.AddStretchSpacer(1)
-            tmL1C0 = wx.TextCtrl(self, -1, labels[0][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL1C0.Disable()
-            h4_sizer.Add(tmL1C0, 1, wx.ALL | wx.CENTER)
-            h4_sizer.AddStretchSpacer(1)
-            tmL1C1 = wx.TextCtrl(self, -1, labels[0][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL1C1.Disable()
-            h4_sizer.Add(tmL1C1, 1, wx.ALL | wx.CENTER)
+            self.tmL1C1 = wx.TextCtrl(self, -1, "%.3f" % labels[0][0][1], style = wx.TE_CENTER)
+            self.tmL1C1.Disable()
+            h4_sizer.Add(self.tmL1C1, 1, wx.ALL | wx.CENTER)
             h4_sizer.AddStretchSpacer(1)
 
             h5_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t2 = wx.StaticText(self, label = "2   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t2.SetForegroundColour((119,118,114))
+            h5_sizer.Add(t2, 1, wx.ALL | wx.CENTER)
+            self.tmL2C0 = wx.TextCtrl(self, -1, "%.3f" % labels[0][1][0], style = wx.TE_CENTER)
+            self.tmL2C0.Disable()
+            h5_sizer.Add(self.tmL2C0, 1, wx.ALL | wx.CENTER)
             h5_sizer.AddStretchSpacer(1)
-            tmL2C0 = wx.TextCtrl(self, -1, labels[0][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL2C0.Disable()
-            h5_sizer.Add(tmL2C0, 1, wx.ALL | wx.CENTER)
-            h5_sizer.AddStretchSpacer(1)
-            tmL2C1 = wx.TextCtrl(self, -1, labels[0][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL2C1.Disable()
-            h5_sizer.Add(tmL2C1, 1, wx.ALL | wx.CENTER)
+            self.tmL2C1 = wx.TextCtrl(self, -1, "%.3f" % labels[0][1][1], style = wx.TE_CENTER)
+            self.tmL2C1.Disable()
+            h5_sizer.Add(self.tmL2C1, 1, wx.ALL | wx.CENTER)
             h5_sizer.AddStretchSpacer(1)
 
             h6_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t3 = wx.StaticText(self, label = "3   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t3.SetForegroundColour((119,118,114))
+            h6_sizer.Add(t3, 1, wx.ALL | wx.CENTER)
+            self.tmL3C0 = wx.TextCtrl(self, -1, "%.3f" % labels[0][2][0], style = wx.TE_CENTER)
+            self.tmL3C0.Disable()
+            h6_sizer.Add(self.tmL3C0, 1, wx.ALL | wx.CENTER)
             h6_sizer.AddStretchSpacer(1)
-            tmL3C0 = wx.TextCtrl(self, -1, labels[0][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL3C0.Disable()
-            h6_sizer.Add(tmL3C0, 1, wx.ALL | wx.CENTER)
-            h6_sizer.AddStretchSpacer(1)
-            tmL3C1 = wx.TextCtrl(self, -1, labels[0][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL3C1.Disable()
-            h6_sizer.Add(tmL3C1, 1, wx.ALL | wx.CENTER)
+            self.tmL3C1 = wx.TextCtrl(self, -1, "%.3f" % labels[0][2][1], style = wx.TE_CENTER)
+            self.tmL3C1.Disable()
+            h6_sizer.Add(self.tmL3C1, 1, wx.ALL | wx.CENTER)
             h6_sizer.AddStretchSpacer(1)
 
             #---------------------------------------L4L5L6
             h7_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t4 = wx.StaticText(self, label = "4   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t4.SetForegroundColour((119,118,114))
+            h7_sizer.Add(t4, 1, wx.ALL | wx.CENTER)
+            self.tmL4C0 = wx.TextCtrl(self, -1, "%.3f" % labels[1][0][0], style = wx.TE_CENTER)
+            self.tmL4C0.Disable()
+            h7_sizer.Add(self.tmL4C0, 1, wx.ALL | wx.CENTER)
             h7_sizer.AddStretchSpacer(1)
-            tmL4C0 = wx.TextCtrl(self, -1, labels[1][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL4C0.Disable()
-            h7_sizer.Add(tmL4C0, 1, wx.ALL | wx.CENTER)
-            h7_sizer.AddStretchSpacer(1)
-            tmL4C1 = wx.TextCtrl(self, -1, labels[1][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL4C1.Disable()
-            h7_sizer.Add(tmL4C1, 1, wx.ALL | wx.CENTER)
+            self.tmL4C1 = wx.TextCtrl(self, -1, "%.3f" % labels[1][0][1], style = wx.TE_CENTER)
+            self.tmL4C1.Disable()
+            h7_sizer.Add(self.tmL4C1, 1, wx.ALL | wx.CENTER)
             h7_sizer.AddStretchSpacer(1)
 
             h8_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t5 = wx.StaticText(self, label = "5   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t5.SetForegroundColour((119,118,114))
+            h8_sizer.Add(t5, 1, wx.ALL | wx.CENTER)
+            self.tmL5C0 = wx.TextCtrl(self, -1, "%.3f" % labels[1][1][0], style = wx.TE_CENTER)
+            self.tmL5C0.Disable()
+            h8_sizer.Add(self.tmL5C0, 1, wx.ALL | wx.CENTER)
             h8_sizer.AddStretchSpacer(1)
-            tmL5C0 = wx.TextCtrl(self, -1, labels[1][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL5C0.Disable()
-            h8_sizer.Add(tmL5C0, 1, wx.ALL | wx.CENTER)
-            h8_sizer.AddStretchSpacer(1)
-            tmL5C1 = wx.TextCtrl(self, -1, labels[1][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL5C1.Disable()
-            h8_sizer.Add(tmL5C1, 1, wx.ALL | wx.CENTER)
+            self.tmL5C1 = wx.TextCtrl(self, -1, "%.3f" % labels[1][1][1], style = wx.TE_CENTER)
+            self.tmL5C1.Disable()
+            h8_sizer.Add(self.tmL5C1, 1, wx.ALL | wx.CENTER)
             h8_sizer.AddStretchSpacer(1)
 
             h9_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t6 = wx.StaticText(self, label = "6   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t6.SetForegroundColour((119,118,114))
+            h9_sizer.Add(t6, 1, wx.ALL | wx.CENTER)
+            self.tmL6C0 = wx.TextCtrl(self, -1, "%.3f" % labels[1][2][0], style = wx.TE_CENTER)
+            self.tmL6C0.Disable()
+            h9_sizer.Add(self.tmL6C0, 1, wx.ALL | wx.CENTER)
             h9_sizer.AddStretchSpacer(1)
-            tmL6C0 = wx.TextCtrl(self, -1, labels[1][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL6C0.Disable()
-            h9_sizer.Add(tmL6C0, 1, wx.ALL | wx.CENTER)
-            h9_sizer.AddStretchSpacer(1)
-            tmL6C1 = wx.TextCtrl(self, -1, labels[1][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL6C1.Disable()
-            h9_sizer.Add(tmL6C1, 1, wx.ALL | wx.CENTER)
+            self.tmL6C1 = wx.TextCtrl(self, -1, "%.3f" % labels[1][2][1], style = wx.TE_CENTER)
+            self.tmL6C1.Disable()
+            h9_sizer.Add(self.tmL6C1, 1, wx.ALL | wx.CENTER)
             h9_sizer.AddStretchSpacer(1)
 
             #---------------------------------------L7L8L9
             h10_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t7 = wx.StaticText(self, label = "7   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t7.SetForegroundColour((119,118,114))
+            h10_sizer.Add(t7, 1, wx.ALL | wx.CENTER)
+            self.tmL7C0 = wx.TextCtrl(self, -1, "%.3f" % labels[2][0][0], style = wx.TE_CENTER)
+            self.tmL7C0.Disable()
+            h10_sizer.Add(self.tmL7C0, 1, wx.ALL | wx.CENTER)
             h10_sizer.AddStretchSpacer(1)
-            tmL7C0 = wx.TextCtrl(self, -1, labels[2][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL7C0.Disable()
-            h10_sizer.Add(tmL7C0, 1, wx.ALL | wx.CENTER)
-            h10_sizer.AddStretchSpacer(1)
-            tmL7C1 = wx.TextCtrl(self, -1, labels[2][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL7C1.Disable()
-            h10_sizer.Add(tmL7C1, 1, wx.ALL | wx.CENTER)
+            self.tmL7C1 = wx.TextCtrl(self, -1, "%.3f" % labels[2][0][1], style = wx.TE_CENTER)
+            self.tmL7C1.Disable()
+            h10_sizer.Add(self.tmL7C1, 1, wx.ALL | wx.CENTER)
             h10_sizer.AddStretchSpacer(1)
 
             h11_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t8 = wx.StaticText(self, label = "8   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t8.SetForegroundColour((119,118,114))
+            h11_sizer.Add(t8, 1, wx.ALL | wx.CENTER)
+            self.tmL8C0 = wx.TextCtrl(self, -1, "%.3f" % labels[2][1][0], style = wx.TE_CENTER)
+            self.tmL8C0.Disable()
+            h11_sizer.Add(self.tmL8C0, 1, wx.ALL | wx.CENTER)
             h11_sizer.AddStretchSpacer(1)
-            tmL8C0 = wx.TextCtrl(self, -1, labels[2][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL8C0.Disable()
-            h11_sizer.Add(tmL8C0, 1, wx.ALL | wx.CENTER)
-            h11_sizer.AddStretchSpacer(1)
-            tmL8C1 = wx.TextCtrl(self, -1, labels[2][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL8C1.Disable()
-            h11_sizer.Add(tmL8C1, 1, wx.ALL | wx.CENTER)
+            self.tmL8C1 = wx.TextCtrl(self, -1, "%.3f" % labels[2][1][1], style = wx.TE_CENTER)
+            self.tmL8C1.Disable()
+            h11_sizer.Add(self.tmL8C1, 1, wx.ALL | wx.CENTER)
             h11_sizer.AddStretchSpacer(1)
 
             h12_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t9 = wx.StaticText(self, label = "9   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t9.SetForegroundColour((119,118,114))
+            h12_sizer.Add(t9, 1, wx.ALL | wx.CENTER)
+            self.tmL9C0 = wx.TextCtrl(self, -1, "%.3f" % labels[2][2][0], style = wx.TE_CENTER)
+            self.tmL9C0.Disable()
+            h12_sizer.Add(self.tmL9C0, 1, wx.ALL | wx.CENTER)
             h12_sizer.AddStretchSpacer(1)
-            tmL9C0 = wx.TextCtrl(self, -1, labels[2][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL9C0.Disable()
-            h12_sizer.Add(tmL9C0, 1, wx.ALL | wx.CENTER)
-            h12_sizer.AddStretchSpacer(1)
-            tmL9C1 = wx.TextCtrl(self, -1, labels[2][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL9C1.Disable()
-            h12_sizer.Add(tmL9C1, 1, wx.ALL | wx.CENTER)
+            self.tmL9C1 = wx.TextCtrl(self, -1, "%.3f" % labels[2][2][1], style = wx.TE_CENTER)
+            self.tmL9C1.Disable()
+            h12_sizer.Add(self.tmL9C1, 1, wx.ALL | wx.CENTER)
             h12_sizer.AddStretchSpacer(1)
 
             #---------------------------------------L10L11L12
             h13_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t10 = wx.StaticText(self, label = "10   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t10.SetForegroundColour((119,118,114))
+            h13_sizer.Add(t10, 1, wx.ALL | wx.CENTER)
+            self.tmL10C0 = wx.TextCtrl(self, -1, "%.3f" % labels[3][0][0], style = wx.TE_CENTER)
+            self.tmL10C0.Disable()
+            h13_sizer.Add(self.tmL10C0, 1, wx.ALL | wx.CENTER)
             h13_sizer.AddStretchSpacer(1)
-            tmL10C0 = wx.TextCtrl(self, -1, labels[3][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL10C0.Disable()
-            h13_sizer.Add(tmL10C0, 1, wx.ALL | wx.CENTER)
-            h13_sizer.AddStretchSpacer(1)
-            tmL10C1 = wx.TextCtrl(self, -1, labels[3][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL10C1.Disable()
-            h13_sizer.Add(tmL10C1, 1, wx.ALL | wx.CENTER)
+            self.tmL10C1 = wx.TextCtrl(self, -1, "%.3f" % labels[3][0][1], style = wx.TE_CENTER)
+            self.tmL10C1.Disable()
+            h13_sizer.Add(self.tmL10C1, 1, wx.ALL | wx.CENTER)
             h13_sizer.AddStretchSpacer(1)
 
             h14_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t11 = wx.StaticText(self, label = "11   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t11.SetForegroundColour((119,118,114))
+            h14_sizer.Add(t11, 1, wx.ALL | wx.CENTER)
+            self.tmL11C0 = wx.TextCtrl(self, -1, "%.3f" % labels[3][1][0], style = wx.TE_CENTER)
+            self.tmL11C0.Disable()
+            h14_sizer.Add(self.tmL11C0, 1, wx.ALL | wx.CENTER)
             h14_sizer.AddStretchSpacer(1)
-            tmL11C0 = wx.TextCtrl(self, -1, labels[3][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL11C0.Disable()
-            h14_sizer.Add(tmL11C0, 1, wx.ALL | wx.CENTER)
-            h14_sizer.AddStretchSpacer(1)
-            tmL11C1 = wx.TextCtrl(self, -1, labels[3][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL11C1.Disable()
-            h14_sizer.Add(tmL11C1, 1, wx.ALL | wx.CENTER)
+            self.tmL11C1 = wx.TextCtrl(self, -1, "%.3f" % labels[3][1][1], style = wx.TE_CENTER)
+            self.tmL11C1.Disable()
+            h14_sizer.Add(self.tmL11C1, 1, wx.ALL | wx.CENTER)
             h14_sizer.AddStretchSpacer(1)
 
             h15_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t12 = wx.StaticText(self, label = "12   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t12.SetForegroundColour((119,118,114))
+            h15_sizer.Add(t12, 1, wx.ALL | wx.CENTER)
+            self.tmL12C0 = wx.TextCtrl(self, -1, "%.3f" % labels[3][2][0], style = wx.TE_CENTER)
+            self.tmL12C0.Disable()
+            h15_sizer.Add(self.tmL12C0, 1, wx.ALL | wx.CENTER)
             h15_sizer.AddStretchSpacer(1)
-            tmL12C0 = wx.TextCtrl(self, -1, labels[3][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL12C0.Disable()
-            h15_sizer.Add(tmL12C0, 1, wx.ALL | wx.CENTER)
-            h15_sizer.AddStretchSpacer(1)
-            tmL12C1 = wx.TextCtrl(self, -1, labels[3][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL12C1.Disable()
-            h15_sizer.Add(tmL12C1, 1, wx.ALL | wx.CENTER)
+            self.tmL12C1 = wx.TextCtrl(self, -1, "%.3f" % labels[3][2][1], style = wx.TE_CENTER)
+            self.tmL12C1.Disable()
+            h15_sizer.Add(self.tmL12C1, 1, wx.ALL | wx.CENTER)
             h15_sizer.AddStretchSpacer(1)
 
             #---------------------------------------L13L14L15
             h16_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t13 = wx.StaticText(self, label = "13   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t13.SetForegroundColour((119,118,114))
+            h16_sizer.Add(t13, 1, wx.ALL | wx.CENTER)
+            self.tmL13C0 = wx.TextCtrl(self, -1, "%.3f" % labels[4][0][0], style = wx.TE_CENTER)
+            self.tmL13C0.Disable()
+            h16_sizer.Add(self.tmL13C0, 1, wx.ALL | wx.CENTER)
             h16_sizer.AddStretchSpacer(1)
-            tmL13C0 = wx.TextCtrl(self, -1, labels[4][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL13C0.Disable()
-            h16_sizer.Add(tmL13C0, 1, wx.ALL | wx.CENTER)
-            h16_sizer.AddStretchSpacer(1)
-            tmL13C1 = wx.TextCtrl(self, -1, labels[4][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL13C1.Disable()
-            h16_sizer.Add(tmL13C1, 1, wx.ALL | wx.CENTER)
+            self.tmL13C1 = wx.TextCtrl(self, -1, "%.3f" % labels[4][0][1], style = wx.TE_CENTER)
+            self.tmL13C1.Disable()
+            h16_sizer.Add(self.tmL13C1, 1, wx.ALL | wx.CENTER)
             h16_sizer.AddStretchSpacer(1)
 
             h17_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t14 = wx.StaticText(self, label = "14   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t14.SetForegroundColour((119,118,114))
+            h17_sizer.Add(t14, 1, wx.ALL | wx.CENTER)
+            self.tmL14C0 = wx.TextCtrl(self, -1, "%.3f" % labels[4][1][0], style = wx.TE_CENTER)
+            self.tmL14C0.Disable()
+            h17_sizer.Add(self.tmL14C0, 1, wx.ALL | wx.CENTER)
             h17_sizer.AddStretchSpacer(1)
-            tmL14C0 = wx.TextCtrl(self, -1, labels[4][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL14C0.Disable()
-            h17_sizer.Add(tmL14C0, 1, wx.ALL | wx.CENTER)
-            h17_sizer.AddStretchSpacer(1)
-            tmL14C1 = wx.TextCtrl(self, -1, labels[4][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL14C1.Disable()
-            h17_sizer.Add(tmL14C1, 1, wx.ALL | wx.CENTER)
+            self.tmL14C1 = wx.TextCtrl(self, -1, "%.3f" % labels[4][1][1], style = wx.TE_CENTER)
+            self.tmL14C1.Disable()
+            h17_sizer.Add(self.tmL14C1, 1, wx.ALL | wx.CENTER)
             h17_sizer.AddStretchSpacer(1)
 
             h18_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t15 = wx.StaticText(self, label = "15   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t15.SetForegroundColour((119,118,114))
+            h18_sizer.Add(t15, 1, wx.ALL | wx.CENTER)
+            self.tmL15C0 = wx.TextCtrl(self, -1, "%.3f" % labels[4][2][0], style = wx.TE_CENTER)
+            self.tmL15C0.Disable()
+            h18_sizer.Add(self.tmL15C0, 1, wx.ALL | wx.CENTER)
             h18_sizer.AddStretchSpacer(1)
-            tmL15C0 = wx.TextCtrl(self, -1, labels[4][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL15C0.Disable()
-            h18_sizer.Add(tmL15C0, 1, wx.ALL | wx.CENTER)
-            h18_sizer.AddStretchSpacer(1)
-            tmL15C1 = wx.TextCtrl(self, -1, labels[4][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL15C1.Disable()
-            h18_sizer.Add(tmL15C1, 1, wx.ALL | wx.CENTER)
+            self.tmL15C1 = wx.TextCtrl(self, -1, "%.3f" % labels[4][2][1], style = wx.TE_CENTER)
+            self.tmL15C1.Disable()
+            h18_sizer.Add(self.tmL15C1, 1, wx.ALL | wx.CENTER)
             h18_sizer.AddStretchSpacer(1)
 
             #---------------------------------------L16L17L18
             h19_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t16 = wx.StaticText(self, label = "16   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t16.SetForegroundColour((119,118,114))
+            h19_sizer.Add(t16, 1, wx.ALL | wx.CENTER)
+            self.tmL16C0 = wx.TextCtrl(self, -1, "%.3f" % labels[5][0][0], style = wx.TE_CENTER)
+            self.tmL16C0.Disable()
+            h19_sizer.Add(self.tmL16C0, 1, wx.ALL | wx.CENTER)
             h19_sizer.AddStretchSpacer(1)
-            tmL16C0 = wx.TextCtrl(self, -1, labels[5][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL16C0.Disable()
-            h19_sizer.Add(tmL16C0, 1, wx.ALL | wx.CENTER)
-            h19_sizer.AddStretchSpacer(1)
-            tmL16C1 = wx.TextCtrl(self, -1, labels[5][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL16C1.Disable()
-            h19_sizer.Add(tmL16C1, 1, wx.ALL | wx.CENTER)
+            self.tmL16C1 = wx.TextCtrl(self, -1, "%.3f" % labels[5][0][1], style = wx.TE_CENTER)
+            self.tmL16C1.Disable()
+            h19_sizer.Add(self.tmL16C1, 1, wx.ALL | wx.CENTER)
             h19_sizer.AddStretchSpacer(1)
 
             h20_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t17 = wx.StaticText(self, label = "17   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t17.SetForegroundColour((119,118,114))
+            h20_sizer.Add(t17, 1, wx.ALL | wx.CENTER)
+            self.tmL17C0 = wx.TextCtrl(self, -1, "%.3f" % labels[5][1][0], style = wx.TE_CENTER)
+            self.tmL17C0.Disable()
+            h20_sizer.Add(self.tmL17C0, 1, wx.ALL | wx.CENTER)
             h20_sizer.AddStretchSpacer(1)
-            tmL17C0 = wx.TextCtrl(self, -1, labels[5][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL17C0.Disable()
-            h20_sizer.Add(tmL17C0, 1, wx.ALL | wx.CENTER)
-            h20_sizer.AddStretchSpacer(1)
-            tmL17C1 = wx.TextCtrl(self, -1, labels[5][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL17C1.Disable()
-            h20_sizer.Add(tmL17C1, 1, wx.ALL | wx.CENTER)
+            self.tmL17C1 = wx.TextCtrl(self, -1, "%.3f" % labels[5][1][1], style = wx.TE_CENTER)
+            self.tmL17C1.Disable()
+            h20_sizer.Add(self.tmL17C1, 1, wx.ALL | wx.CENTER)
             h20_sizer.AddStretchSpacer(1)
 
             h21_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            t18 = wx.StaticText(self, label = "18   ", style = wx.ALL | wx.ALIGN_RIGHT)
+            t18.SetForegroundColour((119,118,114))
+            h21_sizer.Add(t18, 1, wx.ALL | wx.CENTER)
+            self.tmL18C0 = wx.TextCtrl(self, -1, "%.3f" % labels[5][2][0], style = wx.TE_CENTER)
+            self.tmL18C0.Disable()
+            h21_sizer.Add(self.tmL18C0, 1, wx.ALL | wx.CENTER)
             h21_sizer.AddStretchSpacer(1)
-            tmL18C0 = wx.TextCtrl(self, -1, labels[5][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL18C0.Disable()
-            h21_sizer.Add(tmL18C0, 1, wx.ALL | wx.CENTER)
-            h21_sizer.AddStretchSpacer(1)
-            tmL18C1 = wx.TextCtrl(self, -1, labels[5][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
-            tmL18C1.Disable()
-            h21_sizer.Add(tmL18C1, 1, wx.ALL | wx.CENTER)
+            self.tmL18C1 = wx.TextCtrl(self, -1, "%.3f" % labels[5][2][1], style = wx.TE_CENTER)
+            self.tmL18C1.Disable()
+            h21_sizer.Add(self.tmL18C1, 1, wx.ALL | wx.CENTER)
             h21_sizer.AddStretchSpacer(1)
 
             #---------------------------------------
             self.editar1 = wx.Button(self, -1, 'Editar', style = wx.CENTER)
             self.Salvar1 = wx.Button(self, -1, 'Salvar', style = wx.CENTER)
             self.Salvar1.Disable()
+            self.Bind(wx.EVT_BUTTON, self.Editar1, self.editar1)
+            self.Bind(wx.EVT_BUTTON, self.Salva1, self.Salvar1)
             h22_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h22_sizer.Add(self.editar1, 1)
             h22_sizer.AddStretchSpacer(2)
@@ -457,6 +470,439 @@ class quadroEditavelDNIT134(wx.Dialog):
             self.SetSize((369,710))
             self.Centre()
             self.Show()
+
+        #--------------------------------------------------
+        def Editar1(self, event):
+                '''Edita...'''
+                self.tL0C0.Enable()
+                self.tL0C1.Enable()
+                self.tL1C0.Enable()
+                self.tL1C1.Enable()
+                self.tL2C0.Enable()
+                self.tL2C1.Enable()
+
+                self.tmL1C0.Enable()
+                self.tmL1C1.Enable()
+                self.tmL2C0.Enable()
+                self.tmL2C1.Enable()
+                self.tmL3C0.Enable()
+                self.tmL3C1.Enable()
+
+                self.tmL4C0.Enable()
+                self.tmL4C1.Enable()
+                self.tmL5C0.Enable()
+                self.tmL5C1.Enable()
+                self.tmL6C0.Enable()
+                self.tmL6C1.Enable()
+
+                self.tmL7C0.Enable()
+                self.tmL7C1.Enable()
+                self.tmL8C0.Enable()
+                self.tmL8C1.Enable()
+                self.tmL9C0.Enable()
+                self.tmL9C1.Enable()
+
+                self.tmL10C0.Enable()
+                self.tmL10C1.Enable()
+                self.tmL11C0.Enable()
+                self.tmL11C1.Enable()
+                self.tmL12C0.Enable()
+                self.tmL12C1.Enable()
+
+                self.tmL13C0.Enable()
+                self.tmL13C1.Enable()
+                self.tmL14C0.Enable()
+                self.tmL14C1.Enable()
+                self.tmL15C0.Enable()
+                self.tmL15C1.Enable()
+
+                self.tmL16C0.Enable()
+                self.tmL16C1.Enable()
+                self.tmL17C0.Enable()
+                self.tmL17C1.Enable()
+                self.tmL18C0.Enable()
+                self.tmL18C1.Enable()
+
+                self.editar1.Disable()
+                self.Salvar1.Enable()
+                self.Update()
+                self.Refresh()
+
+        #--------------------------------------------------
+        def Salva1(self, event):
+                '''Salva...'''
+                CL1C0 = self.tL0C0.GetValue()
+                CL1C1 = self.tL0C1.GetValue()
+                CL2C0 = self.tL1C0.GetValue()
+                CL2C1 = self.tL1C1.GetValue()
+                CL3C0 = self.tL2C0.GetValue()
+                CL3C1 = self.tL2C1.GetValue()
+
+                ML1C0 = self.tmL1C0.GetValue()
+                ML1C1 = self.tmL1C1.GetValue()
+                ML2C0 = self.tmL2C0.GetValue()
+                ML2C1 = self.tmL2C1.GetValue()
+                ML3C0 = self.tmL3C0.GetValue()
+                ML3C1 = self.tmL3C1.GetValue()
+
+                ML4C0 = self.tmL4C0.GetValue()
+                ML4C1 = self.tmL4C1.GetValue()
+                ML5C0 = self.tmL5C0.GetValue()
+                ML5C1 = self.tmL5C1.GetValue()
+                ML6C0 = self.tmL6C0.GetValue()
+                ML6C1 = self.tmL6C1.GetValue()
+
+                ML7C0 = self.tmL7C0.GetValue()
+                ML7C1 = self.tmL7C1.GetValue()
+                ML8C0 = self.tmL8C0.GetValue()
+                ML8C1 = self.tmL8C1.GetValue()
+                ML9C0 = self.tmL9C0.GetValue()
+                ML9C1 = self.tmL9C1.GetValue()
+
+                ML10C0 = self.tmL10C0.GetValue()
+                ML10C1 = self.tmL10C1.GetValue()
+                ML11C0 = self.tmL11C0.GetValue()
+                ML11C1 = self.tmL11C1.GetValue()
+                ML12C0 = self.tmL12C0.GetValue()
+                ML12C1 = self.tmL12C1.GetValue()
+
+                ML13C0 = self.tmL13C0.GetValue()
+                ML13C1 = self.tmL13C1.GetValue()
+                ML14C0 = self.tmL14C0.GetValue()
+                ML14C1 = self.tmL14C1.GetValue()
+                ML15C0 = self.tmL15C0.GetValue()
+                ML15C1 = self.tmL15C1.GetValue()
+
+                ML16C0 = self.tmL16C0.GetValue()
+                ML16C1 = self.tmL16C1.GetValue()
+                ML17C0 = self.tmL17C0.GetValue()
+                ML17C1 = self.tmL17C1.GetValue()
+                ML18C0 = self.tmL18C0.GetValue()
+                ML18C1 = self.tmL18C1.GetValue()
+                #------------------------------
+                CL1C0 = format(CL1C0).replace(',','.')
+                CL1C1 = format(CL1C1).replace(',','.')
+                CL2C0 = format(CL2C0).replace(',','.')
+                CL2C1 = format(CL2C1).replace(',','.')
+                CL3C0 = format(CL3C0).replace(',','.')
+                CL3C1 = format(CL3C1).replace(',','.')
+
+                ML1C0 = format(ML1C0).replace(',','.')
+                ML1C1 = format(ML1C1).replace(',','.')
+                ML2C0 = format(ML2C0).replace(',','.')
+                ML2C1 = format(ML2C1).replace(',','.')
+                ML3C0 = format(ML3C0).replace(',','.')
+                ML3C1 = format(ML3C1).replace(',','.')
+
+                ML4C0 = format(ML4C0).replace(',','.')
+                ML4C1 = format(ML4C1).replace(',','.')
+                ML5C0 = format(ML5C0).replace(',','.')
+                ML5C1 = format(ML5C1).replace(',','.')
+                ML6C0 = format(ML6C0).replace(',','.')
+                ML6C1 = format(ML6C1).replace(',','.')
+
+                ML7C0 = format(ML7C0).replace(',','.')
+                ML7C1 = format(ML7C1).replace(',','.')
+                ML8C0 = format(ML8C0).replace(',','.')
+                ML8C1 = format(ML8C1).replace(',','.')
+                ML9C0 = format(ML9C0).replace(',','.')
+                ML9C1 = format(ML9C1).replace(',','.')
+
+                ML10C0 = format(ML10C0).replace(',','.')
+                ML10C1 = format(ML10C1).replace(',','.')
+                ML11C0 = format(ML11C0).replace(',','.')
+                ML11C1 = format(ML11C1).replace(',','.')
+                ML12C0 = format(ML12C0).replace(',','.')
+                ML12C1 = format(ML12C1).replace(',','.')
+
+                ML13C0 = format(ML13C0).replace(',','.')
+                ML13C1 = format(ML13C1).replace(',','.')
+                ML14C0 = format(ML14C0).replace(',','.')
+                ML14C1 = format(ML14C1).replace(',','.')
+                ML15C0 = format(ML15C0).replace(',','.')
+                ML15C1 = format(ML15C1).replace(',','.')
+
+                ML16C0 = format(ML16C0).replace(',','.')
+                ML16C1 = format(ML16C1).replace(',','.')
+                ML17C0 = format(ML17C0).replace(',','.')
+                ML17C1 = format(ML17C1).replace(',','.')
+                ML18C0 = format(ML18C0).replace(',','.')
+                ML18C1 = format(ML18C1).replace(',','.')
+
+                l = []
+                q = []
+                try:
+                    CL1C0 = abs(float(CL1C0))
+                    CL1C1 = abs(float(CL1C1))
+                    CL2C0 = abs(float(CL2C0))
+                    CL2C1 = abs(float(CL2C1))
+                    CL3C0 = abs(float(CL3C0))
+                    CL3C1 = abs(float(CL3C1))
+
+                    if CL1C0 <= 0:
+                        CL1C0 = 0.001
+                    l.append(math.sqrt(CL1C0*CL1C0))
+                    l.append(CL1C1)
+                    l.append((CL1C0+CL1C1)/CL1C0)
+                    q.append(l)
+                    l = []
+                    if CL2C0 <= 0:
+                        CL2C0 = 0.001
+                    l.append(CL2C0)
+                    l.append(CL2C1)
+                    l.append((CL2C0+CL2C1)/CL2C0)
+                    q.append(l)
+                    l = []
+                    if CL3C0 <= 0:
+                        CL3C0 = 0.001
+                    l.append(CL3C0)
+                    l.append(CL3C1)
+                    l.append((CL3C0+CL3C1)/CL3C0)
+                    q.append(l)
+                    l = []
+
+                    ML1C0 = abs(float(ML1C0))
+                    ML1C1 = abs(float(ML1C1))
+                    ML2C0 = abs(float(ML2C0))
+                    ML2C1 = abs(float(ML2C1))
+                    ML3C0 = abs(float(ML3C0))
+                    ML3C1 = abs(float(ML3C1))
+
+                    if ML1C0 <= 0:
+                        ML1C0 = 0.001
+                    l.append(ML1C0)
+                    l.append(ML1C1)
+                    l.append((ML1C0+ML1C1)/ML1C0)
+                    q.append(l)
+                    l = []
+                    if ML2C0 <= 0:
+                        ML2C0 = 0.001
+                    l.append(ML2C0)
+                    l.append(ML2C1)
+                    l.append((ML2C0+ML2C1)/ML2C0)
+                    q.append(l)
+                    l = []
+                    if ML3C0 <= 0:
+                        ML3C0 = 0.001
+                    l.append(ML3C0)
+                    l.append(ML3C1)
+                    l.append((ML3C0+ML3C1)/ML3C0)
+                    q.append(l)
+                    l = []
+
+                    ML4C0 = abs(float(ML4C0))
+                    ML4C1 = abs(float(ML4C1))
+                    ML5C0 = abs(float(ML5C0))
+                    ML5C1 = abs(float(ML5C1))
+                    ML6C0 = abs(float(ML6C0))
+                    ML6C1 = abs(float(ML6C1))
+
+                    if ML4C0 <= 0:
+                        ML4C0 = 0.001
+                    l.append(ML4C0)
+                    l.append(ML4C1)
+                    l.append((ML4C0+ML4C1)/ML4C0)
+                    q.append(l)
+                    l = []
+                    if ML5C0 <= 0:
+                        ML5C0 = 0.001
+                    l.append(ML5C0)
+                    l.append(ML5C1)
+                    l.append((ML5C0+ML5C1)/ML5C0)
+                    q.append(l)
+                    l = []
+                    if ML6C0 <= 0:
+                        ML6C0 = 0.001
+                    l.append(ML6C0)
+                    l.append(ML6C1)
+                    l.append((ML6C0+ML6C1)/ML6C0)
+                    q.append(l)
+                    l = []
+
+                    ML7C0 = abs(float(ML7C0))
+                    ML7C1 = abs(float(ML7C1))
+                    ML8C0 = abs(float(ML8C0))
+                    ML8C1 = abs(float(ML8C1))
+                    ML9C0 = abs(float(ML9C0))
+                    ML9C1 = abs(float(ML9C1))
+
+                    if ML7C0 <= 0:
+                        ML7C0 = 0.001
+                    l.append(ML7C0)
+                    l.append(ML7C1)
+                    l.append((ML7C0+ML7C1)/ML7C0)
+                    q.append(l)
+                    l = []
+                    if ML8C0 <= 0:
+                        ML8C0 = 0.001
+                    l.append(ML8C0)
+                    l.append(ML8C1)
+                    l.append((ML8C0+ML8C1)/ML8C0)
+                    q.append(l)
+                    l = []
+                    if ML9C0 <= 0:
+                        ML9C0 = 0.001
+                    l.append(ML9C0)
+                    l.append(ML9C1)
+                    l.append((ML9C0+ML9C1)/ML9C0)
+                    q.append(l)
+                    l = []
+
+                    ML10C0 = abs(float(ML10C0))
+                    ML10C1 = abs(float(ML10C1))
+                    ML11C0 = abs(float(ML11C0))
+                    ML11C1 = abs(float(ML11C1))
+                    ML12C0 = abs(float(ML12C0))
+                    ML12C1 = abs(float(ML12C1))
+
+                    if ML10C0 <= 0:
+                        ML10C0 = 0.001
+                    l.append(ML10C0)
+                    l.append(ML10C1)
+                    l.append((ML10C0+ML10C1)/ML10C0)
+                    q.append(l)
+                    l = []
+                    if ML11C0 <= 0:
+                        ML11C0 = 0.001
+                    l.append(ML11C0)
+                    l.append(ML11C1)
+                    l.append((ML11C0+ML11C1)/ML11C0)
+                    q.append(l)
+                    l = []
+                    if ML12C0 <= 0:
+                        ML12C0 = 0.001
+                    l.append(ML12C0)
+                    l.append(ML12C1)
+                    l.append((ML12C0+ML12C1)/ML12C0)
+                    q.append(l)
+                    l = []
+
+                    ML13C0 = abs(float(ML13C0))
+                    ML13C1 = abs(float(ML13C1))
+                    ML14C0 = abs(float(ML14C0))
+                    ML14C1 = abs(float(ML14C1))
+                    ML15C0 = abs(float(ML15C0))
+                    ML15C1 = abs(float(ML15C1))
+
+                    if ML13C0 <= 0:
+                        ML13C0 = 0.001
+                    l.append(ML13C0)
+                    l.append(ML13C1)
+                    l.append((ML13C0+ML13C1)/ML13C0)
+                    q.append(l)
+                    l = []
+                    if ML14C0 <= 0:
+                        ML14C0 = 0.001
+                    l.append(ML14C0)
+                    l.append(ML14C1)
+                    l.append((ML14C0+ML14C1)/ML14C0)
+                    q.append(l)
+                    l = []
+                    if ML15C0 <= 0:
+                        ML15C0 = 0.001
+                    l.append(ML15C0)
+                    l.append(ML15C1)
+                    l.append((ML15C0+ML15C1)/ML15C0)
+                    q.append(l)
+                    l = []
+
+                    ML16C0 = abs(float(ML16C0))
+                    ML16C1 = abs(float(ML16C1))
+                    ML17C0 = abs(float(ML17C0))
+                    ML17C1 = abs(float(ML17C1))
+                    ML18C0 = abs(float(ML18C0))
+                    ML18C1 = abs(float(ML18C1))
+
+                    if ML16C0 <= 0:
+                        ML16C0 = 0.001
+                    l.append(ML16C0)
+                    l.append(ML16C1)
+                    l.append((ML16C0+ML16C1)/ML16C0)
+                    q.append(l)
+                    l = []
+                    if ML17C0 <= 0:
+                        ML17C0 = 0.001
+                    l.append(ML17C0)
+                    l.append(ML17C1)
+                    l.append((ML17C0+ML17C1)/ML17C0)
+                    q.append(l)
+                    l = []
+                    if ML18C0 <= 0:
+                        ML18C0 = 0.001
+                    l.append(ML18C0)
+                    l.append(ML18C1)
+                    l.append((ML18C0+ML18C1)/ML18C0)
+                    q.append(l)
+                    l = []
+                    condicional = 1
+
+                except:
+                    print('Os valores digitados em algum dos campos nao esta da maneira esperada')
+                    menssagError = wx.MessageDialog(self, 'Os valores digitados em algum dos campos não está da maneira esperada.', 'EDP', wx.OK|wx.ICON_INFORMATION)
+                    aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                    menssagError.ShowModal()
+                    menssagError.Destroy()
+                    condicional = -1
+
+                if CL1C0 > 0.15 or CL2C0 > 0.15 or CL3C0 > 0.15 or CL1C1 > 0.5 or CL2C1 > 0.5 or CL2C1 > 0.5 or CL2C1 > 0.5 or ML1C0 > 0.15 or ML2C0 > 0.15 or ML3C0 > 0.15 or ML4C0 > 0.15 or ML5C0 > 0.15 or ML6C0 > 0.15 or ML7C0 > 0.15 or  ML8C0 > 0.15 or ML9C0 > 0.15 or ML10C0 > 0.15 or ML11C0 > 0.15 or ML12C0 > 0.15 or ML13C0 > 0.15 or ML14C0 > 0.15 or ML15C0 > 0.15 or ML16C0 > 0.15 or ML17C0 > 0.15 or ML18C0 > 0.15 or ML1C1 > 0.5 or ML2C1 > 0.5 or ML3C1 > 0.5 or ML4C1 > 0.5 or ML5C1 > 0.5 or ML6C1 > 0.5 or ML7C1 > 0.5 or  ML8C1 > 0.5 or ML9C1 > 0.5 or ML10C1 > 0.5 or ML11C1 > 0.5 or ML12C1 > 0.5 or ML13C1 > 0.5 or ML14C1 > 0.5 or ML15C1 > 0.5 or ML16C1 > 0.5 or ML17C1 > 0.5 or ML18C1 > 0.5:
+                    '''Diálogo para forçar preenchimento de pressões sigma3 < 0.15 e sigmad <0.5'''
+                    dlg = wx.MessageDialog(None, 'Esses limites devem ser respeitados! \nσ3 < 0.150 (MPa) e  σd < 0.500 (MPa)', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                    result = dlg.ShowModal()
+
+                else:
+                    if(condicional>0):
+                        bancodedados.update_QD_134(q)
+                        self.tL0C0.Disable()
+                        self.tL0C1.Disable()
+                        self.tL1C0.Disable()
+                        self.tL1C1.Disable()
+                        self.tL2C0.Disable()
+                        self.tL2C1.Disable()
+
+                        self.tmL1C0.Disable()
+                        self.tmL1C1.Disable()
+                        self.tmL2C0.Disable()
+                        self.tmL2C1.Disable()
+                        self.tmL3C0.Disable()
+                        self.tmL3C1.Disable()
+
+                        self.tmL4C0.Disable()
+                        self.tmL4C1.Disable()
+                        self.tmL5C0.Disable()
+                        self.tmL5C1.Disable()
+                        self.tmL6C0.Disable()
+                        self.tmL6C1.Disable()
+
+                        self.tmL7C0.Disable()
+                        self.tmL7C1.Disable()
+                        self.tmL8C0.Disable()
+                        self.tmL8C1.Disable()
+                        self.tmL9C0.Disable()
+                        self.tmL9C1.Disable()
+
+                        self.tmL10C0.Disable()
+                        self.tmL10C1.Disable()
+                        self.tmL11C0.Disable()
+                        self.tmL11C1.Disable()
+                        self.tmL12C0.Disable()
+                        self.tmL12C1.Disable()
+
+                        self.tmL13C0.Disable()
+                        self.tmL13C1.Disable()
+                        self.tmL14C0.Disable()
+                        self.tmL14C1.Disable()
+                        self.tmL15C0.Disable()
+                        self.tmL15C1.Disable()
+
+                        self.tmL16C0.Disable()
+                        self.tmL16C1.Disable()
+                        self.tmL17C0.Disable()
+                        self.tmL17C1.Disable()
+                        self.tmL18C0.Disable()
+                        self.tmL18C1.Disable()
+
+                        self.editar1.Enable()
+                        self.Salvar1.Disable()
 
 '''Quadro de Tensões Editável DNIT179'''
 class quadroEditavelDNIT179(wx.Dialog):
@@ -502,11 +948,11 @@ class quadroEditavelDNIT179(wx.Dialog):
             #---------------------------------------
             h0_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h0_sizer.AddStretchSpacer(1)
-            tL0C0 = wx.TextCtrl(self, -1, labels1[0][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tL0C0 = wx.TextCtrl(self, -1, labels1[0][0], style =  wx.TE_CENTER)
             tL0C0.Disable()
             h0_sizer.Add(tL0C0, 1, wx.ALL | wx.CENTER)
             h0_sizer.AddStretchSpacer(1)
-            tL0C1 = wx.TextCtrl(self, -1, labels1[0][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tL0C1 = wx.TextCtrl(self, -1, labels1[0][1], style =  wx.TE_CENTER)
             tL0C1.Disable()
             h0_sizer.Add(tL0C1, 1, wx.ALL | wx.CENTER)
             h0_sizer.AddStretchSpacer(1)
@@ -537,33 +983,33 @@ class quadroEditavelDNIT179(wx.Dialog):
             #---------------------------------------L1L2L3
             h4_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h4_sizer.AddStretchSpacer(1)
-            tmL1C0 = wx.TextCtrl(self, -1, labels[0][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL1C0 = wx.TextCtrl(self, -1, labels[0][0][0], style =  wx.TE_CENTER)
             tmL1C0.Disable()
             h4_sizer.Add(tmL1C0, 1, wx.ALL | wx.CENTER)
             h4_sizer.AddStretchSpacer(1)
-            tmL1C1 = wx.TextCtrl(self, -1, labels[0][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL1C1 = wx.TextCtrl(self, -1, labels[0][0][1], style =  wx.TE_CENTER)
             tmL1C1.Disable()
             h4_sizer.Add(tmL1C1, 1, wx.ALL | wx.CENTER)
             h4_sizer.AddStretchSpacer(1)
 
             h5_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h5_sizer.AddStretchSpacer(1)
-            tmL2C0 = wx.TextCtrl(self, -1, labels[0][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL2C0 = wx.TextCtrl(self, -1, labels[0][1][0], style =  wx.TE_CENTER)
             tmL2C0.Disable()
             h5_sizer.Add(tmL2C0, 1, wx.ALL | wx.CENTER)
             h5_sizer.AddStretchSpacer(1)
-            tmL2C1 = wx.TextCtrl(self, -1, labels[0][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL2C1 = wx.TextCtrl(self, -1, labels[0][1][1], style =  wx.TE_CENTER)
             tmL2C1.Disable()
             h5_sizer.Add(tmL2C1, 1, wx.ALL | wx.CENTER)
             h5_sizer.AddStretchSpacer(1)
 
             h6_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h6_sizer.AddStretchSpacer(1)
-            tmL3C0 = wx.TextCtrl(self, -1, labels[0][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL3C0 = wx.TextCtrl(self, -1, labels[0][2][0], style =  wx.TE_CENTER)
             tmL3C0.Disable()
             h6_sizer.Add(tmL3C0, 1, wx.ALL | wx.CENTER)
             h6_sizer.AddStretchSpacer(1)
-            tmL3C1 = wx.TextCtrl(self, -1, labels[0][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL3C1 = wx.TextCtrl(self, -1, labels[0][2][1], style =  wx.TE_CENTER)
             tmL3C1.Disable()
             h6_sizer.Add(tmL3C1, 1, wx.ALL | wx.CENTER)
             h6_sizer.AddStretchSpacer(1)
@@ -571,33 +1017,33 @@ class quadroEditavelDNIT179(wx.Dialog):
             #---------------------------------------L4L5L6
             h7_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h7_sizer.AddStretchSpacer(1)
-            tmL4C0 = wx.TextCtrl(self, -1, labels[1][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL4C0 = wx.TextCtrl(self, -1, labels[1][0][0], style =  wx.TE_CENTER)
             tmL4C0.Disable()
             h7_sizer.Add(tmL4C0, 1, wx.ALL | wx.CENTER)
             h7_sizer.AddStretchSpacer(1)
-            tmL4C1 = wx.TextCtrl(self, -1, labels[1][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL4C1 = wx.TextCtrl(self, -1, labels[1][0][1], style =  wx.TE_CENTER)
             tmL4C1.Disable()
             h7_sizer.Add(tmL4C1, 1, wx.ALL | wx.CENTER)
             h7_sizer.AddStretchSpacer(1)
 
             h8_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h8_sizer.AddStretchSpacer(1)
-            tmL5C0 = wx.TextCtrl(self, -1, labels[1][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL5C0 = wx.TextCtrl(self, -1, labels[1][1][0], style =  wx.TE_CENTER)
             tmL5C0.Disable()
             h8_sizer.Add(tmL5C0, 1, wx.ALL | wx.CENTER)
             h8_sizer.AddStretchSpacer(1)
-            tmL5C1 = wx.TextCtrl(self, -1, labels[1][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL5C1 = wx.TextCtrl(self, -1, labels[1][1][1], style =  wx.TE_CENTER)
             tmL5C1.Disable()
             h8_sizer.Add(tmL5C1, 1, wx.ALL | wx.CENTER)
             h8_sizer.AddStretchSpacer(1)
 
             h9_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h9_sizer.AddStretchSpacer(1)
-            tmL6C0 = wx.TextCtrl(self, -1, labels[1][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL6C0 = wx.TextCtrl(self, -1, labels[1][2][0], style =  wx.TE_CENTER)
             tmL6C0.Disable()
             h9_sizer.Add(tmL6C0, 1, wx.ALL | wx.CENTER)
             h9_sizer.AddStretchSpacer(1)
-            tmL6C1 = wx.TextCtrl(self, -1, labels[1][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL6C1 = wx.TextCtrl(self, -1, labels[1][2][1], style =  wx.TE_CENTER)
             tmL6C1.Disable()
             h9_sizer.Add(tmL6C1, 1, wx.ALL | wx.CENTER)
             h9_sizer.AddStretchSpacer(1)
@@ -605,33 +1051,33 @@ class quadroEditavelDNIT179(wx.Dialog):
             #---------------------------------------L7L8L9
             h10_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h10_sizer.AddStretchSpacer(1)
-            tmL7C0 = wx.TextCtrl(self, -1, labels[2][0][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL7C0 = wx.TextCtrl(self, -1, labels[2][0][0], style =  wx.TE_CENTER)
             tmL7C0.Disable()
             h10_sizer.Add(tmL7C0, 1, wx.ALL | wx.CENTER)
             h10_sizer.AddStretchSpacer(1)
-            tmL7C1 = wx.TextCtrl(self, -1, labels[2][0][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL7C1 = wx.TextCtrl(self, -1, labels[2][0][1], style =  wx.TE_CENTER)
             tmL7C1.Disable()
             h10_sizer.Add(tmL7C1, 1, wx.ALL | wx.CENTER)
             h10_sizer.AddStretchSpacer(1)
 
             h11_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h11_sizer.AddStretchSpacer(1)
-            tmL8C0 = wx.TextCtrl(self, -1, labels[2][1][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL8C0 = wx.TextCtrl(self, -1, labels[2][1][0], style =  wx.TE_CENTER)
             tmL8C0.Disable()
             h11_sizer.Add(tmL8C0, 1, wx.ALL | wx.CENTER)
             h11_sizer.AddStretchSpacer(1)
-            tmL8C1 = wx.TextCtrl(self, -1, labels[2][1][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL8C1 = wx.TextCtrl(self, -1, labels[2][1][1], style =  wx.TE_CENTER)
             tmL8C1.Disable()
             h11_sizer.Add(tmL8C1, 1, wx.ALL | wx.CENTER)
             h11_sizer.AddStretchSpacer(1)
 
             h12_sizer = wx.BoxSizer(wx.HORIZONTAL)
             h12_sizer.AddStretchSpacer(1)
-            tmL9C0 = wx.TextCtrl(self, -1, labels[2][2][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL9C0 = wx.TextCtrl(self, -1, labels[2][2][0], style =  wx.TE_CENTER)
             tmL9C0.Disable()
             h12_sizer.Add(tmL9C0, 1, wx.ALL | wx.CENTER)
             h12_sizer.AddStretchSpacer(1)
-            tmL9C1 = wx.TextCtrl(self, -1, labels[2][2][1], style = wx.TE_READONLY | wx.TE_CENTER)
+            tmL9C1 = wx.TextCtrl(self, -1, labels[2][2][1], style =  wx.TE_CENTER)
             tmL9C1.Disable()
             h12_sizer.Add(tmL9C1, 1, wx.ALL | wx.CENTER)
             h12_sizer.AddStretchSpacer(1)
@@ -702,31 +1148,31 @@ class quadroEditavelDNIT181(wx.Dialog):
 
             #---------------------------------------
             h0_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            tL0C0 = wx.TextCtrl(self, -1, labels1[0][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tL0C0 = wx.TextCtrl(self, -1, labels1[0][0], style =  wx.TE_CENTER)
             tL0C0.Disable()
             h0_sizer.Add(tL0C0, 1, wx.ALL | wx.CENTER)
 
             #---------------------------------------
             h1_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            tL1C0 = wx.TextCtrl(self, -1, labels1[1][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tL1C0 = wx.TextCtrl(self, -1, labels1[1][0], style =  wx.TE_CENTER)
             tL1C0.Disable()
             h1_sizer.Add(tL1C0, 1, wx.ALL | wx.CENTER)
 
             #---------------------------------------
             h2_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            tL2C0 = wx.TextCtrl(self, -1, labels1[2][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tL2C0 = wx.TextCtrl(self, -1, labels1[2][0], style =  wx.TE_CENTER)
             tL2C0.Disable()
             h2_sizer.Add(tL2C0, 1, wx.ALL | wx.CENTER)
 
             #---------------------------------------
             h3_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            tL3C0 = wx.TextCtrl(self, -1, labels1[3][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tL3C0 = wx.TextCtrl(self, -1, labels1[3][0], style =  wx.TE_CENTER)
             tL3C0.Disable()
             h3_sizer.Add(tL3C0, 1, wx.ALL | wx.CENTER)
 
             #---------------------------------------
             h4_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            tL4C0 = wx.TextCtrl(self, -1, labels1[4][0], style = wx.TE_READONLY | wx.TE_CENTER)
+            tL4C0 = wx.TextCtrl(self, -1, labels1[4][0], style =  wx.TE_CENTER)
             tL4C0.Disable()
             h4_sizer.Add(tL4C0, 1, wx.ALL | wx.CENTER)
 
@@ -762,6 +1208,6 @@ class quadroEditavelDNIT181(wx.Dialog):
 
 if __name__ == "__main__":
 	app = wx.App()
-	frame = quadroEditavelDNIT181(None)
+	frame = quadroEditavelDNIT134(None)
 	frame.Show()
 	app.MainLoop()

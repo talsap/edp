@@ -197,8 +197,8 @@ class TopPanel(wx.Panel):
 
                 if Fase == 'CONDICIONAMENTO':
                     print '\nAVANCA.FASE.COND='+str(self._fase+1)+'\n'
-                    self._self.bottom.PCalvo.AppendText(str(VETOR_COND[self._fase][0]))
-                    self._self.bottom.SigmaAlvo.AppendText(str(VETOR_COND[self._fase][1]-VETOR_COND[self._fase][0]))
+                    self._self.bottom.PCalvo.AppendText("%.3f" % VETOR_COND[self._fase][0])
+                    self._self.bottom.SigmaAlvo.AppendText("%.3f" % (VETOR_COND[self._fase][1]-VETOR_COND[self._fase][0]))
                     self._self.bottom.fase.AppendText(str(self._fase+1))
 
                     if(self._fase < 2):
@@ -208,8 +208,8 @@ class TopPanel(wx.Panel):
 
                 if Fase == 'MR':
                     print '\nAVANCA.FASE.MR='+str(self._fase+1)+'\n'
-                    self._self.bottom.PCalvo.AppendText(str(VETOR_MR[self._fase][0]))
-                    self._self.bottom.SigmaAlvo.AppendText(str(VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0]))
+                    self._self.bottom.PCalvo.AppendText("%.3f" % VETOR_MR[self._fase][0])
+                    self._self.bottom.SigmaAlvo.AppendText("%.3f" % (VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0]))
                     self._self.bottom.fase.AppendText(str(self._fase+1))
 
                     if(self._fase < 17):
@@ -1242,8 +1242,8 @@ class BottomPanel(wx.Panel):
                 self.fase.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
-                self.PCalvo.AppendText(str(VETOR_COND[self._fase][0])+'0')
-                self.SigmaAlvo.AppendText(str(VETOR_COND[self._fase][1]-VETOR_COND[self._fase][0])+'0')
+                self.PCalvo.AppendText("%.3f" % VETOR_COND[self._fase][0])
+                self.SigmaAlvo.AppendText("%.3f" % (VETOR_COND[self._fase][1]-VETOR_COND[self._fase][0]))
                 self.NGolpes.AppendText(str(glpCOND))
                 self.fase.AppendText(str(self._fase+1))
                 self.GolpeAtual.AppendText(str(0))
@@ -1347,8 +1347,8 @@ class BottomPanel(wx.Panel):
                 self.fase.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
-                self.PCalvo.AppendText(str(VETOR_MR[self._fase][0])+'0')
-                self.SigmaAlvo.AppendText(str(VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0])+'0')
+                self.PCalvo.AppendText("%.3f" % VETOR_MR[self._fase][0])
+                self.SigmaAlvo.AppendText("%.3f" % (VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0]))
                 self.NGolpes.AppendText(str(10))
                 self.fase.AppendText(str(self._fase+1))
                 self.GolpeAtual.AppendText(str(0))

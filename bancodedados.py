@@ -11,6 +11,41 @@ pi = math.pi
 connection = sqlite3.connect('banco.db', check_same_thread = False)
 c = connection.cursor()
 
+VETOR_134 = [[0.070,0.070,2],
+             [0.070,0.210,4],
+             [0.105,0.315,4],
+             [0.020,0.020,2],
+             [0.020,0.040,3],
+             [0.020,0.060,4],
+             [0.035,0.035,2],
+             [0.035,0.070,3],
+             [0.035,0.105,4],
+             [0.050,0.050,2],
+             [0.050,0.100,3],
+             [0.050,0.150,4],
+             [0.070,0.070,2],
+             [0.070,0.140,3],
+             [0.070,0.210,4],
+             [0.105,0.105,2],
+             [0.105,0.210,3],
+             [0.105,0.315,4],
+             [0.140,0.140,2],
+             [0.140,0.280,3],
+             [0.140,0.420,4]]
+
+VETOR_179 = [[0.030,0.030,2],
+             [0.040,0.040,2],
+             [0.040,0.080,3],
+             [0.040,0.120,4],
+             [0.080,0.080,2],
+             [0.080,0.160,3],
+             [0.080,0.240,4],
+             [0.120,0.120,2],
+             [0.120,0.240,3],
+             [0.120,0.360,4]]
+
+VETOR_181 = [0.1,0.2,0.3,0.4,0.5]
+
 ######################################################################################
 ################################### INICIAL ##########################################
 ######################################################################################
@@ -23,18 +58,32 @@ def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT179 (idt text, glp int, DR real, DP real, pc real, pg real)")
     c.execute("CREATE TABLE IF NOT EXISTS referenciaADM (idt text, r1 real, r2 real)")
     c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, r real)")
-    c.execute("CREATE TABLE IF NOT EXISTS config134 (id integer, cicloCOND int, cicloMR int, erro int, DPacum int)")
-    c.execute("CREATE TABLE IF NOT EXISTS config179 (id integer, cicloCOND int, cicloDP int)")
-    c.execute("CREATE TABLE IF NOT EXISTS config181 (id integer, cicloMR int, erro int)")
+    c.execute("CREATE TABLE IF NOT EXISTS config134 (id INTEGER PRIMARY KEY AUTOINCREMENT, cicloCOND int, cicloMR int, erro int, DPacum int)")
+    c.execute("CREATE TABLE IF NOT EXISTS config179 (id INTEGER PRIMARY KEY AUTOINCREMENT, cicloCOND int, cicloDP int)")
+    c.execute("CREATE TABLE IF NOT EXISTS config181 (id INTEGER PRIMARY KEY AUTOINCREMENT, cicloMR int, erro int)")
+    c.execute("CREATE TABLE IF NOT EXISTS Quadro134 (id INTEGER PRIMARY KEY AUTOINCREMENT, sigma3 real, sigmad real, Razaosigma1sigma3 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS Quadro179 (id INTEGER PRIMARY KEY AUTOINCREMENT, sigma3 real, sigmad real, Razaosigma1sigma3 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS Quadro181 (id INTEGER PRIMARY KEY AUTOINCREMENT, sigma1 real)")
 
 def data_entry():
     try:
+        i = 0
+        while i < len(VETOR_134):
+            c.execute("INSERT INTO Quadro134 (id, sigma3, sigmad, Razaosigma1sigma3) VALUES (?, ?, ?, ?)", (i+1, VETOR_134[i][0], VETOR_134[i][1], VETOR_134[i][2]))
+            i+=1
+        j = 0
+        while j < len(VETOR_179):
+            c.execute("INSERT INTO Quadro179 (id, sigma3, sigmad, Razaosigma1sigma3) VALUES (?, ?, ?, ?)", (j+1, VETOR_179[j][0], VETOR_179[j][1], VETOR_179[j][2]))
+            j+=1
+        k = 0
+        while k < len(VETOR_181):
+            c.execute("INSERT INTO Quadro181 (id, sigma1) VALUES (?, ?)", (k+1, VETOR_181[k],))
+            k+=1
         c.execute("INSERT INTO s1s2 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113442', -0.0004, 25.394, 'P2019113443', -0.0004, 25.369))
         c.execute("INSERT INTO s3s4 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113340', -0.0002, 11.447, 'P2019113446', -0.0002, 11.362))
         c.execute("INSERT INTO config134 (id, cicloCOND, cicloMR, erro, DPacum) VALUES (?, ?, ?, ?, ?)", (0, 500, 10, 5, 5))
         c.execute("INSERT INTO config179 (id, cicloCOND, cicloDP) VALUES (?, ?, ?)", (0, 50, 150000))
         c.execute("INSERT INTO config181 (id, cicloMR, erro) VALUES (?, ?, ?)", (0, 50, 5))
-        c.execute()
         connection.commit()
     except Exception:
         pass
@@ -45,6 +94,46 @@ data_entry()
 ######################################################################################
 ####################################  GERAL  #########################################
 ######################################################################################
+'''Atualiza a lista das pressões do DNIT 134'''
+def update_QD_134(VETOR):
+    i = 0
+    while i < len(VETOR):
+        c.execute("UPDATE Quadro134 SET sigma3 = ? WHERE id = ?", (VETOR[i][0], i+1,))
+        c.execute("UPDATE Quadro134 SET sigmad = ? WHERE id = ?", (VETOR[i][1], i+1,))
+        c.execute("UPDATE Quadro134 SET Razaosigma1sigma3 = ? WHERE id = ?", (VETOR[i][2], i+1,))
+        i+=1
+    connection.commit()
+    
+'''Cria um lista com as pressões do DNIT 134'''
+def QD_134():
+    l = []
+    list = []
+    listCOND = []
+    listMR = []
+
+    i = 0
+    j = 0
+    for row in c.execute('SELECT * FROM Quadro134'):
+        l.append(row[1])
+        l.append(row[2])
+        l.append(row[3])
+        list.append(l)
+        l = []
+        if i == 2:
+            i = -1
+            if j == 0:
+                listCOND = list
+                list = []
+            j+=1
+            if j > 1:
+                listMR.append(list)
+                list = []
+        i+=1
+
+
+    return listCOND, listMR
+
+
 '''Lista com os ids'''
 def ids():
     lista_id = []
