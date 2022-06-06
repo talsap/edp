@@ -103,7 +103,7 @@ def update_QD_134(VETOR):
         c.execute("UPDATE Quadro134 SET Razaosigma1sigma3 = ? WHERE id = ?", (VETOR[i][2], i+1,))
         i+=1
     connection.commit()
-    
+
 '''Cria um lista com as pressões do DNIT 134'''
 def QD_134():
     l = []
@@ -129,10 +129,59 @@ def QD_134():
                 listMR.append(list)
                 list = []
         i+=1
-
-
     return listCOND, listMR
 
+'''Atualiza a lista das pressões do DNIT 179'''
+def update_QD_179(VETOR):
+    i = 0
+    while i < len(VETOR):
+        c.execute("UPDATE Quadro179 SET sigma3 = ? WHERE id = ?", (VETOR[i][0], i+1,))
+        c.execute("UPDATE Quadro179 SET sigmad = ? WHERE id = ?", (VETOR[i][1], i+1,))
+        c.execute("UPDATE Quadro179 SET Razaosigma1sigma3 = ? WHERE id = ?", (VETOR[i][2], i+1,))
+        i+=1
+    connection.commit()
+
+'''Cria um lista com as pressões do DNIT 179'''
+def QD_179():
+    l = []
+    list = []
+    listCOND = []
+    listDP = []
+
+    i = -1
+    j = 0
+    for row in c.execute('SELECT * FROM Quadro179'):
+        l.append(row[1])
+        l.append(row[2])
+        l.append(row[3])
+        list.append(l)
+        l = []
+        if j == 0:
+            listCOND = list
+            list = []
+        j+=1
+        if i == 2:
+            i = -1
+            listDP.append(list)
+            list = []
+        i+=1
+    return listCOND, listDP
+
+'''Atualiza a lista das pressões do DNIT 181'''
+def update_QD_181(VETOR):
+    i = 0
+    while i < len(VETOR):
+        c.execute("UPDATE Quadro181 SET sigma1 = ? WHERE id = ?", (VETOR[i], i+1,))
+        i+=1
+    connection.commit()
+
+'''Cria um lista com as pressões do DNIT 181'''
+def QD_181():
+    l = []
+    for row in c.execute('SELECT * FROM Quadro181'):
+        l.append([row[1]])
+
+    return l
 
 '''Lista com os ids'''
 def ids():

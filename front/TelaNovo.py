@@ -6,7 +6,7 @@ from TelaNovoEnsaioDNIT134 import TelaNovoEnsaioDNIT134
 from TelaNovoEnsaioDNIT179 import TelaNovoEnsaioDNIT179
 
 #normas = ['DNIT 134/2018ME', 'DNIT 135/2018ME', 'DNIT 179/2018IE', 'DNIT 184/2018ME', 'DNIT 416/2019ME']
-normas = ['DNIT 134/2018ME', 'DNIT 179/2018IE']
+normas = ['DNIT 134/2018ME', 'DNIT 179/2018IE', 'DNIT 181/2018ME']
 
 '''Tela Selecão de Ensaio'''
 class TelaNovo(wx.Dialog):

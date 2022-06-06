@@ -4,6 +4,7 @@
 
 import wx
 import bancodedados
+from quadrotensoes import *
 
 '''Tela de Configurações'''
 class Config(wx.Frame):
@@ -74,8 +75,7 @@ class Page01(wx.Panel):
         #--------------------------------------------------
         def QT(self, event):
             print '\nQT1'
-            pass
-            #dlg = quadro().ShowModal()
+            dlg = quadroEditavelDNIT134().ShowModal()
 
         #--------------------------------------------------
         def Editar1(self, event):
@@ -166,8 +166,7 @@ class Page02(wx.Panel):
         #--------------------------------------------------
         def QT(self, event):
             print '\nQT2'
-            pass
-            #dlg = quadro().ShowModal()
+            dlg = quadroEditavelDNIT179().ShowModal()
 
         #--------------------------------------------------
         def Editar2(self, event):
@@ -246,8 +245,7 @@ class Page03(wx.Panel):
         #--------------------------------------------------
         def QT(self, event):
             print '\nQT3'
-            pass
-            #dlg = quadro().ShowModal()
+            dlg = quadroEditavelDNIT181().ShowModal()
 
         #--------------------------------------------------
         def Editar3(self, event):
@@ -296,9 +294,3 @@ class Page03(wx.Panel):
                         self.erro.Disable()
                         self.Update()
                         self.Refresh()
-
-if __name__ == "__main__":
-	app = wx.App()
-	frame = Config(None)
-	frame.Show()
-	app.MainLoop()
