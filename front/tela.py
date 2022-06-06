@@ -186,20 +186,32 @@ class Tela(wx.Frame):
     #--------------------------------------------------
      def Editar(self, event):
          id = event.GetId()
-         print str(id)+'EDI'
+         list = bancodedados.qual_identificador(id)
+         if list[0] == "134":
+             print list[1]
+         if list[0] == "179":
+             print list[1]
 
     #--------------------------------------------------
      def Pdf(self, event):
          id = event.GetId()
          id = id - 8000
-         print str(id)+'PDF'
-         dialogo = Pdf(id).ShowModal()
+         list = bancodedados.qual_identificador(id)
+         if list[0] == "134":
+             print list[1]
+         if list[0] == "179":
+             print list[1]
+         #dialogo = Pdf(id).ShowModal()
 
     #--------------------------------------------------
      def exportCSV(self, event):
          id = event.GetId()
          id = id - 16000
-         print str(id)+'CSV'
+         list = bancodedados.qual_identificador(id)
+         if list[0] == "134":
+             print list[1]
+         if list[0] == "179":
+             print list[1]
 
     #--------------------------------------------------
      def Deletar(self, event):

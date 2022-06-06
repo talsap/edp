@@ -50,7 +50,7 @@ VETOR_181 = [0.1,0.2,0.3,0.4,0.5]
 ################################### INICIAL ##########################################
 ######################################################################################
 def create_table():
-    c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, ensaio text, status text, identificador text, tipo text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, ensaio text, status text, identificador text, tipo text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text, freq int)")
     c.execute("CREATE TABLE IF NOT EXISTS s1s2 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS s3s4 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
@@ -94,94 +94,14 @@ data_entry()
 ######################################################################################
 ####################################  GERAL  #########################################
 ######################################################################################
-'''Atualiza a lista das pressões do DNIT 134'''
-def update_QD_134(VETOR):
-    i = 0
-    while i < len(VETOR):
-        c.execute("UPDATE Quadro134 SET sigma3 = ? WHERE id = ?", (VETOR[i][0], i+1,))
-        c.execute("UPDATE Quadro134 SET sigmad = ? WHERE id = ?", (VETOR[i][1], i+1,))
-        c.execute("UPDATE Quadro134 SET Razaosigma1sigma3 = ? WHERE id = ?", (VETOR[i][2], i+1,))
-        i+=1
-    connection.commit()
-
-'''Cria um lista com as pressões do DNIT 134'''
-def QD_134():
-    l = []
+'''pega os tipo e o Identificador do ensaio de acorodo com o ID'''
+def qual_identificador(id):
     list = []
-    listCOND = []
-    listMR = []
+    for row in c.execute('SELECT * FROM dadosIniciais WHERE id = ?', (id,)):
+        list.append(row[1])
+        list.append(row[3])
 
-    i = 0
-    j = 0
-    for row in c.execute('SELECT * FROM Quadro134'):
-        l.append(row[1])
-        l.append(row[2])
-        l.append(row[3])
-        list.append(l)
-        l = []
-        if i == 2:
-            i = -1
-            if j == 0:
-                listCOND = list
-                list = []
-            j+=1
-            if j > 1:
-                listMR.append(list)
-                list = []
-        i+=1
-    return listCOND, listMR
-
-'''Atualiza a lista das pressões do DNIT 179'''
-def update_QD_179(VETOR):
-    i = 0
-    while i < len(VETOR):
-        c.execute("UPDATE Quadro179 SET sigma3 = ? WHERE id = ?", (VETOR[i][0], i+1,))
-        c.execute("UPDATE Quadro179 SET sigmad = ? WHERE id = ?", (VETOR[i][1], i+1,))
-        c.execute("UPDATE Quadro179 SET Razaosigma1sigma3 = ? WHERE id = ?", (VETOR[i][2], i+1,))
-        i+=1
-    connection.commit()
-
-'''Cria um lista com as pressões do DNIT 179'''
-def QD_179():
-    l = []
-    list = []
-    listCOND = []
-    listDP = []
-
-    i = -1
-    j = 0
-    for row in c.execute('SELECT * FROM Quadro179'):
-        l.append(row[1])
-        l.append(row[2])
-        l.append(row[3])
-        list.append(l)
-        l = []
-        if j == 0:
-            listCOND = list
-            list = []
-        j+=1
-        if i == 2:
-            i = -1
-            listDP.append(list)
-            list = []
-        i+=1
-    return listCOND, listDP
-
-'''Atualiza a lista das pressões do DNIT 181'''
-def update_QD_181(VETOR):
-    i = 0
-    while i < len(VETOR):
-        c.execute("UPDATE Quadro181 SET sigma1 = ? WHERE id = ?", (VETOR[i], i+1,))
-        i+=1
-    connection.commit()
-
-'''Cria um lista com as pressões do DNIT 181'''
-def QD_181():
-    l = []
-    for row in c.execute('SELECT * FROM Quadro181'):
-        l.append([row[1]])
-
-    return l
+    return list
 
 '''Lista com os ids'''
 def ids():
@@ -261,7 +181,7 @@ def ListaVisualizacao():
         c.append(a[cont] + b[cont])
         cont = cont +1
 
-    return c
+    return c[::-1] #retorna a lista c de mado invertido
 
 ######################################################################################
 ################################## CALIBRAÇÕES #######################################
@@ -319,6 +239,45 @@ def S3S4():
 ######################################################################################
 ###################################  DNIT 134  #######################################
 ######################################################################################
+
+
+'''Atualiza a lista das pressões do DNIT 134'''
+def update_QD_134(VETOR):
+    i = 0
+    while i < len(VETOR):
+        c.execute("UPDATE Quadro134 SET sigma3 = ? WHERE id = ?", (VETOR[i][0], i+1,))
+        c.execute("UPDATE Quadro134 SET sigmad = ? WHERE id = ?", (VETOR[i][1], i+1,))
+        c.execute("UPDATE Quadro134 SET Razaosigma1sigma3 = ? WHERE id = ?", (VETOR[i][2], i+1,))
+        i+=1
+    connection.commit()
+
+'''Cria um lista com as pressões do DNIT 134'''
+def QD_134():
+    l = []
+    list = []
+    listCOND = []
+    listMR = []
+
+    i = 0
+    j = 0
+    for row in c.execute('SELECT * FROM Quadro134'):
+        l.append(row[1])
+        l.append(row[2])
+        l.append(row[3])
+        list.append(l)
+        l = []
+        if i == 2:
+            i = -1
+            if j == 0:
+                listCOND = list
+                list = []
+            j+=1
+            if j > 1:
+                listMR.append(list)
+                list = []
+        i+=1
+    return listCOND, listMR
+
 '''Atualiza as configurações do ensaio DNIT 134'''
 def update_dados_CONFIG_134(CICLOCOND, CICLOMR, ERRO, DP_ACUM):
     id = 0;
@@ -374,6 +333,42 @@ def saveReferenciaADM(idt, r1, r2):
 ######################################################################################
 ###################################  DNIT 179  #######################################
 ######################################################################################
+'''Atualiza a lista das pressões do DNIT 179'''
+def update_QD_179(VETOR):
+    i = 0
+    while i < len(VETOR):
+        c.execute("UPDATE Quadro179 SET sigma3 = ? WHERE id = ?", (VETOR[i][0], i+1,))
+        c.execute("UPDATE Quadro179 SET sigmad = ? WHERE id = ?", (VETOR[i][1], i+1,))
+        c.execute("UPDATE Quadro179 SET Razaosigma1sigma3 = ? WHERE id = ?", (VETOR[i][2], i+1,))
+        i+=1
+    connection.commit()
+
+'''Cria um lista com as pressões do DNIT 179'''
+def QD_179():
+    l = []
+    list = []
+    listCOND = []
+    listDP = []
+
+    i = -1
+    j = 0
+    for row in c.execute('SELECT * FROM Quadro179'):
+        l.append(row[1])
+        l.append(row[2])
+        l.append(row[3])
+        list.append(l)
+        l = []
+        if j == 0:
+            listCOND = list
+            list = []
+        j+=1
+        if i == 2:
+            i = -1
+            listDP.append(list)
+            list = []
+        i+=1
+    return listCOND, listDP
+
 '''Atualiza as configurações do ensaio DNIT 179'''
 def update_dados_CONFIG_179(CICLOCOND, CICLODP):
     id = 0;
@@ -409,6 +404,22 @@ def saveDNIT179(idt, glp, DR, DP, pc, pg):
 ######################################################################################
 ###################################  DNIT 181 ########################################
 ######################################################################################
+'''Atualiza a lista das pressões do DNIT 181'''
+def update_QD_181(VETOR):
+    i = 0
+    while i < len(VETOR):
+        c.execute("UPDATE Quadro181 SET sigma1 = ? WHERE id = ?", (VETOR[i], i+1,))
+        i+=1
+    connection.commit()
+
+'''Cria um lista com as pressões do DNIT 181'''
+def QD_181():
+    l = []
+    for row in c.execute('SELECT * FROM Quadro181'):
+        l.append([row[1]])
+
+    return l
+
 '''Atualiza as configurações do ensaio DNIT 181'''
 def update_dados_CONFIG_181(CICLOMR, ERRO):
     id = 0;
