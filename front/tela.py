@@ -12,6 +12,7 @@ from cabecalhos import Cab
 from calibration import Cal
 from configuration import Config
 from Pdf import Pdf
+from Csv import *
 '''from Editar import Editar'''
 '''from Csv import Csv'''
 
@@ -198,7 +199,7 @@ class Tela(wx.Frame):
          id = id - 8000
          list = bancodedados.qual_identificador(id)
          if list[0] == "134":
-             print list[1]
+             dialogo = Pdf(list[1]).ShowModal()
          if list[0] == "179":
              print list[1]
          #dialogo = Pdf(id).ShowModal()
@@ -209,7 +210,7 @@ class Tela(wx.Frame):
          id = id - 16000
          list = bancodedados.qual_identificador(id)
          if list[0] == "134":
-             print list[1]
+             dialogo = Csv134(list[1])
          if list[0] == "179":
              print list[1]
 

@@ -83,14 +83,14 @@ class Csv(wx.Dialog):
           Tabela = []
           legendaTripla = ['',''] #tempo/raizdotempo/Altura_cp
           i = 0
-          
+
           while i<quant:
                Tabela.append(bancodedados.TabelaEstagioCSV(id, i+1))
 
                legendaTripla.insert(2, 'Altura_CP (mm)')
                legendaTripla.insert(2, 'Raiz do tempo (s)')
                legendaTripla.insert(2, 'Tempo (s)')
-               
+
                if i==0:
                     Estagios.insert(i,'Estagios')
                     Estagios.insert(quant+1, '')
@@ -115,18 +115,18 @@ class Csv(wx.Dialog):
 
                     IndiceVaziosFinal.insert(quant-i,'')
                     IndiceVaziosFinal.insert(quant-i,'')
-                    
+
                i = i+1
 
           tabela2 = map(None, *Tabela)
           quant1 = len(tabela2)
-          i1 = 0          
+          i1 = 0
           tabela3 = []
-          
+
           while i1<quant1:
                j = 0
                tabela3.append(['',''])
-               while j<quant:                    
+               while j<quant:
                     k = 0
                     while k<3:
                          if tabela2[i1][j] == None:
@@ -136,7 +136,7 @@ class Csv(wx.Dialog):
                          k = k + 1
                     j = j + 1
                i1 = i1 +1
-                                       
+
           with wx.FileDialog(self, name, wildcard="CSV files(*.csv)|*.csv*", style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
                if fileDialog.ShowModal() == wx.ID_CANCEL:
                     return
@@ -175,8 +175,7 @@ class Csv(wx.Dialog):
                          while i2<quant2:
                               editor.writerows([tabela3[i2]])
                               i2 = i2 + 1
-                         
+
 
                except IOError:
                     wx.LogError("O arquivo não pôde ser salvo em '%s'." % pathname)
-     

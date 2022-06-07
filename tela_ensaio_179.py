@@ -265,7 +265,7 @@ class TopPanel(wx.Panel):
                             if valorGolpe != valorGolpeAnterior:
                                 valorGolpeAnterior = valorGolpe
                                 if valorGolpe in temposDNIT179_02:
-                                    bancodedados.saveDNIT179(idt+"DP", valorGolpe, DefResiliente, DefPermanente, pc, pg)
+                                    bancodedados.saveDNIT179(idt, valorGolpe, DefResiliente, DefPermanente, pc, pg)
                                 if valorGolpe in temposDNIT179_01:
                                     golpe.append(valorGolpe)
                                     vDR.append(DefResiliente)
@@ -277,7 +277,7 @@ class TopPanel(wx.Panel):
                                     if valorGolpe == 100:
                                         ix = 0
                                         while ix < len(golpe):
-                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
+                                            bancodedados.saveDNIT179(idt, golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
                                             ix += 1
                                         golpe *= 0 #limpa a lista
                                         vDR *= 0 #limpa a lista
@@ -287,7 +287,7 @@ class TopPanel(wx.Panel):
                                     if valorGolpe == 950:
                                         ix = 0
                                         while ix < len(golpe):
-                                            bancodedados.saveDNIT179(idt+"DP", golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
+                                            bancodedados.saveDNIT179(idt, golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
                                             ix += 1
                                         golpe *= 0 #limpa a lista
                                         vDR *= 0 #limpa a lista

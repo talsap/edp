@@ -1116,10 +1116,10 @@ class BottomPanel(wx.Panel):
 
             if self._fase > 0 and subleito == True:
                 if modeADM == True:
-                    bancodedados.saveReferenciaADM(idt+"COND-"+str(self._fase), REFERENCIA1, REFERENCIA2)
+                    bancodedados.saveReferenciaADM(idt, "COND-"+str(self._fase), REFERENCIA1, REFERENCIA2)
                 else:
                     print REFERENCIA_MEDIA
-                    bancodedados.saveReferencia(idt+"COND-"+str(self._fase), REFERENCIA_MEDIA)
+                    bancodedados.saveReferencia(idt, "COND-"+str(self._fase), REFERENCIA_MEDIA)
 
             if self._fase < fase:
                 self.LZero.Disable()
@@ -1221,7 +1221,7 @@ class BottomPanel(wx.Panel):
                     except:
                         dlg = dialogoDinamico(3, "EDP 134/2018ME", "SALVAMENTO", "Ocorreu algum problema com o salvamento dos dados!", "O Ensaio precisarar ser finalizado!", "", None)
                         dlg.ShowModal()
-                    bancodedados.saveDNIT134(idt+"MR-"+str(self._fase), pc, pg, dr, REFERENCIA_MEDIA)
+                    bancodedados.saveDNIT134(idt, "MR-"+str(self._fase), pc, pg, dr, REFERENCIA_MEDIA)
                     yyy = []
                     pc1 = []
                     pg1 = []

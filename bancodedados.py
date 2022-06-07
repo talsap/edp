@@ -53,11 +53,11 @@ def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, ensaio text, status text, identificador text, tipo text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text, freq int)")
     c.execute("CREATE TABLE IF NOT EXISTS s1s2 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS s3s4 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
-    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
-    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134 (idt text, pc real, pg real, dr real, r real)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, fase text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134 (idt text, fase text, pc real, pg real, dr real, r real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT179 (idt text, glp int, DR real, DP real, pc real, pg real)")
-    c.execute("CREATE TABLE IF NOT EXISTS referenciaADM (idt text, r1 real, r2 real)")
-    c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, r real)")
+    c.execute("CREATE TABLE IF NOT EXISTS referenciaADM (idt text, fase text, r1 real, r2 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, fase text, r real)")
     c.execute("CREATE TABLE IF NOT EXISTS config134 (id INTEGER PRIMARY KEY AUTOINCREMENT, cicloCOND int, cicloMR int, erro int, DPacum int)")
     c.execute("CREATE TABLE IF NOT EXISTS config179 (id INTEGER PRIMARY KEY AUTOINCREMENT, cicloCOND int, cicloDP int)")
     c.execute("CREATE TABLE IF NOT EXISTS config181 (id INTEGER PRIMARY KEY AUTOINCREMENT, cicloMR int, erro int)")
@@ -94,7 +94,31 @@ data_entry()
 ######################################################################################
 ####################################  GERAL  #########################################
 ######################################################################################
-'''pega os tipo e o Identificador do ensaio de acorodo com o ID'''
+'''coleta uma lista com os dados iniciais dos ensaio de acordo com o ID'''
+def dados_iniciais_(idt):
+    list = []
+    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificador = ?', (idt,)):
+        list.append(row[1]) #ensaio
+        list.append(row[2]) #status
+        list.append(row[4]) #tipo
+        list.append(row[5]) #cp
+        list.append(row[6]) #rodovia
+        list.append(row[7]) #origem
+        list.append(row[8]) #trecho
+        list.append(row[9]) #estkm
+        list.append(row[10]) #operador
+        list.append(row[11]) #datadacoleta
+        list.append(row[12]) #datainicio
+        list.append(row[13]) #datafim
+        list.append(row[14]) #amostra
+        list.append(row[15]) #diametro
+        list.append(row[16]) #altura
+        list.append(row[17]) #obs
+        list.append(row[18]) #freq
+
+    return list
+
+'''pega os tipo e o Identificador do ensaio de acordo com o ID'''
 def qual_identificador(id):
     list = []
     for row in c.execute('SELECT * FROM dadosIniciais WHERE id = ?', (id,)):
@@ -239,7 +263,51 @@ def S3S4():
 ######################################################################################
 ###################################  DNIT 134  #######################################
 ######################################################################################
+'''pega a altura do CP de acorodo com o identificador'''
+def altura_cp_134(idt):
+    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificador = ?', (idt,)):
+        altura = row[16]
+    return altura
 
+'''Cria Lista com a Coleta do resultado do ensaio no banco de dados'''
+def dados_da_coleta_134_pdf(idt):
+    l =[]
+    alturaCP = float(altura_cp_134(idt))
+    acumulado = 0
+    list  = [['FASE', 'TC[MPa]', 'TD[MPa]', 'Desl. R. [mm]', 'DEF. R [%]', 'MOD. R. [MPa]']]
+    for row in c.execute('SELECT * FROM dadosDNIT134 WHERE idt = ?', (idt,)):
+        l.append(row[1]) #Fase
+        l.append(format("%.3f" % float(row[2])).replace('.',',')) #TC
+        l.append(format("%.3f" % float(row[3])).replace('.',',')) #TD
+        l.append(format("%.3f" % float(row[4])).replace('.',',')) #Desl. R.
+        acumulado = acumulado + float(row[5])
+        alturaRF = alturaCP - acumulado
+        l.append(format(str("%.3f" % (100*float(row[4])/alturaRF))).replace('.',',')) #DEF.R
+        l.append(format(str("%.3f" % (float(row[3])/(float(row[4])/alturaRF)))).replace('.',',')) #MOD. R.
+        list.append(l)
+        l = []
+
+    return list
+
+'''Cria Lista com a Coleta do resultado do ensaio no banco de dados'''
+def dados_da_coleta_134(idt):
+    l =[]
+    alturaCP = float(altura_cp_134(idt))
+    acumulado = 0
+    list  = [['FASE', 'TC[MPa]', 'TD[MPa]', 'Desl. R. [mm]', 'DEF. R [%]', 'MOD. R. [MPa]']]
+    for row in c.execute('SELECT * FROM dadosDNIT134 WHERE idt = ?', (idt,)):
+        l.append(row[1]) #Fase
+        l.append(format(row[2]).replace('.',',')) #TC
+        l.append(format(row[3]).replace('.',',')) #TD
+        l.append(format(row[4]).replace('.',',')) #Desl. R.
+        acumulado = acumulado + float(row[5])
+        alturaRF = alturaCP - acumulado
+        l.append(format(str(100*float(row[4])/alturaRF)).replace('.',',')) #DEF.R
+        l.append(format(str(float(row[3])/(float(row[4])/alturaRF))).replace('.',',')) #MOD. R.
+        list.append(l)
+        l = []
+
+    return list
 
 '''Atualiza a lista das pressões do DNIT 134'''
 def update_QD_134(VETOR):
