@@ -319,6 +319,32 @@ def update_QD_134(VETOR):
         i+=1
     connection.commit()
 
+'''Cria um lista com as pressões do DNIT 134 modificado'''
+def QD_134_MOD():
+    l = []
+    list = []
+    listCOND = []
+    listMR = []
+
+    i = 0
+    j = 0
+    for row in c.execute('SELECT * FROM Quadro134'):
+        l.append(row[1])
+        l.append(row[2]+row[1])
+        list.append(l)
+        l = []
+        if i == 2:
+            i = -1
+            if j == 0:
+                listCOND = list
+                list = []
+            j+=1
+            if j > 1:
+                listMR.append(list)
+                list = []
+        i+=1
+    return listCOND, listMR
+
 '''Cria um lista com as pressões do DNIT 134'''
 def QD_134():
     l = []
@@ -377,20 +403,20 @@ def data_save_dados_134(identificador, tipo, cp, rodovia, origem, trecho, estKm,
     c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs))
     connection.commit()
 
-def saveDNIT134(idt, pc, pg, dr, r):
-    c.execute("INSERT INTO dadosDNIT134 (idt, pc, pg, dr, r) VALUES (?, ?, ?, ?, ?)", (idt, pc, pg, dr, r))
+def saveDNIT134(idt, fase, pc, pg, dr, r):
+    c.execute("INSERT INTO dadosDNIT134 (idt, fase, pc, pg, dr, r) VALUES (?, ?, ?, ?, ?, ?)", (idt, fase, pc, pg, dr, r))
     connection.commit()
 
-def saveDNIT134ADM(idt, x, y1, yt1, y2, yt2, pc, pg):
-    c.execute("INSERT INTO dadosDNIT134ADM (idt, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (idt, x, y1, yt1, y2, yt2, pc, pg))
+def saveDNIT134ADM(idt, fase, x, y1, yt1, y2, yt2, pc, pg):
+    c.execute("INSERT INTO dadosDNIT134ADM (idt, fase, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (idt, x, y1, yt1, y2, yt2, pc, pg))
     connection.commit()
 
-def saveReferencia(idt, r):
-    c.execute("INSERT INTO referencia (idt, r) VALUES (?, ?)", (idt, r))
+def saveReferencia(idt, fase, r):
+    c.execute("INSERT INTO referencia (idt, fase, r) VALUES (?, ?)", (idt, fase, r))
     connection.commit()
 
-def saveReferenciaADM(idt, r1, r2):
-    c.execute("INSERT INTO referenciaADM (idt, r1, r2) VALUES (?, ?, ?)", (idt, r1, r2))
+def saveReferenciaADM(idt, fase, r1, r2):
+    c.execute("INSERT INTO referenciaADM (idt, fase, r1, r2) VALUES (?, ?, ?)", (idt, fase, r1, r2))
     connection.commit()
 
 ######################################################################################

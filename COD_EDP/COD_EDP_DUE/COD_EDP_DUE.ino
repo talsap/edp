@@ -27,7 +27,7 @@ int nGolpe = 0; //numpero de golpes
 int nTime = 0; //parte inteira do tempo
 int statuS = 0; //(0 ou 1)(ok ou n_ok) mado de avisar erro de pressao do aplicador
 int margemSup = 63000; //margem superior
-int margemInf = 25000; //margem inferior
+int margemInf = 10000; //margem inferior
 int ntotalGolpes; //Numero total de golpes por estagio
 int frequencia; //Valor condicao para intervalo da frequencia
 int botoes; //Acoes do botoes pausar, parar e continuar o ensaio
@@ -243,7 +243,7 @@ void loop(void) {
           if (Serial.available()>1){
             setpoint = Serial.parseInt();    //valor em %
             if(setpoint > 5){
-              discrep = 1 + setpoint/100;
+              discrep = 1 + float(setpoint)/100;
               Serial.print("DISCREP=");
               Serial.println(discrep);
               serialFlush();

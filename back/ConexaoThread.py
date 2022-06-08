@@ -8,14 +8,14 @@ from pubsub import pub
 '''ConexaoThread'''
 class ConexaoThread(Thread):
     #-------------------------------------------------------------------
-    def __init__(self):
+    def __init__(self, DISCREP):
         Thread.__init__(self)
         self.start()
-
+        self.DISCREP = DISCREP
     #-------------------------------------------------------------------
     def run(self):
         wx.CallAfter(pub.sendMessage, "update", msg="      Conectando...")
-        valor = con.connect()
+        valor = con.connect(self.DISCREP)
         if valor[1] == 'connectado':
             print 'CONECTADO'
             wx.CallAfter(pub.sendMessage, "update", msg="          CONECTADO")

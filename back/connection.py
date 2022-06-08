@@ -19,6 +19,7 @@ opcaoM = "M"    '''MOTOR DE PASSOS'''
 opcaoB = "B"    '''Break'''
 opcaoG = "G"    '''Golpes'''
 opcaoJ = "J"    '''DNIT134 e imprimir 1 valor'''
+opcaoK = "K"    '''Mudar Limite de discrepância'''
 opcaoS = "S"    '''Stoped'''
 Y = []          #Array Deformações
 T = []          #Array tempo grafico'''
@@ -42,8 +43,9 @@ B3_S3 = float(M[2])
 A4_S4 = float(M[4])
 B4_S4 = float(M[5])
 
+'''Dados de Config'''
 #-------------------------------------------------------------------
-def connect():
+def connect(DISCREP):
     print 'connect'
     i = 0
     condicaoConeccao = False
@@ -61,6 +63,15 @@ def connect():
                         print a
                         condicaoConeccao = True
                         return conexao.port, "connectado"
+                        if DISCREP != 1.05:
+                            print "MUDANDO DISCREPANCIA"
+                            discrep = int((DISCREP - 1)*100)
+                            conexao.write(opcaoK)
+                            conexao.timeout = .3
+                            conexao.write(str(discrep))
+                            conexao.timeout = .3
+                            conexao.write(str(3))
+
                     else:
                         print "notconectado"
                         conexao.close()
