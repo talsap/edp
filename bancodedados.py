@@ -94,6 +94,23 @@ data_entry()
 ######################################################################################
 ####################################  GERAL  #########################################
 ######################################################################################
+'''Atualiza a frequencia do Ensaio'''
+def Update_freq(idt, freq):
+    c.execute("UPDATE dadosIniciais SET freq = ? WHERE identificador = ?", (freq, idt,))
+    connection.commit()
+
+'''Data de quando o finaliza o ensaio acordo com o idt'''
+def data_final_Update_idt(idt):
+    date = str(datetime.datetime.fromtimestamp(int(time.time())).strftime('%H:%M:%S  %d/%m/%Y'))
+    c.execute("UPDATE dadosIniciais SET dataFim = ? WHERE identificador = ?", (date, idt,))
+    connection.commit()
+
+'''Data de quando inicia o ensaio de acordo com o idt'''
+def data_inicio_Update_idt(idt):
+    date = str(datetime.datetime.fromtimestamp(int(time.time())).strftime('%H:%M:%S  %d/%m/%Y'))
+    c.execute("UPDATE dadosIniciais SET dataInicio = ? WHERE identificador = ?", (date, idt,))
+    connection.commit()
+
 '''coleta uma lista com os dados iniciais dos ensaio de acordo com o ID'''
 def dados_iniciais_(idt):
     list = []
