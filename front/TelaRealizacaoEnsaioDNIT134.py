@@ -22,67 +22,6 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 '''Frequencias para o ensaio'''
 frequencias = ['1']
 
-'''Banco de dados'''
-pressoes = bancodedados.QD_134_MOD()
-config = bancodedados.CONFIG_134()
-
-'''Variáveis Globais'''
-global idt #identificador do ensaio
-global leituraZerob1 #leitura zero do sensor 1
-global leituraZerob2 #leitura zero do sensor 2
-global H  #Altura do corpo de prova em milímetros
-global Diam  #Diametro do corpo de prova em milímetros
-global H0 #Altura de referência do medididor de deslocamento
-global X  #valores X do gráfico
-global Y  #valores Y do gráfico
-global xz1
-global yz1
-global yt1
-global yz2
-global yt2
-global pc1
-global pg1
-global yyy
-global REFERENCIA1 #referencia de ponto de partida para o sensor 1
-global REFERENCIA2 #referencia de ponto de partida para o sensor 2
-global REFERENCIA_MEDIA #referencia de ponto de partidada MÉDIA
-global Ti #valor temporal
-global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
-global Automatico #idica se o ensaio será automático ou não
-global Pausa #indica se o ensaio foi pausado
-global mult  #Multiplo de 5 que ajuda a arrumar o gráfico em 5 em 5
-global glpCOND #quantidade de golpes do CONDICIONAMENTO
-global glpMR #quantidade de golpes do MR
-global ntglp #quantidade total de golpes disponíveis
-global modeADM #modo Administrador de salvar dados (apenas para dbug)
-global DISCREP #valor da discrepância
-global subleito #recebe valor de True ou False
-global DPmaxACUM #Altura mínima que o corpo de prova deve atingir
-
-H0 = 0.01
-H = 200
-mult = 0
-Pausa = False
-X = np.array([])
-Y = np.array([])
-xz1 = []
-yz1 = []
-yt1 = []
-yz2 = []
-yt2 = []
-pc1 = []
-pg1 = []
-yyy = []
-Fase = ''
-glpCOND = config[0]
-glpMR = config[1]
-modeADM = False
-DISCREP = 1+float(config[2])/100
-DPmaxACUM = float(H) - float(H)*float(config[2])/100
-
-VETOR_COND = pressoes[0]
-VETOR_MR =  pressoes[1]
-
 ########################################################################
 '''Painel Superior'''
 class TopPanel(wx.Panel):
@@ -991,6 +930,8 @@ class BottomPanel(wx.Panel):
         '''Função responsável em realizar a CONECÇÃO'''
         def LTESTE(self, event):
             print '\nBottomPanel - LTESTE'
+            global DISCREP
+            print DISCREP
             threadConection = ConexaoThread.ConexaoThread(DISCREP)
             dlg = My.MyProgressDialog(2)
             dlg.ShowModal()
@@ -1053,8 +994,8 @@ class BottomPanel(wx.Panel):
                                 self.AlturaFinal.Clear()
                                 self.valorLeitura0 = valores[1] #usado apenas no LZERO
                                 self.valorLeitura1 = valores[2] #usado apenas no LZERO
-                                self.y1mm.AppendText(str(round((valores[1]-self.leituraZerob1), 4)))
-                                self.y2mm.AppendText(str(round((valores[2]-self.leituraZerob2), 4)))
+                                self.y1mm.AppendText(str(round(abs(valores[1]-self.leituraZerob1), 4)))
+                                self.y2mm.AppendText(str(round(abs(valores[2]-self.leituraZerob2), 4)))
                                 self.y1V.AppendText(str(round((valores[3]), 2)))
                                 self.y2V.AppendText(str(round((valores[4]), 2)))
                                 self.PCreal.AppendText(str(round(abs((valores[5])), 3)))
@@ -1083,6 +1024,8 @@ class BottomPanel(wx.Panel):
 
                                 # Dados do CONDICIONAMENTO #
                                 if Fase == 'CONDICIONAMENTO' and Pausa == False:
+                                    if valores[0] < 5:
+                                        REFERENCIA_MEDIA = ymedio
                                     if valores[0] == (ntglp - 1):
                                         REFERENCIA1 = y1+H0
                                         REFERENCIA2 = y2+H0
@@ -1208,8 +1151,11 @@ class BottomPanel(wx.Panel):
             global REFERENCIA1
             global REFERENCIA2
             global REFERENCIA_MEDIA
+            global idt
             global modeADM
             global DISCREP
+            global glpCOND
+            print glpCOND
             Fase = 'CONDICIONAMENTO'
             self.erro = False
 
@@ -1221,7 +1167,7 @@ class BottomPanel(wx.Panel):
             if self._fase < fase:
                 print '\nFASE.COND='+str(self._fase+1)+'\n'
 
-            if self._fase > 0 and subleito == True:
+            if self._fase > 0:
                 if modeADM == True:
                     bancodedados.saveReferenciaADM(idt, str(self._fase), REFERENCIA1, REFERENCIA2)
                 else:
@@ -1251,36 +1197,38 @@ class BottomPanel(wx.Panel):
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 if dlg.ShowModal() == wx.ID_OK:
-                    if self._fase == 0:
-                        self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
-                        self.graph.fim_inicio.Enable()
-                        if subleito == False:
-                            self.graph.avanca.Enable()
-
-                    if self._fase > 0 and self._fase < fase and self.Automatico == False:
-                        self.graph.fim_inicio.SetLabel('INICIO')
-                        self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
-                        self.graph.fim_inicio.Enable()
+                    self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                    self.graph.fim_inicio.Enable()
+                    if subleito == False:
                         self.graph.avanca.Enable()
-
-                    if self._fase > 0 and self._fase < fase and self.Automatico == True:
-                        self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                    if self.Automatico == True:
                         evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                         wx.PostEvent(self.graph.fim_inicio, evt)
 
-                    if self._fase >= fase and self.Automatico == False and self.erro == False:
-                        self._fase = 0
-                        self.mr.Enable()
-                        self.condic.Disable()
-                        self.graph.fim_inicio.SetLabel('INICIO')
+            else:
+                if self._fase > 0 and self._fase < fase and self.Automatico == False:
+                    self.graph.fim_inicio.SetLabel('INICIO')
+                    self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                    self.graph.fim_inicio.Enable()
+                    self.graph.avanca.Enable()
 
-                    if self._fase >= fase and self.Automatico == True and self.erro == False:
-                        self._fase = 0
-                        self.condic.Disable()
-                        self.graph.fim_inicio.SetLabel('INICIO')
-                        evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.mr.GetId())
-                        wx.PostEvent(self.mr, evt)
+                if self._fase > 0 and self._fase < fase and self.Automatico == True:
+                    self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
+                    evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
+                    wx.PostEvent(self.graph.fim_inicio, evt)
 
+                if self._fase >= fase and self.Automatico == False and self.erro == False:
+                    self._fase = 0
+                    self.mr.Enable()
+                    self.condic.Disable()
+                    self.graph.fim_inicio.SetLabel('INICIO')
+
+                if self._fase >= fase and self.Automatico == True and self.erro == False:
+                    self._fase = 0
+                    self.condic.Disable()
+                    self.graph.fim_inicio.SetLabel('INICIO')
+                    evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.mr.GetId())
+                    wx.PostEvent(self.mr, evt)
     #--------------------------------------------------
         '''Função responsável em realizar o MODULO RESILIENTE'''
         def MR(self, event):
@@ -1343,6 +1291,8 @@ class BottomPanel(wx.Panel):
                 self.fase.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
+                print self._fase
+                print VETOR_MR[self._fase][0]
                 self.PCalvo.AppendText("%.3f" % VETOR_MR[self._fase][0])
                 self.SigmaAlvo.AppendText("%.3f" % (VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0]))
                 self.NGolpes.AppendText(str(glpMR))
@@ -1424,15 +1374,71 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, identificador, tipo, diametro, altura, *args, **kwargs):
             wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME - Tela_Ensaio_Beta', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+
+            '''Variáveis Globais'''
             global idt #identificador do ensaio
+            global leituraZerob1 #leitura zero do sensor 1
+            global leituraZerob2 #leitura zero do sensor 2
             global H  #Altura do corpo de prova em milímetros
             global Diam  #Diametro do corpo de prova em milímetros
+            global H0 #Altura de referência do medididor de deslocamento
+            global X  #valores X do gráfico
+            global Y  #valores Y do gráfico
+            global xz1
+            global yz1
+            global yt1
+            global yz2
+            global yt2
+            global pc1
+            global pg1
+            global yyy
+            global REFERENCIA1 #referencia de ponto de partida para o sensor 1
+            global REFERENCIA2 #referencia de ponto de partida para o sensor 2
+            global REFERENCIA_MEDIA #referencia de ponto de partidada MÉDIA
+            global Ti #valor temporal
+            global Fase #valor para identificar se esta no CONDICIONAMENTO ou no MR
+            global Automatico #idica se o ensaio será automático ou não
+            global Pausa #indica se o ensaio foi pausado
+            global mult  #Multiplo de 5 que ajuda a arrumar o gráfico em 5 em 5
+            global glpCOND #quantidade de golpes do CONDICIONAMENTO
+            global glpMR #quantidade de golpes do MR
+            global ntglp #quantidade total de golpes disponíveis
+            global modeADM #modo Administrador de salvar dados (apenas para dbug)
+            global DISCREP #valor da discrepância
             global subleito #recebe valor de True ou False
+            global DPmaxACUM #Altura mínima que o corpo de prova deve atingir
+            global VETOR_COND #Vetor com os pares de pressões do CONDICIONAMENTO
+            global VETOR_MR #Vetor com os pares de pressões do MR
+
+            '''Banco de dados'''
+            pressoes = bancodedados.QD_134_MOD()
+            config = bancodedados.CONFIG_134()
 
             idt = identificador
             subleito = tipo
             H = altura
             Diam = diametro
+            glpCOND = config[0]
+            glpMR = config[1]
+            modeADM = False
+            DISCREP = 1+float(config[2])/100
+            DPmaxACUM = float(H) - float(H)*float(config[2])/100
+            H0 = 0.01
+            mult = 0
+            Pausa = False
+            X = np.array([])
+            Y = np.array([])
+            xz1 = []
+            yz1 = []
+            yt1 = []
+            yz2 = []
+            yt2 = []
+            pc1 = []
+            pg1 = []
+            yyy = []
+            Fase = ''
+            VETOR_COND = pressoes[0]
+            VETOR_MR = pressoes[1][0]
 
             '''Iserção do IconeLogo'''
             try:

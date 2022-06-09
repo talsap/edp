@@ -408,15 +408,15 @@ def saveDNIT134(idt, fase, pc, pg, dr, r):
     connection.commit()
 
 def saveDNIT134ADM(idt, fase, x, y1, yt1, y2, yt2, pc, pg):
-    c.execute("INSERT INTO dadosDNIT134ADM (idt, fase, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (idt, x, y1, yt1, y2, yt2, pc, pg))
+    c.execute("INSERT INTO dadosDNIT134ADM (idt, fase, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (idt, fase, x, y1, yt1, y2, yt2, pc, pg))
     connection.commit()
 
 def saveReferencia(idt, fase, r):
-    c.execute("INSERT INTO referencia (idt, fase, r) VALUES (?, ?)", (idt, fase, r))
+    c.execute("INSERT INTO referencia (idt, fase, r) VALUES (?, ?, ?)", (idt, fase, r))
     connection.commit()
 
 def saveReferenciaADM(idt, fase, r1, r2):
-    c.execute("INSERT INTO referenciaADM (idt, fase, r1, r2) VALUES (?, ?, ?)", (idt, fase, r1, r2))
+    c.execute("INSERT INTO referenciaADM (idt, fase, r1, r2) VALUES (?, ?, ?, ?)", (idt, fase, r1, r2))
     connection.commit()
 
 ######################################################################################

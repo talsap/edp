@@ -43,7 +43,6 @@ B3_S3 = float(M[2])
 A4_S4 = float(M[4])
 B4_S4 = float(M[5])
 
-'''Dados de Config'''
 #-------------------------------------------------------------------
 def connect(DISCREP):
     print 'connect'
@@ -61,17 +60,20 @@ def connect(DISCREP):
                     a = conexao.readline()
                     if a[0] == "c":
                         print a
-                        condicaoConeccao = True
-                        return conexao.port, "connectado"
                         if DISCREP != 1.05:
                             print "MUDANDO DISCREPANCIA"
-                            discrep = int((DISCREP - 1)*100)
-                            conexao.write(opcaoK)
-                            conexao.timeout = .3
-                            conexao.write(str(discrep))
-                            conexao.timeout = .3
-                            conexao.write(str(3))
-
+                            try:
+                                discrep = int((DISCREP - 1)*100)
+                                conexao.write(opcaoK)
+                                conexao.timeout = .3
+                                conexao.write(str(discrep))
+                                conexao.timeout = .3
+                                conexao.write(str(3))
+                                print "\nDiscrepancia Alterada\n"
+                            except:
+                                print "\nDiscrepancia NÃO Alterada\n"
+                        condicaoConeccao = True
+                        return conexao.port, "connectado"
                     else:
                         print "notconectado"
                         conexao.close()

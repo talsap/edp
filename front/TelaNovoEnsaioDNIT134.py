@@ -206,10 +206,10 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
                             bancodedados.data_save_dados_134(identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, data, amostra, diametro, altura, obs)
                             self.Close(True)
                             if tipo == 0:
-                                tipo = True
+                                tipoE = True
                             if tipo == 1:
-                                tipo = False
-                            frame = TelaRealizacaoEnsaioDNIT134(identificador, tipo, diametro, altura).ShowModal()
+                                tipoE = False
+                            frame = TelaRealizacaoEnsaioDNIT134(identificador, tipoE, diametro, altura).ShowModal()
                     else:
                         '''Diálogo para informar que os campos diametro ou altura ou energia ou distAo estão vazios.'''
                         if condicional>0:
