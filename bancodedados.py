@@ -342,24 +342,20 @@ def QD_134_MOD():
     list = []
     listCOND = []
     listMR = []
-
     i = 0
-    j = 0
     for row in c.execute('SELECT * FROM Quadro134'):
         l.append(row[1])
         l.append(row[2]+row[1])
         list.append(l)
-        l = []
         if i == 2:
-            i = -1
-            if j == 0:
-                listCOND = list
-                list = []
-            j+=1
-            if j > 1:
-                listMR.append(list)
-                list = []
+            listCOND = list
+            list = []
+        if i > 2:
+            listMR.append(l)
+            list = []
         i+=1
+        l = []
+
     return listCOND, listMR
 
 '''Cria um lista com as pressões do DNIT 134'''

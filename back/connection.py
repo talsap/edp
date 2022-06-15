@@ -429,16 +429,18 @@ def Buffer():
 '''Ativando motor'''
 def modeBuffer():
     print 'modeBuffer'
-    while (conexao.inWaiting() == 0):
-        pass
     a = conexao.readline()
     #print a
-    if a[0] == 'D' or a == '\n' or a == '':
-        print a
-        print "BufferLimpo"
+    try:
+        if a[0] == 'D':
+            print a
+            print "BufferLimpo"
+            return True
+        else:
+            return False
+    except:
         return True
-    else:
-        return False
+
 
 #-------------------------------------------------------------------
 def ColetaI(valores):

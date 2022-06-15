@@ -22,7 +22,7 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 '''Frequencias para o ensaio'''
 frequencias = ['1']
 
-########################################################################
+#########################################################################
 '''Painel Superior'''
 class TopPanel(wx.Panel):
         def __init__(self, parent, _self):
@@ -207,27 +207,29 @@ class TopPanel(wx.Panel):
                         self.DINAMICA1_ANTERIOR = VETOR_COND[self._fase][0]
                         time.sleep(1)
 
-                    if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], self.DINAMICA2_ANTERIOR)
-                        dlgC1 = My.MyProgressDialog(3)
-                        dlgC1.ShowModal()
-                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._fase][1]
-                        self.DINAMICA1_ANTERIOR = VETOR_COND[self._fase][0]
-                        self.AVANCA = False
-                        time.sleep(1)
-                else:
-                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], 0)
-                    dlgC1 = My.MyProgressDialog(3)
-                    dlgC1.ShowModal()
-                    time.sleep(1)
-
-                if self._fase > 0:
                     if VETOR_COND[self._fase][0] != VETOR_COND[self._fase - 1][0]:
                         #threadConection = MotorThread.MotorThread(VETOR_COND[self._fase][0])
                         threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
+
+                    if self.AVANCA == True:
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], self.DINAMICA2_ANTERIOR)
+                        dlgC1 = My.MyProgressDialog(3)
+                        dlgC1.ShowModal()
+                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._fase][1]
+                        time.sleep(.5)
+                        if VETOR_COND[self._fase][0] != self.DINAMICA1_ANTERIOR:
+                            threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
+                            dlgC2 = My.MyProgressDialog(3)
+                            dlgC2.ShowModal()
+                            self.DINAMICA1_ANTERIOR = VETOR_COND[self._fase][0]
+                        self.AVANCA = False
                 else:
+                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], 0)
+                    dlgC1 = My.MyProgressDialog(3)
+                    dlgC1.ShowModal()
+                    time.sleep(.5)
                     #threadConection = MotorThread.MotorThread(VETOR_COND[self._fase][0])
                     threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
@@ -258,26 +260,29 @@ class TopPanel(wx.Panel):
                         self.DINAMICA2_ANTERIOR = VETOR_MR[self._fase][1]
                         time.sleep(1)
 
+                    if VETOR_MR[self._fase][0] != VETOR_MR[self._fase - 1][0] and self.AVANCA == False:
+                        #threadConection = MotorThread.MotorThread(VETOR_MR[self._fase][0])
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
+                        dlgC2 = My.MyProgressDialog(3)
+                        dlgC2.ShowModal()
+
                     if self.AVANCA == True:
                         threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], self.DINAMICA2_ANTERIOR)
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA2_ANTERIOR = VETOR_MR[self._fase][1]
+                        time.sleep(.5)
+                        if VETOR_MR[self._fase][0] != self.DINAMICA1_ANTERIOR:
+                            threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
+                            dlgC2 = My.MyProgressDialog(3)
+                            dlgC2.ShowModal()
+                            self.DINAMICA1_ANTERIOR = VETOR_MR[self._fase][0]
                         self.AVANCA = False
-                        time.sleep(1)
                 else:
                     threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], 0)
                     dlgC1 = My.MyProgressDialog(3)
                     dlgC1.ShowModal()
-                    time.sleep(1)
-
-                if self._fase > 0:
-                    if VETOR_MR[self._fase][0] != VETOR_MR[self._fase - 1][0]:
-                        #threadConection = MotorThread.MotorThread(VETOR_MR[self._fase][0])
-                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
-                        dlgC2 = My.MyProgressDialog(3)
-                        dlgC2.ShowModal()
-                else:
+                    time.sleep(.5)
                     #threadConection = MotorThread.MotorThread(VETOR_MR[self._fase][0])
                     threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
@@ -416,9 +421,18 @@ class TopPanel(wx.Panel):
             if Fase == 'MR':
                 con.modeI()
                 self._self.bottom.pressao_zero(VETOR_MR[self._fase][0], VETOR_MR[self._fase][1])
-                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
-                dlg3.ShowModal()
                 con.modeI()
+                bancodedados.data_final_Update_idt(idt)
+                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório podem ser gerados na tela inicial.", "FIM!", "", None)
+                if dlg3.ShowModal() == wx.ID_OK:
+                    time.sleep(.3)
+                    con.modeStoped()
+                    time.sleep(.3)
+                    con.modeB()
+                    time.sleep(.3)
+                    con.modeD()
+                    self.Close(True)
+
 
     #--------------------------------------------------
         '''Ajusta min e max EIXO X'''
@@ -931,190 +945,195 @@ class BottomPanel(wx.Panel):
         def LTESTE(self, event):
             print '\nBottomPanel - LTESTE'
             global DISCREP
-            print DISCREP
-            threadConection = ConexaoThread.ConexaoThread(DISCREP)
-            dlg = My.MyProgressDialog(2)
-            dlg.ShowModal()
-            cond = threadConection.ret()
-            if cond[0] == 'connectado':
-                menssagError = wx.MessageDialog(self, 'CONECTADO!', 'EDP', wx.OK|wx.ICON_AUTH_NEEDED)
-                aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-                menssagError.ShowModal()
-                menssagError.Destroy()
-                con.modeConectDNIT134() #acessa o ensaio da 134 no arduino
-                self.LTeste.Disable()
-                self.LZero.Enable()
 
-                #--------------------------------------------------
-                def worker(self):
-                    global condition
-                    global conditionEnsaio
-                    global Fase
-                    global Ti
-                    global Pausa
-                    global X
-                    global Y
-                    global H
-                    global xz1
-                    global yz1
-                    global yt1
-                    global yz2
-                    global yt2
-                    global pc1
-                    global pg1
-                    global yyy
-                    global REFERENCIA1
-                    global REFERENCIA2
-                    global REFERENCIA_MEDIA
-                    global ntglp
-                    global modeADM
-                    con.modeI()  #inicia o modo de impressão de dados
-                    condition = True
-                    conditionEnsaio = False
-                    cnt = 0
-                    cont = 0
-                    cont1 = 0
-                    amplitudeMax = 0
-                    amplitudeMaxAnterior = 0
-                    GolpeAnterior = -1
-                    self.leituraZerob1 = 0
-                    self.leituraZerob2 = 0
-                    x_counter = 0
-                    valores = [0,0,0,0,0,0,0,0,0,0]
-                    while True:
-                        while condition == True:
-                            valores = con.ColetaI(valores)
-                            if cont1 >= 20: #mede a frequencia da impressão de dados na tela
-                                self.y1mm.Clear()
-                                self.y2mm.Clear()
-                                self.y1V.Clear()
-                                self.y2V.Clear()
-                                self.PCreal.Clear()
-                                self.SigmaReal.Clear()
-                                self.AlturaFinal.Clear()
-                                self.valorLeitura0 = valores[1] #usado apenas no LZERO
-                                self.valorLeitura1 = valores[2] #usado apenas no LZERO
-                                self.y1mm.AppendText(str(round(abs(valores[1]-self.leituraZerob1), 4)))
-                                self.y2mm.AppendText(str(round(abs(valores[2]-self.leituraZerob2), 4)))
-                                self.y1V.AppendText(str(round((valores[3]), 2)))
-                                self.y2V.AppendText(str(round((valores[4]), 2)))
-                                self.PCreal.AppendText(str(round(abs((valores[5])), 3)))
-                                self.SigmaReal.AppendText(str(round(abs(valores[6]-valores[5]), 3)))
-                                if self.leituraZerob1 == 0:
-                                    self.AlturaFinal.AppendText(str(round(H, 3)))
-                                else:
-                                    self.AlturaFinal.AppendText(str(round(H-ymedio, 3)))
-                                if cont1 == 20:
-                                    cont1 = 0
-                            cont1 = cont1 + 1
+            try:
+                threadConection = ConexaoThread.ConexaoThread(DISCREP)
+                dlg = My.MyProgressDialog(2)
+                dlg.ShowModal()
+                cond = threadConection.ret()
+                if cond[0] == 'connectado':
+                    menssagError = wx.MessageDialog(self, 'CONECTADO!', 'EDP', wx.OK|wx.ICON_AUTH_NEEDED)
+                    aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                    menssagError.ShowModal()
+                    menssagError.Destroy()
+                    con.modeConectDNIT134() #acessa o ensaio da 134 no arduino
+                    self.LTeste.Disable()
+                    self.LZero.Enable()
 
-                            ntglp = valores[9] #numero total de golpes
-                            y1 = valores[1]-self.leituraZerob1
-                            y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
-                            ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
+                    #--------------------------------------------------
+                    def worker(self):
+                        global condition
+                        global conditionEnsaio
+                        global Fase
+                        global Ti
+                        global Pausa
+                        global X
+                        global Y
+                        global H
+                        global xz1
+                        global yz1
+                        global yt1
+                        global yz2
+                        global yt2
+                        global pc1
+                        global pg1
+                        global yyy
+                        global REFERENCIA1
+                        global REFERENCIA2
+                        global REFERENCIA_MEDIA
+                        global ntglp
+                        global modeADM
+                        con.modeI()  #inicia o modo de impressão de dados
+                        condition = True
+                        conditionEnsaio = False
+                        cnt = 0
+                        cont = 0
+                        cont1 = 0
+                        amplitudeMax = 0
+                        amplitudeMaxAnterior = 0
+                        GolpeAnterior = -1
+                        self.leituraZerob1 = 0
+                        self.leituraZerob2 = 0
+                        x_counter = 0
+                        valores = [0,0,0,0,0,0,0,0,0,0]
+                        while True:
+                            while condition == True:
+                                valores = con.ColetaI(valores)
+                                if cont1 >= 20: #mede a frequencia da impressão de dados na tela
+                                    self.y1mm.Clear()
+                                    self.y2mm.Clear()
+                                    self.y1V.Clear()
+                                    self.y2V.Clear()
+                                    self.PCreal.Clear()
+                                    self.SigmaReal.Clear()
+                                    self.AlturaFinal.Clear()
+                                    self.valorLeitura0 = valores[1] #usado apenas no LZERO
+                                    self.valorLeitura1 = valores[2] #usado apenas no LZERO
+                                    self.y1mm.AppendText(str(round(abs(valores[1]-self.leituraZerob1), 4)))
+                                    self.y2mm.AppendText(str(round(abs(valores[2]-self.leituraZerob2), 4)))
+                                    self.y1V.AppendText(str(round((valores[3]), 2)))
+                                    self.y2V.AppendText(str(round((valores[4]), 2)))
+                                    self.PCreal.AppendText(str(round(abs((valores[5])), 3)))
+                                    self.SigmaReal.AppendText(str(round(abs(valores[6]-valores[5]), 3)))
+                                    if self.leituraZerob1 == 0:
+                                        self.AlturaFinal.AppendText(str(round(H, 3)))
+                                    else:
+                                        self.AlturaFinal.AppendText(str(round(H-ymedio, 3)))
+                                    if cont1 == 20:
+                                        cont1 = 0
+                                cont1 = cont1 + 1
 
-                            # Dados para a parte GRÁFICA #
-                            if conditionEnsaio == True and valores[0] > 0:
-                                X = np.append(X, valores[0])
-                                Y = np.append(Y, ymedio)
-                                x_counter = len(X)
-                                if x_counter >= 1000: #antes era 1500
-                                    X = np.delete(X, 0, 0)
-                                    Y = np.delete(Y, 0, 0)
+                                ntglp = valores[9] #numero total de golpes
+                                y1 = valores[1]-self.leituraZerob1
+                                y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
+                                ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
 
-                                # Dados do CONDICIONAMENTO #
-                                if Fase == 'CONDICIONAMENTO' and Pausa == False:
-                                    if valores[0] < 5:
-                                        REFERENCIA_MEDIA = ymedio
-                                    if valores[0] == (ntglp - 1):
-                                        REFERENCIA1 = y1+H0
-                                        REFERENCIA2 = y2+H0
-                                        REFERENCIA_MEDIA = ymedio
-                                    if valores[0] > (ntglp - 0.80) and valores[0] < (ntglp - 0.1):
-                                        REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
-                                        REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                        REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
+                                # Dados para a parte GRÁFICA #
+                                if conditionEnsaio == True and valores[0] > 0:
+                                    X = np.append(X, valores[0])
+                                    Y = np.append(Y, ymedio)
+                                    x_counter = len(X)
+                                    if x_counter >= 1000: #antes era 1500
+                                        X = np.delete(X, 0, 0)
+                                        Y = np.delete(Y, 0, 0)
 
-                                # Dados do MR #
-                                if Fase == 'MR' and Pausa == False:
-                                    #condicao de erro para o ensaio
-                                    if int(valores[7]) == 1:
-                                        print "ERRO NO ENSAIO"
+                                    # Dados do CONDICIONAMENTO #
+                                    if Fase == 'CONDICIONAMENTO' and Pausa == False:
+                                        if valores[0] < 5:
+                                            REFERENCIA_MEDIA = ymedio
+                                        if valores[0] == (ntglp - 1):
+                                            REFERENCIA1 = y1+H0
+                                            REFERENCIA2 = y2+H0
+                                            REFERENCIA_MEDIA = ymedio
+                                        if valores[0] > (ntglp - 0.80) and valores[0] < (ntglp - 0.1):
+                                            REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
+                                            REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
+                                            REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
 
-                                    #PEGA OS VALORES DE REFERENCIA
-                                    if valores[0] == 0.01:
-                                        REFERENCIA1 = y1+H0
-                                        REFERENCIA2 = y2+H0
-                                        REFERENCIA_MEDIA = ymedio
-                                    if valores[0] > 0.2 and valores[0] < 0.9:
-                                        REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
-                                        REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                        REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
+                                    # Dados do MR #
+                                    if Fase == 'MR' and Pausa == False:
+                                        #condicao de erro para o ensaio
+                                        if int(valores[7]) == 1:
+                                            print "ERRO NO ENSAIO"
 
-                                    # DefResiliente incial de compararação (para condicao de discrepância)
-                                    if valores[0] > 4 and valores[0] < 4.2:
-                                        if valores[0] == 4.01:
-                                            amplitudeMaxAnterior = ymedio
-                                            mediaMovel = ymedio
-                                        if ymedio > amplitudeMaxAnterior:
-                                            amplitudeMaxAnterior = ymedio
-                                    if valores[0] > 4.2 and valores[0] < 5:
-                                        mediaMovel = (mediaMovel+ymedio)/2
-                                        defResilienteAnterior = amplitudeMaxAnterior - mediaMovel
+                                        #PEGA OS VALORES DE REFERENCIA
+                                        if valores[0] == 0.01:
+                                            REFERENCIA1 = y1+H0
+                                            REFERENCIA2 = y2+H0
+                                            REFERENCIA_MEDIA = ymedio
+                                        if valores[0] > 0.2 and valores[0] < 0.9:
+                                            REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
+                                            REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
+                                            REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
 
-                                    # Condição da analise de discrepância #
-                                    if valores[0] > 5:
-                                        valoreS = valores[0] - int(valores[0])
-                                        if valoreS > 0 and valoreS < 0.2:
-                                            if valoreS == 0.01:
-                                                amplitudeMax = ymedio
+                                        # DefResiliente incial de compararação (para condicao de discrepância)
+                                        if valores[0] > 4 and valores[0] < 4.2:
+                                            if valores[0] == 4.01:
+                                                amplitudeMaxAnterior = ymedio
                                                 mediaMovel = ymedio
-                                            if ymedio > amplitudeMax:
-                                                amplitudeMax = ymedio
-
-                                        if valoreS > 0.2 and valoreS < 0.90:
+                                            if ymedio > amplitudeMaxAnterior:
+                                                amplitudeMaxAnterior = ymedio
+                                        if valores[0] > 4.2 and valores[0] < 5:
                                             mediaMovel = (mediaMovel+ymedio)/2
-                                            defResiliente = amplitudeMax - mediaMovel
+                                            defResilienteAnterior = amplitudeMaxAnterior - mediaMovel
 
-                                        if valoreS > 0.98:
-                                            if defResiliente > defResilienteAnterior:
-                                                if defResiliente/defResilienteAnterior < DISCREP:
-                                                    print defResiliente, defResilienteAnterior
-                                                    if len(yyy) < 5:
-                                                        yyy.append(defResiliente)
-                                            if defResiliente < defResilienteAnterior:
-                                                if defResilienteAnterior/defResiliente < DISCREP:
-                                                    print defResiliente, defResilienteAnterior
-                                                    if len(yyy) < 5:
-                                                        yyy.append(defResiliente)
-                                            defResilienteAnterior = defResiliente
+                                        # Condição da analise de discrepância #
+                                        if valores[0] > 5:
+                                            valoreS = valores[0] - int(valores[0])
+                                            if valoreS > 0 and valoreS < 0.2:
+                                                if valoreS == 0.01:
+                                                    amplitudeMax = ymedio
+                                                    mediaMovel = ymedio
+                                                if ymedio > amplitudeMax:
+                                                    amplitudeMax = ymedio
 
-                                    if int(valores[0]) > 4 and int(valores[0]) <= int(valores[9]):
-                                        if modeADM == True:
-                                            xz1.append(valores[0])
-                                            yz1.append(y1+H0)
-                                            yz2.append(y2+H0)
-                                            yt1.append(valores[3])
-                                            yt2.append(valores[4])
-                                        else:
-                                            pc1.append(valores[5])
-                                            pg1.append(valores[6]-valores[5])
+                                            if valoreS > 0.2 and valoreS < 0.90:
+                                                mediaMovel = (mediaMovel+ymedio)/2
+                                                defResiliente = amplitudeMax - mediaMovel
 
-                                if int(valores[8]) != GolpeAnterior:
-                                    GolpeAnterior = int(valores[8])
-                                    self.GolpeAtual.Clear()
-                                    self.GolpeAtual.AppendText(str(int(valores[8])))
+                                            if valoreS > 0.98:
+                                                if defResiliente > defResilienteAnterior:
+                                                    if defResiliente/defResilienteAnterior < DISCREP:
+                                                        print defResiliente, defResilienteAnterior
+                                                        if len(yyy) < 5:
+                                                            yyy.append(defResiliente)
+                                                if defResiliente < defResilienteAnterior:
+                                                    if defResilienteAnterior/defResiliente < DISCREP:
+                                                        print defResiliente, defResilienteAnterior
+                                                        if len(yyy) < 5:
+                                                            yyy.append(defResiliente)
+                                                defResilienteAnterior = defResiliente
 
-                #--------------------------------------------------
-                self.t = threading.Thread(target=worker, args=(self,))
-                self.t.start()
+                                        if int(valores[0]) > 4 and int(valores[0]) <= int(valores[9]):
+                                            if modeADM == True:
+                                                xz1.append(valores[0])
+                                                yz1.append(y1+H0)
+                                                yz2.append(y2+H0)
+                                                yt1.append(valores[3])
+                                                yt2.append(valores[4])
+                                            else:
+                                                pc1.append(valores[5])
+                                                pg1.append(valores[6]-valores[5])
 
-            else:
-                menssagError = wx.MessageDialog(self, 'Não é possível manter uma conexão serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
+                                    if int(valores[8]) != GolpeAnterior:
+                                        GolpeAnterior = int(valores[8])
+                                        self.GolpeAtual.Clear()
+                                        self.GolpeAtual.AppendText(str(int(valores[8])))
+
+                    #--------------------------------------------------
+                    self.t = threading.Thread(target=worker, args=(self,))
+                    self.t.start()
+
+                else:
+                    menssagError = wx.MessageDialog(self, 'Não é possível manter uma conexão serial!', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
+                    aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                    menssagError.ShowModal()
+                    menssagError.Destroy()
+            except:
+                menssagError = wx.MessageDialog(self, 'ERRO AO EXECUTAR L. TESTE', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                 menssagError.ShowModal()
                 menssagError.Destroy()
-
     #--------------------------------------------------
         '''Função responsável pela leitura zero'''
         def LZERO(self, event):
@@ -1155,7 +1174,6 @@ class BottomPanel(wx.Panel):
             global modeADM
             global DISCREP
             global glpCOND
-            print glpCOND
             Fase = 'CONDICIONAMENTO'
             self.erro = False
 
@@ -1197,6 +1215,9 @@ class BottomPanel(wx.Panel):
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 if dlg.ShowModal() == wx.ID_OK:
+                    freq = self.freq.GetValue()
+                    bancodedados.Update_freq(idt, int(freq))
+                    bancodedados.data_inicio_Update_idt(idt)
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                     self.graph.fim_inicio.Enable()
                     if subleito == False:
@@ -1246,6 +1267,10 @@ class BottomPanel(wx.Panel):
             global REFERENCIA1
             global REFERENCIA2
             global REFERENCIA_MEDIA
+            global idt
+            global modeADM
+            global DISCREP
+            global glpCOND
             self.erro = False
 
             if subleito == True:
@@ -1291,8 +1316,6 @@ class BottomPanel(wx.Panel):
                 self.fase.Clear()
                 self.NGolpes.Clear()
                 self.GolpeAtual.Clear()
-                print self._fase
-                print VETOR_MR[self._fase][0]
                 self.PCalvo.AppendText("%.3f" % VETOR_MR[self._fase][0])
                 self.SigmaAlvo.AppendText("%.3f" % (VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0]))
                 self.NGolpes.AppendText(str(glpMR))
@@ -1307,6 +1330,11 @@ class BottomPanel(wx.Panel):
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 if dlg.ShowModal() == wx.ID_OK:
                     Fase = 'MR'
+                    if self._fase == 0:
+                        freq = self.freq.GetValue()
+                        bancodedados.Update_freq(idt, int(freq))
+                        bancodedados.data_inicio_Update_idt(idt)
+
                     if self._fase >= 0 and self._fase < fase and self.Automatico == False:
                         self.graph.fim_inicio.SetLabel('INICIO')
                         self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
@@ -1322,8 +1350,16 @@ class BottomPanel(wx.Panel):
                         self.mr.Disable()
                         self.pressao_zero(VETOR_MR[self._fase-1][0], VETOR_MR[self._fase-1][1])
                         self._fase = 0
+                        bancodedados.data_final_Update_idt(idt)
                         dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
-                        dlg3.ShowModal()
+                        if dlg3.ShowModal() == wx.ID_OK:
+                            time.sleep(.3)
+                            con.modeStoped()
+                            time.sleep(.3)
+                            con.modeB()
+                            time.sleep(.3)
+                            con.modeD()
+                            self.Close(True)
             else:
                 Fase = 'MR'
                 if self._fase >= 0 and self._fase < fase and self.Automatico == False:
@@ -1341,8 +1377,16 @@ class BottomPanel(wx.Panel):
                     self.mr.Disable()
                     self.pressao_zero(VETOR_MR[self._fase-1][0], VETOR_MR[self._fase-1][1])
                     self._fase = 0
+                    bancodedados.data_final_Update_idt(idt)
                     dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
-                    dlg3.ShowModal()
+                    if dlg3.ShowModal() == wx.ID_OK:
+                        time.sleep(.3)
+                        con.modeStoped()
+                        time.sleep(.3)
+                        con.modeB()
+                        time.sleep(.3)
+                        con.modeD()
+                        self.Close(True)
 
     #--------------------------------------------------
         '''Função responsável em zera a pressão do sistema'''
@@ -1438,7 +1482,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             yyy = []
             Fase = ''
             VETOR_COND = pressoes[0]
-            VETOR_MR = pressoes[1][0]
+            VETOR_MR = pressoes[1]
 
             '''Iserção do IconeLogo'''
             try:
