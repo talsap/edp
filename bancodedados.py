@@ -51,8 +51,8 @@ VETOR_181 = [0.1,0.2,0.3,0.4,0.5]
 ######################################################################################
 def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, ensaio text, status text, identificador text, tipo text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text, freq int)")
-    c.execute("CREATE TABLE IF NOT EXISTS s1s2 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
-    c.execute("CREATE TABLE IF NOT EXISTS s3s4 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, I1 text, A1 real, B1 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS s1s2 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, C0 real, I1 text, A1 real, B1 real, C1 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS s3s4 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, C0 real, I1 text, A1 real, B1 real, C1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, fase text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134 (idt text, fase text, pc real, pg real, dr real, r real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT179 (idt text, glp int, DR real, DP real, pc real, pg real)")
@@ -79,8 +79,8 @@ def data_entry():
         while k < len(VETOR_181):
             c.execute("INSERT INTO Quadro181 (id, sigma1) VALUES (?, ?)", (k+1, VETOR_181[k],))
             k+=1
-        c.execute("INSERT INTO s1s2 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113442', -0.0004, 25.394, 'P2019113443', -0.0004, 25.369))
-        c.execute("INSERT INTO s3s4 (id, I0, A0, B0, I1, A1, B1) VALUES (?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113340', -0.0002, 11.447, 'P2019113446', -0.0002, 11.362))
+        c.execute("INSERT INTO s1s2 (id, I0, A0, B0, C0, I1, A1, B1, C1) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113442', -0.0004, 25.394, 25, 'P2019113443', -0.0004, 25.369, 25))
+        c.execute("INSERT INTO s3s4 (id, I0, A0, B0, C0, I1, A1, B1, C1) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113340', -0.0002, 11.447, 10, 'P2019113446', -0.0002, 11.362, 10))
         c.execute("INSERT INTO config134 (id, cicloCOND, cicloMR, erro, DPacum) VALUES (?, ?, ?, ?, ?)", (0, 500, 10, 5, 5))
         c.execute("INSERT INTO config179 (id, cicloCOND, cicloDP) VALUES (?, ?, ?)", (0, 50, 150000))
         c.execute("INSERT INTO config181 (id, cicloMR, erro) VALUES (?, ?, ?)", (0, 50, 5))
@@ -228,25 +228,29 @@ def ListaVisualizacao():
 ################################## CALIBRAÇÕES #######################################
 ######################################################################################
 '''Atualiza os dados I, A e B de Calibração dos sensores S1 e S2'''
-def update_dados_S1S2(i0, a0, b0, i1, a1, b1):
+def update_dados_S1S2(i0, a0, b0, c0, i1, a1, b1, c1):
     id = 0;
     c.execute("UPDATE s1s2 SET I0 = ? WHERE id = ?", (i0, id,))
     c.execute("UPDATE s1s2 SET A0 = ? WHERE id = ?", (a0, id,))
     c.execute("UPDATE s1s2 SET B0 = ? WHERE id = ?", (b0, id,))
+    c.execute("UPDATE s1s2 SET C0 = ? WHERE id = ?", (c0, id,))
     c.execute("UPDATE s1s2 SET I1 = ? WHERE id = ?", (i1, id,))
     c.execute("UPDATE s1s2 SET A1= ? WHERE id = ?", (a1, id,))
     c.execute("UPDATE s1s2 SET B1 = ? WHERE id = ?", (b1, id,))
+    c.execute("UPDATE s1s2 SET C1 = ? WHERE id = ?", (c1, id,))
     connection.commit()
 
 '''Atualiza os dados I, A e B de Calibração dos sensores S3 e S4'''
-def update_dados_S3S4(i0, a0, b0, i1, a1, b1):
+def update_dados_S3S4(i0, a0, b0, c0, i1, a1, b1, c1):
     id = 0;
     c.execute("UPDATE s3s4 SET I0 = ? WHERE id = ?", (i0, id,))
     c.execute("UPDATE s3s4 SET A0 = ? WHERE id = ?", (a0, id,))
     c.execute("UPDATE s3s4 SET B0 = ? WHERE id = ?", (b0, id,))
+    c.execute("UPDATE s3s4 SET C0 = ? WHERE id = ?", (c0, id,))
     c.execute("UPDATE s3s4 SET I1 = ? WHERE id = ?", (i1, id,))
     c.execute("UPDATE s3s4 SET A1= ? WHERE id = ?", (a1, id,))
     c.execute("UPDATE s3s4 SET B1 = ? WHERE id = ?", (b1, id,))
+    c.execute("UPDATE s3s4 SET C1 = ? WHERE id = ?", (c1, id,))
     connection.commit()
 
 '''Retorna uma lista as variaveis I, A e B de Calibração dos sensores S1 e S2'''
@@ -260,6 +264,8 @@ def S1S2():
         list.append(row[4])
         list.append(row[5])
         list.append(row[6])
+        list.append(row[7])
+        list.append(row[8])
 
     return list
 
@@ -274,6 +280,8 @@ def S3S4():
         list.append(row[4])
         list.append(row[5])
         list.append(row[6])
+        list.append(row[7])
+        list.append(row[8])
 
     return list
 

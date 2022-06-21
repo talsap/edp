@@ -33,15 +33,15 @@ conexao.baudrate = 115200
 L = bancodedados.S1S2()
 A1_S1 = float(L[1])
 B1_S1= float(L[2])
-A2_S2 = float(L[4])
-B2_S2 = float(L[5])
+A2_S2 = float(L[5])
+B2_S2 = float(L[6])
 
 '''Coeficientes da calibracao dos sensores S3 e S4'''
 M = bancodedados.S3S4()
 A3_S3 = float(M[1])
 B3_S3 = float(M[2])
-A4_S4 = float(M[4])
-B4_S4 = float(M[5])
+A4_S4 = float(M[5])
+B4_S4 = float(M[6])
 
 #-------------------------------------------------------------------
 def connect(DISCREP):

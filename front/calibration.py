@@ -59,19 +59,25 @@ class Page01(wx.Panel):
                 textoB0 = wx.StaticText(self, -1, "B =", (178,95), (-1,-1), wx.ALIGN_RIGHT)
                 self.blvdt0 = wx.TextCtrl(self, -1, "%.12f" % self.lista[2], (200,93), (120,-1), wx.TE_LEFT)
                 self.blvdt0.Disable()
+                textoC0 = wx.StaticText(self, -1, "Cursor LVDT empregado (mm) =", (20,126), (-1,-1), wx.ALIGN_RIGHT)
+                self.c0 = wx.TextCtrl(self, -1, "%.0f" % self.lista[3], (200,123), (120,-1), wx.TE_LEFT)
+                self.c0.Disable()
 
                 title1 = wx.StaticText(self, -1, "SENSOR DE DESLOCAMENTO 2", (20,220), (-1,-1), wx.ALIGN_CENTER)
                 title1.SetFont(FontTitle)
                 texto1 = wx.StaticText(self, -1, "Curva do tipo Ax + B", (20,240), (-1,-1), wx.ALIGN_RIGHT)
                 textoi1 = wx.StaticText(self, -1, "IDENTIFICADOR =", (100,265), (-1,-1), wx.ALIGN_RIGHT)
-                self.ilvdt1 = wx.TextCtrl(self, -1, self.lista[3], (200,263), (120,-1), wx.TE_LEFT)
+                self.ilvdt1 = wx.TextCtrl(self, -1, self.lista[4], (200,263), (120,-1), wx.TE_LEFT)
                 self.ilvdt1.Disable()
                 textoA1 = wx.StaticText(self, -1, "A =", (20,295), (-1,-1), wx.ALIGN_RIGHT)
-                self.alvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[4], (40,293), (120,-1), wx.TE_LEFT)
+                self.alvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[5], (40,293), (120,-1), wx.TE_LEFT)
                 self.alvdt1.Disable()
                 textoB1 = wx.StaticText(self, -1, "B =", (178,295), (-1,-1), wx.ALIGN_RIGHT)
-                self.blvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[5], (200,293), (120,-1), wx.TE_LEFT)
+                self.blvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[6], (200,293), (120,-1), wx.TE_LEFT)
                 self.blvdt1.Disable()
+                textoC1 = wx.StaticText(self, -1, "Cursor LVDT empregado (mm) =", (20,326), (-1,-1), wx.ALIGN_RIGHT)
+                self.c1 = wx.TextCtrl(self, -1, "%.0f" % self.lista[7], (200,323), (120,-1), wx.TE_LEFT)
+                self.c1.Disable()
 
                 self.editar1 = wx.Button(self, -1, 'Editar', (60,400), (-1,-1))
                 self.Salvar1 = wx.Button(self, -1, 'Salvar', (200,400), (-1,-1))
@@ -90,6 +96,8 @@ class Page01(wx.Panel):
                 self.ilvdt1.Enable()
                 self.alvdt1.Enable()
                 self.blvdt1.Enable()
+                self.c0.Enable()
+                self.c1.Enable()
                 self.Update()
                 self.Refresh()
 
@@ -102,10 +110,15 @@ class Page01(wx.Panel):
                 II1 = self.ilvdt1.GetValue()
                 AA1 = self.alvdt1.GetValue()
                 BB1 = self.blvdt1.GetValue()
+                CC0 = self.c0.GetValue()
+                CC1 = self.c1.GetValue()
                 AA0 = format(AA0).replace(',','.')
                 BB0 = format(BB0).replace(',','.')
                 AA1 = format(AA1).replace(',','.')
                 BB1 = format(BB1).replace(',','.')
+                CC0 = format(CC0).replace(',','.')
+                CC1 = format(CC1).replace(',','.')
+
                 condicional = 0
 
                 try:
@@ -113,6 +126,8 @@ class Page01(wx.Panel):
                     BB0 = float(BB1)
                     AA1 = float(AA1)
                     BB1 = float(BB1)
+                    CC0 = float(CC0)
+                    CC1 = float(CC1)
                     condicional = 1
 
                 except ValueError:
@@ -123,14 +138,14 @@ class Page01(wx.Panel):
                     menssagError.Destroy()
                     condicional = -1
 
-                if AA0 == '' or BB0 == '' or AA1 == '' or BB1 == '':
+                if AA0 == '' or BB0 == '' or AA1 == '' or BB1 == '' or CC0 == '' or CC1 == '':
                     '''Diálogo para Forçar preenchimento dos valores'''
                     dlg = wx.MessageDialog(None, 'É necessário que alguns campos estejam preenchidos.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                     result = dlg.ShowModal()
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_dados_S1S2(II0, AA0, BB0, II1, AA1, BB1)
+                        bancodedados.update_dados_S1S2(II0, AA0, BB0, CC0, II1, AA1, BB1, CC1)
                         self.editar1.Enable()
                         self.Salvar1.Disable()
                         self.ilvdt0.Disable()
@@ -139,6 +154,8 @@ class Page01(wx.Panel):
                         self.ilvdt1.Disable()
                         self.alvdt1.Disable()
                         self.blvdt1.Disable()
+                        self.c0.Disable()
+                        self.c1.Disable()
                         self.Update()
                         self.Refresh()
 
@@ -164,19 +181,25 @@ class Page02(wx.Panel):
                 textoB0 = wx.StaticText(self, -1, "B =", (178,95), (-1,-1), wx.ALIGN_RIGHT)
                 self.blvdt0 = wx.TextCtrl(self, -1, "%.12f" % self.lista[2], (200,93), (120,-1), wx.TE_LEFT)
                 self.blvdt0.Disable()
+                textoC0 = wx.StaticText(self, -1, "Cursor LVDT empregado (mm) =", (20,126), (-1,-1), wx.ALIGN_RIGHT)
+                self.c0 = wx.TextCtrl(self, -1, "%.0f" % self.lista[3], (200,123), (120,-1), wx.TE_LEFT)
+                self.c0.Disable()
 
                 title1 = wx.StaticText(self, -1, "SENSOR DE DESLOCAMENTO 4", (20,220), (-1,-1), wx.ALIGN_CENTER)
                 title1.SetFont(FontTitle)
                 texto1 = wx.StaticText(self, -1, "Curva do tipo Ax + B", (20,240), (-1,-1), wx.ALIGN_RIGHT)
                 textoi1 = wx.StaticText(self, -1, "IDENTIFICADOR =", (100,265), (-1,-1), wx.ALIGN_RIGHT)
-                self.ilvdt1 = wx.TextCtrl(self, -1, self.lista[3], (200,263), (120,-1), wx.TE_LEFT)
+                self.ilvdt1 = wx.TextCtrl(self, -1, self.lista[4], (200,263), (120,-1), wx.TE_LEFT)
                 self.ilvdt1.Disable()
                 textoA1 = wx.StaticText(self, -1, "A =", (20,295), (-1,-1), wx.ALIGN_RIGHT)
-                self.alvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[4], (40,293), (120,-1), wx.TE_LEFT)
+                self.alvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[5], (40,293), (120,-1), wx.TE_LEFT)
                 self.alvdt1.Disable()
                 textoB1 = wx.StaticText(self, -1, "B =", (178,295), (-1,-1), wx.ALIGN_RIGHT)
-                self.blvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[5], (200,293), (120,-1), wx.TE_LEFT)
+                self.blvdt1 = wx.TextCtrl(self, -1, "%.12f" % self.lista[6], (200,293), (120,-1), wx.TE_LEFT)
                 self.blvdt1.Disable()
+                textoC1 = wx.StaticText(self, -1, "Cursor LVDT empregado (mm) =", (20,326), (-1,-1), wx.ALIGN_RIGHT)
+                self.c1 = wx.TextCtrl(self, -1, "%.0f" % self.lista[7], (200,323), (120,-1), wx.TE_LEFT)
+                self.c1.Disable()
 
                 self.editar2 = wx.Button(self, -1, 'Editar', (60,400), (-1,-1))
                 self.Salvar2 = wx.Button(self, -1, 'Salvar', (200,400), (-1,-1))
@@ -195,6 +218,8 @@ class Page02(wx.Panel):
                 self.ilvdt1.Enable()
                 self.alvdt1.Enable()
                 self.blvdt1.Enable()
+                self.c0.Enable()
+                self.c1.Enable()
                 self.Update()
                 self.Refresh()
 
@@ -207,10 +232,15 @@ class Page02(wx.Panel):
                 II1 = self.ilvdt1.GetValue()
                 AA1 = self.alvdt1.GetValue()
                 BB1 = self.blvdt1.GetValue()
+                CC0 = self.c0.GetValue()
+                CC1 = self.c1.GetValue()
                 AA0 = format(AA0).replace(',','.')
                 BB0 = format(BB0).replace(',','.')
                 AA1 = format(AA1).replace(',','.')
                 BB1 = format(BB1).replace(',','.')
+                CC0 = format(CC0).replace(',','.')
+                CC1 = format(CC1).replace(',','.')
+
                 condicional = 0
 
                 try:
@@ -218,6 +248,8 @@ class Page02(wx.Panel):
                     BB0 = float(BB1)
                     AA1 = float(AA1)
                     BB1 = float(BB1)
+                    CC0 = float(CC0)
+                    CC1 = float(CC1)
                     condicional = 1
 
                 except ValueError:
@@ -228,14 +260,14 @@ class Page02(wx.Panel):
                     menssagError.Destroy()
                     condicional = -1
 
-                if AA0 == '' or BB0 == '' or AA1 == '' or BB1 == '':
+                if AA0 == '' or BB0 == '' or AA1 == '' or BB1 == '' or CC0 == '' or CC1 == '':
                     '''Diálogo para Forçar preenchimento dos valores'''
                     dlg = wx.MessageDialog(None, 'É necessário que alguns campos estejam preenchidos.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                     result = dlg.ShowModal()
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_dados_S3S4(II0, AA0, BB0, II1, AA1, BB1)
+                        bancodedados.update_dados_S3S4(II0, AA0, BB0, CC0, II1, AA1, BB1, CC1)
                         self.editar2.Enable()
                         self.Salvar2.Disable()
                         self.ilvdt0.Disable()
@@ -244,5 +276,7 @@ class Page02(wx.Panel):
                         self.ilvdt1.Disable()
                         self.alvdt1.Disable()
                         self.blvdt1.Disable()
+                        self.c0.Disable()
+                        self.c1.Disable()
                         self.Update()
                         self.Refresh()
