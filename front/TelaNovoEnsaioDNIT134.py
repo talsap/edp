@@ -226,5 +226,5 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
                     else:
                         '''Diálogo para informar que os campos diametro e altura estão vazios ou não estão na faixa adequada.'''
                         if condicional>0:
-                            dlg = wx.MessageDialog(None, 'Os valores de diametro e de altura devem ser preenchidos corretamente.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                            dlg = wx.MessageDialog(None, 'Os valores de Diâmetro e de Altura devem ser preenchidos corretamente.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                             result = dlg.ShowModal()
