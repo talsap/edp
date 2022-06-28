@@ -50,7 +50,7 @@ VETOR_181 = [0.1,0.2,0.3,0.4,0.5]
 ################################### INICIAL ##########################################
 ######################################################################################
 def create_table():
-    c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, ensaio text, status text, identificador text, tipo text, cp text, rodovia text, origem text, trecho text, estKm text, operador text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text, freq int)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosIniciais (id INTEGER PRIMARY KEY AUTOINCREMENT, ensaio text, status text, identificacao text, tipo text, naturazaDaAmostra text, teorUmidade text, pesoEspecifico text, umidadeOtima text, energiaCompactacao text, grauCompactacao text, dataColeta text, dataInicio text, dataFim text, amostra text, diametro real, altura real, obs text, freq int, pressaoConf text, pressaoDesvio text, tipoEstabilizante text, pesoEstabilizante int, tempoCura text, tecnico text, formacao text)")
     c.execute("CREATE TABLE IF NOT EXISTS s1s2 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, C0 real, I1 text, A1 real, B1 real, C1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS s3s4 (id INTEGER PRIMARY KEY AUTOINCREMENT, I0 text, A0 real, B0 real, C0 real, I1 text, A1 real, B1 real, C1 real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, fase text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
@@ -94,36 +94,36 @@ data_entry()
 ######################################################################################
 ####################################  GERAL  #########################################
 ######################################################################################
-'''Atualiza a frequencia do Ensaio'''
+'''Atualiza a frequencia do Ensaio de acordo com a idt'''
 def Update_freq(idt, freq):
-    c.execute("UPDATE dadosIniciais SET freq = ? WHERE identificador = ?", (freq, idt,))
+    c.execute("UPDATE dadosIniciais SET freq = ? WHERE identificacao = ?", (freq, idt,))
     connection.commit()
 
-'''Data de quando o finaliza o ensaio acordo com o idt'''
+'''Data de quando finaliza o ensaio acordo com o idt'''
 def data_final_Update_idt(idt):
     date = str(datetime.datetime.fromtimestamp(int(time.time())).strftime('%H:%M:%S  %d/%m/%Y'))
-    c.execute("UPDATE dadosIniciais SET dataFim = ? WHERE identificador = ?", (date, idt,))
+    c.execute("UPDATE dadosIniciais SET dataFim = ? WHERE identificacao = ?", (date, idt,))
     connection.commit()
 
 '''Data de quando inicia o ensaio de acordo com o idt'''
 def data_inicio_Update_idt(idt):
     date = str(datetime.datetime.fromtimestamp(int(time.time())).strftime('%H:%M:%S  %d/%m/%Y'))
-    c.execute("UPDATE dadosIniciais SET dataInicio = ? WHERE identificador = ?", (date, idt,))
+    c.execute("UPDATE dadosIniciais SET dataInicio = ? WHERE identificacao = ?", (date, idt,))
     connection.commit()
 
 '''coleta uma lista com os dados iniciais dos ensaio de acordo com o ID'''
 def dados_iniciais_(idt):
     list = []
-    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificador = ?', (idt,)):
+    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificacao = ?', (idt,)):
         list.append(row[1]) #ensaio
         list.append(row[2]) #status
         list.append(row[4]) #tipo
-        list.append(row[5]) #cp
-        list.append(row[6]) #rodovia
-        list.append(row[7]) #origem
-        list.append(row[8]) #trecho
-        list.append(row[9]) #estkm
-        list.append(row[10]) #operador
+        list.append(row[5]) #naturazaDaAmostra
+        list.append(row[6]) #teorUmidade
+        list.append(row[7]) #pesoEspecifico
+        list.append(row[8]) #umidadeOtima
+        list.append(row[9]) #energiaCompactacao
+        list.append(row[10]) #grauCompactacao
         list.append(row[11]) #datadacoleta
         list.append(row[12]) #datainicio
         list.append(row[13]) #datafim
@@ -132,10 +132,17 @@ def dados_iniciais_(idt):
         list.append(row[16]) #altura
         list.append(row[17]) #obs
         list.append(row[18]) #freq
+        list.append(row[19]) #pressaoConf
+        list.append(row[20]) #pressaoDesvio
+        list.append(row[21]) #tipoEstabilizante
+        list.append(row[22]) #pesoEstabilizante
+        list.append(row[23]) #tempoCura
+        list.append(row[24]) #tecnico
+        list.append(row[25]) #formacao
 
     return list
 
-'''pega os tipo e o Identificador do ensaio de acordo com o ID'''
+'''pega os tipo e a identificação do ensaio de acordo com o ID'''
 def qual_identificador(id):
     list = []
     for row in c.execute('SELECT * FROM dadosIniciais WHERE id = ?', (id,)):
@@ -193,7 +200,7 @@ def datafinal():
 
     return list_datefinal
 
-'''Captura os identificadores'''
+'''Captura as identificacoes'''
 def data_identificadores():
     list_id = []
 
@@ -202,7 +209,7 @@ def data_identificadores():
 
     return list_id
 
-'''Captura os IDE (Identificadores de cada Ensaio)'''
+'''Captura os IDE (identificacaoes de cada Ensaio)'''
 def IDE():
     list_IDE = []
 
@@ -288,9 +295,9 @@ def S3S4():
 ######################################################################################
 ###################################  DNIT 134  #######################################
 ######################################################################################
-'''pega a altura do CP de acorodo com o identificador'''
+'''pega a altura do CP de acordo com a identificação'''
 def altura_cp_134(idt):
-    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificador = ?', (idt,)):
+    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificacao = ?', (idt,)):
         altura = row[16]
     return altura
 
@@ -415,25 +422,31 @@ def CONFIG_134():
     return list
 
 '''Salva os dados iniciais do ensaio 134'''
-def data_save_dados_134(identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, amostra, diametro, altura, obs):
+def data_save_dados_134(identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, amostra, diametro, altura, obs, tecnico, formacao):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
     ensaio = '134'
     status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio foi finalizado com sucesso! / 2 - O ensaio foi interrompido pelo critério de rompimento / 3 - O ensaio foi interrompido por algum erro inesperado
-    c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs))
+    freq = ''
+    pressaoConf = ''
+    pressaoDesvio = ''
+    tipoEstabilizante = ''
+    pesoEstabilizante = ''
+    tempoCura = ''
+    c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao))
     connection.commit()
 
 def saveDNIT134(idt, fase, pc, pg, dr, r):
     c.execute("INSERT INTO dadosDNIT134 (idt, fase, pc, pg, dr, r) VALUES (?, ?, ?, ?, ?, ?)", (idt, fase, pc, pg, dr, r))
     connection.commit()
 
-def saveDNIT134ADM(idt, fase, x, y1, yt1, y2, yt2, pc, pg):
-    c.execute("INSERT INTO dadosDNIT134ADM (idt, fase, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (idt, fase, x, y1, yt1, y2, yt2, pc, pg))
-    connection.commit()
-
 def saveReferencia(idt, fase, r):
     c.execute("INSERT INTO referencia (idt, fase, r) VALUES (?, ?, ?)", (idt, fase, r))
+    connection.commit()
+
+def saveDNIT134ADM(idt, fase, x, y1, yt1, y2, yt2, pc, pg):
+    c.execute("INSERT INTO dadosDNIT134ADM (idt, fase, x, y1, yt1, y2, yt2, pc, pg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (idt, fase, x, y1, yt1, y2, yt2, pc, pg))
     connection.commit()
 
 def saveReferenciaADM(idt, fase, r1, r2):
@@ -502,14 +515,15 @@ def CONFIG_179():
     return list
 
 '''Salva os dados iniciais do ensaio 179'''
-def data_save_dados_179(identificador, cp, rodovia, origem, trecho, estKm, operador, dataColeta, amostra, diametro, altura, obs):
+def data_save_dados_179(identificacao, cp, rodovia, origem, trecho, estKm, operador, dataColeta, amostra, diametro, altura, obs):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
     ensaio = '179'
     status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio foi finalizado com sucesso! / 2 - O ensaio foi interrompido pelo critério de rompimento / 3 - O ensaio foi interrompido por algum erro inesperado
     tipo = ''
-    c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificador, tipo, cp, rodovia, origem, trecho, estKm, operador, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs))
+
+    c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao))
     connection.commit()
 
 def saveDNIT179(idt, glp, DR, DP, pc, pg):

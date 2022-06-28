@@ -16,7 +16,7 @@ def pm(mm):
     return mm/0.352777
 
 '''Class Export PDF'''
-class Pdf(wx.Dialog):
+class Pdf134(wx.Dialog):
     #--------------------------------------------------
      def __init__(self, idt, *args, **kwargs):
         wx.Dialog.__init__(self, None, -1, 'EDP - PDF')
@@ -31,7 +31,7 @@ class Pdf(wx.Dialog):
         self.list = bancodedados.dados_da_coleta_134_pdf(idt)
 
         if len(self.list) == 1:
-            menssagError = wx.MessageDialog(self, 'NADA CALCULADO AINDA!\n\n Seu arquivo PDF ainda não pode ser exportado!\n Alguns dados precisam ser coletados.', 'EDP', wx.OK|wx.ICON_INFORMATION)
+            menssagError = wx.MessageDialog(self, 'NADA AINDA!\n\n Seu arquivo PDF ainda não pode ser exportado!\n Alguns dados precisam ser coletados.', 'EDP', wx.OK|wx.ICON_INFORMATION)
             aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
             menssagError.ShowModal()
             menssagError.Destroy()

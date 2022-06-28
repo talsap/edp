@@ -25,7 +25,7 @@ class Csv134(wx.Dialog):
         self.list = bancodedados.dados_da_coleta_134(idt)
 
         if len(self.list) == 1:
-            menssagError = wx.MessageDialog(self, 'NADA CALCULADO AINDA!\n\n Seu arquivo .CSV ainda não pode ser exportado!\n Alguns dados precisam ser coletados.', 'EDP', wx.OK|wx.ICON_INFORMATION)
+            menssagError = wx.MessageDialog(self, 'NADA AINDA!\n\n Seu arquivo .CSV ainda não pode ser exportado!\n Alguns dados precisam ser coletados.', 'EDP', wx.OK|wx.ICON_INFORMATION)
             aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
             menssagError.ShowModal()
             menssagError.Destroy()

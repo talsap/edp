@@ -11,7 +11,7 @@ from TelaNovo import TelaNovo
 from cabecalhos import Cab
 from calibration import Cal
 from configuration import Config
-from Pdf import Pdf
+from Pdf import *
 from Csv import *
 '''from Editar import Editar'''
 '''from Csv import Csv'''
@@ -139,7 +139,7 @@ class Tela(wx.Frame):
          panel.SetSizerAndFit(v_sizer)
 
          if len(lista) >=11:
-             self.list_ctrl.InsertColumn(0, 'IDENTIFICADOR', wx.LIST_FORMAT_CENTRE, width=170)
+             self.list_ctrl.InsertColumn(0, 'IDENTIFICAÇÃO', wx.LIST_FORMAT_CENTRE, width=170)
              self.list_ctrl.InsertColumn(1, 'INICIO DO ENSAIO', wx.LIST_FORMAT_CENTRE, width=115)
              self.list_ctrl.InsertColumn(2, 'TERMINO DO ENSAIO', wx.LIST_FORMAT_CENTRE, width=135)
              self.list_ctrl.InsertColumn(3, 'EDT', wx.LIST_FORMAT_CENTRE, width=40)
@@ -147,7 +147,7 @@ class Tela(wx.Frame):
              self.list_ctrl.InsertColumn(5, 'CSV', wx.LIST_FORMAT_CENTRE, width=40)
              self.list_ctrl.InsertColumn(6, 'DEL', wx.LIST_FORMAT_CENTRE, width=40)
          else:
-             self.list_ctrl.InsertColumn(0, 'IDENTIFICADOR', wx.LIST_FORMAT_CENTRE, width=180)
+             self.list_ctrl.InsertColumn(0, 'IDENTIFICAÇÃO', wx.LIST_FORMAT_CENTRE, width=180)
              self.list_ctrl.InsertColumn(1, 'INICIO DO ENSAIO', wx.LIST_FORMAT_CENTRE, width=120)
              self.list_ctrl.InsertColumn(2, 'TERMINO DO ENSAIO', wx.LIST_FORMAT_CENTRE, width=135)
              self.list_ctrl.InsertColumn(3, 'EDT', wx.LIST_FORMAT_CENTRE, width=40)
@@ -199,10 +199,10 @@ class Tela(wx.Frame):
          id = id - 8000
          list = bancodedados.qual_identificador(id)
          if list[0] == "134":
-             dialogo = Pdf(list[1]).ShowModal()
+             dialogo = Pdf134(list[1])
          if list[0] == "179":
              print list[1]
-         #dialogo = Pdf(id).ShowModal()
+         #dialogo = Pdf(id)
 
     #--------------------------------------------------
      def exportCSV(self, event):

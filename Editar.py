@@ -4,15 +4,15 @@
 import wx
 import wx.adv
 import bancodedados
-from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
+from front.TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 
 tipos = ['SIMPLES', 'COMPLETO']
 
-'''Tela Selecão de Ensaio'''
-class TelaNovoEnsaioDNIT134(wx.Dialog):
+'''Tela de Edicao dos dados do Ensaio'''
+class Editar134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - DNIT 134/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Frame.__init__(self, None, -1, 'EDP - EDITAR DADOS DO ENSAIO', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
             try:
@@ -228,3 +228,9 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
                         if condicional>0:
                             dlg = wx.MessageDialog(None, 'Os valores de diametro e de altura devem ser preenchidos corretamente.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                             result = dlg.ShowModal()
+
+if __name__ == "__main__":
+	app = wx.App()
+	frame = Editar134(None)
+	frame.ShowModal()
+	app.MainLoop()

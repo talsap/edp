@@ -9,10 +9,10 @@ from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 tipos = ['SIMPLES', 'COMPLETO']
 
 '''Tela Selecão de Ensaio'''
-class TelaNovoEnsaioDNIT134(wx.Dialog):
+class TelaNovoEnsaioDNIT181(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - DNIT 134/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Frame.__init__(self, None, -1, 'EDP - DNIT 181/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
             try:
