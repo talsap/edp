@@ -192,6 +192,8 @@ class Tela(wx.Frame):
              print list[1]
          if list[0] == "179":
              print list[1]
+         if list[0] == "181":
+             print list[1]
 
     #--------------------------------------------------
      def Pdf(self, event):
@@ -202,7 +204,8 @@ class Tela(wx.Frame):
              dialogo = Pdf134(list[1])
          if list[0] == "179":
              print list[1]
-         #dialogo = Pdf(id)
+         if list[0] == "181":
+             print list[1]
 
     #--------------------------------------------------
      def exportCSV(self, event):
@@ -213,23 +216,27 @@ class Tela(wx.Frame):
              dialogo = Csv134(list[1])
          if list[0] == "179":
              print list[1]
+         if list[0] == "181":
+             print list[1]
 
     #--------------------------------------------------
      def Deletar(self, event):
          id = event.GetId()
          id = id - 24000
-         print str(id)+'DEL'
+         list = bancodedados.qual_identificador(id)
+         print list[1]
+         print id
 
          '''Diálogo se deseja realmente excluir o Ensaio'''
-         dlg = wx.MessageDialog(None, 'Deseja mesmo excluir esse Ensaio?', 'EAU', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
+         dlg = wx.MessageDialog(None, 'Deseja mesmo excluir esse Ensaio?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
          result = dlg.ShowModal()
 
          if result == wx.ID_YES:
-             bancodedados.delete(id)
+             bancodedados.delete(list[1])
              dlg.Destroy()
 
              self.list_ctrl.DeleteAllItems()
-             '''lista = bancodedados.ListaVisualizacao()'''
+             lista = bancodedados.ListaVisualizacao()
              index = 0
 
              for key, row in lista:

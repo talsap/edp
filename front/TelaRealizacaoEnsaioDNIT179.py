@@ -20,9 +20,9 @@ from front.dialogoDinamico import dialogoDinamico
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
 '''Frequencias para o ensaio'''
-frequencias = ['1']
+frequencias = ['1', '2']
 
-#########################################################################
+########################################################################
 '''Painel Superior'''
 class TopPanel(wx.Panel):
         def __init__(self, parent, _self):
@@ -37,23 +37,12 @@ class TopPanel(wx.Panel):
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
             self.figure = plt.figure(constrained_layout=True)
-            #plt.subplot()
-            #plt.ion()
             self.axes = self.figure.add_subplot(111)
             self.canvas = FigureCanvas(self, -1, self.figure)
-            #self.axes.set_xlabel("TEMPO (seg)")
-            #self.axes.set_ylabel("DESLOCAMENTO (mm)")
-            #self.axes.set_ylim(float(0), float(5))
-            #self.axes.set_xlim(float(0), float(5))
 
             rect = self.figure.patch
             rect.set_facecolor('#D7D7D7')
 
-            #rect1 = self.axes.patch
-            #rect1.set_facecolor('#A0BA8C')
-
-            self.avanca = wx.Button(self, -1, 'AVANÇA')
-            self.Bind(wx.EVT_BUTTON, self.AVANCA, self.avanca)
             self.pausa = wx.Button(self, -1, 'PAUSA')
             self.Bind(wx.EVT_BUTTON, self.PAUSA, self.pausa)
             self.continua = wx.Button(self, -1, 'CONTINUA')
@@ -61,17 +50,14 @@ class TopPanel(wx.Panel):
             self.fim_inicio = wx.Button(self, -1, 'INICIO')
             self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
 
-            self.avanca.Disable()
             self.pausa.Disable()
             self.continua.Disable()
             self.fim_inicio.Disable()
 
-            self.avanca.SetFont(FontTitle)
             self.pausa.SetFont(FontTitle)
             self.continua.SetFont(FontTitle)
             self.fim_inicio.SetFont(FontTitle)
 
-            self.v_sizer.Add(self.avanca, 1, wx.EXPAND | wx.ALL, 5)
             self.v_sizer.Add(self.pausa, 1, wx.EXPAND | wx.ALL, 5)
             self.v_sizer.Add(self.continua, 1, wx.EXPAND | wx.ALL, 5)
             self.v_sizer.Add(self.fim_inicio, 1, wx.EXPAND | wx.ALL, 5)
@@ -84,69 +70,6 @@ class TopPanel(wx.Panel):
             self.SetSizer(self.sizer)
             self.DINAMICA2_ANTERIOR = 0
             self.DINAMICA1_ANTERIOR = 0
-            self.AVANCA = False
-
-    #--------------------------------------------------
-        '''Função AVANCA'''
-        def AVANCA(self, event):
-            print '\nTopPanel - AVANCA'
-            global Fase
-            global X
-            global Y
-            global mult
-
-            '''Diálogo se deseja realmente avancar um FASE'''
-            dlg = wx.MessageDialog(None, 'Deseja realmente avancar um FASE?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
-            result = dlg.ShowModal()
-
-            if result == wx.ID_YES:
-                dlg.Destroy()
-                con.modeFIM()
-                self.fim_inicio.Enable()
-                self.avanca.Enable()
-                self.continua.Disable()
-                self.fim_inicio.Disable()
-                self.fim_inicio.SetLabel('INICIO')
-                self._self.bottom.GolpeAtual.Clear()
-                self._self.bottom.GolpeAtual.AppendText(str(0))
-
-                self._fase = self._self.bottom._fase + 1
-                self._self.bottom._fase = self._fase
-
-                self._self.bottom.timer.Stop()
-                X = np.array([])
-                Y = np.array([])
-                mult = 0
-                self.draww()
-                self._self.bottom.PCalvo.Clear()
-                self._self.bottom.SigmaAlvo.Clear()
-                self._self.bottom.fase.Clear()
-                self.AVANCA = True
-
-                if Fase == 'CONDICIONAMENTO':
-                    print '\nAVANCA.FASE.COND='+str(self._fase+1)+'\n'
-                    self._self.bottom.PCalvo.AppendText("%.3f" % VETOR_COND[self._fase][0])
-                    self._self.bottom.SigmaAlvo.AppendText("%.3f" % (VETOR_COND[self._fase][1]-VETOR_COND[self._fase][0]))
-                    self._self.bottom.fase.AppendText(str(self._fase+1))
-
-                    if(self._fase < 2):
-                        self.avanca.Enable()
-                    else:
-                        self.avanca.Disable()
-
-                if Fase == 'MR':
-                    print '\nAVANCA.FASE.MR='+str(self._fase+1)+'\n'
-                    self._self.bottom.PCalvo.AppendText("%.3f" % VETOR_MR[self._fase][0])
-                    self._self.bottom.SigmaAlvo.AppendText("%.3f" % (VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0]))
-                    self._self.bottom.fase.AppendText(str(self._fase+1))
-
-                    if(self._fase < 17):
-                        self.avanca.Enable()
-                    else:
-                        self.avanca.Disable()
-
-                self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
-                self.fim_inicio.Enable()
 
     #--------------------------------------------------
         '''Função PAUSA'''
@@ -162,10 +85,6 @@ class TopPanel(wx.Panel):
             self.continua.Enable()
             self.fim_inicio.Enable()
             self.pausa.Disable()
-            if Fase == 'CONDICIONAMENTO' and subleito == False:
-                self.avanca.Enable()
-            if Fase == 'MR':
-                self.avanca.Enable()
 
     #--------------------------------------------------
         '''Função CONTINUA'''
@@ -178,11 +97,10 @@ class TopPanel(wx.Panel):
             con.modeC()
             conditionEnsaio = True
             Pausa = False
-            self._self.bottom.timer.Start(int('5000'))
+            self._self.bottom.timer.Start(int('2500'))
             self.pausa.Enable()
             self.fim_inicio.Disable()
             self.continua.Disable()
-            self.avanca.Disable()
 
     #--------------------------------------------------
         '''Função INICIO'''
@@ -191,116 +109,34 @@ class TopPanel(wx.Panel):
             global Fase
             global condition
             global conditionEnsaio
+            global freq
             self.fim_inicio.Disable()
-            self.avanca.Disable()
-            self._fase = self._self.bottom._fase
-            #time.sleep(1)
 
             if Fase == 'CONDICIONAMENTO':
                 condition = False
-                if self._fase > 0:
-                    if VETOR_COND[self._fase][1] != VETOR_COND[self._fase - 1][1] and self.AVANCA == False:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], VETOR_COND[self._fase-1][1])
-                        dlgC1 = My.MyProgressDialog(3)
-                        dlgC1.ShowModal()
-                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._fase][1]
-                        self.DINAMICA1_ANTERIOR = VETOR_COND[self._fase][0]
-                        time.sleep(1)
+                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
+                dlgC1 = My.MyProgressDialog(3)
+                dlgC1.ShowModal()
+                time.sleep(1)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[0][0], self.DINAMICA1_ANTERIOR)
+                dlgC2 = My.MyProgressDialog(3)
+                dlgC2.ShowModal()
+                time.sleep(1)
+                self.DINAMICA2_ANTERIOR = VETOR_COND[0][1]
+                self.DINAMICA1_ANTERIOR = VETOR_COND[0][0]
 
-                    if VETOR_COND[self._fase][0] != VETOR_COND[self._fase - 1][0]:
-                        #threadConection = MotorThread.MotorThread(VETOR_COND[self._fase][0])
-                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
-                        dlgC2 = My.MyProgressDialog(3)
-                        dlgC2.ShowModal()
-
-                    if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], self.DINAMICA2_ANTERIOR)
-                        dlgC1 = My.MyProgressDialog(3)
-                        dlgC1.ShowModal()
-                        self.DINAMICA2_ANTERIOR = VETOR_COND[self._fase][1]
-                        time.sleep(.5)
-                        if VETOR_COND[self._fase][0] != self.DINAMICA1_ANTERIOR:
-                            threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
-                            dlgC2 = My.MyProgressDialog(3)
-                            dlgC2.ShowModal()
-                            self.DINAMICA1_ANTERIOR = VETOR_COND[self._fase][0]
-                        self.AVANCA = False
-                else:
-                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], 0)
-                    dlgC1 = My.MyProgressDialog(3)
-                    dlgC1.ShowModal()
-                    time.sleep(.5)
-                    #threadConection = MotorThread.MotorThread(VETOR_COND[self._fase][0])
-                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], 0)
-                    dlgC2 = My.MyProgressDialog(3)
-                    dlgC2.ShowModal()
-
-                if threadConection.ret() == False:
-                    dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "CONDICIONAMENTO", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
-                    dlgC3.ShowModal()
-                    self._self.bottom.erro = True
-                    if self._fase == 0:
-                        self._self.bottom.mr.Enable()
-                        self._self.bottom.condic.Enable()
-                time.sleep(.5)
-
-                if self._self.bottom.Automatico == False:
-                    condition = True
-                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "CONDICIONAMENTO", "Tudo pronto!", "Aperte INICIO.", "", None)
-                    dlg3.ShowModal()
-                    time.sleep(1)
-
-            if Fase == 'MR':
+            if Fase == 'DP':
                 condition = False
-                if self._fase > 0:
-                    if VETOR_MR[self._fase][1] != VETOR_MR[self._fase - 1][1] and self.AVANCA == False:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], VETOR_MR[self._fase-1][1])
-                        dlgC1 = My.MyProgressDialog(3)
-                        dlgC1.ShowModal()
-                        self.DINAMICA2_ANTERIOR = VETOR_MR[self._fase][1]
-                        time.sleep(1)
-
-                    if VETOR_MR[self._fase][0] != VETOR_MR[self._fase - 1][0] and self.AVANCA == False:
-                        #threadConection = MotorThread.MotorThread(VETOR_MR[self._fase][0])
-                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
-                        dlgC2 = My.MyProgressDialog(3)
-                        dlgC2.ShowModal()
-
-                    if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], self.DINAMICA2_ANTERIOR)
-                        dlgC1 = My.MyProgressDialog(3)
-                        dlgC1.ShowModal()
-                        self.DINAMICA2_ANTERIOR = VETOR_MR[self._fase][1]
-                        time.sleep(.5)
-                        if VETOR_MR[self._fase][0] != self.DINAMICA1_ANTERIOR:
-                            threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
-                            dlgC2 = My.MyProgressDialog(3)
-                            dlgC2.ShowModal()
-                            self.DINAMICA1_ANTERIOR = VETOR_MR[self._fase][0]
-                        self.AVANCA = False
-                else:
-                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], 0)
-                    dlgC1 = My.MyProgressDialog(3)
-                    dlgC1.ShowModal()
-                    time.sleep(.5)
-                    #threadConection = MotorThread.MotorThread(VETOR_MR[self._fase][0])
-                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], 0)
-                    dlgC2 = My.MyProgressDialog(3)
-                    dlgC2.ShowModal()
-
-                if threadConection.ret() == False:
-                    dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "MÓDULO DE RESILIÊNCIA", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
-                    dlgC3.ShowModal()
-                    self._self.bottom.erro = True
-                    if self._fase == 0:
-                        self._self.bottom.mr.Enable()
-                time.sleep(.5)
-
-                if self._self.bottom.Automatico == False:
-                    condition = True
-                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "MÓDULO DE RESILIÊNCIA", "Tudo pronto!", "Aperte INICIO.", "", None)
-                    dlg3.ShowModal()
-                    time.sleep(1)
+                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_DP[0][1], self.DINAMICA2_ANTERIOR)
+                dlgC1 = My.MyProgressDialog(3)
+                dlgC1.ShowModal()
+                time.sleep(1)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_DP[0][0], self.DINAMICA1_ANTERIOR)
+                dlgC2 = My.MyProgressDialog(3)
+                dlgC2.ShowModal()
+                time.sleep(1)
+                self.DINAMICA2_ANTERIOR = VETOR_DP[0][1]
+                self.DINAMICA1_ANTERIOR = VETOR_DP[0][0]
 
             condition = False
             con.modeStoped()
@@ -308,28 +144,41 @@ class TopPanel(wx.Panel):
             freq = self._self.bottom.freq.GetValue()
             con.modeG()
             time.sleep(0.5)
-            con.modeGOLPES(int(gl), int(freq))
+            con.modeGOLPES(int(gl)+1, int(freq))
             condition = True
             conditionEnsaio = True
-            time.sleep(2)
-            self._self.bottom.timer.Start(int('5000'))
+            time.sleep(0.5)
+            self._self.bottom.timer.Start(int('2500'))
             self.pausa.Enable()
             self.fim_inicio.SetLabel('FIM')
             self.Bind(wx.EVT_BUTTON, self.FIM, self.fim_inicio)
 
             #--------------------------------------------------
+            #-------- Thread de parada e de salvamento --------
             def worker1(self):
+                import bancodedados
                 global condition
                 global conditionEnsaio
                 global Fase
                 global X
                 global Y
+                global pc
+                global pg
                 global mult
                 global glpCOND
                 global ntglp
-                global H
-                global DPmaxACUM
+                global DefResiliente
+                global DefPermanente
                 global REFERENCIA_MEDIA
+                global idt
+                global temposDNIT179_01
+                global temposDNIT179_02
+                valorGolpeAnterior = 0
+                golpe = []
+                vDR = []
+                vDP = []
+                ppc = []
+                ppg = []
 
                 if Fase == 'CONDICIONAMENTO':
                     while True:
@@ -339,8 +188,6 @@ class TopPanel(wx.Panel):
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
-                                self._fase = self._self.bottom._fase + 1
-                                self._self.bottom._fase = self._fase
                                 conditionEnsaio = False
                                 valorGolpe = 0
                                 self._self.bottom.timer.Stop()
@@ -349,18 +196,50 @@ class TopPanel(wx.Panel):
                                 mult = 0
                                 self.draww()
                                 self.pausa.Disable()
-                                evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.condic.GetId())
+                                evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.dp.GetId())
                                 wx.PostEvent(self._self.bottom.condic, evt)
                                 break
                         except:
                             pass
 
-                if Fase == 'MR':
+                if Fase == 'DP':
                     while True:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
-                            alturaFinalCP = float(self._self.bottom.AlturaFinal.GetValue())
-                            if valorGolpe == int(ntglp-1) or (H - REFERENCIA_MEDIA) < DPmaxACUM or alturaFinalCP < (DPmaxACUM-5):
+                            if valorGolpe != valorGolpeAnterior:
+                                valorGolpeAnterior = valorGolpe
+                                if valorGolpe in temposDNIT179_02:
+                                    bancodedados.saveDNIT179(idt, valorGolpe, DefResiliente, DefPermanente, pc, pg)
+                                if valorGolpe in temposDNIT179_01:
+                                    golpe.append(valorGolpe)
+                                    vDR.append(DefResiliente)
+                                    vDP.append(DefPermanente)
+                                    ppc.append(pc)
+                                    ppg.append(pg)
+                                    if valorGolpe == 200:
+                                        self._self.bottom.gDP.Enable()
+                                    if valorGolpe == 100:
+                                        ix = 0
+                                        while ix < len(golpe):
+                                            bancodedados.saveDNIT179(idt, golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
+                                            ix += 1
+                                        golpe *= 0 #limpa a lista
+                                        vDR *= 0 #limpa a lista
+                                        vDP *= 0 #limpa a lista
+                                        ppc *= 0 #limpa a lista
+                                        ppg *= 0 #limpa a lista
+                                    if valorGolpe == 900:
+                                        ix = 0
+                                        while ix < len(golpe):
+                                            bancodedados.saveDNIT179(idt, golpe[ix], vDR[ix], vDP[ix], ppc[ix], ppg[ix])
+                                            ix += 1
+                                        golpe *= 0 #limpa a lista
+                                        vDR *= 0 #limpa a lista
+                                        vDP *= 0 #limpa a lista
+                                        ppc *= 0 #limpa a lista
+                                        ppg *= 0 #limpa a lista
+
+                            if valorGolpe == int(ntglp):
                                 time.sleep(4)
                                 con.modeI()
                                 self.pausa.Disable()
@@ -374,8 +253,8 @@ class TopPanel(wx.Panel):
                                 mult = 0
                                 self.draww()
                                 self.pausa.Disable()
-                                evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.mr.GetId())
-                                wx.PostEvent(self._self.bottom.mr, evt)
+                                evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self._self.bottom.dp.GetId())
+                                wx.PostEvent(self._self.bottom.dp, evt)
                                 break
                         except:
                             pass
@@ -400,7 +279,6 @@ class TopPanel(wx.Panel):
                 dlg.Destroy()
                 self.fim_inicio.Disable()
                 con.modeFIM()
-                self.avanca.Disable()
                 self.continua.Disable()
 
                 conditionEnsaio = False
@@ -412,27 +290,18 @@ class TopPanel(wx.Panel):
 
             if Fase == 'CONDICIONAMENTO':
                 self._self.bottom._fase = 0
-                self._self.bottom.mr.Enable()
+                self._self.bottom.dp.Enable()
                 self.fim_inicio.SetLabel('INICIO')
                 self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
-                self._self.bottom.pressao_zero(VETOR_COND[self._fase][0], VETOR_COND[self._fase][1])
+                self._self.bottom.pressao_zero(VETOR_COND[0][0], VETOR_COND[0][1])
                 con.modeI()
 
-            if Fase == 'MR':
+            if Fase == 'DP':
                 con.modeI()
-                self._self.bottom.pressao_zero(VETOR_MR[self._fase][0], VETOR_MR[self._fase][1])
+                self._self.bottom.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
+                dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
+                dlg3.ShowModal()
                 con.modeI()
-                bancodedados.data_final_Update_idt(idt)
-                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório podem ser gerados na tela inicial.", "FIM!", "", None)
-                if dlg3.ShowModal() == wx.ID_OK:
-                    time.sleep(.3)
-                    con.modeStoped()
-                    time.sleep(.3)
-                    con.modeB()
-                    time.sleep(.3)
-                    con.modeD()
-                    self.Close(True)
-
 
     #--------------------------------------------------
         '''Ajusta min e max EIXO X'''
@@ -463,7 +332,7 @@ class TopPanel(wx.Panel):
             print '\nTopPanel - draw'
             global mult
             self.axes.clear()
-            self.axes.set_xlim(mult*5-5, mult*5)
+            #self.axes.set_xlim(mult*5-5, mult*5)
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
             self.axes.plot(X, Y, 'r-')
@@ -501,40 +370,35 @@ class BottomPanel(wx.Panel):
             staticbox5.SetBackgroundColour(wx.Colour(215,215,215))
             staticbox6.SetBackgroundColour(wx.Colour(215,215,215))
 
-            self.qTensoes = wx.Button(self, -1, 'Q. Tensões')
-            self.Bind(wx.EVT_BUTTON, self.QT, self.qTensoes)
+            self.gDP = wx.Button(self, -1, 'GOLPE\nX\nD. P.')
+            self.Bind(wx.EVT_BUTTON, self.GDP, self.gDP)
             self.condic = wx.Button(self, -1, 'CONDIC.')
             self.Bind(wx.EVT_BUTTON, self.CONDIC, self.condic)
-            self.mr = wx.Button(self, -1, 'M. R.')
-            self.Bind(wx.EVT_BUTTON, self.MR, self.mr)
+            self.dp = wx.Button(self, -1, 'D. P.')
+            self.Bind(wx.EVT_BUTTON, self.DP, self.dp)
             self.LTeste = wx.Button(self, -1, "L. TESTE", size = wx.DefaultSize)
             self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
             self.LZero = wx.Button(self, -1, "L. ZERO", size = wx.DefaultSize)
             self.Bind(wx.EVT_BUTTON, self.LZERO, self.LZero)
 
-            self.qTensoes.Disable()
+            self.gDP.Disable()
             self.condic.Disable()
-            self.mr.Disable()
+            self.dp.Disable()
             self.LZero.Disable()
 
-            self.qTensoes.SetFont(FontTitle1)
+            self.gDP.SetFont(FontTitle1)
             self.condic.SetFont(FontTitle1)
-            self.mr.SetFont(FontTitle1)
+            self.dp.SetFont(FontTitle1)
             self.LTeste.SetFont(FontTitle1)
             self.LZero.SetFont(FontTitle1)
 
             texto1 = wx.StaticText(self, label = "EIXO Y", style = wx.ALIGN_CENTRE)
-            #texto2 = wx.StaticText(self, label = "EIXO Y (mm)", style = wx.ALIGN_CENTRE)
             texto3 = wx.StaticText(self, label = "σ3 - Tensão confinante (MPa)", style = wx.ALIGN_CENTRE)
             texto4 = wx.StaticText(self, label = "σd - Tensão desvio (MPa)", style = wx.ALIGN_CENTRE)
             texto5 = wx.StaticText(self, label = "Y1 (V)", style = wx.ALIGN_CENTER)
             texto6 = wx.StaticText(self, label = "Y2 (V)", style = wx.ALIGN_CENTER)
             texto7 = wx.StaticText(self, label = "Y1 (mm)", style = wx.ALIGN_CENTER)
             texto8 = wx.StaticText(self, label = "Y2 (mm)", style = wx.ALIGN_CENTER)
-            #texto9 = wx.StaticText(self, label = "Def. Elástica", style = wx.ALIGN_CENTER)
-            #texto10 = wx.StaticText(self, label = "Def. Plástica", style = wx.ALIGN_CENTER)
-            #texto11 = wx.StaticText(self, label = "Def. P. Cond.", style = wx.ALIGN_CENTER)
-            #texto12 = wx.StaticText(self, label = "Def. P. Acum.", style = wx.ALIGN_CENTER)
             texto13 = wx.StaticText(self, label = "Altura Final (mm)", style = wx.ALIGN_LEFT)
             texto14 = wx.StaticText(self, label = "REAL", style = wx.ALIGN_CENTER)
             texto15 = wx.StaticText(self, label = "REAL", style = wx.ALIGN_CENTER)
@@ -542,24 +406,18 @@ class BottomPanel(wx.Panel):
             texto17 = wx.StaticText(self, label = "ALVO", style = wx.ALIGN_CENTER)
             texto18 = wx.StaticText(self, label = "Altura (mm)", style = wx.ALIGN_LEFT)
             texto19 = wx.StaticText(self, label = "Diâmetro (mm)", style = wx.ALIGN_LEFT)
-            #texto20 = wx.StaticText(self, label = "Def. Crítica (mm)", style = wx.ALIGN_LEFT)
             texto21 = wx.StaticText(self, label = "FASE", style = wx.ALIGN_CENTER)
             texto22 = wx.StaticText(self, label = "Nº de CICLOs", style = wx.ALIGN_CENTER)
             texto23 = wx.StaticText(self, label = "Freq. (Hz)", style = wx.ALIGN_CENTER)
             texto24 = wx.StaticText(self, label = "CICLO Atual", style = wx.ALIGN_CENTER)
 
             texto1.SetFont(FontTitle)
-            #texto2.SetFont(FontTitle)
             texto3.SetFont(FontTitle)
             texto4.SetFont(FontTitle)
             texto5.SetFont(Fonttext)
             texto6.SetFont(Fonttext)
             texto7.SetFont(Fonttext)
             texto8.SetFont(Fonttext)
-            #texto9.SetFont(Fonttext)
-            #texto10.SetFont(Fonttext)
-            #texto11.SetFont(Fonttext)
-            #texto12.SetFont(Fonttext)
             texto13.SetFont(FontTitle)
             texto14.SetFont(Fonttext)
             texto15.SetFont(Fonttext)
@@ -567,24 +425,18 @@ class BottomPanel(wx.Panel):
             texto17.SetFont(Fonttext)
             texto18.SetFont(Fonttext)
             texto19.SetFont(Fonttext)
-            #texto20.SetFont(FontTitle)
             texto21.SetFont(FontTitle)
             texto22.SetFont(Fonttext)
             texto23.SetFont(Fonttext)
             texto24.SetFont(Fonttext)
 
             texto1.SetBackgroundColour(wx.Colour(215,215,215))
-            #texto2.SetBackgroundColour(wx.Colour(215,215,215))
             texto3.SetBackgroundColour(wx.Colour(215,215,215))
             texto4.SetBackgroundColour(wx.Colour(215,215,215))
             texto5.SetBackgroundColour(wx.Colour(215,215,215))
             texto6.SetBackgroundColour(wx.Colour(215,215,215))
             texto7.SetBackgroundColour(wx.Colour(215,215,215))
             texto8.SetBackgroundColour(wx.Colour(215,215,215))
-            #texto9.SetBackgroundColour(wx.Colour(215,215,215))
-            #texto10.SetBackgroundColour(wx.Colour(215,215,215))
-            #texto11.SetBackgroundColour(wx.Colour(215,215,215))
-            #texto12.SetBackgroundColour(wx.Colour(215,215,215))
             texto13.SetBackgroundColour(wx.Colour(215,215,215))
             texto14.SetBackgroundColour(wx.Colour(215,215,215))
             texto15.SetBackgroundColour(wx.Colour(215,215,215))
@@ -592,7 +444,6 @@ class BottomPanel(wx.Panel):
             texto17.SetBackgroundColour(wx.Colour(215,215,215))
             texto18.SetBackgroundColour(wx.Colour(215,215,215))
             texto19.SetBackgroundColour(wx.Colour(215,215,215))
-            #texto20.SetBackgroundColour(wx.Colour(215,215,215))
             texto21.SetBackgroundColour(wx.Colour(215,215,215))
             texto22.SetBackgroundColour(wx.Colour(215,215,215))
             texto23.SetBackgroundColour(wx.Colour(215,215,215))
@@ -602,10 +453,6 @@ class BottomPanel(wx.Panel):
             self.y2V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.y1mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.y2mm = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            #self.defElastica = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            #self.defPlastica = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            #self.defPCond = wx.TextCtrl(self, -1, '', size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            #self.defPAcum = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.AlturaFinal = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.PCreal = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.PCalvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -613,10 +460,9 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.AlturaMM = wx.TextCtrl(self, -1, str(H), size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.DiametroMM = wx.TextCtrl(self, -1, str(Diam), size = (80, 41), style = wx.TE_READONLY | wx.TE_CENTER)
-            #self.DefCritica = wx.TextCtrl(self, -1, wx.EmptyString, size = (80, 41.5), style = wx.TE_READONLY | wx.TE_CENTER)
             self.fase = wx.TextCtrl(self, -1, '1', size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTER)
-            self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (50, 35), style = wx.TE_READONLY | wx.TE_CENTRE)
+            self.NGolpes = wx.TextCtrl(self, -1, wx.EmptyString, size = (70, 35), style = wx.TE_READONLY | wx.TE_CENTER)
+            self.GolpeAtual = wx.TextCtrl(self, -1, wx.EmptyString, size = (70, 35), style = wx.TE_READONLY | wx.TE_CENTRE)
             self.freq = wx.ComboBox(self, -1, frequencias[0], choices = frequencias, size = (50, 35), style = wx.CB_READONLY)
             self.ensaioAuto = wx.CheckBox(self, -1, 'Ensaio automático', (20,0), (260,-1), style = wx.ALIGN_LEFT)
 
@@ -624,10 +470,6 @@ class BottomPanel(wx.Panel):
             self.y2V.Disable()
             self.y1mm.Disable()
             self.y2mm.Disable()
-            #self.defElastica.Disable()
-            #self.defPlastica.Disable()
-            #self.defPCond.Disable()
-            #self.defPAcum.Disable()
             self.AlturaFinal.Disable()
             self.PCreal.Disable()
             self.PCalvo.Disable()
@@ -635,7 +477,6 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo.Disable()
             self.AlturaMM.Disable()
             self.DiametroMM.Disable()
-            #self.DefCritica.Disable()
             self.fase.Disable()
             self.NGolpes.Disable()
             self.GolpeAtual.Disable()
@@ -645,10 +486,6 @@ class BottomPanel(wx.Panel):
             self.y2V.SetFont(Fonttext)
             self.y1mm.SetFont(Fonttext)
             self.y2mm.SetFont(Fonttext)
-            #self.defElastica.SetFont(Fonttext)
-            #self.defPlastica.SetFont(Fonttext)
-            #self.defPCond.SetFont(Fonttext)
-            #self.defPAcum.SetFont(Fonttext)
             self.AlturaFinal.SetFont(Fonttext)
             self.PCreal.SetFont(Fonttext)
             self.PCalvo.SetFont(Fonttext)
@@ -656,7 +493,6 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo.SetFont(Fonttext)
             self.AlturaMM.SetFont(Fonttext)
             self.DiametroMM.SetFont(Fonttext)
-            #self.DefCritica.SetFont(Fonttext)
             self.fase.SetFont(Fonttext)
             self.NGolpes.SetFont(Fonttext)
             self.GolpeAtual.SetFont(Fonttext)
@@ -666,10 +502,6 @@ class BottomPanel(wx.Panel):
             self.y2V.SetForegroundColour((119,118,114))
             self.y1mm.SetForegroundColour((119,118,114))
             self.y2mm.SetForegroundColour((119,118,114))
-            #self.defElastica.SetForegroundColour((119,118,114))
-            #self.defPlastica.SetForegroundColour((119,118,114))
-            #self.defPCond.SetForegroundColour((119,118,114))
-            #self.defPAcum.SetForegroundColour((119,118,114))
             self.AlturaFinal.SetForegroundColour((119,118,114))
             self.PCreal.SetForegroundColour((119,118,114))
             self.PCalvo.SetForegroundColour((119,118,114))
@@ -677,7 +509,6 @@ class BottomPanel(wx.Panel):
             self.SigmaAlvo.SetForegroundColour((119,118,114))
             self.AlturaMM.SetForegroundColour((119,118,114))
             self.DiametroMM.SetForegroundColour((119,118,114))
-            #self.DefCritica.SetForegroundColour((119,118,114))
             self.fase.SetForegroundColour((119,118,114))
             self.NGolpes.SetForegroundColour((119,118,114))
             self.GolpeAtual.SetForegroundColour((119,118,114))
@@ -730,50 +561,6 @@ class BottomPanel(wx.Panel):
 
             self.h22_sizer.Add(self.v21_sizer, 1, wx.CENTER)
             staticboxSizer1.Add(self.h22_sizer, 0,  wx.ALL | wx.EXPAND  | wx.CENTER, 10)
-
-            #--------------------------------------------------
-            '''Static Box 2'''
-            #self.v15_sizer = wx.BoxSizer(wx.VERTICAL)
-            #self.h13_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            #self.h14_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            #self.h15_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            #self.h16_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            #self.h17_sizer = wx.BoxSizer(wx.HORIZONTAL)
-            #self.h18_sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-            #self.h13_sizer.Add(texto13, 7, wx.ALIGN_CENTER_VERTICAL)
-            #self.h13_sizer.AddStretchSpacer(1)
-            #self.h13_sizer.Add(self.AlturaFinal, 5, wx.CENTER)
-
-            #self.h14_sizer.Add(texto12, 7, wx.ALIGN_CENTER_VERTICAL)
-            #self.h14_sizer.AddStretchSpacer(1)
-            #self.h14_sizer.Add(self.defPAcum, 5, wx.CENTER)
-
-            #self.h15_sizer.Add(texto11, 7, wx.ALIGN_CENTER_VERTICAL)
-            #self.h15_sizer.AddStretchSpacer(1)
-            #self.h15_sizer.Add(self.defPCond, 5, wx.CENTER)
-
-            #self.h16_sizer.Add(texto10, 7, wx.ALIGN_CENTER_VERTICAL)
-            #self.h16_sizer.AddStretchSpacer(1)
-            #self.h16_sizer.Add(self.defPlastica, 5, wx.CENTER)
-
-            #self.h17_sizer.Add(texto9, 7, wx.ALIGN_CENTER_VERTICAL)
-            #self.h17_sizer.AddStretchSpacer(1)
-            #self.h17_sizer.Add(self.defElastica, 5, wx.CENTER)
-
-            #self.v15_sizer.Add(texto2, 3, wx.ALL | wx.EXPAND  | wx.CENTER)
-            #self.v15_sizer.Add(self.h17_sizer, 5, wx.ALL | wx.EXPAND  | wx.CENTER)
-            #self.v15_sizer.AddStretchSpacer(1)
-            #self.v15_sizer.Add(self.h16_sizer, 5, wx.ALL | wx.EXPAND  | wx.CENTER)
-            #self.v15_sizer.AddStretchSpacer(1)
-            #self.v15_sizer.Add(self.h15_sizer, 5, wx.ALL | wx.EXPAND  | wx.CENTER)
-            #self.v15_sizer.AddStretchSpacer(1)
-            #self.v15_sizer.Add(self.h14_sizer, 5, wx.ALL | wx.EXPAND  | wx.CENTER)
-            #self.v15_sizer.AddStretchSpacer(1)
-            #self.v15_sizer.Add(self.h13_sizer, 5, wx.ALL | wx.EXPAND  | wx.CENTER)
-
-            #self.h18_sizer.Add(self.v15_sizer, 1, wx.CENTER)
-            #staticboxSizer2.Add(self.h18_sizer, 0, wx.ALL | wx.EXPAND  | wx.CENTER, 10)
 
             #--------------------------------------------------
             '''Static Box 3'''
@@ -898,9 +685,9 @@ class BottomPanel(wx.Panel):
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
             self.h1_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-            self.v_sizer.Add(self.qTensoes, 1, wx.EXPAND | wx.ALL, 5)
+            self.v_sizer.Add(self.gDP, 1, wx.EXPAND | wx.ALL, 5)
             self.v_sizer.Add(self.condic, 1, wx.EXPAND | wx.ALL, 5)
-            self.v_sizer.Add(self.mr, 1, wx.EXPAND | wx.ALL, 5)
+            self.v_sizer.Add(self.dp, 1, wx.EXPAND | wx.ALL, 5)
 
             self.v1_sizer.Add(staticboxSizer3, 15, wx.EXPAND | wx.ALL)
             self.v1_sizer.AddStretchSpacer(1)
@@ -911,7 +698,6 @@ class BottomPanel(wx.Panel):
             self.v2_sizer.Add(staticboxSizer6, 20, wx.EXPAND | wx.ALL)
 
             self.h1_sizer.Add(staticboxSizer1, 1, wx.EXPAND | wx.ALL, 3)
-            #self.h1_sizer.Add(staticboxSizer2, 1, wx.EXPAND | wx.ALL, 3)
             self.h1_sizer.Add(self.v1_sizer, 1, wx.EXPAND | wx.ALL, 3)
             self.h1_sizer.Add(self.v2_sizer, 1, wx.EXPAND | wx.ALL, 3)
 
@@ -941,13 +727,12 @@ class BottomPanel(wx.Panel):
                 self.Automatico = True
 
     #--------------------------------------------------
-        '''Função responsável em realizar a CONECÇÃO'''
+        '''Função responsável em realizar a CONEXÃO'''
         def LTESTE(self, event):
             print '\nBottomPanel - LTESTE'
-            global DISCREP
 
             try:
-                threadConection = ConexaoThread.ConexaoThread(DISCREP)
+                threadConection = ConexaoThread.ConexaoThread(1.05)
                 dlg = My.MyProgressDialog(2)
                 dlg.ShowModal()
                 cond = threadConection.ret()
@@ -956,7 +741,7 @@ class BottomPanel(wx.Panel):
                     aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                     menssagError.ShowModal()
                     menssagError.Destroy()
-                    con.modeConectDNIT134() #acessa o ensaio da 134 no arduino
+                    con.modeConectDNIT134() #acessa o ensaio da 134 no arduino (134 é tido como modelo padrão)
                     self.LTeste.Disable()
                     self.LZero.Enable()
 
@@ -970,19 +755,15 @@ class BottomPanel(wx.Panel):
                         global X
                         global Y
                         global H
-                        global xz1
-                        global yz1
-                        global yt1
-                        global yz2
-                        global yt2
-                        global pc1
-                        global pg1
-                        global yyy
+                        global DefResiliente
+                        global DefPermanente
+                        global pc
+                        global pg
                         global REFERENCIA1
                         global REFERENCIA2
                         global REFERENCIA_MEDIA
                         global ntglp
-                        global modeADM
+                        global freq
                         con.modeI()  #inicia o modo de impressão de dados
                         condition = True
                         conditionEnsaio = False
@@ -990,7 +771,13 @@ class BottomPanel(wx.Panel):
                         cont = 0
                         cont1 = 0
                         amplitudeMax = 0
-                        amplitudeMaxAnterior = 0
+                        amplitudeMax2 = 0
+                        patamarAnterior = 0
+                        patamar = 0
+                        DefResiliente = 0
+                        DefPermanente = 0
+                        pc = 0
+                        pg = 0
                         GolpeAnterior = -1
                         self.leituraZerob1 = 0
                         self.leituraZerob2 = 0
@@ -1009,8 +796,8 @@ class BottomPanel(wx.Panel):
                                     self.AlturaFinal.Clear()
                                     self.valorLeitura0 = valores[1] #usado apenas no LZERO
                                     self.valorLeitura1 = valores[2] #usado apenas no LZERO
-                                    self.y1mm.AppendText(str(round(abs(valores[1]-self.leituraZerob1), 4)))
-                                    self.y2mm.AppendText(str(round(abs(valores[2]-self.leituraZerob2), 4)))
+                                    self.y1mm.AppendText(str(round((valores[1]-self.leituraZerob1), 4)))
+                                    self.y2mm.AppendText(str(round((valores[2]-self.leituraZerob2), 4)))
                                     self.y1V.AppendText(str(round((valores[3]), 2)))
                                     self.y2V.AppendText(str(round((valores[4]), 2)))
                                     self.PCreal.AppendText(str(round(abs((valores[5])), 3)))
@@ -1029,92 +816,73 @@ class BottomPanel(wx.Panel):
                                 ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
 
                                 # Dados para a parte GRÁFICA #
-                                if conditionEnsaio == True and valores[0] > 0:
+                                if conditionEnsaio == True and valores[8] >= 0:
                                     X = np.append(X, valores[0])
                                     Y = np.append(Y, ymedio)
                                     x_counter = len(X)
-                                    if x_counter >= 1000: #antes era 1500
+                                    if x_counter >= 500: #antes era 1500
                                         X = np.delete(X, 0, 0)
                                         Y = np.delete(Y, 0, 0)
 
-                                    # Dados do CONDICIONAMENTO #
-                                    if Fase == 'CONDICIONAMENTO' and Pausa == False:
-                                        if valores[0] < 5:
-                                            REFERENCIA_MEDIA = ymedio
-                                        if valores[0] == (ntglp - 1):
-                                            REFERENCIA1 = y1+H0
-                                            REFERENCIA2 = y2+H0
-                                            REFERENCIA_MEDIA = ymedio
-                                        if valores[0] > (ntglp - 0.80) and valores[0] < (ntglp - 0.1):
-                                            REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
-                                            REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
-                                            REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
-
-                                    # Dados do MR #
-                                    if Fase == 'MR' and Pausa == False:
-                                        #condicao de erro para o ensaio
-                                        if int(valores[7]) == 1:
-                                            print "ERRO NO ENSAIO"
-
+                                    # Dados do dp #
+                                    if Fase == 'DP' and Pausa == False:
                                         #PEGA OS VALORES DE REFERENCIA
                                         if valores[0] == 0.01:
                                             REFERENCIA1 = y1+H0
                                             REFERENCIA2 = y2+H0
                                             REFERENCIA_MEDIA = ymedio
-                                        if valores[0] > 0.2 and valores[0] < 0.9:
+                                        if valores[0] > 0.2 and valores[0] < 0.5:
                                             REFERENCIA1 = (REFERENCIA1 + (y1+H0))/2
                                             REFERENCIA2 = (REFERENCIA2 + (y2+H0))/2
                                             REFERENCIA_MEDIA = (REFERENCIA_MEDIA + ymedio)/2
 
-                                        # DefResiliente incial de compararação (para condicao de discrepância)
-                                        if valores[0] > 4 and valores[0] < 4.2:
-                                            if valores[0] == 4.01:
-                                                amplitudeMaxAnterior = ymedio
-                                                mediaMovel = ymedio
-                                            if ymedio > amplitudeMaxAnterior:
-                                                amplitudeMaxAnterior = ymedio
-                                        if valores[0] > 4.2 and valores[0] < 5:
-                                            mediaMovel = (mediaMovel+ymedio)/2
-                                            defResilienteAnterior = amplitudeMaxAnterior - mediaMovel
+                                        #condicao de erro para o ensaio
+                                        if int(valores[7]) == 1:
+                                            print "ERRO NO ENSAIO"
 
-                                        # Condição da analise de discrepância #
-                                        if valores[0] > 5:
-                                            valoreS = valores[0] - int(valores[0])
-                                            if valoreS > 0 and valoreS < 0.2:
-                                                if valoreS == 0.01:
-                                                    amplitudeMax = ymedio
-                                                    mediaMovel = ymedio
+                                        #PRESSÕES DO ENSAIO
+                                        pc = (pc + valores[5])/2
+                                        pg = (pg + (valores[6]-valores[5]))/2
+
+                                        D = valores[0] - int(valores[0])
+                                        #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE FREQ 1
+                                        if freq == '1':
+                                            if D == 0.01:
+                                                patamar = ymedio
+                                                amplitudeMax = ymedio
+                                            if D < 0.2:
                                                 if ymedio > amplitudeMax:
                                                     amplitudeMax = ymedio
+                                            if D > 0.2 and D < 0.9:
+                                                patamar = (patamar + ymedio)/2
+                                            if D > 0.9:
+                                                DefResiliente  = amplitudeMax - patamar
+                                                DefPermanente = patamar
+                                                patamarAnterior = patamar
+                                            #print D, DefResiliente, DefPermanente, REFERENCIA_MEDIA
 
-                                            if valoreS > 0.2 and valoreS < 0.90:
-                                                mediaMovel = (mediaMovel+ymedio)/2
-                                                defResiliente = amplitudeMax - mediaMovel
-
-                                            if valoreS > 0.98:
-                                                if defResiliente > defResilienteAnterior:
-                                                    if defResiliente/defResilienteAnterior < DISCREP:
-                                                        print defResiliente, defResilienteAnterior
-                                                        if len(yyy) < 5:
-                                                            yyy.append(defResiliente)
-                                                if defResiliente < defResilienteAnterior:
-                                                    if defResilienteAnterior/defResiliente < DISCREP:
-                                                        print defResiliente, defResilienteAnterior
-                                                        if len(yyy) < 5:
-                                                            yyy.append(defResiliente)
-                                                defResilienteAnterior = defResiliente
-
-                                        if int(valores[0]) > 4 and int(valores[0]) <= int(valores[9]):
-                                            if modeADM == True:
-                                                xz1.append(valores[0])
-                                                yz1.append(y1+H0)
-                                                yz2.append(y2+H0)
-                                                yt1.append(valores[3])
-                                                yt2.append(valores[4])
-                                            else:
-                                                pc1.append(valores[5])
-                                                pg1.append(valores[6]-valores[5])
-
+                                        #REFERENTE AOS DADOS DE DEFORMAÇÃO PERMANENTE FREQ 2
+                                        if freq == '2':
+                                            if D == 0.01:
+                                                patamar = ymedio
+                                                amplitudeMax = ymedio
+                                                amplitudeMax2 = ymedio
+                                            if D < 0.2:
+                                                if ymedio > amplitudeMax:
+                                                    amplitudeMax = ymedio
+                                            if D > 0.2 and D < 0.5:
+                                                patamar = (patamar + ymedio)/2
+                                            if D > 0.5 and D < 0.65:
+                                                if ymedio > amplitudeMax2:
+                                                    amplitudeMax2 = ymedio
+                                                DefResiliente  = amplitudeMax - patamar
+                                                DefPermanente = patamar
+                                            if D > 0.6 and D < 0.9:
+                                                patamar = (patamar + ymedio)/2
+                                            if D > 0.9:
+                                                DefResiliente  = amplitudeMax2 - patamar
+                                                DefPermanente = patamar
+                                            #print D, DefResiliente, DefPermanente, REFERENCIA_MEDIA
                                     if int(valores[8]) != GolpeAnterior:
                                         GolpeAnterior = int(valores[8])
                                         self.GolpeAtual.Clear()
@@ -1140,9 +908,8 @@ class BottomPanel(wx.Panel):
         def LZERO(self, event):
             print '\nBottomPanel - LZERO'
             self.freq.Enable()
-            self.qTensoes.Enable()
             self.condic.Enable()
-            self.mr.Enable()
+            self.dp.Enable()
             self.LTeste.Disable()
             self.leituraZerob1 = float(self.valorLeitura0)
             self.leituraZerob2 = float(self.valorLeitura1)
@@ -1150,10 +917,9 @@ class BottomPanel(wx.Panel):
             print self.leituraZerob2
 
     #--------------------------------------------------
-        '''Função responsável em mostrar o quadro dinâmico de tensões'''
-        def QT(self, event):
-            print '\nBottomPanel - QT'
-            dlg = quadro().ShowModal()
+        '''Função responsável em mostrar o gráfico da deformação permanente'''
+        def GDP(self, event):
+            print '\nBottomPanel - GDP'
 
     #--------------------------------------------------
         '''Função responsável em realizar o CONDICIONAMENTO'''
@@ -1161,177 +927,85 @@ class BottomPanel(wx.Panel):
             print '\nBottomPanel - CONDIC'
             global condition
             global Fase
-            global xz1
-            global yz1
-            global yt1
-            global yz2
-            global yt2
-            global pc1
-            global pg1
+            global idt
             global REFERENCIA1
             global REFERENCIA2
             global REFERENCIA_MEDIA
-            global idt
             global modeADM
-            global DISCREP
-            global glpCOND
             Fase = 'CONDICIONAMENTO'
             self.erro = False
 
-            if subleito == True:
-                fase = 1
-            else:
-                fase = 3
+            self.LZero.Disable()
+            self.freq.Disable()
+            self.dp.Disable()
+            self.condic.Disable()
+            self.PCalvo.Clear()
+            self.SigmaAlvo.Clear()
+            self.fase.Clear()
+            self.NGolpes.Clear()
+            self.GolpeAtual.Clear()
+            self.PCalvo.AppendText("%.3f" % VETOR_COND[0][0])
+            self.SigmaAlvo.AppendText("%.3f" % (VETOR_COND[0][1]-VETOR_COND[0][0]))
+            self.NGolpes.AppendText(str(glpCOND))
+            self.fase.AppendText('1')
+            self.GolpeAtual.AppendText(str(0))
 
-            if self._fase < fase:
-                print '\nFASE.COND='+str(self._fase+1)+'\n'
-
-            if self._fase > 0:
-                if modeADM == True:
-                    bancodedados.saveReferenciaADM(idt, str(self._fase), REFERENCIA1, REFERENCIA2)
-                else:
-                    print REFERENCIA_MEDIA
-                    bancodedados.saveReferencia(idt, str(self._fase), REFERENCIA_MEDIA)
-
-            if self._fase < fase:
-                self.LZero.Disable()
-                self.freq.Disable()
-                self.mr.Disable()
-                self.condic.Disable()
-                self.PCalvo.Clear()
-                self.SigmaAlvo.Clear()
-                self.fase.Clear()
-                self.NGolpes.Clear()
-                self.GolpeAtual.Clear()
-                self.PCalvo.AppendText("%.3f" % VETOR_COND[self._fase][0])
-                self.SigmaAlvo.AppendText("%.3f" % (VETOR_COND[self._fase][1]-VETOR_COND[self._fase][0]))
-                self.NGolpes.AppendText(str(glpCOND))
-                self.fase.AppendText(str(self._fase+1))
-                self.GolpeAtual.AppendText(str(0))
-
-            if self._fase == 0:
-                info = "EDP 134/2018ME"
-                titulo = "Preparação da câmara triaxial."
-                message1 = "Verifique se está tudo certo!"
-                message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
-                dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
-                if dlg.ShowModal() == wx.ID_OK:
-                    freq = self.freq.GetValue()
-                    bancodedados.Update_freq(idt, int(freq))
-                    bancodedados.data_inicio_Update_idt(idt)
-                    self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
-                    self.graph.fim_inicio.Enable()
-                    if subleito == False:
-                        self.graph.avanca.Enable()
-                    if self.Automatico == True:
-                        evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
-                        wx.PostEvent(self.graph.fim_inicio, evt)
-
-            else:
-                if self._fase > 0 and self._fase < fase and self.Automatico == False:
+            info = "EDP 179/2018IE"
+            titulo = "Preparação da câmara triaxial."
+            message1 = "Verifique se está tudo certo!"
+            message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
+            dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
+            if dlg.ShowModal() == wx.ID_OK:
+                freq = self.freq.GetValue()
+                bancodedados.Update_freq(idt, int(freq))
+                bancodedados.data_inicio_Update_idt(idt)
+                if self.Automatico == False:
                     self.graph.fim_inicio.SetLabel('INICIO')
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                     self.graph.fim_inicio.Enable()
-                    self.graph.avanca.Enable()
 
-                if self._fase > 0 and self._fase < fase and self.Automatico == True:
+                if self.Automatico == True:
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                     evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                     wx.PostEvent(self.graph.fim_inicio, evt)
 
-                if self._fase >= fase and self.Automatico == False and self.erro == False:
-                    self._fase = 0
-                    self.mr.Enable()
-                    self.condic.Disable()
-                    self.graph.fim_inicio.SetLabel('INICIO')
-
-                if self._fase >= fase and self.Automatico == True and self.erro == False:
-                    self._fase = 0
-                    self.condic.Disable()
-                    self.graph.fim_inicio.SetLabel('INICIO')
-                    evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.mr.GetId())
-                    wx.PostEvent(self.mr, evt)
     #--------------------------------------------------
-        '''Função responsável em realizar o MODULO RESILIENTE'''
-        def MR(self, event):
-            print '\nBottomPanel - MR'
+        '''Função responsável em realizar a DEFORMAÇÃO PERMANENTE'''
+        def DP(self, event):
+            print '\nBottomPanel - DP'
             global condition
             global Fase
-            global xz1
-            global yz1
-            global yt1
-            global yz2
-            global yt2
-            global pc1
-            global pg1
-            global yyy
+            global glpDP
+            global idt
             global REFERENCIA1
             global REFERENCIA2
             global REFERENCIA_MEDIA
-            global idt
-            global modeADM
-            global DISCREP
-            global glpCOND
-            global glpMR
             self.erro = False
+            fase = 1
 
-            if subleito == True:
-                fase = 12
-            else:
-                fase = 18
-
-            if self._fase < fase:
-                print '\nFASE.MR='+str(self._fase+1)+'\n'
-
-            if self._fase > 0:
-                if modeADM == True:
-                    threadConection = SaveThread.SaveThreadADM(idt, str(self._fase), xz1, yz1, yt1, yz2, yt2, pc1, pg1, REFERENCIA1, REFERENCIA2)
-                    dlgC2 = My.MyProgressDialog(len(xz1)-2)
-                    dlgC2.ShowModal()
-                    xz1 = []
-                    yz1 = []
-                    yt1 = []
-                    yz2 = []
-                    yt2 = []
-                    pc1 = []
-                    pg1 = []
-                else:
-                    try:
-                        dr = sum(yyy)/len(yyy)
-                        pc = sum(pc1)/len(pc1)
-                        pg = sum(pg1)/len(pg1)
-                    except:
-                        dlg = dialogoDinamico(3, "EDP 134/2018ME", "SALVAMENTO", "Ocorreu algum problema com o salvamento dos dados!", "O Ensaio precisarar ser finalizado!", "", None)
-                        dlg.ShowModal()
-                    bancodedados.saveDNIT134(idt, str(self._fase), pc, pg, dr, REFERENCIA_MEDIA)
-                    yyy = []
-                    pc1 = []
-                    pg1 = []
-
-            if self._fase < fase:
-                self.LZero.Disable()
-                self.freq.Disable()
-                self.mr.Disable()
-                self.condic.Disable()
-                self.PCalvo.Clear()
-                self.SigmaAlvo.Clear()
-                self.fase.Clear()
-                self.NGolpes.Clear()
-                self.GolpeAtual.Clear()
-                self.PCalvo.AppendText("%.3f" % VETOR_MR[self._fase][0])
-                self.SigmaAlvo.AppendText("%.3f" % (VETOR_MR[self._fase][1]-VETOR_MR[self._fase][0]))
-                self.NGolpes.AppendText(str(glpMR))
-                self.fase.AppendText(str(self._fase+1))
-                self.GolpeAtual.AppendText(str(0))
+            self.LZero.Disable()
+            self.freq.Disable()
+            self.dp.Disable()
+            self.condic.Disable()
+            self.PCalvo.Clear()
+            self.SigmaAlvo.Clear()
+            self.fase.Clear()
+            self.NGolpes.Clear()
+            self.GolpeAtual.Clear()
+            self.PCalvo.AppendText("%.3f" % VETOR_DP[0][0])
+            self.SigmaAlvo.AppendText("%.3f" % (VETOR_DP[0][1]-VETOR_DP[0][0]))
+            self.NGolpes.AppendText(str(glpDP))
+            self.fase.AppendText('1')
+            self.GolpeAtual.AppendText(str(0))
 
             if Fase == '':
-                info = "EDP 134/2018ME"
+                info = "EDP 179/2018ME"
                 titulo = "Preparação da câmara triaxial."
                 message1 = "Verifique se está tudo certo!"
                 message2 = "Se as válvulas de escape estão fechadas, se as válvulas reguladoras de pressão estão devidamentes conectadas, se a passagem de ar comprimido para o sistema está liberado e se a câmara triaxial está totalmente fechada e com o fluido de atrito para o suporte vertical."
                 dlg = dialogoDinamico(2, info, titulo, message1, message2, "", None)
                 if dlg.ShowModal() == wx.ID_OK:
-                    Fase = 'MR'
+                    Fase = 'DP'
                     if self._fase == 0:
                         freq = self.freq.GetValue()
                         bancodedados.Update_freq(idt, int(freq))
@@ -1341,7 +1015,6 @@ class BottomPanel(wx.Panel):
                         self.graph.fim_inicio.SetLabel('INICIO')
                         self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                         self.graph.fim_inicio.Enable()
-                        self.graph.avanca.Enable()
 
                     if self._fase >= 0 and self._fase < fase and self.Automatico == True:
                         self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
@@ -1349,26 +1022,18 @@ class BottomPanel(wx.Panel):
                         wx.PostEvent(self.graph.fim_inicio, evt)
 
                     if self._fase >= fase and self.erro == False:
-                        self.mr.Disable()
-                        self.pressao_zero(VETOR_MR[self._fase-1][0], VETOR_MR[self._fase-1][1])
+                        self.dp.Disable()
+                        self.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
                         self._fase = 0
                         bancodedados.data_final_Update_idt(idt)
-                        dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
-                        if dlg3.ShowModal() == wx.ID_OK:
-                            time.sleep(.3)
-                            con.modeStoped()
-                            time.sleep(.3)
-                            con.modeB()
-                            time.sleep(.3)
-                            con.modeD()
-                            self.Close(True)
+                        dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
+                        dlg3.ShowModal()
             else:
-                Fase = 'MR'
+                Fase = 'DP'
                 if self._fase >= 0 and self._fase < fase and self.Automatico == False:
                     self.graph.fim_inicio.SetLabel('INICIO')
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
                     self.graph.fim_inicio.Enable()
-                    self.graph.avanca.Enable()
 
                 if self._fase >= 0 and self._fase < fase and self.Automatico == True:
                     self.graph.Bind(wx.EVT_BUTTON, self.graph.INICIO, self.graph.fim_inicio)
@@ -1376,22 +1041,15 @@ class BottomPanel(wx.Panel):
                     wx.PostEvent(self.graph.fim_inicio, evt)
 
                 if self._fase >= fase and self.erro == False:
-                    self.mr.Disable()
-                    self.pressao_zero(VETOR_MR[self._fase-1][0], VETOR_MR[self._fase-1][1])
+                    self.dp.Disable()
+                    self.pressao_zero(VETOR_DP[0][0], VETOR_DP[0][1])
                     self._fase = 0
                     bancodedados.data_final_Update_idt(idt)
-                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
-                    if dlg3.ShowModal() == wx.ID_OK:
-                        time.sleep(.3)
-                        con.modeStoped()
-                        time.sleep(.3)
-                        con.modeB()
-                        time.sleep(.3)
-                        con.modeD()
-                        self.Close(True)
+                    dlg3 = dialogoDinamico(3, "EDP 179/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatórios de extração são gerados na tela inicial.", "FIM!", "", None)
+                    dlg3.ShowModal()
 
     #--------------------------------------------------
-        '''Função responsável em zera a pressão do sistema'''
+        '''Função responsável em zerar a pressão do sistema'''
         def pressao_zero(self, p1Sen ,p2Sen):
             print '\nBottomPanel - pressao_zero'
             global condition
@@ -1416,10 +1074,10 @@ class BottomPanel(wx.Panel):
 
 
 '''Tela Realização do Ensaio'''
-class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
+class TelaRealizacaoEnsaioDNIT179(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, identificador, tipo, diametro, altura, *args, **kwargs):
-            wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 134/2018ME - Tela_Ensaio_Beta', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 179/2018IE - Tela_Ensaio_Beta', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Variáveis Globais'''
             global idt #identificador do ensaio
@@ -1430,14 +1088,10 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             global H0 #Altura de referência do medididor de deslocamento
             global X  #valores X do gráfico
             global Y  #valores Y do gráfico
-            global xz1
-            global yz1
-            global yt1
-            global yz2
-            global yt2
-            global pc1
-            global pg1
-            global yyy
+            global pc #pressão confinante
+            global pg #pressão dos golpes (desvio)
+            global DefResiliente #Deformação resiliente ou recuperável
+            global DefPermanente #Deformação Permanente
             global REFERENCIA1 #referencia de ponto de partida para o sensor 1
             global REFERENCIA2 #referencia de ponto de partida para o sensor 2
             global REFERENCIA_MEDIA #referencia de ponto de partidada MÉDIA
@@ -1447,44 +1101,43 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             global Pausa #indica se o ensaio foi pausado
             global mult  #Multiplo de 5 que ajuda a arrumar o gráfico em 5 em 5
             global glpCOND #quantidade de golpes do CONDICIONAMENTO
-            global glpMR #quantidade de golpes do MR
+            global glpDP #quantidade de golpes do DP
             global ntglp #quantidade total de golpes disponíveis
             global modeADM #modo Administrador de salvar dados (apenas para dbug)
-            global DISCREP #valor da discrepância
-            global subleito #recebe valor de True ou False
-            global DPmaxACUM #Altura mínima que o corpo de prova deve atingir
-            global VETOR_COND #Vetor com os pares de pressões do CONDICIONAMENTO
-            global VETOR_MR #Vetor com os pares de pressões do MR
+            global freq #frequencia do ensaio
+            global temposDNIT179_01
+            global temposDNIT179_02
 
             '''Banco de dados'''
-            pressoes = bancodedados.QD_134_MOD()
-            config = bancodedados.CONFIG_134()
+            pressoes = bancodedados.QD_179_MOD()
+            config = bancodedados.CONFIG_179()
 
             idt = identificador
-            subleito = tipo
+            H0 = 0.01
             H = altura
             Diam = diametro
-            glpCOND = config[0]
-            glpMR = config[1]
+            glpCOND = config[0] #número total de golpes do condicionamento
+            glpDP = config[1] #número total de golpes da deformação permanente
             modeADM = False
-            DISCREP = 1+float(config[2])/100
-            DPmaxACUM = float(H) - float(H)*float(config[2])/100
-            H0 = 0.01
             mult = 0
             Pausa = False
             X = np.array([])
             Y = np.array([])
-            xz1 = []
-            yz1 = []
-            yt1 = []
-            yz2 = []
-            yt2 = []
-            pc1 = []
-            pg1 = []
-            yyy = []
             Fase = ''
+            freq = 1  #a frequencia inicia sendo 1 (default)
+
             VETOR_COND = pressoes[0]
-            VETOR_MR = pressoes[1]
+
+            VETOR_DP =  pressoes[1][tipo]
+
+            temposDNIT179_01 = [1,2,3,4,5,10,15,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900]
+            temposDNIT179_02 = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,
+                                19000,20000,21000,22000,23000,24000,25000,26000,27000,28000,29000,30000,31000,32000,33000,34000,
+                                35000,36000,37000,38000,39000,40000,41000,42000,43000,44000,45000,46000,47000,48000,49000,50000,
+                                55000,60000,65000,70000,75000,80000,85000,90000,95000,100000,110000,120000,130000,140000,150000,
+                                160000,170000,180000,190000,200000,210000,220000,230000,240000,250000,260000,270000,280000,290000,
+                                300000,310000,320000,330000,340000,350000,360000,370000,380000,390000,400000,410000,420000,430000,
+                                440000,450000,460000,470000,480000,490000,500000]
 
             '''Iserção do IconeLogo'''
             try:
@@ -1508,7 +1161,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             self.Maximize(True)
 
             '''Dialogo Inicial'''
-            info = "EDP 134/2018ME"
+            info = "EDP 179/2018IE"
             titulo = "Ajuste o Zero dos LVDTs"
             message1 = "Com o valor entre:"
             message2 = "2.5 e 3.0 Volts"

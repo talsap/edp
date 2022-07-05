@@ -8,12 +8,20 @@ from front.TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 
 tipos = ['SIMPLES', 'COMPLETO']
 
-'''Tela de Edicao dos dados do Ensaio'''
-class Editar134(wx.Dialog):
+'''Tela Selecão de Ensaio'''
+class EditarDNIT134(wx.Dialog):
     #--------------------------------------------------
-        def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - EDITAR DADOS DO ENSAIO', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+        def __init__(self, idt, *args, **kwargs):
+            wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 134/2018ME - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            self.idt = idt
+            frame = self.basic_gui()
 
+        #--------------------------------------------------
+        def basic_gui(self):
+            idt = self.idt
+
+            self.list = bancodedados.dados_iniciais_(idt)
+            print self.list
             '''Iserção do IconeLogo'''
             try:
                 ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
@@ -41,13 +49,14 @@ class Editar134(wx.Dialog):
             panel = wx.Panel(self)
 
             FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
-            title = wx.StaticText(panel, label = "Dados do Ensaio", style = wx.ALIGN_CENTRE)
+            title = wx.StaticText(panel, label = "Editar Dados do Ensaio", style = wx.ALIGN_CENTRE)
             title.SetFont(FontTitle)
             v_sizer.Add(title, 1, wx.EXPAND | wx.ALL)
 
             texto1 = wx.StaticText(panel, label = "Identificação", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto1, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.Identificador = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.Identificador.SetMaxLength(15)
             h_sizer.Add(self.Identificador, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto2 = wx.StaticText(panel, label = "Tipo de Ensaio", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto2, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
@@ -60,10 +69,12 @@ class Editar134(wx.Dialog):
             texto16 = wx.StaticText(panel, label = "Responsável Técnico", style = wx.ALIGN_RIGHT)
             h10_sizer.Add(texto16, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.responsavel = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.responsavel.SetMaxLength(30)
             h10_sizer.Add(self.responsavel, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto17 = wx.StaticText(panel, label = "Formação/CREA", style = wx.ALIGN_RIGHT)
             h10_sizer.Add(texto17, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.formacao = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.formacao.SetMaxLength(30)
             h10_sizer.Add(self.formacao, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h10_sizer, 1, wx.EXPAND | wx.ALL)
@@ -71,10 +82,12 @@ class Editar134(wx.Dialog):
             texto3 = wx.StaticText(panel, label = "Natureza da Amostra", style = wx.ALIGN_RIGHT)
             h1_sizer.Add(texto3, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.cp = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.cp.SetMaxLength(30)
             h1_sizer.Add(self.cp, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto4 = wx.StaticText(panel, label = "Teor de Umidade (%)", style = wx.ALIGN_RIGHT)
             h1_sizer.Add(texto4, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.teordeumidade = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.teordeumidade.SetMaxLength(5)
             h1_sizer.Add(self.teordeumidade, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h1_sizer, 1, wx.EXPAND | wx.ALL)
@@ -82,10 +95,12 @@ class Editar134(wx.Dialog):
             texto5 = wx.StaticText(panel, label = "Peso específico seco (kN/m³)", style = wx.ALIGN_RIGHT)
             h2_sizer.Add(texto5, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.pesoespecifico = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.pesoespecifico.SetMaxLength(5)
             h2_sizer.Add(self.pesoespecifico, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto6 = wx.StaticText(panel, label = "Umidade Ótima (%)", style = wx.ALIGN_RIGHT)
             h2_sizer.Add(texto6, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.umidadeotima = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.umidadeotima.SetMaxLength(5)
             h2_sizer.Add(self.umidadeotima, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h2_sizer, 1, wx.EXPAND | wx.ALL)
@@ -93,28 +108,30 @@ class Editar134(wx.Dialog):
             texto7 = wx.StaticText(panel, label = "Energia de compactação", style = wx.ALIGN_RIGHT)
             h3_sizer.Add(texto7, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.energiacompactacao = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.energiacompactacao.SetMaxLength(30)
             h3_sizer.Add(self.energiacompactacao, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto8 = wx.StaticText(panel, label = "Grau de compactação (%)", style = wx.ALIGN_RIGHT)
             h3_sizer.Add(texto8, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.graucompactacao = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.graucompactacao.SetMaxLength(5)
             h3_sizer.Add(self.graucompactacao, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h3_sizer, 1, wx.EXPAND | wx.ALL)
 
             texto9 = wx.StaticText(panel, label = "Data da coleta ou recebimento", style = wx.ALIGN_RIGHT)
-            h4_sizer.Add(texto9, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            h4_sizer.Add(texto9, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.date = wx.adv.DatePickerCtrl(panel, id = wx.ID_ANY, dt = wx.DefaultDateTime, size = wx.DefaultSize, style = wx.adv.DP_SHOWCENTURY | wx.adv.DP_DROPDOWN , validator = wx.DefaultValidator, name = "datectrl")
-            h4_sizer.Add(self.date, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
+            h4_sizer.Add(self.date, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             v1_sizer.Add(h4_sizer, 1, wx.EXPAND | wx.ALL)
             texto10 = wx.StaticText(panel, label = "Diâmetro C.P. (mm)", style = wx.ALIGN_RIGHT)
-            h5_sizer.Add(texto10, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            h5_sizer.Add(texto10, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.diametro = wx.TextCtrl(panel, -1, '100', style = wx.TE_RIGHT | wx.TE_READONLY)
-            h5_sizer.Add(self.diametro, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
+            h5_sizer.Add(self.diametro, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             v1_sizer.Add(h5_sizer, 1, wx.EXPAND | wx.ALL)
             texto11 = wx.StaticText(panel, label = "Altura C.P. (mm)", style = wx.ALIGN_RIGHT)
-            h6_sizer.Add(texto11, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            h6_sizer.Add(texto11, 3, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.altura = wx.TextCtrl(panel, -1, '200', style = wx.TE_RIGHT | wx.TE_READONLY)
-            h6_sizer.Add(self.altura, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
+            h6_sizer.Add(self.altura, 2, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             v1_sizer.Add(h6_sizer, 1, wx.EXPAND | wx.ALL)
 
             staticbox = wx.StaticBox(panel, -1, '')
@@ -128,23 +145,25 @@ class Editar134(wx.Dialog):
             staticboxSizer.Add(v2_sizer, 0, wx.ALL|wx.CENTER)
 
             h7_sizer.AddStretchSpacer(2)
-            h7_sizer.Add(staticboxSizer, 3, wx.EXPAND | wx.ALL, 1)
+            h7_sizer.Add(staticboxSizer, 1, wx.EXPAND | wx.ALL, 1)
             h7_sizer.AddStretchSpacer(1)
-            h7_sizer.Add(v1_sizer, 3, wx.EXPAND | wx.ALL)
+            h7_sizer.Add(v1_sizer, 5, wx.EXPAND | wx.ALL)
 
             v_sizer.Add(h7_sizer, 3, wx.EXPAND | wx.ALL)
 
             texto15 = wx.StaticText(panel, label = "Observações", style = wx.ALIGN_RIGHT)
             h9_sizer.Add(texto15, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.obs = wx.TextCtrl(panel, -1, '', style = wx.TE_RIGHT)
+            self.obs.SetMaxLength(50)
             h9_sizer.Add(self.obs, 5, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
-            v_sizer.Add(h9_sizer, 2, wx.EXPAND | wx.ALL)
+            v_sizer.Add(h9_sizer, 1, wx.EXPAND | wx.ALL)
 
-            continuar = wx.Button(panel, -1, 'Continuar')
-            continuar.Bind(wx.EVT_BUTTON, self.Prosseguir)
-            v_sizer.Add(continuar, 1, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
-            sizer.Add(v_sizer, 0,  wx.EXPAND | wx.ALL, 15)
+            self.continuar = wx.Button(panel, -1, 'Ensaio')
+            self.continuar.Bind(wx.EVT_BUTTON, self.Prosseguir)
+            self.continuar.Disable()
+            v_sizer.Add(self.continuar, 1, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+            sizer.Add(v_sizer, 1,  wx.EXPAND | wx.ALL, 15)
 
             panel.SetSizer(sizer)
             self.Centre()
@@ -226,11 +245,11 @@ class Editar134(wx.Dialog):
                     else:
                         '''Diálogo para informar que os campos diametro e altura estão vazios ou não estão na faixa adequada.'''
                         if condicional>0:
-                            dlg = wx.MessageDialog(None, 'Os valores de diametro e de altura devem ser preenchidos corretamente.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                            dlg = wx.MessageDialog(None, 'Os valores de Diâmetro e de Altura devem ser preenchidos corretamente.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                             result = dlg.ShowModal()
 
 if __name__ == "__main__":
 	app = wx.App()
-	frame = Editar134(None)
+	frame = EditarDNIT134("Identificacao")
 	frame.ShowModal()
 	app.MainLoop()

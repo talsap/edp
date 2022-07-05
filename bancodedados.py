@@ -56,6 +56,7 @@ def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134ADM (idt text, fase text, x real, y1 real, yt1 real, y2 real, yt2 real, pc real, pg real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT134 (idt text, fase text, pc real, pg real, dr real, r real)")
     c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT179 (idt text, glp int, DR real, DP real, pc real, pg real)")
+    c.execute("CREATE TABLE IF NOT EXISTS dadosDNIT181 (idt text, fase text, pg real, dr real, r real)")
     c.execute("CREATE TABLE IF NOT EXISTS referenciaADM (idt text, fase text, r1 real, r2 real)")
     c.execute("CREATE TABLE IF NOT EXISTS referencia (idt text, fase text, r real)")
     c.execute("CREATE TABLE IF NOT EXISTS config134 (id INTEGER PRIMARY KEY AUTOINCREMENT, cicloCOND int, cicloMR int, erro int, DPacum int)")
@@ -230,6 +231,17 @@ def ListaVisualizacao():
         cont = cont +1
 
     return c[::-1] #retorna a lista c de mado invertido
+
+'''Deleta o ensaio no banco de dados'''
+def delete(idt):
+    c.execute("DELETE FROM dadosIniciais WHERE identificacao = ?", (idt,))
+    c.execute("DELETE FROM dadosDNIT134ADM WHERE idt = ?", (idt,))
+    c.execute("DELETE FROM dadosDNIT134 WHERE idt = ?", (idt,))
+    c.execute("DELETE FROM dadosDNIT179 WHERE idt = ?", (idt,))
+    c.execute("DELETE FROM dadosDNIT181 WHERE idt = ?", (idt,))
+    c.execute("DELETE FROM referenciaADM WHERE idt = ?", (idt,))
+    c.execute("DELETE FROM referencia WHERE idt = ?", (idt,))
+    connection.commit()
 
 ######################################################################################
 ################################## CALIBRAÇÕES #######################################
@@ -471,6 +483,40 @@ def update_QD_179(VETOR):
         i+=1
     connection.commit()
 
+'''Cria um lista com os pares de tensão do DNIT 179'''
+def Pares_Tensoes():
+    l = []
+    j = 0
+    for row in c.execute('SELECT * FROM Quadro179'):
+        if j == 0:
+            pass
+        else:
+            l.append("σ3="+"%.3f" % row[1]+" / σd="+"%.3f" % row[2])
+        j+=1
+    return l
+
+'''Cria um lista com as pressões do DNIT 134 modificado'''
+def QD_179_MOD():
+    l = []
+    list = []
+    listCOND = []
+    listMR = []
+    i = 0
+    for row in c.execute('SELECT * FROM Quadro179'):
+        l.append(row[1])
+        l.append(row[2]+row[1])
+        list.append(l)
+        if i == 0:
+            listCOND = list
+            list = []
+        if i > 0:
+            listMR.append(l)
+            list = []
+        i+=1
+        l = []
+
+    return listCOND, listMR
+
 '''Cria um lista com as pressões do DNIT 179'''
 def QD_179():
     l = []
@@ -515,14 +561,18 @@ def CONFIG_179():
     return list
 
 '''Salva os dados iniciais do ensaio 179'''
-def data_save_dados_179(identificacao, cp, rodovia, origem, trecho, estKm, operador, dataColeta, amostra, diametro, altura, obs):
+def data_save_dados_179(identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, amostra, diametro, altura, obs, tecnico, formacao):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
     ensaio = '179'
     status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio foi finalizado com sucesso! / 2 - O ensaio foi interrompido pelo critério de rompimento / 3 - O ensaio foi interrompido por algum erro inesperado
-    tipo = ''
-
+    freq = ''
+    pressaoConf = QD_179_MOD()[1][tipo][0]
+    pressaoDesvio = QD_179_MOD()[1][tipo][1] - pressaoConf
+    tipoEstabilizante = ''
+    pesoEstabilizante = ''
+    tempoCura = ''
     c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao))
     connection.commit()
 
@@ -565,3 +615,18 @@ def CONFIG_181():
         list.append(row[2])
 
     return list
+
+'''Salva os dados iniciais do ensaio 181'''
+def data_save_dados_181(identificacao, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, diametro, altura, obs, tecnico, formacao, tipoEstabilizante, tempoCura, pesoEstabilizante):
+    dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
+    dataInicio = ''
+    dataFim = ''
+    ensaio = '181'
+    status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio foi finalizado com sucesso! / 2 - O ensaio foi interrompido pelo critério de rompimento / 3 - O ensaio foi interrompido por algum erro inesperado
+    freq = ''
+    pressaoConf = ''
+    pressaoDesvio = ''
+    amostra = 0
+    tipo = 0
+    c.execute("INSERT INTO dadosIniciais (id, ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (ensaio, status, identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, dataInicio, dataFim, amostra, diametro, altura, obs, freq, pressaoConf, pressaoDesvio, tipoEstabilizante, pesoEstabilizante, tempoCura, tecnico, formacao))
+    connection.commit()

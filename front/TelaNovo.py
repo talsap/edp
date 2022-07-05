@@ -4,6 +4,7 @@
 import wx
 from TelaNovoEnsaioDNIT134 import TelaNovoEnsaioDNIT134
 from TelaNovoEnsaioDNIT179 import TelaNovoEnsaioDNIT179
+from TelaNovoEnsaioDNIT181 import TelaNovoEnsaioDNIT181
 
 #normas = ['DNIT 134/2018ME', 'DNIT 135/2018ME', 'DNIT 179/2018IE', 'DNIT 184/2018ME', 'DNIT 416/2019ME']
 normas = ['DNIT 134/2018ME', 'DNIT 179/2018IE', 'DNIT 181/2018ME']
@@ -62,3 +63,7 @@ class TelaNovo(wx.Dialog):
                 '''Acessa a DNIT 179/2018IE'''
                 self.Close(True)
                 frame = TelaNovoEnsaioDNIT179().ShowModal()
+            if a == 2:
+                '''Acessa a DNIT 181/2018ME'''
+                self.Close(True)
+                frame = TelaNovoEnsaioDNIT181().ShowModal()
