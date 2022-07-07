@@ -583,6 +583,10 @@ def saveDNIT179(idt, glp, DR, DP, pc, pg):
 ######################################################################################
 ###################################  DNIT 181 ########################################
 ######################################################################################
+def saveDNIT181(idt, fase, pg, dr, r):
+    c.execute("INSERT INTO dadosDNIT181 (idt, fase, pg, dr, r) VALUES (?, ?, ?, ?, ?)", (idt, fase, pg, dr, r))
+    connection.commit()
+
 '''Atualiza a lista das pressões do DNIT 181'''
 def update_QD_181(VETOR):
     i = 0

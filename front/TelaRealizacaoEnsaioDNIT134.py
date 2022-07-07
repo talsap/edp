@@ -289,7 +289,7 @@ class TopPanel(wx.Panel):
                     dlgC2.ShowModal()
 
                 if threadConection.ret() == False:
-                    dlgC3 = dialogoDinamico(3, "EDP 134/2018ME", "MÓDULO DE RESILIÊNCIA", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
+                    dlgC3 = dialogoDinamico(3, "EDP DNIT134/2018ME", "MÓDULO DE RESILIÊNCIA", "Ocorreu algum problema com o ajuste da pressão!", "Verifique o motor de passos!", "", None)
                     dlgC3.ShowModal()
                     self._self.bottom.erro = True
                     if self._fase == 0:
@@ -298,7 +298,7 @@ class TopPanel(wx.Panel):
 
                 if self._self.bottom.Automatico == False:
                     condition = True
-                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "MÓDULO DE RESILIÊNCIA", "Tudo pronto!", "Aperte INICIO.", "", None)
+                    dlg3 = dialogoDinamico(3, "EDP DNIT134/2018ME", "MÓDULO DE RESILIÊNCIA", "Tudo pronto!", "Aperte INICIO.", "", None)
                     dlg3.ShowModal()
                     time.sleep(1)
 
@@ -1348,20 +1348,6 @@ class BottomPanel(wx.Panel):
                         evt = wx.PyCommandEvent(wx.EVT_BUTTON.typeId, self.graph.fim_inicio.GetId())
                         wx.PostEvent(self.graph.fim_inicio, evt)
 
-                    if self._fase >= fase and self.erro == False:
-                        self.mr.Disable()
-                        self.pressao_zero(VETOR_MR[self._fase-1][0], VETOR_MR[self._fase-1][1])
-                        self._fase = 0
-                        bancodedados.data_final_Update_idt(idt)
-                        dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
-                        if dlg3.ShowModal() == wx.ID_OK:
-                            time.sleep(.3)
-                            con.modeStoped()
-                            time.sleep(.3)
-                            con.modeB()
-                            time.sleep(.3)
-                            con.modeD()
-                            self.Close(True)
             else:
                 Fase = 'MR'
                 if self._fase >= 0 and self._fase < fase and self.Automatico == False:
@@ -1380,7 +1366,7 @@ class BottomPanel(wx.Panel):
                     self.pressao_zero(VETOR_MR[self._fase-1][0], VETOR_MR[self._fase-1][1])
                     self._fase = 0
                     bancodedados.data_final_Update_idt(idt)
-                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
+                    dlg3 = dialogoDinamico(3, "EDP DNIT134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório de extração são gerados na tela inicial.", "FIM!", "", None)
                     if dlg3.ShowModal() == wx.ID_OK:
                         time.sleep(.3)
                         con.modeStoped()
