@@ -6,8 +6,6 @@ import wx.adv
 import bancodedados
 from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 
-tipos = ['SIMPLES', 'COMPLETO']
-
 '''Tela Selecão de Ensaio'''
 class TelaNovoEnsaioDNIT181(wx.Dialog):
     #--------------------------------------------------
@@ -219,7 +217,7 @@ class TelaNovoEnsaioDNIT181(wx.Dialog):
                             '''Salva os dados iniciais de um ensaio'''
                             bancodedados.data_save_dados_181(identificador, cp, teordeumidade, pesoespecifico, umidadeotima, energiacompactacao, graucompactacao, data, diametro, altura, obs, tecnico, formacao, tipoEstabilizante, tempoCura, pesoEstabilizante)
                             self.Close(True)
-                            #frame = TelaRealizacaoEnsaioDNIT181(identificador, diametro, altura).ShowModal()
+                            frame = TelaRealizacaoEnsaioDNIT181(identificador, diametro, altura).ShowModal()
                     else:
                         '''Diálogo para informar que os campos diametro e altura estão vazios ou não estão na faixa adequada.'''
                         if condicional>0:

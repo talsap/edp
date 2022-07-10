@@ -103,12 +103,16 @@ def Update_freq(idt, freq):
 '''Data de quando finaliza o ensaio acordo com o idt'''
 def data_final_Update_idt(idt):
     date = str(datetime.datetime.fromtimestamp(int(time.time())).strftime('%H:%M:%S  %d/%m/%Y'))
+    status = '2'
+    c.execute("UPDATE dadosIniciais SET status = ? WHERE identificacao = ?", (status, idt,))
     c.execute("UPDATE dadosIniciais SET dataFim = ? WHERE identificacao = ?", (date, idt,))
     connection.commit()
 
 '''Data de quando inicia o ensaio de acordo com o idt'''
 def data_inicio_Update_idt(idt):
     date = str(datetime.datetime.fromtimestamp(int(time.time())).strftime('%H:%M:%S  %d/%m/%Y'))
+    status = '1'
+    c.execute("UPDATE dadosIniciais SET status = ? WHERE identificacao = ?", (status, idt,))
     c.execute("UPDATE dadosIniciais SET dataInicio = ? WHERE identificacao = ?", (date, idt,))
     connection.commit()
 
@@ -433,13 +437,32 @@ def CONFIG_134():
 
     return list
 
+'''Atualiza os dados iniciais do ensaio 134'''
+def update_dados_134(identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, amostra, diametro, altura, obs, tecnico, formacao):
+    dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
+    c.execute("UPDATE dadosIniciais SET tipo = ? WHERE identificacao = ?", (tipo, identificacao,))
+    c.execute("UPDATE dadosIniciais SET naturazaDaAmostra = ? WHERE identificacao = ?", (naturazaDaAmostra, identificacao,))
+    c.execute("UPDATE dadosIniciais SET teorUmidade = ? WHERE identificacao = ?", (teorUmidade, identificacao,))
+    c.execute("UPDATE dadosIniciais SET pesoEspecifico = ? WHERE identificacao = ?", (pesoEspecifico, identificacao,))
+    c.execute("UPDATE dadosIniciais SET umidadeOtima = ? WHERE identificacao = ?", (umidadeOtima, identificacao,))
+    c.execute("UPDATE dadosIniciais SET energiaCompactacao = ? WHERE identificacao = ?", (energiaCompactacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET grauCompactacao = ? WHERE identificacao = ?", (grauCompactacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET dataColeta = ? WHERE identificacao = ?", (dataColeta, identificacao,))
+    c.execute("UPDATE dadosIniciais SET amostra = ? WHERE identificacao = ?", (amostra, identificacao,))
+    c.execute("UPDATE dadosIniciais SET diametro = ? WHERE identificacao = ?", (diametro, identificacao,))
+    c.execute("UPDATE dadosIniciais SET altura = ? WHERE identificacao = ?", (altura, identificacao,))
+    c.execute("UPDATE dadosIniciais SET obs = ? WHERE identificacao = ?", (obs, identificacao,))
+    c.execute("UPDATE dadosIniciais SET tecnico = ? WHERE identificacao = ?", (tecnico, identificacao,))
+    c.execute("UPDATE dadosIniciais SET formacao = ? WHERE identificacao = ?", (formacao, identificacao,))
+    connection.commit()
+
 '''Salva os dados iniciais do ensaio 134'''
 def data_save_dados_134(identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, amostra, diametro, altura, obs, tecnico, formacao):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
     ensaio = '134'
-    status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio foi finalizado com sucesso! / 2 - O ensaio foi interrompido pelo critério de rompimento / 3 - O ensaio foi interrompido por algum erro inesperado
+    status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio já foi iniciado em algum momento / 2 - O ensaio foi finalizado com sucesso! / 3 - O ensaio foi interrompido pelo critério de rompimento / 4 - O ensaio foi interrompido por algum erro inesperado
     freq = ''
     pressaoConf = ''
     pressaoDesvio = ''
@@ -560,13 +583,36 @@ def CONFIG_179():
 
     return list
 
+'''Atualiza os dados iniciais do ensaio 179'''
+def update_dados_179(identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, amostra, diametro, altura, obs, tecnico, formacao):
+    dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
+    pressaoConf = QD_179_MOD()[1][tipo][0]
+    pressaoDesvio = QD_179_MOD()[1][tipo][1] - pressaoConf
+    c.execute("UPDATE dadosIniciais SET tipo = ? WHERE identificacao = ?", (tipo, identificacao,))
+    c.execute("UPDATE dadosIniciais SET naturazaDaAmostra = ? WHERE identificacao = ?", (naturazaDaAmostra, identificacao,))
+    c.execute("UPDATE dadosIniciais SET teorUmidade = ? WHERE identificacao = ?", (teorUmidade, identificacao,))
+    c.execute("UPDATE dadosIniciais SET pesoEspecifico = ? WHERE identificacao = ?", (pesoEspecifico, identificacao,))
+    c.execute("UPDATE dadosIniciais SET umidadeOtima = ? WHERE identificacao = ?", (umidadeOtima, identificacao,))
+    c.execute("UPDATE dadosIniciais SET energiaCompactacao = ? WHERE identificacao = ?", (energiaCompactacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET grauCompactacao = ? WHERE identificacao = ?", (grauCompactacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET dataColeta = ? WHERE identificacao = ?", (dataColeta, identificacao,))
+    c.execute("UPDATE dadosIniciais SET amostra = ? WHERE identificacao = ?", (amostra, identificacao,))
+    c.execute("UPDATE dadosIniciais SET diametro = ? WHERE identificacao = ?", (diametro, identificacao,))
+    c.execute("UPDATE dadosIniciais SET altura = ? WHERE identificacao = ?", (altura, identificacao,))
+    c.execute("UPDATE dadosIniciais SET obs = ? WHERE identificacao = ?", (obs, identificacao,))
+    c.execute("UPDATE dadosIniciais SET tecnico = ? WHERE identificacao = ?", (tecnico, identificacao,))
+    c.execute("UPDATE dadosIniciais SET formacao = ? WHERE identificacao = ?", (formacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET pressaoConf = ? WHERE identificacao = ?", (pressaoConf, identificacao,))
+    c.execute("UPDATE dadosIniciais SET pressaoDesvio = ? WHERE identificacao = ?", (pressaoDesvio, identificacao,))
+    connection.commit()
+
 '''Salva os dados iniciais do ensaio 179'''
 def data_save_dados_179(identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, amostra, diametro, altura, obs, tecnico, formacao):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
     ensaio = '179'
-    status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio foi finalizado com sucesso! / 2 - O ensaio foi interrompido pelo critério de rompimento / 3 - O ensaio foi interrompido por algum erro inesperado
+    status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio já foi iniciado em algum momento / 2 - O ensaio foi finalizado com sucesso! / 3 - O ensaio foi interrompido pelo critério de rompimento / 4 - O ensaio foi interrompido por algum erro inesperado
     freq = ''
     pressaoConf = QD_179_MOD()[1][tipo][0]
     pressaoDesvio = QD_179_MOD()[1][tipo][1] - pressaoConf
@@ -620,13 +666,33 @@ def CONFIG_181():
 
     return list
 
+'''Atualiza os dados iniciais do ensaio 181'''
+def update_dados_181(identificacao, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, diametro, altura, obs, tecnico, formacao, tipoEstabilizante, tempoCura, pesoEstabilizante):
+    dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
+    c.execute("UPDATE dadosIniciais SET naturazaDaAmostra = ? WHERE identificacao = ?", (naturazaDaAmostra, identificacao,))
+    c.execute("UPDATE dadosIniciais SET teorUmidade = ? WHERE identificacao = ?", (teorUmidade, identificacao,))
+    c.execute("UPDATE dadosIniciais SET pesoEspecifico = ? WHERE identificacao = ?", (pesoEspecifico, identificacao,))
+    c.execute("UPDATE dadosIniciais SET umidadeOtima = ? WHERE identificacao = ?", (umidadeOtima, identificacao,))
+    c.execute("UPDATE dadosIniciais SET energiaCompactacao = ? WHERE identificacao = ?", (energiaCompactacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET grauCompactacao = ? WHERE identificacao = ?", (grauCompactacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET dataColeta = ? WHERE identificacao = ?", (dataColeta, identificacao,))
+    c.execute("UPDATE dadosIniciais SET diametro = ? WHERE identificacao = ?", (diametro, identificacao,))
+    c.execute("UPDATE dadosIniciais SET altura = ? WHERE identificacao = ?", (altura, identificacao,))
+    c.execute("UPDATE dadosIniciais SET obs = ? WHERE identificacao = ?", (obs, identificacao,))
+    c.execute("UPDATE dadosIniciais SET tecnico = ? WHERE identificacao = ?", (tecnico, identificacao,))
+    c.execute("UPDATE dadosIniciais SET formacao = ? WHERE identificacao = ?", (formacao, identificacao,))
+    c.execute("UPDATE dadosIniciais SET tipoEstabilizante = ? WHERE identificacao = ?", (tipoEstabilizante, identificacao,))
+    c.execute("UPDATE dadosIniciais SET pesoEstabilizante = ? WHERE identificacao = ?", (pesoEstabilizante, identificacao,))
+    c.execute("UPDATE dadosIniciais SET tempoCura = ? WHERE identificacao = ?", (tempoCura, identificacao,))
+    connection.commit()
+
 '''Salva os dados iniciais do ensaio 181'''
 def data_save_dados_181(identificacao, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, diametro, altura, obs, tecnico, formacao, tipoEstabilizante, tempoCura, pesoEstabilizante):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
     dataInicio = ''
     dataFim = ''
     ensaio = '181'
-    status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio foi finalizado com sucesso! / 2 - O ensaio foi interrompido pelo critério de rompimento / 3 - O ensaio foi interrompido por algum erro inesperado
+    status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio já foi iniciado em algum momento / 2 - O ensaio foi finalizado com sucesso! / 3 - O ensaio foi interrompido pelo critério de rompimento / 4 - O ensaio foi interrompido por algum erro inesperado
     freq = ''
     pressaoConf = ''
     pressaoDesvio = ''
