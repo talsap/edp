@@ -9,7 +9,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import Table, TableStyle, Paragraph
 
 #--------------------------------------------------
 def pm(mm):
@@ -63,15 +63,16 @@ class Pdf134(wx.Dialog):
 
         '''Obter dados do banco'''
         list = bancodedados.dados_iniciais_(idt)
+        lvdt = bancodedados.S1S2()
         ensaio = list[0].encode('utf-8','ignore')
         status = list[1].encode('utf-8','ignore')
         tipo = list[2].encode('utf-8','ignore')
-        cp = list[3].encode('utf-8','ignore')
-        rodovia = list[4].encode('utf-8','ignore')
-        origem = list[5].encode('utf-8','ignore')
-        trecho = list[6].encode('utf-8','ignore')
-        estkm = list[7].encode('utf-8','ignore')
-        operador = list[8].encode('utf-8','ignore')
+        naturazaDaAmostra = list[3].encode('utf-8','ignore')
+        teorUmidade = list[4].encode('utf-8','ignore')
+        pesoEspecifico = list[5].encode('utf-8','ignore')
+        umidadeOtima = list[6].encode('utf-8','ignore')
+        energiaCompactacao = list[7].encode('utf-8','ignore')
+        grauCompactacao = list[8].encode('utf-8','ignore')
         datadacoleta = list[9].encode('utf-8','ignore')
         datainicio = list[10].encode('utf-8','ignore')
         datafim = list[11].encode('utf-8','ignore')
@@ -80,10 +81,22 @@ class Pdf134(wx.Dialog):
         altura = list[14]
         obs = list[15].encode('utf-8','ignore')
         freq = list[16]
+        pressaoConf = list[17].encode('utf-8','ignore')
+        pressaoDesvio = list[18].encode('utf-8','ignore')
+        tipoEstabilizante = list[19].encode('utf-8','ignore')
+        pesoEstabilizante = list[20].encode('utf-8','ignore')
+        tempoCura = list[21].encode('utf-8','ignore')
+        tecnico = list[22].encode('utf-8','ignore')
+        formacao = list[23].encode('utf-8','ignore')
+
         if int(amostra) == 0:
             valoramostra = 'Deformada'
         else:
             valoramostra = 'Indeformada'
+        try:
+            desvioUmidade = str(float(teorUmidade)-float(umidadeOtima))
+        except:
+            desvioUmidade = ''
 
         '''Criando arquivo PDF'''
         with wx.FileDialog(self, name, wildcard="PDF files(*.pdf)|*.pdf*", style = wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
@@ -100,6 +113,7 @@ class Pdf134(wx.Dialog):
                     diretorio = pathname+".pdf"
 
                 cnv = canvas.Canvas(diretorio, pagesize=A4)
+                cnv.setTitle(idt)
 
                 #CABEÇALHO
                 try:
@@ -116,48 +130,54 @@ class Pdf134(wx.Dialog):
                 cnv.drawCentredString(pm(125), pm(259), complemento)
                 cnv.drawCentredString(pm(125), pm(254), cpfcnpj+', '+fone+', '+email)
 
-                #TABLE
+                #CORPO
                 cnv.setFont("Helvetica-Bold", 14)
-                cnv.drawCentredString(pm(100), pm(240), 'MÓDULO DE RESILIÊNCIA - SOLO')
+                cnv.drawCentredString(pm(105), pm(240), 'MÓDULO DE RESILIÊNCIA - SOLO')
                 cnv.setFont("Helvetica", 11)
-                cnv.drawRightString(pm(80), pm(230), 'Identificador:')
-                cnv.drawRightString(pm(80), pm(225), 'Início do ensaio:')
-                cnv.drawRightString(pm(80), pm(220), 'Fim do ensaio:')
-                cnv.drawRightString(pm(80), pm(215), 'Coleta da amostra:')
-                cnv.drawRightString(pm(80), pm(210), 'Nº do CP:')
-                cnv.drawRightString(pm(80), pm(205), 'Rodovia:')
-                cnv.drawRightString(pm(80), pm(200), 'Origem:')
-                cnv.drawRightString(pm(80), pm(195), 'Trecho:')
-                cnv.drawRightString(pm(80), pm(190), 'est/km:')
-                cnv.drawRightString(pm(80), pm(185), 'Operador:')
-                cnv.drawRightString(pm(80), pm(180), 'Observação:')
-                cnv.drawRightString(pm(80), pm(175), 'Tipo da amostra:')
-                cnv.drawRightString(pm(80), pm(170), 'Diâmetro [mm]:')
-                cnv.drawRightString(pm(80), pm(165), 'Altura [mm]:')
-                cnv.drawRightString(pm(80), pm(160), 'Frequência do ensaio [Hz]:')
+                cnv.drawRightString(pm(110), pm(230), 'Identificação:')
+                cnv.drawRightString(pm(110), pm(225), 'Norma de referência:')
+                cnv.drawRightString(pm(110), pm(220), 'Coleta da amostra:')
+                cnv.drawRightString(pm(110), pm(215), 'Início do ensaio')
+                cnv.drawRightString(pm(110), pm(210), 'Fim do ensaio:')
+                cnv.drawRightString(pm(110), pm(205), 'Identificação e natureza da amostra:')
+                cnv.drawRightString(pm(110), pm(200), 'Tipo de amostra:')
+                cnv.drawRightString(pm(110), pm(195), 'Energia de compactação:')
+                cnv.drawRightString(pm(110), pm(190), 'Tamanho do Corpo de Prova (mm):')
+                cnv.drawRightString(pm(110), pm(185), 'Teor de umidade do Corpo de Prova (%):')
+                cnv.drawRightString(pm(110), pm(180), 'Peso específico seco do Corpo de Prova (kN/m³):')
+                cnv.drawRightString(pm(110), pm(175), 'Grau de compactação do Corpo de Prova (%):')
+                cnv.drawRightString(pm(110), pm(170), 'Desvio de umidade (%):')
+                cnv.drawRightString(pm(110), pm(165), 'Frequência do ensaio [Hz]:')
+                cnv.drawRightString(pm(110), pm(160), 'Curso do LVDT empregado (mm)')
 
-                cnv.drawString(pm(82), pm(230), idt)
-                cnv.drawString(pm(82), pm(225), datainicio)
-                cnv.drawString(pm(82), pm(220), datafim)
-                cnv.drawString(pm(82), pm(215), datadacoleta)
-                cnv.drawString(pm(82), pm(210), cp)
-                cnv.drawString(pm(82), pm(205), rodovia)
-                cnv.drawString(pm(82), pm(200), origem)
-                cnv.drawString(pm(82), pm(195), trecho)
-                cnv.drawString(pm(82), pm(190), estkm)
-                cnv.drawString(pm(82), pm(185), operador)
-                cnv.drawString(pm(82), pm(180), obs)
-                cnv.drawString(pm(82), pm(175), valoramostra)
-                cnv.drawString(pm(82), pm(170), str(diametro))
-                cnv.drawString(pm(82), pm(165), str(altura))
-                cnv.drawString(pm(82), pm(160), str(freq))
+                cnv.drawString(pm(112), pm(230), idt)
+                cnv.drawString(pm(112), pm(225), 'DNIT 134/2018-ME')
+                cnv.drawString(pm(112), pm(220), datadacoleta)
+                cnv.drawString(pm(112), pm(215), datainicio)
+                cnv.drawString(pm(112), pm(210), datafim)
+                cnv.drawString(pm(112), pm(205), naturazaDaAmostra)
+                cnv.drawString(pm(112), pm(200), valoramostra)
+                cnv.drawString(pm(112), pm(195), energiaCompactacao)
+                cnv.drawString(pm(112), pm(190), str(diametro)+' x '+str(altura))
+                cnv.drawString(pm(112), pm(185), teorUmidade)
+                cnv.drawString(pm(112), pm(180), pesoEspecifico)
+                cnv.drawString(pm(112), pm(175), grauCompactacao)
+                cnv.drawString(pm(112), pm(170), desvioUmidade)
+                cnv.drawString(pm(112), pm(165), str(freq))
+                cnv.drawString(pm(112), pm(160), str(lvdt[3]))
+
+                #RODAPÉ
+                o = Paragraph('OBS.: '+obs)
+                o.wrapOn(cnv, 250, 50)
+                o.drawOn(cnv, pm(32), pm(10))
 
                 #TABLE
                 t=Table(lista)
                 t.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'MIDDLE'), ('ALIGN',(0,0),(-1,-1),'CENTER'), ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black), ('BOX', (0,0), (-1,-1), 0.25, colors.black)]))
 
                 t.wrapOn(cnv, 720, 576)
-                t.drawOn(cnv, pm(45), pm(-6*len(lista)+144))
+                t.drawOn(cnv, pm(48), pm((19-len(lista))*6.35+36))
+
                 cnv.save()
                 self.Destroy()
 

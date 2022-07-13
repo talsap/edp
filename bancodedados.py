@@ -120,30 +120,30 @@ def data_inicio_Update_idt(idt):
 def dados_iniciais_(idt):
     list = []
     for row in c.execute('SELECT * FROM dadosIniciais WHERE identificacao = ?', (idt,)):
-        list.append(row[1]) #ensaio
-        list.append(row[2]) #status
-        list.append(row[4]) #tipo
-        list.append(row[5]) #naturazaDaAmostra
-        list.append(row[6]) #teorUmidade
-        list.append(row[7]) #pesoEspecifico
-        list.append(row[8]) #umidadeOtima
-        list.append(row[9]) #energiaCompactacao
-        list.append(row[10]) #grauCompactacao
-        list.append(row[11]) #datadacoleta
-        list.append(row[12]) #datainicio
-        list.append(row[13]) #datafim
-        list.append(row[14]) #amostra
-        list.append(row[15]) #diametro
-        list.append(row[16]) #altura
-        list.append(row[17]) #obs
-        list.append(row[18]) #freq
-        list.append(row[19]) #pressaoConf
-        list.append(row[20]) #pressaoDesvio
-        list.append(row[21]) #tipoEstabilizante
-        list.append(row[22]) #pesoEstabilizante
-        list.append(row[23]) #tempoCura
-        list.append(row[24]) #tecnico
-        list.append(row[25]) #formacao
+        list.append(row[1]) #0 ensaio
+        list.append(row[2]) #1 status
+        list.append(row[4]) #2 tipo
+        list.append(row[5]) #3 naturazaDaAmostra
+        list.append(row[6]) #4 teorUmidade
+        list.append(row[7]) #5 pesoEspecifico
+        list.append(row[8]) #6 umidadeOtima
+        list.append(row[9]) #7 energiaCompactacao
+        list.append(row[10]) #8 grauCompactacao
+        list.append(row[11]) #9 datadacoleta
+        list.append(row[12]) #10 datainicio
+        list.append(row[13]) #11 datafim
+        list.append(row[14]) #12 amostra
+        list.append(row[15]) #13 diametro
+        list.append(row[16]) #14 altura
+        list.append(row[17]) #15 obs
+        list.append(row[18]) #16 freq
+        list.append(row[19]) #17 pressaoConf
+        list.append(row[20]) #18 pressaoDesvio
+        list.append(row[21]) #19 tipoEstabilizante
+        list.append(row[22]) #20 pesoEstabilizante
+        list.append(row[23]) #21 tempoCura
+        list.append(row[24]) #22 tecnico
+        list.append(row[25]) #23 formacao
 
     return list
 

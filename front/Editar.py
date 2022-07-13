@@ -176,7 +176,7 @@ class EditarDNIT134(wx.Dialog):
             h9_sizer.Add(texto15, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.obs = wx.TextCtrl(panel, -1, self.list[15], style = wx.TE_RIGHT)
             self.obs.Disable()
-            self.obs.SetMaxLength(50)
+            self.obs.SetMaxLength(120)
             h9_sizer.Add(self.obs, 5, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
             v_sizer.Add(h9_sizer, 1, wx.EXPAND | wx.ALL)
@@ -485,7 +485,7 @@ class EditarDNIT179(wx.Dialog):
             texto15 = wx.StaticText(panel, label = "Observações", style = wx.ALIGN_RIGHT)
             h9_sizer.Add(texto15, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.obs = wx.TextCtrl(panel, -1, self.list[15], style = wx.TE_RIGHT)
-            self.obs.SetMaxLength(50)
+            self.obs.SetMaxLength(120)
             self.obs.Disable()
             h9_sizer.Add(self.obs, 5, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
@@ -798,7 +798,7 @@ class EditarDNIT181(wx.Dialog):
             texto15 = wx.StaticText(panel, label = "Observações", style = wx.ALIGN_RIGHT)
             h9_sizer.Add(texto15, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             self.obs = wx.TextCtrl(panel, -1, self.list[15], style = wx.TE_RIGHT)
-            self.obs.SetMaxLength(50)
+            self.obs.SetMaxLength(120)
             self.obs.Disable()
             h9_sizer.Add(self.obs, 5, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
