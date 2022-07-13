@@ -4,7 +4,7 @@
 import wx
 import wx.adv
 import bancodedados
-from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
+from TelaRealizacaoEnsaioDNIT181 import TelaRealizacaoEnsaioDNIT181
 
 '''Tela Selecão de Ensaio'''
 class TelaNovoEnsaioDNIT181(wx.Dialog):
