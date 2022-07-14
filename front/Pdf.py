@@ -170,6 +170,9 @@ class Pdf134(wx.Dialog):
                 o = Paragraph('OBS.: '+obs)
                 o.wrapOn(cnv, 250, 50)
                 o.drawOn(cnv, pm(32), pm(10))
+                cnv.line(pm(130),pm(18),pm(195),pm(18))
+                cnv.drawString(pm(130), pm(14), 'R. T.: '+tecnico)
+                cnv.drawString(pm(130), pm(10), formacao) 
 
                 #TABLE
                 t=Table(lista)

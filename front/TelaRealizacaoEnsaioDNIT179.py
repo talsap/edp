@@ -1113,7 +1113,7 @@ class TelaRealizacaoEnsaioDNIT179(wx.Dialog):
             config = bancodedados.CONFIG_179()
 
             idt = identificador
-            H0 = 0.01
+            H0 = 0.0000001
             H = altura
             Diam = diametro
             glpCOND = config[0] #número total de golpes do condicionamento

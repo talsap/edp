@@ -1455,7 +1455,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             modeADM = False
             DISCREP = 1+float(config[2])/100
             DPmaxACUM = float(H) - float(H)*float(config[2])/100
-            H0 = 0.01
+            H0 = 0.0000001
             mult = 0
             Pausa = False
             X = np.array([])
