@@ -247,6 +247,12 @@ def delete(idt):
     c.execute("DELETE FROM referencia WHERE idt = ?", (idt,))
     connection.commit()
 
+'''pega a altura do CP de acordo com a identificação'''
+def altura_cp(idt):
+    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificacao = ?', (idt,)):
+        altura = row[16]
+    return altura
+
 ######################################################################################
 ################################## CALIBRAÇÕES #######################################
 ######################################################################################
@@ -311,18 +317,12 @@ def S3S4():
 ######################################################################################
 ###################################  DNIT 134  #######################################
 ######################################################################################
-'''pega a altura do CP de acordo com a identificação'''
-def altura_cp_134(idt):
-    for row in c.execute('SELECT * FROM dadosIniciais WHERE identificacao = ?', (idt,)):
-        altura = row[16]
-    return altura
-
 '''Cria Lista com a Coleta do resultado do ensaio no banco de dados'''
 def dados_da_coleta_134_pdf(idt):
     l =[]
-    alturaCP = float(altura_cp_134(idt))
+    alturaCP = float(altura_cp(idt))
     acumulado = 0
-    list  = [['FASE', 'TC[MPa]', 'TD[MPa]', 'Desl. R. [mm]', 'DEF. R [%]', 'MOD. R. [MPa]']]
+    list  = [['FASE', 'Tesão\nconfinante\nσ3\n[MPa]', 'Tensão\ndesvio\nσd\n[MPa]', 'Deslocamento\nrecuperável\nδ\n[mm]', 'Deformação\nresiliente\nε\n[%]', 'Módulo de\nResiliência\nMR\n[MPa]']]
     for row in c.execute('SELECT * FROM dadosDNIT134 WHERE idt = ?', (idt,)):
         l.append(row[1]) #Fase
         l.append(format("%.3f" % float(row[2])).replace('.',',')) #TC
@@ -337,10 +337,10 @@ def dados_da_coleta_134_pdf(idt):
 
     return list
 
-'''Cria Lista com a Coleta do resultado do ensaio no banco de dados'''
+'''Cria Lista com a Coleta do resultado do ensaio no banco de dados (PARA GERAR ARQUIVO CSV)'''
 def dados_da_coleta_134(idt):
     l =[]
-    alturaCP = float(altura_cp_134(idt))
+    alturaCP = float(altura_cp(idt))
     acumulado = 0
     list  = [['FASE', 'TC[MPa]', 'TD[MPa]', 'Desl. R. [mm]', 'DEF. R [%]', 'MOD. R. [MPa]']]
     for row in c.execute('SELECT * FROM dadosDNIT134 WHERE idt = ?', (idt,)):
@@ -496,6 +496,44 @@ def saveReferenciaADM(idt, fase, r1, r2):
 ######################################################################################
 ###################################  DNIT 179  #######################################
 ######################################################################################
+'''Cria Lista com a Coleta dos resultados do ensaio no banco de dados'''
+def dados_da_coleta_179_pdf(idt):
+    l =[]
+    alturaCP = float(altura_cp(idt))
+    acumulado = 0
+    list  = [['Número de\nciclos\nN', 'Deslocamanto\nplástico ou\npermanente\nacumulado\nδp\n[mm]', 'Deslocamanto\nelástico ou\nrecuperável\nδ\n[mm]', 'Deformação\nplástica ou\npermanente\nεp\n[%]', 'Deformação\nresiliente ou\nelástica\nε\n[%]']]
+    for row in c.execute('SELECT * FROM dadosDNIT179 WHERE idt = ?', (idt,)):
+        l.append(row[1]) #CICLO
+        l.append(format("%.3f" % float(row[2])).replace('.',',')) #Desl. P.
+        l.append(format("%.3f" % float(row[3])).replace('.',',')) #Desl. R.
+        acumulado = float(row[3])
+        alturaRF = alturaCP - acumulado
+        l.append(format(str("%.3f" % (100*float(row[2])/alturaRF))).replace('.',',')) #DEF. P.
+        l.append(format(str("%.3f" % (100*float(row[3])/alturaRF))).replace('.',',')) #DEF. R.
+        list.append(l)
+        l = []
+
+    return list
+
+'''Cria Lista com a Coleta do resultado do ensaio no banco de dados (PARA GERAR ARQUIVO CSV)'''
+def dados_da_coleta_179(idt):
+    l =[]
+    alturaCP = float(altura_cp(idt))
+    acumulado = 0
+    list  = [['CICLOS', 'Desl. P. [mm]', 'Desl. R. [mm]', 'DEF. P [%]', 'DEF. P [%]']]
+    for row in c.execute('SELECT * FROM dadosDNIT179 WHERE idt = ?', (idt,)):
+        l.append(row[1]) #CICLO
+        l.append(format(row[2]).replace('.',',')) #Desl. P.
+        l.append(format(row[3]).replace('.',',')) #Desl. R.
+        acumulado = float(row[3])
+        alturaRF = alturaCP - acumulado
+        l.append(format(str(100*float(row[4])/alturaRF)).replace('.',',')) #DEF.R
+        l.append(format(str(float(row[3])/(float(row[4])/alturaRF))).replace('.',',')) #MOD. R.
+        list.append(l)
+        l = []
+
+    return list
+
 '''Atualiza a lista das pressões do DNIT 179'''
 def update_QD_179(VETOR):
     i = 0
