@@ -496,6 +496,16 @@ def saveReferenciaADM(idt, fase, r1, r2):
 ######################################################################################
 ###################################  DNIT 179  #######################################
 ######################################################################################
+'''Cria Lista com a Coleta para criar grafico local'''
+def dados_GDP_179(idt):
+    x = []
+    y = []
+    for row in c.execute('SELECT * FROM dadosDNIT179 WHERE idt = ?', (idt,)):
+        x.append(int(row[1])) #golpe
+        y.append(float(row[3])) #Desl. Permanente.
+        
+    return x, y
+
 '''Cria Lista com a Coleta dos resultados do ensaio no banco de dados'''
 def dados_da_coleta_179_pdf(idt):
     l =[]
@@ -504,12 +514,12 @@ def dados_da_coleta_179_pdf(idt):
     list  = [['Número\nde ciclos\nN', 'Deslocamanto plástico\nou permanente\nacumulado\nδp\n[mm]', 'Deslocamanto\nelástico ou\nrecuperável\nδ\n[mm]', 'Deformação\nplástica ou\npermanente\nεp\n[%]', 'Deformação\nresiliente ou\nelástica\nε\n[%]']]
     for row in c.execute('SELECT * FROM dadosDNIT179 WHERE idt = ?', (idt,)):
         l.append(row[1]) #CICLO
-        l.append(format("%.3f" % float(row[2])).replace('.',',')) #Desl. P.
-        l.append(format("%.3f" % float(row[3])).replace('.',',')) #Desl. R.
+        l.append(format("%.3f" % float(row[3])).replace('.',',')) #Desl. Permanente.
+        l.append(format("%.3f" % float(row[2])).replace('.',',')) #Desl. R.
         acumulado = float(row[3])
         alturaRF = alturaCP - acumulado
-        l.append(format(str("%.3f" % (100*float(row[2])/alturaRF))).replace('.',',')) #DEF. P.
-        l.append(format(str("%.3f" % (100*float(row[3])/alturaRF))).replace('.',',')) #DEF. R.
+        l.append(format(str("%.3f" % (100*float(row[3])/alturaRF))).replace('.',',')) #DEF. Permanente.
+        l.append(format(str("%.3f" % (100*float(row[2])/alturaRF))).replace('.',',')) #DEF. R.
         list.append(l)
         l = []
 
@@ -520,15 +530,15 @@ def dados_da_coleta_179(idt):
     l =[]
     alturaCP = float(altura_cp(idt))
     acumulado = 0
-    list  = [['N', 'Desl. P. [mm]', 'Desl. R. [mm]', 'DEF. P [%]', 'DEF. P [%]']]
+    list  = [['N', 'Desl. P. [mm]', 'Desl. R. [mm]', 'DEF. P. [%]', 'DEF. R. [%]']]
     for row in c.execute('SELECT * FROM dadosDNIT179 WHERE idt = ?', (idt,)):
         l.append(row[1]) #CICLOS
-        l.append(format(row[2]).replace('.',',')) #Desl. P.
-        l.append(format(row[3]).replace('.',',')) #Desl. R.
+        l.append(format(row[3]).replace('.',',')) #Desl. Permanente.
+        l.append(format(row[2]).replace('.',',')) #Desl. R.
         acumulado = float(row[3])
         alturaRF = alturaCP - acumulado
-        l.append(format(str(100*float(row[2])/alturaRF)).replace('.',',')) #DEF.R
-        l.append(format(str(100*float(row[3])/alturaRF)).replace('.',',')) #DEF.P
+        l.append(format(str(100*float(row[3])/alturaRF)).replace('.',',')) #DEF.Permanente.
+        l.append(format(str(100*float(row[2])/alturaRF)).replace('.',',')) #DEF.R.
         list.append(l)
         l = []
 
