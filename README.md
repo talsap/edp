@@ -1,19 +1,21 @@
 ![Logo of the project](https://github.com/talsap/edp/blob/main/readme_images/logoEDP.png?raw=true)
+
 ## Projeto
  
-Software EDP - Ensaios Dinâmicos para Pavimentação - v1.0 Beta (em andamento...)
+Software EDP - Ensaios Dinâmicos para Pavimentação
 
-## Objetivos
+## Versão
  
-Esse software está sendo desenvolvido para facilitar a realização dos ensaios
-que determina o módulo de resiliência, o módulo dinâmico e a resistência à deformação permanente, tanto para solos quanto 
-para misturas asfálticas de acordo com as normas do DNIT:
+1.0.0
+
+## Objetivos Alcançados
+ 
+Esse software foi desenvolvido para facilitar a realização dos ensaios
+que determina o módulo de resiliência e a deformação permanente de acordo com as normas do DNIT:
+
 * [DNIT 134/2018-ME](https://drive.google.com/file/d/18vc2bwBTUGvFR8FzVhaN7bOs5RtttrZZ/view?usp=sharing)   
-* [DNIT 135/2018-ME](https://drive.google.com/file/d/1IKINV4PylHb-LvNS1__UOz4lucjyiUrZ/view?usp=sharing)      
 * [DNIT 179/2018-IE](https://drive.google.com/file/d/1oUj-w6wfJJ7nnwtH7MDzYlVKajxklrvx/view?usp=sharing)
-* [DNIT 183/2018-ME](https://drive.google.com/file/d/1M3zPtJ2XG24HTTPspz3NSsDicuA63l1G/view?usp=sharing)
-* [DNIT 184/2018-ME](https://drive.google.com/file/d/16YUYvZCJLnyHKCebxVrpToAMPdKgomBw/view?usp=sharing)
-* [DNIT 416/2019-ME](https://drive.google.com/file/d/13nMxjDAL9a9sBeSkHU1ASrWnwv-x_RaZ/view?usp=sharing)
+* [DNIT 181/2018-ME](https://drive.google.com/file/d/1oUj-w6wfJJ7nnwtH7MDzYlVKajxklrvx/view?usp=sharing)
 
 ## Tecnologias
  
@@ -23,14 +25,9 @@ Aqui estão as tecnologias que serão usadas neste projeto.
 * [wxPython  4.1.0 Released](https://wxpython.org/) (GUI toolkit)
 * [Arduino IDE](https://www.microsoft.com/pt-br/p/arduino-ide/9nblggh4rsd8?ocid=badge&rtc=1&activetab=pivot:overviewtab) (incrementação arduino)
   
-## Serviços Usados
- 
-* Github (repositório)
-* [Trello](https://trello.com/b/HZnkyIaC/desenvolvimento-do-software) (Plano de ações)
-
 ## Sistema Operacional
  
-* Windowns 10 Pro
+* Windowns 10 Pro x64
  
 ## Comandos Utilizados
 
@@ -64,23 +61,15 @@ cmd -> (Administrador)
 
 ## Futuro
  
-  Aqui será listado os recursos futuros.
- 
-## Links
- - [Cronograma]
- - [Protótipo](https://xd.adobe.com/view/a5b6ec6b-a05d-434f-bf37-424b80569b09-f0e5/)
- - Repository: https://github.com/talsap/edp
- - Em caso de bugs sensíveis, como vulnerabilidades de segurança, entre em contato
-      atraves do [e-mail](tarcisiosapucaia27@gmail.com) em vez de usar o rastreador de problemas. Nós valorizamos seu esforço
-      para melhorar a segurança e privacidade deste projeto!
- 
-## Versão
- 
-1.0 BETA
+Que o software consiga realizar as rotinas de ensaio em misturas asfalticas de acordo com as seguintes normas do DNIT:
+
+* [DNIT 135/2018-ME](https://drive.google.com/file/d/1IKINV4PylHb-LvNS1__UOz4lucjyiUrZ/view?usp=sharing)
+* [DNIT 183/2018-ME](https://drive.google.com/file/d/1M3zPtJ2XG24HTTPspz3NSsDicuA63l1G/view?usp=sharing)
+* [DNIT 184/2018-ME](https://drive.google.com/file/d/16YUYvZCJLnyHKCebxVrpToAMPdKgomBw/view?usp=sharing)
  
 ## Autor
  
-* **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia27@gmail.com)
+* **Tarcisio Sapucaia**: @talsap (https://github.com/talsap) e-mail: (tarcisiosapucaia@hotmail.com)
 
 ## Orientadores
 
@@ -89,6 +78,8 @@ cmd -> (Administrador)
 
 ## Parceiros
 
+* **José Valentim dos Santos Filho**: e-mail (valentim@ufrb.edu.br)
+* **Weiner Gustavo Silva Costa**: e-mail (weiner@ufrb.edu.br)
 * **Caio França**: @Foiac (https://github.com/Foiac)
 
-Obrigado por visitar e boa codificação!
+Obrigado pela visita!
