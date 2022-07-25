@@ -381,7 +381,7 @@ class BottomPanel(wx.Panel):
             self.LZero = wx.Button(self, -1, "L. ZERO", size = wx.DefaultSize)
             self.Bind(wx.EVT_BUTTON, self.LZERO, self.LZero)
 
-            self.gDP.Disable()
+            self.gDP.Disable()         
             self.condic.Disable()
             self.dp.Disable()
             self.LZero.Disable()
@@ -915,11 +915,28 @@ class BottomPanel(wx.Panel):
             self.leituraZerob2 = float(self.valorLeitura1)
             print self.leituraZerob1
             print self.leituraZerob2
-
+    
     #--------------------------------------------------
         '''Função responsável em mostrar o gráfico da deformação permanente'''
         def GDP(self, event):
             print '\nBottomPanel - GDP'
+            xy = bancodedados.dados_GDP_179(idt)
+            X = xy[0]
+            Y = xy[1]
+            try:
+                self.window.Close()
+            except:
+                pass
+
+            self.window = wx.MiniFrame(self, title="", size=(600,400), style= wx.CLOSE_BOX | wx.CAPTION | wx.STAY_ON_TOP)
+            fig = plt.figure(constrained_layout=True)  
+            axes = fig.add_subplot(111) 
+            axes.set_xlabel("GOLPE")
+            axes.set_ylabel("D. P. (mm)")
+            axes.plot(X, Y, 'r-')
+            canvas = FigureCanvas(self.window, -1, fig)   
+            canvas.draw()
+            self.window.Show() 
 
     #--------------------------------------------------
         '''Função responsável em realizar o CONDICIONAMENTO'''
