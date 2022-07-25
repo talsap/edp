@@ -13,9 +13,9 @@ Software EDP - Ensaios Dinâmicos para Pavimentação
 Esse software foi desenvolvido para facilitar a realização dos ensaios
 que determina o módulo de resiliência e a deformação permanente de acordo com as normas do DNIT:
 
-* [DNIT 134/2018-ME](https://drive.google.com/file/d/18vc2bwBTUGvFR8FzVhaN7bOs5RtttrZZ/view?usp=sharing)   
-* [DNIT 179/2018-IE](https://drive.google.com/file/d/1oUj-w6wfJJ7nnwtH7MDzYlVKajxklrvx/view?usp=sharing)
-* [DNIT 181/2018-ME](https://drive.google.com/file/d/1oUj-w6wfJJ7nnwtH7MDzYlVKajxklrvx/view?usp=sharing)
+* [DNIT 134/2018-ME](https://drive.google.com/file/d/13CiY6I0zISPm_OTZflTue9n10-ZfwWos/view?usp=sharing)   
+* [DNIT 179/2018-IE](https://drive.google.com/file/d/1yZfOu_ykolA4h2jLQoRNr6MRDQNMdBF6/view?usp=sharing)
+* [DNIT 181/2018-ME](https://drive.google.com/file/d/1vkUZUkF0ohl3nKFUk7SBVnnjyKZ8A1v_/view?usp=sharing)
 
 ## Tecnologias
  
@@ -63,9 +63,9 @@ cmd -> (Administrador)
  
 Que o software consiga realizar as rotinas de ensaio em misturas asfalticas de acordo com as seguintes normas do DNIT:
 
-* [DNIT 135/2018-ME](https://drive.google.com/file/d/1IKINV4PylHb-LvNS1__UOz4lucjyiUrZ/view?usp=sharing)
-* [DNIT 183/2018-ME](https://drive.google.com/file/d/1M3zPtJ2XG24HTTPspz3NSsDicuA63l1G/view?usp=sharing)
-* [DNIT 184/2018-ME](https://drive.google.com/file/d/16YUYvZCJLnyHKCebxVrpToAMPdKgomBw/view?usp=sharing)
+* [DNIT 135/2018-ME](https://drive.google.com/file/d/1kfGxjTjYRGPtN7q51Ie2kIFDVJjJxQd9/view?usp=sharing)
+* [DNIT 183/2018-ME](https://drive.google.com/file/d/1VyvCSpRhgQbzoWqg4Kmic6OX4Y_Fi-b7/view?usp=sharing)
+* [DNIT 184/2018-ME](https://drive.google.com/file/d/1LmMK0LNfz_ImeCWRb17NKqFx-dolEX11/view?usp=sharing)
  
 ## Autor
  
