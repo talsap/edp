@@ -14,7 +14,7 @@ def create_table():
 
 def data_entry():
     try:
-        c.execute("INSERT INTO Cabecalho VALUES (0, '(Default)', 'UFRB - UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA', 'EDP - Ensaios Dinâmicos para Pavimentação' ,'xxx.xxx.xxx-xx', 'tarcisiosapucaia27@gmail.com', '(xx) x.xxxx-xxxx', 'Ba', 'Cruz das Almas', 'Inocoop', 'R. Rui Barbosa', 'sn', 'Prédio', '44.380-000', 'logo\logoEDP.png')")
+        c.execute("INSERT INTO Cabecalho VALUES (0, '(Default)', 'UFRB - UNIVERSIDADE FEDERAL DO RECÔNCAVO DA BAHIA', 'EDP - Ensaios Dinâmicos para Pavimentação' ,'xxx.xxx.xxx-xx', 'ensaios.labpav.ufrb@gmail.com', '(xx) x.xxxx-xxxx', 'Ba', 'Cruz das Almas', 'Centro', 'R. Rui Barbosa', 'sn', 'Pavilhão de Engenharias, UFRB', '44.380-000', 'logo\logoEDP.png')")
         c.execute("INSERT INTO escolha VALUES (0)")
         connection.commit()
     except Exception:

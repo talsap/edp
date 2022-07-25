@@ -15,7 +15,7 @@ from Pdf import *
 from Csv import *
 from Editar import *
 
-lista = [[1, ['DNIT134/2018ME - C.P. N XXX', '16:25:19  19/07/2019', '17:51:58  19/07/2019']], [2, ['DNIT134/2018ME - C.P. N XXX', '07:32:26  29/07/2019', '17:51:58  19/07/2019']], [3, ['DNIT134/2018ME - C.P. N XXX', '12:14:48  29/07/2019', '17:51:58  19/07/2019']], [4, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [5, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [6, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [7, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [8, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [9, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [10, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']], [11, ['DNIT134/2018ME - C.P. N XXX', '16:55:57  30/07/2019', '17:51:58  19/07/2019']]]
+global version
 
 '''Classe da Lista editável'''
 class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -67,9 +67,10 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
 '''Tela Inicial'''
 class Tela(wx.Frame):
     #------------------------------------------------------
-     def __init__(self, *args, **kwargs):
-         super(Tela, self).__init__(title = 'EDP - V1.0', name = 'Facade', style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION, *args, **kwargs)
+     def __init__(self, version, *args, **kwargs):
+         wx.Frame.__init__(self, parent = None, title = 'EDP - '+version, name = 'Facade', style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION, *args, **kwargs)
          frame = self.basic_gui()
+         self.version = version
 
      def basic_gui(self):
          v_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -202,10 +203,9 @@ class Tela(wx.Frame):
          if list[0] == "134":
              dialogo = Pdf134(list[1])
          if list[0] == "179":
-             print list[1]
+             dialogo = Pdf179(list[1])
          if list[0] == "181":
-             print list[1]
-
+             dialogo = Pdf181(list[1])
     #--------------------------------------------------
      def exportCSV(self, event):
          id = event.GetId()
@@ -214,9 +214,9 @@ class Tela(wx.Frame):
          if list[0] == "134":
              dialogo = Csv134(list[1])
          if list[0] == "179":
-             print list[1]
+             dialogo = Csv179(list[1])
          if list[0] == "181":
-             print list[1]
+             dialogo = Csv181(list[1])
 
     #--------------------------------------------------
      def Deletar(self, event):
@@ -338,9 +338,9 @@ class Tela(wx.Frame):
     #--------------------------------------------------
      def ajudaGUI(self, event):
           '''Dialogo ajuda'''
-          message1 = ('Software EDP - Ensaios Dinâmicos para Pavimentação\n\n')
+          message1 = ('Software EDP - Ensaios Dinâmicos para Pavimentação - versão %s\n\n' % self.version)
           message2 = ('Este software foi desenvolvido para facilitar a realização de alguns ensaios dinâmicos que estão previstos nas seguintes normas brasileira segundo o DNIT:\n\nDNIT 134/2018-ME           DNIT 179/2018-IE           DNIT 181/2018-ME       \n\nDúvidas em relação ao software, entrar em contato através do\ne-mail: ')
-          message3 = ('tarcisiosapucaia27@gmail.com')
+          message3 = ('tarcisiosapucaia@hotmail.com')
           dlg = wx.MessageDialog(self, message1 + message2 + message3, 'EDP', wx.OK|wx.ICON_INFORMATION)
           aboutPanel = wx.TextCtrl(dlg, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
           dlg.ShowModal()
