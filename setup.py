@@ -8,8 +8,7 @@ if sys.platform == 'win32':
 
 executables = [Executable('edp.py', base=base, icon='icons/logo.ico')]
 
-files = ['COD_EDP/','icons/','logo/', 'bancodedados.py', 'bancodedadosCAB.py', 'file_version_indo.txt']
-excludes = ['tkinter', 'xml', 'html', 'future', 'email', 'json', 'http']
+files = ['COD_EDP/','icons/','logo/', 'bancodedados.py', 'bancodedadosCAB.py', 'file_version_info.txt']
 packs = ['wx',
          're',
          'sys',
@@ -34,6 +33,6 @@ setup(
     name = 'edp',
     version = '1.0.0',
     description = 'Ensaios Dinamicos para Pavimentacao',
-    options = {'build_exe':{'include_files':files, "excludes":excludes, 'packages':packs}},
+    options = {'build_exe':{'include_files':files, 'packages':packs}},
     executables = executables
 )
