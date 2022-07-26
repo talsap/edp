@@ -1,0 +1,12 @@
+1. Instalei o pyinstaller para o python 2.7.18
+   > pip install pyinstaller==3
+
+2. Instalei também o pyinstaller-version
+   > pip install pyinstaller-versionfile
+
+3. Criei o arquivo "ver.yml" que é YAML file de versionamento do programa
+
+4. Usei o pyinstaller-versionfile para criar meu arquivo "file_version_info.txt"
+Para isso usei o comando:
+   > create-version-file ver.yml --outfile file_version_info.txt
+
