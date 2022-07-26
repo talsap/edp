@@ -14,3 +14,7 @@ CONVERTER DE .PY PARA .EXE
 
 2. Depois executa o arquivo setup.py pelo comando
    > python setup.py build
+
+PARA O INSTALADOR USEI O "Install-creator 2" PROGRAMA DA CLICKTEAM
+https://www.clickteam.com/install-creator-2-unreg
+Pode usar o arquivo InstallEDPConfig.iit no Install-creator 2
