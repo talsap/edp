@@ -37,7 +37,7 @@ cmd -> (Administrador)
 * Instalação do PyPDF2:
 >    $ pip install PyPDF2
 * Instalação do wxPython:
->    $ python -m pip install -U wxPython
+>    $ python -m pip install -U wxPython==4.1.0
 * Instalação do pySerial:
 >    $ python -m pip install pyserial
 * Instalação do pandas:
