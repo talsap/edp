@@ -2,12 +2,13 @@
 
 '''Bibliotecas'''
 import wx
+import os
+import os.path
 import shutil
 import bancodedadosCAB
 from front.previsualizar import PDFViewer
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-from pathlib import Path
 
 '''Tela Novo Cabeçalho'''
 class EditarCabecalho(wx.Dialog):
@@ -47,7 +48,6 @@ class EditarCabecalho(wx.Dialog):
 
             self.logo = wx.Button(self.panel, -1, 'Logo')
             self.previsualizar = wx.Button(self.panel, -1, 'Pré-Visualizar')
-            self.previsualizar.Enable()
             self.Bind(wx.EVT_BUTTON, self.PreviewPDF, self.previsualizar)
             self.Bind(wx.EVT_BUTTON, self.OnOpen, self.logo)
 
@@ -142,15 +142,36 @@ class EditarCabecalho(wx.Dialog):
             h_sizer.Add(v1_sizer, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             h_sizer.Add(v2_sizer, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
+            self.editar = wx.Button(self.panel, -1, 'Editar')
             self.salvar = wx.Button(self.panel, -1, 'Salvar')
             sair = wx.Button(self.panel, -1, 'Sair')
             self.Bind(wx.EVT_BUTTON, self.salvarDados, self.salvar)
+            self.Bind(wx.EVT_BUTTON, self.editarDados, self.editar)
             self.Bind(wx.EVT_BUTTON, self.onExit, sair)
 
             h1_sizer.AddStretchSpacer(5)
+            h1_sizer.Add(self.editar, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             h1_sizer.Add(self.salvar, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             h1_sizer.Add(sair, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
             h1_sizer.AddStretchSpacer(5)
+
+            self.editar.Enable()
+            self.salvar.Disable()
+            self.logo.Disable()
+            self.previsualizar.Disable()
+            self.Identificador.Disable()
+            self.empresa.Disable()
+            self.fantasia.Disable()
+            self.cpfcnpj.Disable()
+            self.email.Disable()
+            self.fone.Disable()
+            self.uf.Disable()
+            self.cidade.Disable()
+            self.bairro.Disable()
+            self.rua.Disable()
+            self.numero.Disable()
+            self.cep.Disable()
+            self.complemento.Disable()
 
             v_sizer.Add(h_sizer, 2)
             v_sizer.Add(h1_sizer, 0)
@@ -162,6 +183,26 @@ class EditarCabecalho(wx.Dialog):
             self.panel.SetSizer(sizer)
             self.Centre()
             self.Show()
+    #--------------------------------------------------
+        def editarDados(self, event):
+            self.editar.Disable()
+            self.salvar.Enable()
+            self.logo.Enable()
+            self.previsualizar.Disable()
+            self.Identificador.Enable()
+            self.empresa.Enable()
+            self.fantasia.Enable()
+            self.cpfcnpj.Enable()
+            self.email.Enable()
+            self.fone.Enable()
+            self.uf.Enable()
+            self.cidade.Enable()
+            self.bairro.Enable()
+            self.rua.Enable()
+            self.numero.Enable()
+            self.cep.Enable()
+            self.complemento.Enable()
+
     #--------------------------------------------------
         def OnPaint(self, event):
             '''Opcao Logo Dimensão'''
@@ -183,15 +224,10 @@ class EditarCabecalho(wx.Dialog):
     #--------------------------------------------------
         def PreviewPDF(self, event):
             '''Opcao ver Preview do Cabeçalho do PDF'''
-            #dialogo = Preview(None, size=(800, 600), self.id)
-            dlg = wx.FileDialog(self, wildcard="*.pdf")
-            if dlg.ShowModal() == wx.ID_OK:
-                print dlg
-                print dlg.GetPath()
             pdfV = PDFViewer(None, size=(800, 600))
             pdfV.viewer.UsePrintDirect = ``False``
-            #pdfV.viewer.LoadFile(dlg.GetPath())
-            #pdfV.Show()
+            pdfV.viewer.LoadFile(os.path.abspath('logo\CAB.pdf'))
+            pdfV.Show()
 
     #--------------------------------------------------
         def salvarDados(self, event):
@@ -253,6 +289,24 @@ class EditarCabecalho(wx.Dialog):
                 except:
                     self.logo.Disable()
                     self.logo.Update()
+                
+                self.editar.Enable()
+                self.salvar.Disable()
+                self.logo.Disable()
+                self.previsualizar.Enable()
+                self.Identificador.Disable()
+                self.empresa.Disable()
+                self.fantasia.Disable()
+                self.cpfcnpj.Disable()
+                self.email.Disable()
+                self.fone.Disable()
+                self.uf.Disable()
+                self.cidade.Disable()
+                self.bairro.Disable()
+                self.rua.Disable()
+                self.numero.Disable()
+                self.cep.Disable()
+                self.complemento.Disable()
 
     #--------------------------------------------------
         def OnOpen(self, event):

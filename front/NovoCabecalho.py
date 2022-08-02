@@ -171,7 +171,10 @@ class NovoCabecalho(wx.Dialog):
     #--------------------------------------------------
         def PreviewPDF(self, event):
             '''Opcao ver Preview do Cabeçalho do PDF'''
-            dialogo = Preview(None, 1)
+            pdfV = PDFViewer(None, size=(800, 600))
+            pdfV.viewer.UsePrintDirect = ``False``
+            pdfV.viewer.LoadFile(os.path.abspath('logo\CAB.pdf'))
+            pdfV.Show()
 
     #--------------------------------------------------
         def salvarDados(self, event):
