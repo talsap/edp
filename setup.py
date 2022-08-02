@@ -29,7 +29,6 @@ includes = ['os',
             'reportlab',
             'PyPDF2',
             'math',
-            'pathlib'
             ]
 excludes = ['tkinter']
 
