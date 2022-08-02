@@ -68,7 +68,7 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
 class Tela(wx.Frame):
     #------------------------------------------------------
      def __init__(self, version, *args, **kwargs):
-         wx.Frame.__init__(self, parent = None, title = 'EDP - '+version, name = 'Facade', style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION, *args, **kwargs)
+         super(Tela, self).__init__(parent = None, title = 'EDP - '+version, name = 'Facade', style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION, *args, **kwargs)
          frame = self.basic_gui()
          self.version = version
 

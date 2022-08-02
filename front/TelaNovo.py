@@ -13,7 +13,7 @@ normas = ['DNIT 134/2018ME', 'DNIT 179/2018IE', 'DNIT 181/2018ME']
 class TelaNovo(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
             try:

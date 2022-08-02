@@ -4,7 +4,7 @@
 import wx
 import shutil
 import bancodedadosCAB
-from front.previsualizar import Preview
+from front.previsualizar import PDFViewer
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 
@@ -12,7 +12,7 @@ from reportlab.lib.pagesizes import A4
 class NovoCabecalho(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - Novo Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP - Novo Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
             try:

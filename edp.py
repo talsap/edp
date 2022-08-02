@@ -11,5 +11,4 @@ class main():
      app.locale = wx.Locale(wx.LANGUAGE_ENGLISH)
      tela.Tela(version)
      app.MainLoop()
-
 main()

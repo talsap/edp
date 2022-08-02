@@ -7,10 +7,10 @@ import bancodedados
 from quadrotensoes import *
 
 '''Tela de Configurações'''
-class Config(wx.Frame):
+class Config(wx.Dialog):
         #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-                wx.Frame.__init__(self, None, -1, 'EDP - Configuração dos Ensaios', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+                wx.Dialog.__init__(self, None, -1, 'EDP - Configuração dos Ensaios', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
                 '''Iserção do IconeLogo'''
                 try:

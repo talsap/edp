@@ -325,7 +325,7 @@ class EditarDNIT134(wx.Dialog):
 class EditarDNIT179(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, idt, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - DNIT 179/2018IE - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 179/2018IE - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
             self.idt = idt
             frame = self.basic_gui()
 
@@ -632,7 +632,7 @@ class EditarDNIT179(wx.Dialog):
 class EditarDNIT181(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, idt, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - DNIT 181/2018ME - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 181/2018ME - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
             self.idt = idt
             frame = self.basic_gui()
 

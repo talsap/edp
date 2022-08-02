@@ -962,7 +962,7 @@ class BottomPanel(wx.Panel):
 class TelaRealizacaoEnsaioDNIT181(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, identificador, diametro, altura, *args, **kwargs):
-            wx.Frame.__init__(self, parent = None, title = 'EDP - DNIT 181/2018ME - Tela Ensaio', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, parent = None, title = 'EDP - DNIT 181/2018ME - Tela Ensaio', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Variáveis Globais'''
             global idt #identificador do ensaio

@@ -4,15 +4,16 @@
 import wx
 import shutil
 import bancodedadosCAB
-from front.previsualizar import Preview
+from front.previsualizar import PDFViewer
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from pathlib import Path
 
 '''Tela Novo Cabeçalho'''
 class EditarCabecalho(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, id, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - Editar Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP - Editar Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Busca no bancodedadosCAB'''
             self.id = id
@@ -46,7 +47,8 @@ class EditarCabecalho(wx.Dialog):
 
             self.logo = wx.Button(self.panel, -1, 'Logo')
             self.previsualizar = wx.Button(self.panel, -1, 'Pré-Visualizar')
-            self.previsualizar.Disable()
+            self.previsualizar.Enable()
+            self.Bind(wx.EVT_BUTTON, self.PreviewPDF, self.previsualizar)
             self.Bind(wx.EVT_BUTTON, self.OnOpen, self.logo)
 
             v1_sizer.AddStretchSpacer(10)
@@ -167,7 +169,7 @@ class EditarCabecalho(wx.Dialog):
 
             try:
                 self.dc.SetPen(wx.Pen('#4c4c4c', 1, wx.SOLID))
-                png = wx.Image(self.directory, wx.BITMAP_TYPE_PNG)
+                png = wx.Image(self.directory, wx.BITMAP_TYPE_ANY)
                 bmp = png.Scale(90, 90, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
                 self.dc.DrawRectangle(20, 30, 90, 90)
                 self.dc.DrawBitmap(bmp, 20, 30, useMask=False)
@@ -178,11 +180,18 @@ class EditarCabecalho(wx.Dialog):
                 self.dc.DrawRectangle(20, 30, 90, 90)
                 self.dc.DrawBitmap(bmp, 20, 30, useMask=False)
 
-
     #--------------------------------------------------
         def PreviewPDF(self, event):
             '''Opcao ver Preview do Cabeçalho do PDF'''
-            dialogo = Preview(None, 1)
+            #dialogo = Preview(None, size=(800, 600), self.id)
+            dlg = wx.FileDialog(self, wildcard="*.pdf")
+            if dlg.ShowModal() == wx.ID_OK:
+                print dlg
+                print dlg.GetPath()
+            pdfV = PDFViewer(None, size=(800, 600))
+            pdfV.viewer.UsePrintDirect = ``False``
+            #pdfV.viewer.LoadFile(dlg.GetPath())
+            #pdfV.Show()
 
     #--------------------------------------------------
         def salvarDados(self, event):
@@ -235,7 +244,6 @@ class EditarCabecalho(wx.Dialog):
                 cnv.drawCentredString((125)/0.352777, 254/0.352777, d+', '+f+', '+e)
                 cnv.save()
 
-                self.previsualizar.Enable()
                 self.Bind(wx.EVT_BUTTON, self.PreviewPDF, self.previsualizar)
                 self.panel.Update()
                 myobject = event.GetEventObject()
@@ -254,7 +262,10 @@ class EditarCabecalho(wx.Dialog):
 
                 if fileDialog.ShowModal() == wx.ID_OK:
                     nameDirectory = fileDialog.GetPath()
-                    shutil.copy(nameDirectory, r'logo')
+                    try:
+                        shutil.copy(nameDirectory, r'logo')
+                    except:
+                        pass
                     nameArquivo = fileDialog.GetFilename()
                     nameArquivo = nameArquivo.encode('ascii', 'ignore')
                     self.directory = 'logo\\'+ nameArquivo

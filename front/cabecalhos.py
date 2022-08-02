@@ -57,10 +57,10 @@ class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
             return list_cab
 
 '''Tela Cabeçalhos'''
-class Cab(wx.Frame):
+class Cab(wx.Dialog):
         #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-                wx.Frame.__init__(self, None, -1, 'EDP - Cabeçalhos', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+                wx.Dialog.__init__(self, None, -1, 'EDP - Cabeçalhos', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
                 v_sizer = wx.BoxSizer(wx.VERTICAL)
                 h_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -233,7 +233,7 @@ class Cab(wx.Frame):
         def Editar(self, event):
             id = event.GetId()
 
-            dialogo = EditarCabecalho(id).ShowModal()
+            dialogo = EditarCabecalho(id).Show()
 
             self.list_ctrl.DeleteAllItems()
             lista = bancodedadosCAB.ListaVisualizacaoCab()

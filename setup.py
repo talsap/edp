@@ -27,7 +27,9 @@ packs = ['wx',
          'shutil',
          'reportlab',
          'PyPDF2',
-         'math']
+         'math',
+         'pathlib'
+         ]
 
 setup(
     name = 'edp',

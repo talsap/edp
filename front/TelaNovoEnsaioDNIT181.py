@@ -10,7 +10,7 @@ from TelaRealizacaoEnsaioDNIT181 import TelaRealizacaoEnsaioDNIT181
 class TelaNovoEnsaioDNIT181(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Frame.__init__(self, None, -1, 'EDP - DNIT 181/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 181/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Iserção do IconeLogo'''
             try:
