@@ -2,6 +2,7 @@
 
 '''Bibliotecas'''
 import wx
+import sys
 import front.tela as tela
 
 '''Inicializacao do programa'''
@@ -11,4 +12,6 @@ class main():
      app.locale = wx.Locale(wx.LANGUAGE_PORTUGUESE_BRAZILIAN)
      tela.Tela(version)
      app.MainLoop()
+     app.RestoreStdio()
+     app.__del__
 main()

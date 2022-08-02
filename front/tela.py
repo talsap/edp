@@ -413,7 +413,8 @@ class Tela(wx.Frame):
      def onExit(self, event):
           '''Opcao Sair'''
           self.Close(True)
-
+          self.Destroy()
+          
     #--------------------------------------------------
      def calibrate(self, event):
           '''Opcao Calibração'''
