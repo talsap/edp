@@ -31,7 +31,8 @@ includes = ['os',
             'math',
             ]
 excludes = ['tkinter',
-            'tk'
+            'tk',
+            'tcl',
             ]
 
 setup(
