@@ -38,6 +38,6 @@ setup(
     name = 'edp',
     version = '1.0.0',
     description = 'Ensaios Dinamicos para Pavimentacao',
-    options = {'build_exe':{'include_files':files, 'includes': includes, 'excludes': excludes}},
+    options = {'build_exe':{'include_files':files, 'packages': includes, 'excludes': excludes}},
     executables = executables
 )
