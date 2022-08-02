@@ -30,7 +30,9 @@ includes = ['os',
             'PyPDF2',
             'math',
             ]
-excludes = ['tkinter']
+excludes = ['tkinter',
+            'tk'
+            ]
 
 setup(
     name = 'edp',

@@ -8,7 +8,7 @@ import front.tela as tela
 class main():
      version = '1.0.0'
      app = wx.App()
-     app.locale = wx.Locale(wx.LANGUAGE_ENGLISH)
+     app.locale = wx.Locale(wx.LANGUAGE_PORTUGUESE_BRAZILIAN)
      tela.Tela(version)
      app.MainLoop()
 main()
