@@ -157,7 +157,7 @@ def modeStoped():
         while (conexao.inWaiting() == 0):
             pass
         a = conexao.readline()
-        if a[0] == 'D':
+        if a == '\n' or a[0] == 'F' or a[0] == 'D' or a[0] == 'C' or a[0] == '':
             print a
             break
 
