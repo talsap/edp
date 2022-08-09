@@ -376,7 +376,7 @@ class BottomPanel(wx.Panel):
             self.Bind(wx.EVT_BUTTON, self.CONDIC, self.condic)
             self.dp = wx.Button(self, -1, 'D. P.')
             self.Bind(wx.EVT_BUTTON, self.DP, self.dp)
-            self.LTeste = wx.Button(self, -1, "L. TESTE", size = wx.DefaultSize)
+            self.LTeste = wx.Button(self, -1, "CONECTAR", size = wx.DefaultSize)
             self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
             self.LZero = wx.Button(self, -1, "L. ZERO", size = wx.DefaultSize)
             self.Bind(wx.EVT_BUTTON, self.LZERO, self.LZero)
@@ -898,7 +898,7 @@ class BottomPanel(wx.Panel):
                     menssagError.ShowModal()
                     menssagError.Destroy()
             except:
-                menssagError = wx.MessageDialog(self, 'ERRO AO EXECUTAR L. TESTE', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
+                menssagError = wx.MessageDialog(self, 'ERRO AO EXECUTAR O CONECTAR', 'EDP', wx.OK|wx.ICON_EXCLAMATION)
                 aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
                 menssagError.ShowModal()
                 menssagError.Destroy()
@@ -1182,6 +1182,6 @@ class TelaRealizacaoEnsaioDNIT179(wx.Dialog):
             titulo = "Ajuste o Zero dos LVDTs"
             message1 = "Com o valor entre:"
             message2 = "2.5 e 3.0 Volts"
-            message3 = "realizando a L. TESTE"
+            message3 = "realizando a CONEXAO"
             dlg = dialogoDinamico(1, info, titulo, message1, message2, message3, None)
             dlg.ShowModal()
