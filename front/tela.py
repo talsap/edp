@@ -11,6 +11,7 @@ from TelaNovo import TelaNovo
 from cabecalhos import Cab
 from calibration import Cal
 from configuration import Config
+from conection import Conn
 from Pdf import *
 from Csv import *
 from Editar import *
@@ -109,12 +110,14 @@ class Tela(wx.Frame):
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
          calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Sensores de Deslocamento \tCtrl+T', 'Sensores de Deslocamento')
          configurationEnsaio = configuracoesMenu.Append(wx.NewId(), 'Configurações dos Ensaios \tCtrl+I', 'Configurações dos Ensaios')
+         configurationConection = configuracoesMenu.Append(wx.NewId(), 'Testar Conexão \tCtrl+Y', 'Testar Conexão')
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')
          self.Bind(wx.EVT_MENU, self.NovoEnsaio, novoEnsaioMenuItem)
          self.Bind(wx.EVT_MENU, self.Cabecalhos, cabecalhosMenuitem)
          self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
          self.Bind(wx.EVT_MENU, self.calibrate, calibrateLVDTitem)
          self.Bind(wx.EVT_MENU, self.config, configurationEnsaio)
+         self.Bind(wx.EVT_MENU, self.conection, configurationConection)
          self.Bind(wx.EVT_MENU, self.ajudaGUI, ajudaMenuItem)
          self.SetMenuBar(menuBar)
 
@@ -424,3 +427,8 @@ class Tela(wx.Frame):
      def config(self, event):
          '''Opcao de Configuração'''
          frame = Config()
+    
+    #--------------------------------------------------
+     def conection(self, event):
+         '''Opcao de conexao'''
+         frame = Conn()

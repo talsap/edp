@@ -410,7 +410,7 @@ def Buffer():
         pass
     a = conexao.readline()
     print a
-    if a == '\n' or a[0] == 'F' or a[0] == 'D' or a[0] == 'C':
+    if a == '\n' or a[0] == 'F' or a[0] == 'D' or a[0] == 'C' or a[0] = '':
         print "BufferLimpo"
         return True
     else:

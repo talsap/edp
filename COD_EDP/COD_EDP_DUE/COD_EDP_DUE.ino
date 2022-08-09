@@ -163,6 +163,7 @@ void loop(void) {
       digitalWrite(pinOnOff, LOW); //desativa o pinOnOff após desconectar
       Serial.flush();
       Serial.end();
+      Serial.begin(115200);
       condConect = 0;
       break;
 

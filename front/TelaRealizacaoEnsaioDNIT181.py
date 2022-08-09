@@ -671,7 +671,7 @@ class BottomPanel(wx.Panel):
                 self.Automatico = True
 
     #--------------------------------------------------
-        '''Função responsável em realizar a CONECÇÃO'''
+        '''Função responsável em realizar a CONEXÃO'''
         def LTESTE(self, event):
             print '\nBottomPanel - LTESTE'
             global DISCREP

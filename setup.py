@@ -6,7 +6,7 @@ base = None
 if sys.platform == 'win32':
     base = 'Win32GUI'
 
-executables = [Executable('edp.py', base=base, icon='icons/logo.ico')]
+executables = [Executable('edp.py', base=None, icon='icons/logo.ico')]
 
 files = ['COD_EDP/','icons/','logo/', 'bancodedados.py', 'bancodedadosCAB.py', 'file_version_info.txt']
 inc = ['os','wx','re','sys','time','sqlite3','datetime','threading','unicodecsv','csv','pubsub','pandas','numpy','matplotlib','drawnow','serial','shutil','reportlab','PyPDF2','math']

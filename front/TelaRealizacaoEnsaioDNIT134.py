@@ -927,7 +927,7 @@ class BottomPanel(wx.Panel):
             self.Bind(wx.EVT_CHECKBOX, self.onCheck, self.ensaioAuto)
             self._fase = 0  #condicao dos fases inicia com zero
             self.erro = False  #indica se há erros na execução
-            self.Automatico = True #inicia  com o ensaio Automatico sendo true
+            self.Automatico = True  #inicia  com o ensaio Automatico sendo true
             self.ensaioAuto.SetValue(True)
 
     #--------------------------------------------------
@@ -941,7 +941,7 @@ class BottomPanel(wx.Panel):
                 self.Automatico = True
 
     #--------------------------------------------------
-        '''Função responsável em realizar a CONECÇÃO'''
+        '''Função responsável em realizar a CONEXÃO'''
         def LTESTE(self, event):
             print '\nBottomPanel - LTESTE'
             global DISCREP
