@@ -18,7 +18,8 @@ CONVERTER DE .PY PARA .EXE
 1. Instalei o cx-freeze para o python 2.7.18
    > pip install cx-Freeze==5.1.1
 
-2. Depois executa o arquivo setup.py pelo comando
+2. Criei uma cópia do arquivo edp.py e renomeei para edp.pyw
+3. Depois executei o arquivo setup.py pelo comando
    > python setup.py build
 
 PARA O INSTALADOR USEI O "Install-creator 2" PROGRAMA DA CLICKTEAM

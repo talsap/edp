@@ -3,9 +3,6 @@ import sys
 
 base = None
 
-if sys.platform == 'win32':
-    base = 'Win32GUI'
-
 executables = [Executable('edp.py', base=base, icon='icons/logo.ico')]
 
 files = ['COD_EDP/','icons/','logo/', 'bancodedados.py', 'bancodedadosCAB.py', 'file_version_info.txt']
