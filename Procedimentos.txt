@@ -1,3 +1,9 @@
+INSTALAR PYINSTALLER
+1. Instalar pyinstaller para python 2.7.18
+   >pip install pyinstaller==3.6
+
+   pyinstaller edp.py --noconsole --onedir --version-file file_version_info.txt
+
 CRIAR ARQUIVO DE VERSIONAMENTO
 1. Instalei o pyinstaller-version
    > pip install pyinstaller-versionfile
