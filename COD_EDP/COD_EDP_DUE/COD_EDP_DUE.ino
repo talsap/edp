@@ -18,6 +18,7 @@ Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit
 /* Variavéis */
 const int pinA = 12; //pino do aplicador de golpes DNIT134
 const int pinB = 7; //pino do aplicador de golpes DNIT135
+const int pinOnOff = 14; //pino On/Off da fonte
 int condConect = 0; //Condicao para conexao com o software
 int condicao = 2; //Condicao para iniciar o motor de passos
 int conditionEnsaio = 0; //Condicao de Ensaio (0 - DNIT134 | 1 - DNIT135)
@@ -125,8 +126,10 @@ void setup(void) {
   pinMode(A10, INPUT); //pino Sendor de Temperatura (Estufa)
   pinMode(pinA, OUTPUT);  //configura o pinA
   pinMode(pinB, OUTPUT);  //configura o pinB
+  pinMode(pinOnOff, OUTPUT);  //configura o pinOnOff
   digitalWrite(pinA, LOW); //inicia desativado o pinA
   digitalWrite(pinB, LOW); //inicia desativado o pinB
+  digitalWrite(pinOnOff, LOW); //inicia desativado o pinOnOff
   mp.setSpeed(40); //velocidade de rotacao do motor de passos em rpm
   mp.step(0);  //inicia o motor de passos com zero passos
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de conversão bit~voltagem
@@ -150,12 +153,14 @@ void loop(void) {
       Serial.println("conectado");
       Serial.flush();
       condConect = 1;
+      digitalWrite(pinOnOff, HIGH); //ativa o pinOnOff após ativar a conexao
       break;
 
     //**********************************************************************************//
     case 'D':
       //caso receba D (implica na desconexao com a porta serial)
       Serial.println("desconectado");
+      digitalWrite(pinOnOff, LOW); //desativa o pinOnOff após desconectar
       Serial.flush();
       Serial.end();
       condConect = 0;
