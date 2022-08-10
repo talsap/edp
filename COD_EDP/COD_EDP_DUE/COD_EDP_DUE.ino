@@ -16,9 +16,9 @@
 Oversampling adc(12, 16, 2); //aumentar a resolução do adc de 12bit para 16bit (apenas arduino DUE)
 
 /* Variavéis */
-const int pinA = 12; //pino do aplicador de golpes DNIT134
-const int pinB = 7; //pino do aplicador de golpes DNIT135
-const int pinOnOff = 14; //pino On/Off da fonte
+const int pinA = 7; //pino do aplicador de golpes DNIT134
+const int pinB = 14; //pino do aplicador de golpes DNIT135
+const int pinOnOff = 12; //pino On/Off da fonte
 int condConect = 0; //Condicao para conexao com o software
 int condicao = 2; //Condicao para iniciar o motor de passos
 int conditionEnsaio = 0; //Condicao de Ensaio (0 - DNIT134 | 1 - DNIT135)
@@ -869,13 +869,12 @@ S tempo(int nTime, int frequencia, long initialMillis){
     case 1:
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
-          //digitalWrite(pinA, HIGH);  //ativa o pinA
-          digitalWrite(pinB, LOW);  //ativa o pinB (linha acrescentada em 12/04)
+          digitalWrite(pinA, LOW);  //ativa o pinA
+        }
+        if(conditionEnsaio == 1){
           if(currentMillis - initialMillis > intervalo00){
             //digitalWrite(pinB, HIGH);  //desativa o pinB
           }
-        }
-        if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
           setpointC = (waveformsTable[tipoWave-1][i]*setpointA+setpointB)*4095/3300;
           //analogWrite(DAC0, setpointC);
@@ -886,13 +885,12 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo09){
         if(conditionEnsaio == 0){
-          //digitalWrite(pinA, LOW);  //desativa o pinA
-          digitalWrite(pinB, HIGH);  //desativa o pinB (linha acrescentada em 12/04)
-        }
-        if((currentMillis - initialMillis) > 900){
-          //digitalWrite(pinB, LOW);  //ativa o pinB
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
+          if((currentMillis - initialMillis) > 900){
+          //digitalWrite(pinB, LOW);  //ativa o pinB
+          }
           setpointC = (setpointB)*4095/3300;
           //analogWrite(DAC0, setpointC);
           //analogWrite(DAC1, setpointC);
@@ -912,10 +910,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
     case 2:
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinB, LOW);  //ativa o pinB
-          if(currentMillis - initialMillis < intervalo00){
-            //digitalWrite(pinB, HIGH);  //desativa o pinB
-          }
+          digitalWrite(pinA, LOW);  //ativa o pinA
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis);
@@ -925,7 +920,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo05){
         if(conditionEnsaio == 0){
-          digitalWrite(pinB, HIGH);  //desativa o pinB
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -938,10 +933,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo05 && (currentMillis - initialMillis) <= intervalo05 + intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinB, LOW);  //ativa o pinB
-          if(currentMillis - initialMillis < intervalo00){
-            //digitalWrite(pinB, LOW);  //ativa o pinB
-          }
+          digitalWrite(pinA, LOW);  //ativa o pinA
         }
         if(conditionEnsaio == 1){
           i = int(currentMillis - initialMillis - intervalo05);
@@ -951,7 +943,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo05 + intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinB, HIGH);  //desativa o pinB
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -973,10 +965,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -987,7 +979,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) < intervalo04){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1001,10 +993,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo04 && (currentMillis - initialMillis) <= intervalo04 + intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1015,7 +1007,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo04 + intervalo01 && (currentMillis - initialMillis) <= 2*intervalo04){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1029,10 +1021,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 2*intervalo04 && (currentMillis - initialMillis) <= 2*intervalo04+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1043,7 +1035,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > 2*intervalo04+intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1065,10 +1057,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1079,7 +1071,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo03){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1093,10 +1085,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo03 && (currentMillis - initialMillis) <= intervalo03+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1107,7 +1099,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo03+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo03){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1121,10 +1113,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 2*intervalo03 && (currentMillis - initialMillis) <= 2*intervalo03+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1135,7 +1127,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > 2*intervalo03+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo03){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1149,10 +1141,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 3*intervalo03 && (currentMillis - initialMillis) <= 3*intervalo03+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1163,7 +1155,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > 3*intervalo03+intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1185,10 +1177,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if(currentMillis - initialMillis < intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1199,7 +1191,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo01  && (currentMillis - initialMillis) <= intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1213,10 +1205,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > intervalo02 && (currentMillis - initialMillis) <= intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1227,7 +1219,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > intervalo02+intervalo01 && (currentMillis - initialMillis) <= 2*intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1241,10 +1233,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 2*intervalo02 && (currentMillis - initialMillis) <= 2*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1255,7 +1247,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > 2*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 3*intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1269,10 +1261,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 3*intervalo02 && (currentMillis - initialMillis) <= 3*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1283,7 +1275,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > 3*intervalo02+intervalo01 && (currentMillis - initialMillis) <= 4*intervalo02){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
@@ -1297,10 +1289,10 @@ S tempo(int nTime, int frequencia, long initialMillis){
       if((currentMillis - initialMillis) > 4*intervalo02 && (currentMillis - initialMillis) <= 4*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
           if(currentMillis - initialMillis < intervalo00){
-            digitalWrite(pinA, HIGH);  //ativa o pinA
+            digitalWrite(pinA, LOW);  //ativa o pinA
           }
           else{
-            digitalWrite(pinA, LOW);  //desativa o pinA
+            digitalWrite(pinA, HIGH);  //desativa o pinA
           }
         }
         if(conditionEnsaio == 1){
@@ -1311,7 +1303,7 @@ S tempo(int nTime, int frequencia, long initialMillis){
       }
       if((currentMillis - initialMillis) > 4*intervalo02+intervalo01){
         if(conditionEnsaio == 0){
-          digitalWrite(pinA, LOW);  //desativa o pinA
+          digitalWrite(pinA, HIGH);  //desativa o pinA
         }
         if(conditionEnsaio == 1){
           setpointC = (setpointB)*4095/3300;
