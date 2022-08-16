@@ -410,28 +410,28 @@ class TopPanel(wx.Panel):
                 mult = 0
                 self.draww()
 
-            if Fase == 'CONDICIONAMENTO':
-                self._self.bottom._fase = 0
-                self._self.bottom.mr.Enable()
-                self.fim_inicio.SetLabel('INICIO')
-                self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
-                self._self.bottom.pressao_zero(VETOR_COND[self._fase][0], VETOR_COND[self._fase][1])
-                con.modeI()
+                if Fase == 'CONDICIONAMENTO':
+                    self._self.bottom._fase = 0
+                    self._self.bottom.mr.Enable()
+                    self.fim_inicio.SetLabel('INICIO')
+                    self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
+                    self._self.bottom.pressao_zero(VETOR_COND[self._fase][0], VETOR_COND[self._fase][1])
+                    con.modeI()
 
-            if Fase == 'MR':
-                con.modeI()
-                self._self.bottom.pressao_zero(VETOR_MR[self._fase][0], VETOR_MR[self._fase][1])
-                con.modeI()
-                bancodedados.data_final_Update_idt(idt)
-                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório podem ser gerados na tela inicial.", "FIM!", "", None)
-                if dlg3.ShowModal() == wx.ID_OK:
-                    time.sleep(.3)
-                    con.modeStoped()
-                    time.sleep(.3)
-                    con.modeB()
-                    time.sleep(.3)
-                    con.modeD()
-                    self.Close(True)
+                if Fase == 'MR':
+                    con.modeI()
+                    self._self.bottom.pressao_zero(VETOR_MR[self._fase][0], VETOR_MR[self._fase][1])
+                    con.modeI()
+                    bancodedados.data_final_Update_idt(idt)
+                    dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório podem ser gerados na tela inicial.", "FIM!", "", None)
+                    if dlg3.ShowModal() == wx.ID_OK:
+                        time.sleep(.3)
+                        con.modeStoped()
+                        time.sleep(.3)
+                        con.modeB()
+                        time.sleep(.3)
+                        con.modeD()
+                        self.Close(True)
 
 
     #--------------------------------------------------

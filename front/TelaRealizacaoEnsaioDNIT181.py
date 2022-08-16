@@ -283,19 +283,19 @@ class TopPanel(wx.Panel):
                 mult = 0
                 self.draww()
 
-            con.modeI()
-            self._self.bottom.pressao_zero(VETOR_MR[self._fase][0], VETOR_MR[self._fase][1])
-            con.modeI()
-            bancodedados.data_final_Update_idt(idt)
-            dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório podem ser gerados na tela inicial.", "FIM!", "", None)
-            if dlg3.ShowModal() == wx.ID_OK:
-                time.sleep(.3)
-                con.modeStoped()
-                time.sleep(.3)
-                con.modeB()
-                time.sleep(.3)
-                con.modeD()
-                self.Close(True)
+                con.modeI()
+                self._self.bottom.pressao_zero(VETOR_MR[0][self._fase])
+                con.modeI()
+                bancodedados.data_final_Update_idt(idt)
+                dlg3 = dialogoDinamico(3, "EDP 134/2018ME", "O ENSAIO FOI FINALIZADO!", "Os relatório podem ser gerados na tela inicial.", "FIM!", "", None)
+                if dlg3.ShowModal() == wx.ID_OK:
+                    time.sleep(.3)
+                    con.modeStoped()
+                    time.sleep(.3)
+                    con.modeB()
+                    time.sleep(.3)
+                    con.modeD()
+                    self.Close(True)
 
 
     #--------------------------------------------------
@@ -746,7 +746,7 @@ class BottomPanel(wx.Panel):
                                 ntglp = valores[9] #numero total de golpes
                                 y1 = valores[1]-self.leituraZerob1
                                 y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
-                                ymedio = (y1 + y2)/2 + H0 #A média + H0 que é o ponto de referência inicial
+                                ymedio = abs((y1 + y2)/2 + H0)#A média + H0 que é o ponto de referência inicial
 
                                 # Dados para a parte GRÁFICA #
                                 if conditionEnsaio == True and valores[0] > 0:
