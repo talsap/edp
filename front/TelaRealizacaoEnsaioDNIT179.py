@@ -1147,7 +1147,7 @@ class TelaRealizacaoEnsaioDNIT179(wx.Dialog):
 
             VETOR_COND = pressoes[0]
 
-            VETOR_DP =  pressoes[1][tipo]
+            VETOR_DP =  [pressoes[1][tipo]]
 
             temposDNIT179_01 = [1,2,3,4,5,10,15,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900]
             temposDNIT179_02 = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,
