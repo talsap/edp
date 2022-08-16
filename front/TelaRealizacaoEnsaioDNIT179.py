@@ -1125,7 +1125,7 @@ class TelaRealizacaoEnsaioDNIT179(wx.Dialog):
             global temposDNIT179_01
             global temposDNIT179_02
             global VETOR_COND #Vetor com os pares de pressões do CONDICIONAMENTO
-            global VETOR_MR #Vetor com os pares de pressões do MR
+            global VETOR_DP #Vetor com os pares de pressões do MR
     
             '''Banco de dados'''
             pressoes = bancodedados.QD_179_MOD()
