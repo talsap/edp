@@ -4,6 +4,8 @@
 import wx
 import bancodedadosCAB
 import bancodedados
+import bdPreferences
+import bdConfiguration
 import re
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -63,7 +65,7 @@ class Pdf134(wx.Dialog):
 
         '''Obter dados do banco'''
         list = bancodedados.dados_iniciais_(idt)
-        lvdt = bancodedados.S1S2()
+        lvdt = bdConfiguration.S1S2()
         ensaio = list[0].encode('utf-8','ignore')
         status = list[1].encode('utf-8','ignore')
         tipo = list[2].encode('utf-8','ignore')
@@ -240,7 +242,7 @@ class Pdf179(wx.Dialog):
 
         '''Obter dados do banco'''
         list = bancodedados.dados_iniciais_(idt)
-        lvdt = bancodedados.S1S2()
+        lvdt = bdConfiguration.S1S2()
         ensaio = list[0].encode('utf-8','ignore')
         status = list[1].encode('utf-8','ignore')
         tipo = list[2].encode('utf-8','ignore')
@@ -543,7 +545,7 @@ class Pdf181(wx.Dialog):
 
         '''Obter dados do banco'''
         list = bancodedados.dados_iniciais_(idt)
-        lvdt = bancodedados.S1S2()
+        lvdt = bdConfiguration.S1S2()
         ensaio = list[0].encode('utf-8','ignore')
         status = list[1].encode('utf-8','ignore')
         tipo = list[2].encode('utf-8','ignore')

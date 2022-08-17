@@ -7,6 +7,7 @@ import threading
 import matplotlib
 import numpy as np
 import bancodedados
+import bdConfiguration
 import back.connection as con
 import matplotlib.pyplot as plt
 import back.MyProgressDialog as My
@@ -306,7 +307,10 @@ class TopPanel(wx.Panel):
                     con.modeB()
                     time.sleep(.3)
                     con.modeD()
-                    self.Close(True)
+                    condition = False
+                    time.sleep(.3)
+                    self._self.Close(True)
+                    self._self.Destroy()
 
     #--------------------------------------------------
         '''Ajusta min e max EIXO X'''
@@ -762,7 +766,7 @@ class BottomPanel(wx.Panel):
                                     if self.leituraZerob1 == 0:
                                         self.AlturaFinal.AppendText(str(round(H, 3)))
                                     else:
-                                        self.AlturaFinal.AppendText(str(round(H-ymedio, 3)))
+                                        self.AlturaFinal.AppendText(str(round(H-abs(ymedio), 3)))
                                     if cont1 == 20:
                                         cont1 = 0
                                 cont1 = cont1 + 1
@@ -770,7 +774,7 @@ class BottomPanel(wx.Panel):
                                 ntglp = valores[9] #numero total de golpes
                                 y1 = valores[1]-self.leituraZerob1
                                 y2 = valores[2]-self.leituraZerob2  #alterar essa linha quando usar os 2 sensores
-                                ymedio = abs((y1 + y2)/2 + H0)#A média + H0 que é o ponto de referência inicial
+                                ymedio = (y1 + y2)/2 + H0#A média + H0 que é o ponto de referência inicial
 
                                 # Dados para a parte GRÁFICA #
                                 if conditionEnsaio == True and valores[0] > 0:
@@ -1013,8 +1017,8 @@ class TelaRealizacaoEnsaioDNIT181(wx.Dialog):
             global VETOR_MR #Vetor com os pares de pressões do MR
 
             '''Banco de dados'''
-            config = bancodedados.CONFIG_181()
-            VETOR_MR = bancodedados.QD_181()
+            config = bdConfiguration.CONFIG_181()
+            VETOR_MR = bdConfiguration.QD_181()
 
             idt = identificador
             H = altura

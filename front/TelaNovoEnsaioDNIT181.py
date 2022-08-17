@@ -4,6 +4,7 @@
 import wx
 import wx.adv
 import bancodedados
+import bdConfiguration
 from TelaRealizacaoEnsaioDNIT181 import TelaRealizacaoEnsaioDNIT181
 import back.HexForRGB as HexRGB
 import bdPreferences

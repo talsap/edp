@@ -3,7 +3,7 @@
 '''Bibliotecas'''
 
 import wx
-import bancodedados
+import bdConfiguration
 import bdPreferences
 from quadrotensoes import *
 import back.HexForRGB as HexRGB
@@ -60,8 +60,8 @@ class Page01(wx.Panel):
 
                 self.SetBackgroundColour(colorBackground)
 
-                '''Dados do bancodedados'''
-                self.lista = bancodedados.CONFIG_134()
+                '''Dados do bdConfiguration'''
+                self.lista = bdConfiguration.CONFIG_134()
 
                 FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
                 texto0 = wx.StaticText(self, -1, "Quantidade de ciclos do CONDIC. =", (52,25), (-1,-1), wx.ALIGN_LEFT)
@@ -153,7 +153,7 @@ class Page01(wx.Panel):
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_dados_CONFIG_134(CICLOCOND, CICLOMR, ERRO, DP_ACUM)
+                        bdConfiguration.update_dados_CONFIG_134(CICLOCOND, CICLOMR, ERRO, DP_ACUM)
                         self.editar1.Enable()
                         self.Salvar1.Disable()
                         self.CicloCOND.Disable()
@@ -174,8 +174,8 @@ class Page02(wx.Panel):
 
                 self.SetBackgroundColour(colorBackground)
 
-                '''Dados do bancodedados'''
-                self.lista = bancodedados.CONFIG_179()
+                '''Dados do bdConfiguration'''
+                self.lista = bdConfiguration.CONFIG_179()
 
                 FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
                 texto0 = wx.StaticText(self, -1, "Quantidade de ciclos do CONDIC. =", (52,25), (-1,-1), wx.ALIGN_LEFT)
@@ -245,7 +245,7 @@ class Page02(wx.Panel):
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_dados_CONFIG_179(CICLOCOND, CICLODP)
+                        bdConfiguration.update_dados_CONFIG_179(CICLOCOND, CICLODP)
                         self.editar2.Enable()
                         self.Salvar2.Disable()
                         self.CicloCOND.Disable()
@@ -264,8 +264,8 @@ class Page03(wx.Panel):
 
                 self.SetBackgroundColour(colorBackground)
                 
-                '''Dados do bancodedados'''
-                self.lista = bancodedados.CONFIG_181()
+                '''Dados do bdConfiguration'''
+                self.lista = bdConfiguration.CONFIG_181()
 
                 FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
                 texto0 = wx.StaticText(self, -1, "Quantidade de ciclos do M. R. =", (73,25), (-1,-1), wx.ALIGN_LEFT)
@@ -335,7 +335,7 @@ class Page03(wx.Panel):
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_dados_CONFIG_181(CICLOMR, ERRO)
+                        bdConfiguration.update_dados_CONFIG_181(CICLOMR, ERRO)
                         self.editar3.Enable()
                         self.Salvar3.Disable()
                         self.CicloMR.Disable()

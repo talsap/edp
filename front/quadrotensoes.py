@@ -3,7 +3,7 @@
 '''Bibliotecas'''
 
 import wx
-import bancodedados
+import bdConfiguration
 import back.HexForRGB as HexRGB
 import bdPreferences
 
@@ -27,7 +27,7 @@ class quadro(wx.Dialog):
 
             labels0 = [["  σ3 (MPa)          ","          σd (MPa)            ","             σ1/σ3     "]]
 
-            label = bancodedados.QD_134()
+            label = bdConfiguration.QD_134()
             labels1 = label[0]
             labels = label[1]
 
@@ -110,7 +110,7 @@ class quadroEditavelDNIT134(wx.Dialog):
 
             labels0 = [["σ3 (MPa)","σd (MPa)","σ1/σ3"]]
 
-            label = bancodedados.QD_134()
+            label = bdConfiguration.QD_134()
             labels1 = label[0]
             labels = label[1]
 
@@ -862,7 +862,7 @@ class quadroEditavelDNIT134(wx.Dialog):
 
                 else:
                     if(condicional>0):
-                        bancodedados.update_QD_134(q)
+                        bdConfiguration.update_QD_134(q)
                         self.tL0C0.Disable()
                         self.tL0C1.Disable()
                         self.tL1C0.Disable()
@@ -933,7 +933,7 @@ class quadroEditavelDNIT179(wx.Dialog):
             FontCorpo2 = wx.Font(16, wx.SWISS, wx.NORMAL, wx.BOLD)
             FontCorpo1 = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
 
-            label = bancodedados.QD_179()
+            label = bdConfiguration.QD_179()
             labels1 = label[0]
             labels = label[1]
 
@@ -1322,7 +1322,7 @@ class quadroEditavelDNIT179(wx.Dialog):
                 result = dlg.ShowModal()
             else:
                 if(condicional>0):
-                    bancodedados.update_QD_179(q)
+                    bdConfiguration.update_QD_179(q)
                     self.tL0C0.Disable()
                     self.tL0C1.Disable()
 
@@ -1371,7 +1371,7 @@ class quadroEditavelDNIT181(wx.Dialog):
             FontCorpo2 = wx.Font(16, wx.SWISS, wx.NORMAL, wx.BOLD)
             FontCorpo1 = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
 
-            labels1 = bancodedados.QD_181()
+            labels1 = bdConfiguration.QD_181()
 
             TextoTitle = wx.StaticText(self, label = "QUADRO DE TENSÕES - M. R.", style = wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
             TextoTitle.SetFont(FontTitle)
@@ -1509,7 +1509,7 @@ class quadroEditavelDNIT181(wx.Dialog):
                 result = dlg.ShowModal()
             else:
                 if(condicional>0):
-                    bancodedados.update_QD_181(q)
+                    bdConfiguration.update_QD_181(q)
                     self.tL0C0.Disable()
                     self.tL1C0.Disable()
                     self.tL2C0.Disable()

@@ -7,6 +7,7 @@ import threading
 import matplotlib
 import numpy as np
 import bancodedados
+import bdConfiguration
 import back.connection as con
 import matplotlib.pyplot as plt
 import back.MyProgressDialog as My
@@ -69,7 +70,7 @@ class TopPanel(wx.Panel):
             self.Bind(wx.EVT_BUTTON, self.PAUSA, self.pausa)
             self.continua = wx.Button(self, -1, 'CONTINUA')
             self.Bind(wx.EVT_BUTTON, self.CONTINUA, self.continua)
-            self.fim_inicio = wx.Button(self, -1, 'INICIO')
+            self.fim_inicio = wx.Button(self, -1, 'INICIO') 
             self.Bind(wx.EVT_BUTTON, self.INICIO, self.fim_inicio)
 
             self.avanca.Disable()
@@ -442,8 +443,10 @@ class TopPanel(wx.Panel):
                         con.modeB()
                         time.sleep(.3)
                         con.modeD()
-                        self.Close(True)
-
+                        condition = False
+                        time.sleep(.3)
+                        self._self.Close(True)
+                        self._self.Destroy()
 
     #--------------------------------------------------
         '''Ajusta min e max EIXO X'''
@@ -1043,7 +1046,7 @@ class BottomPanel(wx.Panel):
                                     if self.leituraZerob1 == 0:
                                         self.AlturaFinal.AppendText(str(round(H, 3)))
                                     else:
-                                        self.AlturaFinal.AppendText(str(round(H-ymedio, 3)))
+                                        self.AlturaFinal.AppendText(str(round(H-abs(ymedio), 3)))
                                     if cont1 == 20:
                                         cont1 = 0
                                 cont1 = cont1 + 1
@@ -1468,8 +1471,8 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             global VETOR_MR #Vetor com os pares de pressões do MR
 
             '''Banco de dados'''
-            pressoes = bancodedados.QD_134_MOD()
-            config = bancodedados.CONFIG_134()
+            pressoes = bdConfiguration.QD_134_MOD()
+            config = bdConfiguration.CONFIG_134()
 
             idt = identificador
             subleito = tipo

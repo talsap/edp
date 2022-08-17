@@ -54,17 +54,18 @@ float defResiliente; //valor da deformação Resiliente
 float defResilienteAnterior; //valor da deformação Resiliente anterior
 float discrep; //valor da discrepancia entre as leituras
 
-//************************************* (MOTOR) *******************************************//
+
+//*************************************(MOTOR) ********************************************//
 float AM = 2.0677; //valor de A da calibração da válvula do motor de passos
 float BM = 10.01; //valor de B da calibração da válvula do motor de passos
 
-//*********************************** (DINAMICA1) *****************************************//
+//**************** (DINAMICA1 - Pistão) OBS:VALORES UTILIZADOS NO SOFTWARE *****************//
 float AE1 = 2.0384;  //valor de A da calibração da válvula dinâmica 1 AD2 para mBar (output)
 float BE1 = -2.7918; //valor de B da calibração da válvula dinâmica 1 AD2 para mBar (output)
 float AE2 = 0.6021;  //valor de A da calibração da válvula dinâmica 1 mBar para DAC1 (input)
 float BE2 = 62.652; //valor de B da calibração da válvula dinâmica 1 mBar para DAC1 (input)
 
-//*********************************** (DINAMICA2) *****************************************//
+//**************** (DINAMICA2 - Câmara) OBS:VALORES UTILIZADOS NO SOFTWARE *****************//
 float AF1 = 1.0476;  //valor de A da calibração da válvula dinâmica 2 AD2 para mBar (output)
 float BF1 = -1296; //valor de B da calibração da válvula dinâmica 2 AD2 para mBar (output)
 float AF2 = 2.7668;  //valor de A da calibração da válvula dinâmica 2 mBar para DAC1 (input)
@@ -135,8 +136,8 @@ void setup(void) {
   bit12_Voltage = (InputRange_code)/(AR_12BIT_MAX - 1); //fator de conversão bit~voltagem
   bit16_Voltage = (InputRange_code)/(ADC_16BIT_MAX - 1); //fator de conversão bit~voltagem
   setpointM = 340/InputRange_code;   //setpointM inicia sendo o menor valor admissível (referente a v. do motor)
-  setpointE = int(12*AE2+BE2); //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica1)
-  setpointF = int(12*AF2+BF2);  //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica2)
+  setpointE = int(12); //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica1)
+  setpointF = int(12);  //setpoint inicia sendo o menor valor admissível (referente a v. dinâmica2)
   lmt = 200;  //200 é considerado o valor padrão do limite de golpes para a discrepância
   discrep = 1.05;  //inicia sendo o valor de 5%
 }
@@ -190,12 +191,12 @@ void loop(void) {
               goto conexao;
             }
             if(leitura == 'E'){
-              Serial.println("DINAMICA2");
+              Serial.println("DINAMICA1");
               serialFlush();
               goto dinamica2DNIT134;
             }
             if(leitura == 'F'){
-              Serial.println("DINAMICA1");
+              Serial.println("DINAMICA2");
               serialFlush();
               goto dinamica1DNIT134;
             }
@@ -281,20 +282,19 @@ void loop(void) {
         break;
 
         //**********************************************************************************//
-        //************************* VÁLVULA DINÂMICA 1 (camara) ****************************//
+        //************************* VÁLVULA DINÂMICA 2 (camara) ****************************//
         dinamica1DNIT134:
         while(true){
           if (Serial.available()>1){
-            setpoint1 = Serial.parseInt();    //valor em mbar
+            setpoint1 = Serial.parseInt();  //setpoint1 é um valor em mbar
             if(setpoint1 > 10){
-              setpointF = int(setpoint1*AF2+BF2);   //valor em contagem
+              setpointF = int(setpoint1);   //valor em contagem
               analogWrite(DAC0, setpointF);
               Serial.print("CHEGOU=");
               Serial.print(setpoint1);
               Serial.print("/SENSOR=");
               ad4 = analogRead(A0);
-              vd4 = ad4*AF1+BF1; //mbar
-              Serial.println(vd4);
+              Serial.println(ad4);
               serialFlush();
             }
             if(setpoint1 == 3){
@@ -305,20 +305,19 @@ void loop(void) {
         break;
 
         //**********************************************************************************//
-        //************************** VÁLVULA DINÂMICA 2 (pistão) ***************************//
+        //************************** VÁLVULA DINÂMICA 1 (pistão) ***************************//
         dinamica2DNIT134:
         while(true){
           if (Serial.available()>1){
-            setpoint2 = Serial.parseInt();    //valor em mbar
+            setpoint2 = Serial.parseInt();  //setpoint2 é um valor em mbar
             if(setpoint2 > 10){
-              setpointE = int(setpoint2*AE2+BE2);   //valor em contagem
+              setpointE = int(setpoint2);   //valor em contagem
               analogWrite(DAC1, setpointE);
               Serial.print("CHEGOU=");
               Serial.print(setpoint2);
               Serial.print("/SENSOR=");
               ad5 = analogRead(A2);
-              vd5 = ad5*AE1+BE1; //mbar
-              Serial.println(vd5);
+              Serial.println(ad5);
               serialFlush();
             }
             if(setpoint2 == 3){
@@ -736,8 +735,8 @@ void imprimir(){
   ad5 = analogRead(A2);
   vd0 = ad0*bit16_Voltage;
   vd1 = ad1*bit16_Voltage;
-  vd4 = ad4*AF1+BF1; //mbar (camara)
-  vd5 = ad5*AE1+BE1; //mbar (pistão)
+  vd4 = ad4; //mbar (camara)
+  vd5 = ad5; //mbar (pistão)
   admedio = (ad0+ad1)/2; //admedio
   //CONDICAO DE DE MARGEM DE SEGURANÇA PARA OS SENSORES//
   if(ad0 > margemSup or ad1 > margemSup or ad0 < margemInf or ad1 < margemInf){

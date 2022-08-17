@@ -5,6 +5,7 @@
 import time
 import serial
 import bancodedados
+import bdConfiguration
 import numpy as np
 from sys import *
 from serial.tools import list_ports
@@ -13,7 +14,7 @@ from serial.tools import list_ports
 opcaoC = "C"    '''conectado'''
 opcaoD = "D"    '''desconectado'''
 opcaoI = "I"    '''DNIT134 e imprimir diversos'''
-opcaoE = "E"    '''VALVULA DINÂMICA DE PRESSAO'''
+opcaoE = "E"    '''VALVULA DINÂMICA DE PRESSAO 1'''
 opcaoF = "F"    '''VALVULA DINÂMICA DE PRESSAO 2'''
 opcaoM = "M"    '''MOTOR DE PASSOS'''
 opcaoB = "B"    '''Break'''
@@ -30,18 +31,32 @@ conexao = serial.Serial()
 conexao.baudrate = 115200
 
 '''Coeficientes da calibracao dos sensores S1 e S2'''
-L = bancodedados.S1S2()
-A1_S1 = float(L[1])
-B1_S1= float(L[2])
-A2_S2 = float(L[5])
-B2_S2 = float(L[6])
+L1 = bdConfiguration.S1S2()
+A1_S1 = float(L1[1])
+B1_S1= float(L1[2])
+A2_S2 = float(L1[5])
+B2_S2 = float(L1[6])
 
 '''Coeficientes da calibracao dos sensores S3 e S4'''
-M = bancodedados.S3S4()
-A3_S3 = float(M[1])
-B3_S3 = float(M[2])
-A4_S4 = float(M[5])
-B4_S4 = float(M[6])
+L2 = bdConfiguration.S3S4()
+A3_S3 = float(L2[1])
+B3_S3 = float(L2[2])
+A4_S4 = float(L2[5])
+B4_S4 = float(L2[6])
+
+'''Coeficientes da calibracao da valvula DINAMICA 1'''
+E = bdConfiguration.DadosD1()
+AE2= float(E[1])
+BE2= float(E[2])
+AE1 = float(E[5])
+BE1 = float(E[6])
+
+'''Coeficientes da calibracao da valvula DINAMICA 1'''
+F = bdConfiguration.DadosD2()
+AF2= float(F[1])
+BF2= float(F[2])
+AF1 = float(F[5])
+BF1 = float(F[6])
 
 #-------------------------------------------------------------------
 def connect(DISCREP):
@@ -446,8 +461,8 @@ def ColetaI(valores):
         y2mm = float(Array[2])*A2_S2+B2_S2
         y1v = float(Array[3])
         y2v = float(Array[4])
-        sen = float(Array[5])
-        cam = float(Array[6])
+        sen = float(Array[5])*AE1+BE1
+        cam = float(Array[6])*AF1+BF1
         sts = int(Array[7])
         glp = int(Array[8])
         ntglp = int(Array[9])

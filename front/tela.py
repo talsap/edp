@@ -115,7 +115,7 @@ class Tela(wx.Frame):
          cabecalhosMenuitem = arquivoMenu.Append(wx.NewId(), 'Cabeçalhos', 'Cabeçalhos')
          arquivoMenu.AppendSeparator()
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
-         calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Sensores de Deslocamento \tCtrl+T', 'Sensores de Deslocamento')
+         calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Calibrações \tCtrl+T', 'Calibrações')
          configurationEnsaio = configuracoesMenu.Append(wx.NewId(), 'Configurações dos Ensaios \tCtrl+I', 'Configurações dos Ensaios')
          configurationConection = configuracoesMenu.Append(wx.NewId(), 'Testar Conexão \tCtrl+Y', 'Testar Conexão')
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')

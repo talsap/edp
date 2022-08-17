@@ -382,7 +382,7 @@ class EditarDNIT179(wx.Dialog):
             h_sizer.Add(self.Identificador, 32, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto2 = wx.StaticText(panel, label = "Pares de Tensão (MPa)", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto2, 83, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.Pares = wx.ComboBox(panel, choices = bancodedados.Pares_Tensoes(), style = wx.ALL | wx.CB_READONLY)
+            self.Pares = wx.ComboBox(panel, choices = bdConfiguration.Pares_Tensoes(), style = wx.ALL | wx.CB_READONLY)
             self.Pares.SetSelection(int(self.list[2]))
             self.Pares.Disable()
             h_sizer.Add(self.Pares, 60, wx.ALIGN_CENTER_VERTICAL | wx.ALL)

@@ -4,6 +4,7 @@
 import wx
 import wx.adv
 import bancodedados
+import bdConfiguration
 from TelaRealizacaoEnsaioDNIT179 import TelaRealizacaoEnsaioDNIT179
 import back.HexForRGB as HexRGB
 import bdPreferences
@@ -57,7 +58,7 @@ class TelaNovoEnsaioDNIT179(wx.Dialog):
             h_sizer.Add(self.Identificador, 32, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
             texto2 = wx.StaticText(panel, label = "Pares de Tensão (MPa)", style = wx.ALIGN_RIGHT)
             h_sizer.Add(texto2, 83, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            self.Pares = wx.ComboBox(panel, choices = bancodedados.Pares_Tensoes(), style = wx.ALL | wx.CB_READONLY)
+            self.Pares = wx.ComboBox(panel, choices = bdConfiguration.Pares_Tensoes(), style = wx.ALL | wx.CB_READONLY)
             self.Pares.SetSelection(0)
             h_sizer.Add(self.Pares, 60, wx.ALIGN_CENTER_VERTICAL | wx.ALL)
 
