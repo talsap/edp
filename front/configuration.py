@@ -3,8 +3,8 @@
 '''Bibliotecas'''
 
 import wx
-import bdConfiguration
-import bdPreferences
+import banco.bdConfiguration as bdConfiguration
+import banco.bdPreferences as bdPreferences
 from quadrotensoes import *
 import back.HexForRGB as HexRGB
 

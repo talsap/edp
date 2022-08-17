@@ -3,7 +3,7 @@
 
 import sqlite3
 
-connection = sqlite3.connect('bdPreferences.db', check_same_thread = False)
+connection = sqlite3.connect('banco/bdPreferences.db', check_same_thread = False)
 c = connection.cursor()
 
 def create_table():

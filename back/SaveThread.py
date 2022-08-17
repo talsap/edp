@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import wx
 import time
-import bancodedados
+import banco.bancodedados as bancodedados
 import back.connection as con
 from pubsub import pub
 from threading import Thread

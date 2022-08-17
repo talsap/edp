@@ -4,7 +4,7 @@
 
 import wx
 import back.HexForRGB as HexRGB
-import bdPreferences
+import banco.bdPreferences as bdPreferences 
 
 '''Tela Dialogo Dinamico'''
 class dialogoDinamico(wx.Dialog):

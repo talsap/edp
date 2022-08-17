@@ -9,7 +9,7 @@ import back.connection as con
 import back.ConexaoThread as ConexaoThread
 import back.MyProgressDialog as My
 import back.HexForRGB as HexRGB
-import bdPreferences
+import banco.bdPreferences as bdPreferences
 
 '''Tela de Configurações'''
 class Conn(wx.Dialog):

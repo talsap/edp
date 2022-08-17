@@ -3,11 +3,11 @@
 '''Bibliotecas'''
 import wx
 import wx.adv
-import bancodedados
-import bdConfiguration
+import banco.bancodedados as bancodedados
+import banco.bdConfiguration as bdConfiguration
 from TelaRealizacaoEnsaioDNIT181 import TelaRealizacaoEnsaioDNIT181
 import back.HexForRGB as HexRGB
-import bdPreferences
+import banco.bdPreferences as bdPreferences
 
 '''Tela Selecão de Ensaio'''
 class TelaNovoEnsaioDNIT181(wx.Dialog):

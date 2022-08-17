@@ -6,8 +6,8 @@ import time
 import threading
 import matplotlib
 import numpy as np
-import bancodedados
-import bdConfiguration
+import banco.bancodedados as bancodedados
+import banco.bdConfiguration as bdConfiguration
 import back.connection as con
 import matplotlib.pyplot as plt
 import back.MyProgressDialog as My
@@ -16,7 +16,7 @@ import back.MotorThread as MotorThread
 import back.DinamicaThread as DinamicaThread
 import back.ConexaoThread as ConexaoThread
 import back.HexForRGB as HexRGB
-import bdPreferences
+import banco.bdPreferences as bdPreferences
 from drawnow import *
 from front.quadrotensoes import quadro
 from front.dialogoDinamico import dialogoDinamico
@@ -127,11 +127,11 @@ class TopPanel(wx.Panel):
 
             if Fase == 'CONDICIONAMENTO':
                 condition = False
-                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
                 dlgC1 = My.MyProgressDialog(3)
                 dlgC1.ShowModal()
                 time.sleep(1)
-                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[0][0], self.DINAMICA1_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[0][0], self.DINAMICA1_ANTERIOR)
                 dlgC2 = My.MyProgressDialog(3)
                 dlgC2.ShowModal()
                 time.sleep(1)
@@ -140,11 +140,11 @@ class TopPanel(wx.Panel):
 
             if Fase == 'DP':
                 condition = False
-                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_DP[0][1], self.DINAMICA2_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_DP[0][1], self.DINAMICA2_ANTERIOR)
                 dlgC1 = My.MyProgressDialog(3)
                 dlgC1.ShowModal()
                 time.sleep(1)
-                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_DP[0][0], self.DINAMICA1_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_DP[0][0], self.DINAMICA1_ANTERIOR)
                 dlgC2 = My.MyProgressDialog(3)
                 dlgC2.ShowModal()
                 time.sleep(1)
@@ -169,7 +169,7 @@ class TopPanel(wx.Panel):
             #--------------------------------------------------
             #-------- Thread de parada e de salvamento --------
             def worker1(self):
-                import bancodedados
+                import banco.bancodedados as bancodedados
                 global condition
                 global conditionEnsaio
                 global Fase
@@ -1105,16 +1105,16 @@ class BottomPanel(wx.Panel):
 
     #--------------------------------------------------
         '''Função responsável em zerar a pressão do sistema'''
-        def pressao_zero(self, p1Sen ,p2Sen):
+        def pressao_zero(self, p2Sen ,p1Sen):
             print '\nBottomPanel - pressao_zero'
             global condition
             condition = False
-            threadConection = DinamicaThread.DinamicaThreadTwoZero(0.005, p2Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = DinamicaThread.DinamicaThreadOneZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlgC1 = My.MyProgressDialog(4)
             dlgC1.ShowModal()
             time.sleep(1)
             #threadConection = MotorThread.MotorThreadZero(0.030)  #0.030 é o menor valor de pressão admissível para SI do motor de passos
-            threadConection = DinamicaThread.DinamicaThreadOneZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = DinamicaThread.DinamicaThreadTwoZero(0.005, p2Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlg2 = My.MyProgressDialog(4)
             dlg2.ShowModal()
             condition = True

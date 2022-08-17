@@ -3,8 +3,8 @@
 '''Bibliotecas'''
 
 import wx
-import bancodedados
-import bdConfiguration
+import banco.bancodedados as bancodedados
+import banco.bdConfiguration as bdConfiguration
 import unicodecsv
 import csv
 import math

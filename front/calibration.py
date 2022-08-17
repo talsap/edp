@@ -3,15 +3,15 @@
 '''Bibliotecas'''
 
 import wx
-import bdConfiguration
-import bdPreferences
+import banco.bdConfiguration as bdConfiguration
+import banco.bdPreferences as bdPreferences
 import back.HexForRGB as HexRGB
 
 '''Tela Calibração'''
 class Cal(wx.Dialog):
         #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-                wx.Dialog.__init__(self, None, -1, 'EDP - Curva de Calibração', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+                wx.Dialog.__init__(self, None, -1, 'EDP - Coeficientes de Calibração', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
                 colors = bdPreferences.ListColors()
                 colorBackground = colors[2]

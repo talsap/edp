@@ -3,9 +3,9 @@
 '''Bibliotecas'''
 
 import wx
-import bdConfiguration
+import banco.bdConfiguration as bdConfiguration
 import back.HexForRGB as HexRGB
-import bdPreferences
+import banco.bdPreferences as bdPreferences
 
 '''Tela Dialogo Dinamico'''
 class quadro(wx.Dialog):

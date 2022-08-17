@@ -8,7 +8,7 @@ import math
 
 pi = math.pi
 
-connection = sqlite3.connect('bdConfiguration.db', check_same_thread = False)
+connection = sqlite3.connect('banco/bdConfiguration.db', check_same_thread = False)
 c = connection.cursor()
 
 VETOR_134 = [[0.070,0.070,2],

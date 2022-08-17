@@ -3,8 +3,8 @@
 '''Bibliotecas'''
 import wx
 import shutil
-import bancodedadosCAB
-import bdPreferences
+import banco.bancodedadosCAB as bancodedadosCAB
+import banco.bdPreferences as bdPreferences
 import back.HexForRGB as HexRGB
 from front.previsualizar import PDFViewer
 from reportlab.pdfgen import canvas

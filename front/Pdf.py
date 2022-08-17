@@ -2,10 +2,10 @@
 
 '''Bibliotecas'''
 import wx
-import bancodedadosCAB
-import bancodedados
-import bdPreferences
-import bdConfiguration
+import banco.bancodedadosCAB as bancodedadosCAB
+import banco.bancodedados as bancodedados
+import banco.bdPreferences as bdPreferences
+import banco.bdConfiguration as bdConfiguration
 import re
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4

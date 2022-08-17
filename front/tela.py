@@ -3,8 +3,8 @@
 '''Bibliotecas'''
 
 import wx
-import bancodedados
-import bdPreferences
+import banco.bancodedados as bancodedados
+import banco.bdPreferences as bdPreferences
 import wx.lib.agw.hyperlink as hl
 import wx.lib.mixins.listctrl as listmix
 import back.HexForRGB as HexRGB
@@ -115,7 +115,7 @@ class Tela(wx.Frame):
          cabecalhosMenuitem = arquivoMenu.Append(wx.NewId(), 'Cabeçalhos', 'Cabeçalhos')
          arquivoMenu.AppendSeparator()
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
-         calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Calibrações \tCtrl+T', 'Calibrações')
+         calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Coeficientes de Calibração \tCtrl+T', 'Coeficientes de Calibração')
          configurationEnsaio = configuracoesMenu.Append(wx.NewId(), 'Configurações dos Ensaios \tCtrl+I', 'Configurações dos Ensaios')
          configurationConection = configuracoesMenu.Append(wx.NewId(), 'Testar Conexão \tCtrl+Y', 'Testar Conexão')
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')

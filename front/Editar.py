@@ -4,8 +4,8 @@
 import wx
 import wx.adv
 import datetime
-import bancodedados
-import bdPreferences
+import banco.bancodedados as bancodedados
+import banco.bdPreferences as bdPreferences
 import back.HexForRGB as HexRGB
 from front.TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 from front.TelaRealizacaoEnsaioDNIT179 import TelaRealizacaoEnsaioDNIT179

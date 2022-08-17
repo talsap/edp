@@ -4,8 +4,8 @@
 
 import time
 import serial
-import bancodedados
-import bdConfiguration
+import banco.bancodedados as bancodedados
+import banco.bdConfiguration as bdConfiguration
 import numpy as np
 from sys import *
 from serial.tools import list_ports

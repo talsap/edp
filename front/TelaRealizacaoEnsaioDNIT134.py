@@ -6,8 +6,8 @@ import time
 import threading
 import matplotlib
 import numpy as np
-import bancodedados
-import bdConfiguration
+import banco.bancodedados as bancodedados
+import banco.bdConfiguration as bdConfiguration
 import back.connection as con
 import matplotlib.pyplot as plt
 import back.MyProgressDialog as My
@@ -16,7 +16,7 @@ import back.MotorThread as MotorThread
 import back.DinamicaThread as DinamicaThread
 import back.ConexaoThread as ConexaoThread
 import back.HexForRGB as HexRGB
-import bdPreferences
+import banco.bdPreferences as bdPreferences
 from drawnow import *
 from front.quadrotensoes import quadro
 from front.dialogoDinamico import dialogoDinamico
@@ -212,7 +212,7 @@ class TopPanel(wx.Panel):
                 condition = False
                 if self._fase > 0:
                     if VETOR_COND[self._fase][1] != VETOR_COND[self._fase - 1][1] and self.AVANCA == False:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], VETOR_COND[self._fase-1][1])
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][1], VETOR_COND[self._fase-1][1])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA2_ANTERIOR = VETOR_COND[self._fase][1]
@@ -221,29 +221,29 @@ class TopPanel(wx.Panel):
 
                     if VETOR_COND[self._fase][0] != VETOR_COND[self._fase - 1][0]:
                         #threadConection = MotorThread.MotorThread(VETOR_COND[self._fase][0])
-                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
 
                     if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], self.DINAMICA2_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][1], self.DINAMICA2_ANTERIOR)
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA2_ANTERIOR = VETOR_COND[self._fase][1]
                         time.sleep(.5)
                         if VETOR_COND[self._fase][0] != self.DINAMICA1_ANTERIOR:
-                            threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
+                            threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][0], self.DINAMICA1_ANTERIOR)
                             dlgC2 = My.MyProgressDialog(3)
                             dlgC2.ShowModal()
                             self.DINAMICA1_ANTERIOR = VETOR_COND[self._fase][0]
                         self.AVANCA = False
                 else:
-                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][1], 0)
+                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][1], 0)
                     dlgC1 = My.MyProgressDialog(3)
                     dlgC1.ShowModal()
                     time.sleep(.5)
                     #threadConection = MotorThread.MotorThread(VETOR_COND[self._fase][0])
-                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[self._fase][0], 0)
+                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_COND[self._fase][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
                     dlgC2.ShowModal()
 
@@ -266,7 +266,7 @@ class TopPanel(wx.Panel):
                 condition = False
                 if self._fase > 0:
                     if VETOR_MR[self._fase][1] != VETOR_MR[self._fase - 1][1] and self.AVANCA == False:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], VETOR_MR[self._fase-1][1])
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][1], VETOR_MR[self._fase-1][1])
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA2_ANTERIOR = VETOR_MR[self._fase][1]
@@ -274,29 +274,29 @@ class TopPanel(wx.Panel):
 
                     if VETOR_MR[self._fase][0] != VETOR_MR[self._fase - 1][0] and self.AVANCA == False:
                         #threadConection = MotorThread.MotorThread(VETOR_MR[self._fase][0])
-                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
                         dlgC2 = My.MyProgressDialog(3)
                         dlgC2.ShowModal()
 
                     if self.AVANCA == True:
-                        threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], self.DINAMICA2_ANTERIOR)
+                        threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][1], self.DINAMICA2_ANTERIOR)
                         dlgC1 = My.MyProgressDialog(3)
                         dlgC1.ShowModal()
                         self.DINAMICA2_ANTERIOR = VETOR_MR[self._fase][1]
                         time.sleep(.5)
                         if VETOR_MR[self._fase][0] != self.DINAMICA1_ANTERIOR:
-                            threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
+                            threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][0], self.DINAMICA1_ANTERIOR)
                             dlgC2 = My.MyProgressDialog(3)
                             dlgC2.ShowModal()
                             self.DINAMICA1_ANTERIOR = VETOR_MR[self._fase][0]
                         self.AVANCA = False
                 else:
-                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][1], 0)
+                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][1], 0)
                     dlgC1 = My.MyProgressDialog(3)
                     dlgC1.ShowModal()
                     time.sleep(.5)
                     #threadConection = MotorThread.MotorThread(VETOR_MR[self._fase][0])
-                    threadConection = DinamicaThread.DinamicaThreadOne(VETOR_MR[self._fase][0], 0)
+                    threadConection = DinamicaThread.DinamicaThreadTwo(VETOR_MR[self._fase][0], 0)
                     dlgC2 = My.MyProgressDialog(3)
                     dlgC2.ShowModal()
 
@@ -1406,16 +1406,16 @@ class BottomPanel(wx.Panel):
 
     #--------------------------------------------------
         '''Função responsável em zera a pressão do sistema'''
-        def pressao_zero(self, p1Sen ,p2Sen):
+        def pressao_zero(self, p2Sen ,p1Sen):
             print '\nBottomPanel - pressao_zero'
             global condition
             condition = False
-            threadConection = DinamicaThread.DinamicaThreadTwoZero(0.005, p2Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = DinamicaThread.DinamicaThreadOneZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlgC1 = My.MyProgressDialog(4)
             dlgC1.ShowModal()
             time.sleep(1)
             #threadConection = MotorThread.MotorThreadZero(0.030)  #0.030 é o menor valor de pressão admissível para SI do motor de passos
-            threadConection = DinamicaThread.DinamicaThreadOneZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = DinamicaThread.DinamicaThreadTwoZero(0.005, p2Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
             dlg2 = My.MyProgressDialog(4)
             dlg2.ShowModal()
             condition = True

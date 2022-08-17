@@ -3,8 +3,8 @@
 '''Bibliotecas'''
 
 import wx
-import bancodedadosCAB
-import bdPreferences
+import banco.bancodedadosCAB as bancodedadosCAB
+import banco.bdPreferences as bdPreferences
 import wx.lib.mixins.listctrl as listmix
 from front.NovoCabecalho import NovoCabecalho
 from front.EditarCabecalho import EditarCabecalho

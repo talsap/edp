@@ -3,10 +3,10 @@
 '''Bibliotecas'''
 import wx
 import wx.adv
-import bancodedados
+import banco.bancodedados as bancodedados
 from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 import back.HexForRGB as HexRGB
-import bdPreferences
+import banco.bdPreferences as bdPreferences
 
 tipos = ['SIMPLES', 'COMPLETO']
 
