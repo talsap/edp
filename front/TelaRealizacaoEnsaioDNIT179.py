@@ -1128,7 +1128,7 @@ class BottomPanel(wx.Panel):
 class TelaRealizacaoEnsaioDNIT179(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, identificador, tipo, diametro, altura, *args, **kwargs):
-            wx.Dialog.__init__(self, parent = None, title = 'EDP - DNIT 179/2018IE - Tela Ensaio', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, parent = None, title = 'EDP - Ensaios Dinâmicos para Pavimentação - DNIT 179/2018IE - Tela Ensaio', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             '''Variáveis Globais'''
             global idt #identificador do ensaio

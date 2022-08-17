@@ -12,7 +12,7 @@ import bdPreferences
 class TelaNovoEnsaioDNIT181(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 181/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP - Ensaios Dinâmicos para Pavimentação - DNIT 181/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]

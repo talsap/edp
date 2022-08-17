@@ -15,7 +15,7 @@ normas = ['DNIT 134/2018ME', 'DNIT 179/2018IE', 'DNIT 181/2018ME']
 class TelaNovo(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
-            wx.Dialog.__init__(self, None, -1, 'EDP', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+            wx.Dialog.__init__(self, None, -1, 'EDP - Novo Ensaio', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
