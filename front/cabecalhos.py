@@ -4,10 +4,12 @@
 
 import wx
 import bancodedadosCAB
+import bdPreferences
 import wx.lib.mixins.listctrl as listmix
 from front.NovoCabecalho import NovoCabecalho
 from front.EditarCabecalho import EditarCabecalho
 from wx.lib.agw import ultimatelistctrl as ULC
+import back.HexForRGB as HexRGB
 
 '''Classe da Lista editável'''
 class EditableListCtrl(ULC.UltimateListCtrl, listmix.ListCtrlAutoWidthMixin):
@@ -67,6 +69,11 @@ class Cab(wx.Dialog):
                 h2_sizer = wx.BoxSizer(wx.HORIZONTAL)
                 panel = wx.Panel(self)
 
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
+                
                 '''Iserção do IconeLogo'''
                 try:
                     ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)

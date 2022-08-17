@@ -5,6 +5,8 @@ import wx
 import wx.adv
 import bancodedados
 from TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
+import back.HexForRGB as HexRGB
+import bdPreferences
 
 tipos = ['SIMPLES', 'COMPLETO']
 
@@ -14,6 +16,11 @@ class TelaNovoEnsaioDNIT134(wx.Dialog):
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 134/2018ME', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
+            
             '''Iserção do IconeLogo'''
             try:
                 ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)

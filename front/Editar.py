@@ -5,6 +5,8 @@ import wx
 import wx.adv
 import datetime
 import bancodedados
+import bdPreferences
+import back.HexForRGB as HexRGB
 from front.TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 from front.TelaRealizacaoEnsaioDNIT179 import TelaRealizacaoEnsaioDNIT179
 from front.TelaRealizacaoEnsaioDNIT181 import TelaRealizacaoEnsaioDNIT181
@@ -24,7 +26,11 @@ class EditarDNIT134(wx.Dialog):
             idt = self.idt
 
             self.list = bancodedados.dados_iniciais_(idt)
-            #print self.list
+
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
 
             '''Iserção do IconeLogo'''
             try:

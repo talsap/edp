@@ -14,7 +14,7 @@ class main():
      version = '1.0.0'
      app = wx.App()
      app.locale = wx.Locale(wx.LANGUAGE_PORTUGUESE_BRAZILIAN)
-     tela.Tela(version)
+     app.SetTopWindow(tela.Tela(version))
      app.MainLoop()
      app.RestoreStdio()
      app.__del__

@@ -4,6 +4,8 @@
 
 import wx
 import bancodedados
+import bdPreferences
+import back.HexForRGB as HexRGB
 
 '''Tela Calibração'''
 class Cal(wx.Dialog):
@@ -11,6 +13,11 @@ class Cal(wx.Dialog):
         def __init__(self, *args, **kwargs):
                 wx.Dialog.__init__(self, None, -1, 'EDP - Curva de Calibração', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
+                
                 '''Iserção do IconeLogo'''
                 try:
                     ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
@@ -20,6 +27,7 @@ class Cal(wx.Dialog):
 
                 # Aqui criamos um painel e um Notebook representado as guias
                 panel = wx.Panel(self)
+
                 nb = wx.Notebook(panel)
 
                 # crie as janelas da página como filhas do Notebook
@@ -42,6 +50,11 @@ class Page01(wx.Panel):
         def __init__(self, parent, id):
                 super(Page01, self).__init__(parent)
                 self.id = id
+                
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
 
                 '''Dados do bancodedados'''
                 self.lista = bancodedados.S1S2()
@@ -164,7 +177,12 @@ class Page02(wx.Panel):
         def __init__(self, parent, id):
                 super(Page02, self).__init__(parent)
                 self.id = id
+                
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
 
+                self.SetBackgroundColour(colorBackground)
+                
                 '''Dados do bancodedados'''
                 self.lista = bancodedados.S3S4()
 

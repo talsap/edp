@@ -5,6 +5,8 @@ import wx
 from TelaNovoEnsaioDNIT134 import TelaNovoEnsaioDNIT134
 from TelaNovoEnsaioDNIT179 import TelaNovoEnsaioDNIT179
 from TelaNovoEnsaioDNIT181 import TelaNovoEnsaioDNIT181
+import back.HexForRGB as HexRGB
+import bdPreferences
 
 #normas = ['DNIT 134/2018ME', 'DNIT 135/2018ME', 'DNIT 179/2018IE', 'DNIT 184/2018ME', 'DNIT 416/2019ME']
 normas = ['DNIT 134/2018ME', 'DNIT 179/2018IE', 'DNIT 181/2018ME']
@@ -15,6 +17,11 @@ class TelaNovo(wx.Dialog):
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
+            
             '''Iserção do IconeLogo'''
             try:
                 ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)

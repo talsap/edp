@@ -4,12 +4,19 @@
 
 import wx
 import bancodedados
+import back.HexForRGB as HexRGB
+import bdPreferences
 
 '''Tela Dialogo Dinamico'''
 class quadro(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
+
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
 
             v_sizer = wx.BoxSizer(wx.VERTICAL)
             h_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -88,6 +95,11 @@ class quadroEditavelDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
+
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
 
             v_sizer = wx.BoxSizer(wx.VERTICAL)
             h_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -909,6 +921,11 @@ class quadroEditavelDNIT179(wx.Dialog):
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
 
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
+
             v_sizer = wx.BoxSizer(wx.VERTICAL)
             h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -1341,7 +1358,12 @@ class quadroEditavelDNIT181(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
+            
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
 
+            self.SetBackgroundColour(colorBackground)
+            
             v_sizer = wx.BoxSizer(wx.VERTICAL)
             h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 

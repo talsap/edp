@@ -6,6 +6,8 @@ import os
 import os.path
 import shutil
 import bancodedadosCAB
+import bdPreferences
+import back.HexForRGB as HexRGB
 from front.previsualizar import PDFViewer
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -16,6 +18,11 @@ class EditarCabecalho(wx.Dialog):
         def __init__(self, id, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - Editar Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
+            
             '''Busca no bancodedadosCAB'''
             self.id = id
             lista = bancodedadosCAB.ListaDadosCabecalhos(id)

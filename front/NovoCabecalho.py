@@ -4,6 +4,8 @@
 import wx
 import shutil
 import bancodedadosCAB
+import bdPreferences
+import back.HexForRGB as HexRGB
 from front.previsualizar import PDFViewer
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -14,6 +16,11 @@ class NovoCabecalho(wx.Dialog):
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - Novo Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
+            
             '''Iserção do IconeLogo'''
             try:
                 ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)

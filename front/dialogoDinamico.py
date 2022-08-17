@@ -3,6 +3,8 @@
 '''Bibliotecas'''
 
 import wx
+import back.HexForRGB as HexRGB
+import bdPreferences
 
 '''Tela Dialogo Dinamico'''
 class dialogoDinamico(wx.Dialog):
@@ -10,6 +12,11 @@ class dialogoDinamico(wx.Dialog):
         def __init__(self, indicador, info, texto0, texto1, texto2, texto3, texto4, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "%s" %info, style = wx.CLOSE_BOX)
 
+            colors = bdPreferences.ListColors()
+            colorBackground = colors[2]
+
+            self.SetBackgroundColour(colorBackground)
+            
             self.v_sizer = wx.BoxSizer(wx.VERTICAL)
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 

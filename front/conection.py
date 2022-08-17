@@ -8,6 +8,8 @@ import threading
 import back.connection as con
 import back.ConexaoThread as ConexaoThread
 import back.MyProgressDialog as My
+import back.HexForRGB as HexRGB
+import bdPreferences
 
 '''Tela de Configurações'''
 class Conn(wx.Dialog):
@@ -15,6 +17,19 @@ class Conn(wx.Dialog):
         def __init__(self, *args, **kwargs):
                 wx.Dialog.__init__(self, None, -1, 'EDP - Conexão', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
 
+                colors = bdPreferences.ListColors()
+                colorCard = colors[0]
+                colorTextCtrl = colors[1]
+                colorBackground = colors[2]
+                colorLineGrafic = colors[3]
+                colorBackgroundGrafic = colors[4]
+
+                colorStaticBox = HexRGB.RGB(colorCard)
+                colorTextBackground = HexRGB.RGB(colorCard)
+                colorTextCtrl = HexRGB.RGB(colorTextCtrl)
+
+                self.SetBackgroundColour(colorBackground)
+                
                 '''Iserção do IconeLogo'''
                 try:
                     ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
@@ -29,7 +44,7 @@ class Conn(wx.Dialog):
                 staticbox1 = wx.StaticBox(self, -1, '')
 
                 staticboxSizer1 = wx.StaticBoxSizer(staticbox1, wx.VERTICAL)
-                staticbox1.SetBackgroundColour(wx.Colour(255,255,255))
+                staticbox1.SetBackgroundColour(colorStaticBox)
 
                 self.LTeste = wx.Button(self, -1, "CONECTAR", size = wx.DefaultSize)
                 self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
@@ -48,11 +63,11 @@ class Conn(wx.Dialog):
                 texto7.SetFont(Fonttext)
                 texto8.SetFont(Fonttext)
 
-                texto1.SetBackgroundColour(wx.Colour(255,255,255))
-                texto5.SetBackgroundColour(wx.Colour(255,255,255))
-                texto6.SetBackgroundColour(wx.Colour(255,255,255))
-                texto7.SetBackgroundColour(wx.Colour(255,255,255))
-                texto8.SetBackgroundColour(wx.Colour(255,255,255))
+                texto1.SetBackgroundColour(colorTextBackground)
+                texto5.SetBackgroundColour(colorTextBackground)
+                texto6.SetBackgroundColour(colorTextBackground)
+                texto7.SetBackgroundColour(colorTextBackground)
+                texto8.SetBackgroundColour(colorTextBackground)
 
                 self.y1V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
                 self.y2V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -69,10 +84,10 @@ class Conn(wx.Dialog):
                 self.y1mm.SetFont(Fonttext)
                 self.y2mm.SetFont(Fonttext)
 
-                self.y1V.SetForegroundColour((119,118,114))
-                self.y2V.SetForegroundColour((119,118,114))
-                self.y1mm.SetForegroundColour((119,118,114))
-                self.y2mm.SetForegroundColour((119,118,114))
+                self.y1V.SetForegroundColour(colorTextCtrl)
+                self.y2V.SetForegroundColour(colorTextCtrl)
+                self.y1mm.SetForegroundColour(colorTextCtrl)
+                self.y2mm.SetForegroundColour(colorTextCtrl)
 
                 #--------------------------------------------------
                 '''Static Box 1'''

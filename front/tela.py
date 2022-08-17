@@ -4,8 +4,10 @@
 
 import wx
 import bancodedados
+import bdPreferences
 import wx.lib.agw.hyperlink as hl
 import wx.lib.mixins.listctrl as listmix
+import back.HexForRGB as HexRGB
 from wx.lib.agw import ultimatelistctrl as ULC
 from TelaNovo import TelaNovo
 from cabecalhos import Cab
@@ -72,12 +74,17 @@ class Tela(wx.Frame):
          super(Tela, self).__init__(parent = None, title = 'EDP - '+version, name = 'Facade', style = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION, *args, **kwargs)
          frame = self.basic_gui()
          self.version = version
+         
+         colors = bdPreferences.ListColors()
+         colorBackground = colors[2]
+
+         self.SetBackgroundColour(colorBackground)
 
      def basic_gui(self):
          v_sizer = wx.BoxSizer(wx.VERTICAL)
          h_sizer = wx.BoxSizer(wx.HORIZONTAL)
          panel = wx.Panel(self)
-
+        
          '''Iserção do IconeLogo'''
          try:
              ico = wx.Icon('icons\logo.ico', wx.BITMAP_TYPE_ICO)
@@ -93,7 +100,7 @@ class Tela(wx.Frame):
          '''StatusBar'''
          self.CreateStatusBar()
          self.SetStatusText('Ensaios Dinâmicos para Pavimentação')
-
+         
          '''MenuBarra'''
          arquivoMenu = wx.Menu()
          configuracoesMenu = wx.Menu()
@@ -230,7 +237,7 @@ class Tela(wx.Frame):
          print id
 
          '''Diálogo se deseja realmente excluir o Ensaio'''
-         dlg = wx.MessageDialog(None, 'Deseja mesmo excluir esse Ensaio?', 'EDP', wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
+         dlg = wx.MessageDialog(None, 'Deseja mesmo excluir esse Ensaio?', 'EDP', wx.ICON_EXCLAMATION | wx.YES_NO | wx.CENTRE| wx.NO_DEFAULT )
          result = dlg.ShowModal()
 
          if result == wx.ID_YES:

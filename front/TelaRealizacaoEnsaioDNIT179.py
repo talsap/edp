@@ -14,10 +14,13 @@ import back.SaveThread as SaveThread
 import back.MotorThread as MotorThread
 import back.DinamicaThread as DinamicaThread
 import back.ConexaoThread as ConexaoThread
+import back.HexForRGB as HexRGB
+import bdPreferences
 from drawnow import *
 from front.quadrotensoes import quadro
 from front.dialogoDinamico import dialogoDinamico
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+
 
 '''Frequencias para o ensaio'''
 frequencias = ['1', '2']
@@ -27,8 +30,17 @@ frequencias = ['1', '2']
 class TopPanel(wx.Panel):
         def __init__(self, parent, _self):
             wx.Panel.__init__(self, parent = parent)
+            global colorLineGrafic
+            
+            colors = bdPreferences.ListColors()
+            colorCard = colors[0]
+            colorTextCtrl = colors[1]
+            colorBackground = colors[2]
+            colorLineGrafic = colors[3]
+            colorBackgroundGrafic = colors[4]
 
             self._self = _self
+            self.SetBackgroundColour(colorBackground) 
 
             FontTitle = wx.Font(-1, wx.SWISS, wx.NORMAL, wx.BOLD)
 
@@ -41,7 +53,7 @@ class TopPanel(wx.Panel):
             self.canvas = FigureCanvas(self, -1, self.figure)
 
             rect = self.figure.patch
-            rect.set_facecolor('#D7D7D7')
+            rect.set_facecolor(colorBackgroundGrafic)
 
             self.pausa = wx.Button(self, -1, 'PAUSA')
             self.Bind(wx.EVT_BUTTON, self.PAUSA, self.pausa)
@@ -339,19 +351,33 @@ class TopPanel(wx.Panel):
         def draw(self):
             print '\nTopPanel - draw'
             global mult
+            global colorLineGrafic
             self.axes.clear()
             #self.axes.set_xlim(mult*5-5, mult*5)
             self.axes.set_xlabel("TEMPO (seg)")
             self.axes.set_ylabel("DESLOCAMENTO (mm)")
-            self.axes.plot(X, Y, 'r-')
+            self.axes.plot(X, Y, colorLineGrafic)
             self.canvas.draw()
 
 '''Painel Inferior'''
 class BottomPanel(wx.Panel):
         def __init__(self, parent, top):
             wx.Panel.__init__(self, parent = parent)
+            
+            colors = bdPreferences.ListColors()
+            colorCard = colors[0]
+            colorTextCtrl = colors[1]
+            colorBackground = colors[2]
+            colorLineGrafic = colors[3]
+            colorBackgroundGrafic = colors[4]
+
+            colorStaticBox = HexRGB.RGB(colorCard)
+            colorTextBackground = HexRGB.RGB(colorCard)
+            colorTextCtrl = HexRGB.RGB(colorTextCtrl)
 
             self.graph = top
+
+            self.SetBackgroundColour(colorBackground) 
 
             FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.BOLD)
             FontTitle1 = wx.Font(-1, wx.SWISS, wx.NORMAL, wx.BOLD)
@@ -371,12 +397,12 @@ class BottomPanel(wx.Panel):
             staticboxSizer5 = wx.StaticBoxSizer(staticbox5, wx.VERTICAL)
             staticboxSizer6 = wx.StaticBoxSizer(staticbox6, wx.VERTICAL)
 
-            staticbox1.SetBackgroundColour(wx.Colour(215,215,215))
-            staticbox2.SetBackgroundColour(wx.Colour(215,215,215))
-            staticbox3.SetBackgroundColour(wx.Colour(215,215,215))
-            staticbox4.SetBackgroundColour(wx.Colour(215,215,215))
-            staticbox5.SetBackgroundColour(wx.Colour(215,215,215))
-            staticbox6.SetBackgroundColour(wx.Colour(215,215,215))
+            staticbox1.SetBackgroundColour(colorStaticBox)
+            staticbox2.SetBackgroundColour(colorStaticBox)
+            staticbox3.SetBackgroundColour(colorStaticBox)
+            staticbox4.SetBackgroundColour(colorStaticBox)
+            staticbox5.SetBackgroundColour(colorStaticBox)
+            staticbox6.SetBackgroundColour(colorStaticBox)
 
             self.gDP = wx.Button(self, -1, 'GOLPE\nX\nD. P.')
             self.Bind(wx.EVT_BUTTON, self.GDP, self.gDP)
@@ -438,24 +464,24 @@ class BottomPanel(wx.Panel):
             texto23.SetFont(Fonttext)
             texto24.SetFont(Fonttext)
 
-            texto1.SetBackgroundColour(wx.Colour(215,215,215))
-            texto3.SetBackgroundColour(wx.Colour(215,215,215))
-            texto4.SetBackgroundColour(wx.Colour(215,215,215))
-            texto5.SetBackgroundColour(wx.Colour(215,215,215))
-            texto6.SetBackgroundColour(wx.Colour(215,215,215))
-            texto7.SetBackgroundColour(wx.Colour(215,215,215))
-            texto8.SetBackgroundColour(wx.Colour(215,215,215))
-            texto13.SetBackgroundColour(wx.Colour(215,215,215))
-            texto14.SetBackgroundColour(wx.Colour(215,215,215))
-            texto15.SetBackgroundColour(wx.Colour(215,215,215))
-            texto16.SetBackgroundColour(wx.Colour(215,215,215))
-            texto17.SetBackgroundColour(wx.Colour(215,215,215))
-            texto18.SetBackgroundColour(wx.Colour(215,215,215))
-            texto19.SetBackgroundColour(wx.Colour(215,215,215))
-            texto21.SetBackgroundColour(wx.Colour(215,215,215))
-            texto22.SetBackgroundColour(wx.Colour(215,215,215))
-            texto23.SetBackgroundColour(wx.Colour(215,215,215))
-            texto24.SetBackgroundColour(wx.Colour(215,215,215))
+            texto1.SetBackgroundColour(colorTextBackground)
+            texto3.SetBackgroundColour(colorTextBackground)
+            texto4.SetBackgroundColour(colorTextBackground)
+            texto5.SetBackgroundColour(colorTextBackground)
+            texto6.SetBackgroundColour(colorTextBackground)
+            texto7.SetBackgroundColour(colorTextBackground)
+            texto8.SetBackgroundColour(colorTextBackground)
+            texto13.SetBackgroundColour(colorTextBackground)
+            texto14.SetBackgroundColour(colorTextBackground)
+            texto15.SetBackgroundColour(colorTextBackground)
+            texto16.SetBackgroundColour(colorTextBackground)
+            texto17.SetBackgroundColour(colorTextBackground)
+            texto18.SetBackgroundColour(colorTextBackground)
+            texto19.SetBackgroundColour(colorTextBackground)
+            texto21.SetBackgroundColour(colorTextBackground)
+            texto22.SetBackgroundColour(colorTextBackground)
+            texto23.SetBackgroundColour(colorTextBackground)
+            texto24.SetBackgroundColour(colorTextBackground)
 
             self.y1V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
             self.y2V = wx.TextCtrl(self, -1, wx.EmptyString, size = (100, 41), style = wx.TE_READONLY | wx.TE_CENTER)
@@ -506,20 +532,20 @@ class BottomPanel(wx.Panel):
             self.GolpeAtual.SetFont(Fonttext)
             self.freq.SetFont(Fonttext)
 
-            self.y1V.SetForegroundColour((119,118,114))
-            self.y2V.SetForegroundColour((119,118,114))
-            self.y1mm.SetForegroundColour((119,118,114))
-            self.y2mm.SetForegroundColour((119,118,114))
-            self.AlturaFinal.SetForegroundColour((119,118,114))
-            self.PCreal.SetForegroundColour((119,118,114))
-            self.PCalvo.SetForegroundColour((119,118,114))
-            self.SigmaReal.SetForegroundColour((119,118,114))
-            self.SigmaAlvo.SetForegroundColour((119,118,114))
-            self.AlturaMM.SetForegroundColour((119,118,114))
-            self.DiametroMM.SetForegroundColour((119,118,114))
-            self.fase.SetForegroundColour((119,118,114))
-            self.NGolpes.SetForegroundColour((119,118,114))
-            self.GolpeAtual.SetForegroundColour((119,118,114))
+            self.y1V.SetForegroundColour(colorTextCtrl)
+            self.y2V.SetForegroundColour(colorTextCtrl)
+            self.y1mm.SetForegroundColour(colorTextCtrl)
+            self.y2mm.SetForegroundColour(colorTextCtrl)
+            self.AlturaFinal.SetForegroundColour(colorTextCtrl)
+            self.PCreal.SetForegroundColour(colorTextCtrl)
+            self.PCalvo.SetForegroundColour(colorTextCtrl)
+            self.SigmaReal.SetForegroundColour(colorTextCtrl)
+            self.SigmaAlvo.SetForegroundColour(colorTextCtrl)
+            self.AlturaMM.SetForegroundColour(colorTextCtrl)
+            self.DiametroMM.SetForegroundColour(colorTextCtrl)
+            self.fase.SetForegroundColour(colorTextCtrl)
+            self.NGolpes.SetForegroundColour(colorTextCtrl)
+            self.GolpeAtual.SetForegroundColour(colorTextCtrl)
 
             #--------------------------------------------------
             '''Static Box 1'''

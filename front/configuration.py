@@ -4,13 +4,22 @@
 
 import wx
 import bancodedados
+import bdPreferences
 from quadrotensoes import *
+import back.HexForRGB as HexRGB
 
 '''Tela de Configurações'''
 class Config(wx.Dialog):
         #--------------------------------------------------
         def __init__(self, *args, **kwargs):
                 wx.Dialog.__init__(self, None, -1, 'EDP - Configuração dos Ensaios', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
+
+                colorBackground = None
+
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
 
                 '''Iserção do IconeLogo'''
                 try:
@@ -45,6 +54,11 @@ class Page01(wx.Panel):
         def __init__(self, parent, id):
                 super(Page01, self).__init__(parent)
                 self.id = id
+                
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
 
                 '''Dados do bancodedados'''
                 self.lista = bancodedados.CONFIG_134()
@@ -155,6 +169,11 @@ class Page02(wx.Panel):
                 super(Page02, self).__init__(parent)
                 self.id = id
 
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
+
                 '''Dados do bancodedados'''
                 self.lista = bancodedados.CONFIG_179()
 
@@ -240,6 +259,11 @@ class Page03(wx.Panel):
                 super(Page03, self).__init__(parent)
                 self.id = id
 
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
+                
                 '''Dados do bancodedados'''
                 self.lista = bancodedados.CONFIG_181()
 
