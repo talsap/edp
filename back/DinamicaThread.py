@@ -63,7 +63,7 @@ class DinamicaThreadTwoZero(Thread):
         BF2= float(F[2])
         
         presao2 = (10000*self.p2)*AF2+BF2
-        pressao1Sen = (10000*self.p2Sen)*AF2+BF2
+        pressao2Sen = (10000*self.p2Sen)*AF2+BF2
 
         con.modeS()
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
@@ -71,7 +71,7 @@ class DinamicaThreadTwoZero(Thread):
         con.modeFS()
         wx.CallAfter(pub.sendMessage, "update", msg="         Zerando...")
         time.sleep(.5)
-        valor2 = con.modeDINZERO(presao1, pressao1Sen)
+        valor2 = con.modeDINZERO(presao2, pressao2Sen)
         if valor2 == 'p_ok':
             print 'PRESSAO CAMARA ZERADO'
             wx.CallAfter(pub.sendMessage, "update", msg="       σ3 - Zerado!")

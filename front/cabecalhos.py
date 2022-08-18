@@ -87,6 +87,7 @@ class Cab(wx.Dialog):
                 self.CadastrarCabecalhoButton = wx.Button(panel, -1, '', size=(30, 30))
                 self.CadastrarCabecalhoButton.SetBitmap(wx.Bitmap(r'icons\icons-adicionar-48px.png'))
                 self.Bind(wx.EVT_BUTTON, self.NovoCabecalho, self.CadastrarCabecalhoButton)
+                self.Bind(wx.EVT_CLOSE, self.onExit)
                 v_sizer.AddStretchSpacer(5)
                 v_sizer.Add(self.CadastrarCabecalhoButton, 0, wx.ALIGN_CENTER_HORIZONTAL)
                 v_sizer.AddStretchSpacer(4)
@@ -369,3 +370,8 @@ class Cab(wx.Dialog):
                 self.list_ctrl.SetColumnWidth(0, width=230)
                 self.list_ctrl.SetColumnWidth(1, width=40)
                 self.list_ctrl.SetColumnWidth(2, width=40)
+
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()

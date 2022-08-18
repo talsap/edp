@@ -12,6 +12,7 @@ class quadro(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
+            self.Bind(wx.EVT_CLOSE, self.onExit)
 
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
@@ -89,12 +90,18 @@ class quadro(wx.Dialog):
             self.SetSize((369,745))
             self.Centre()
             self.Show()
+        
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()
 
 '''Quadro de Tensões Editável DNIT134'''
 class quadroEditavelDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
+            self.Bind(wx.EVT_CLOSE, self.onExit)
 
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
@@ -915,11 +922,17 @@ class quadroEditavelDNIT134(wx.Dialog):
                         self.editar1.Enable()
                         self.Salvar1.Disable()
 
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()
+
 '''Quadro de Tensões Editável DNIT179'''
 class quadroEditavelDNIT179(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
+            self.Bind(wx.EVT_CLOSE, self.onExit)
 
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
@@ -1352,12 +1365,17 @@ class quadroEditavelDNIT179(wx.Dialog):
                     self.Update()
                     self.Refresh()
 
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()
 
 '''Quadro de Tensões Editável DNIT181'''
 class quadroEditavelDNIT181(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, "Quadro de Tensões")
+            self.Bind(wx.EVT_CLOSE, self.onExit)
             
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
@@ -1519,3 +1537,8 @@ class quadroEditavelDNIT181(wx.Dialog):
                     self.Salvar1.Disable()
                     self.Update()
                     self.Refresh()
+
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()

@@ -16,7 +16,8 @@ class TelaNovo(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - Novo Ensaio', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
-
+            self.Bind(wx.EVT_CLOSE, self.onExit)
+            
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
 
@@ -74,3 +75,8 @@ class TelaNovo(wx.Dialog):
                 '''Acessa a DNIT 181/2018ME'''
                 self.Close(True)
                 frame = TelaNovoEnsaioDNIT181().ShowModal()
+
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()

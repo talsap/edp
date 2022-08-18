@@ -20,3 +20,9 @@ class PDFViewer(sc.SizedFrame):
         self.viewer = pdfViewer(paneCont, wx.NewId(), wx.DefaultPosition, wx.DefaultSize, wx.CLOSE_BOX | wx.VSCROLL)
         self.viewer.UsePrintDirect = ``False``
         self.viewer.SetSizerProps(expand=True, proportion=-1)
+        self.Bind(wx.EVT_CLOSE, self.onExit)
+
+    #--------------------------------------------------
+    def onExit(self, event):
+        '''Opcao Sair'''
+        self.Destroy()

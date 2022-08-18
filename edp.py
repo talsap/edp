@@ -18,4 +18,5 @@ class main():
      app.MainLoop()
      app.RestoreStdio()
      app.__del__
+     app.Destroy()
 main()

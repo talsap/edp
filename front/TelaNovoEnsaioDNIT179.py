@@ -14,7 +14,8 @@ class TelaNovoEnsaioDNIT179(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - Ensaios Dinâmicos para Pavimentação - DNIT 179/2018IE', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
-
+            self.Bind(wx.EVT_CLOSE, self.onExit)
+            
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
 
@@ -240,3 +241,8 @@ class TelaNovoEnsaioDNIT179(wx.Dialog):
                         if condicional>0:
                             dlg = wx.MessageDialog(None, 'Os valores de diametro e de altura devem ser preenchidos corretamente.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
                             result = dlg.ShowModal()
+        
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()

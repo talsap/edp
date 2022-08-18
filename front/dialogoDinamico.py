@@ -19,6 +19,7 @@ class dialogoDinamico(wx.Dialog):
             
             self.v_sizer = wx.BoxSizer(wx.VERTICAL)
             self.h_sizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.Bind(wx.EVT_CLOSE, self.onExit)
 
             FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.BOLD)
             FontCorpo2 = wx.Font(16, wx.SWISS, wx.NORMAL, wx.BOLD)
@@ -85,6 +86,13 @@ class dialogoDinamico(wx.Dialog):
 
             self.Centre()
             self.Show()
+            
     #--------------------------------------------------
         def Button(self, event):
             self.EndModal(wx.ID_OK)
+            self.Destroy()
+        
+    #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()

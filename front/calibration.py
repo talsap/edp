@@ -49,9 +49,15 @@ class Cal(wx.Dialog):
                 sizer = wx.BoxSizer()
                 sizer.Add(nb, 1, wx.EXPAND)
                 panel.SetSizer(sizer)
+                self.Bind(wx.EVT_CLOSE, self.onExit)
                 self.SetSize((360,520))
                 self.Centre()
                 self.Show()
+
+        #--------------------------------------------------
+        def onExit(self, event):
+                '''Opcao Sair'''
+                self.Destroy()
 
 class Page01(wx.Panel):
         #--------------------------------------------------

@@ -17,7 +17,13 @@ class Csv134(wx.Dialog):
      def __init__(self, idt, *args, **kwargs):
         wx.Dialog.__init__(self, None, -1, 'EDP - CSV')
         self.idt = idt
+        self.Bind(wx.EVT_CLOSE, self.onExit)
         frame = self.basic_gui()
+
+     #--------------------------------------------------
+     def onExit(self, event):
+          '''Opcao Sair'''
+          self.Destroy()
 
     #--------------------------------------------------
      def basic_gui(self):
@@ -121,6 +127,11 @@ class Csv179(wx.Dialog):
         self.idt = idt
         frame = self.basic_gui()
 
+     #--------------------------------------------------
+     def onExit(self, event):
+          '''Opcao Sair'''
+          self.Destroy()
+          
     #--------------------------------------------------
      def basic_gui(self):
         idt = self.idt
@@ -232,6 +243,11 @@ class Csv181(wx.Dialog):
         wx.Dialog.__init__(self, None, -1, 'EDP - CSV')
         self.idt = idt
         frame = self.basic_gui()
+
+     #--------------------------------------------------
+     def onExit(self, event):
+          '''Opcao Sair'''
+          self.Destroy()
 
     #--------------------------------------------------
      def basic_gui(self):

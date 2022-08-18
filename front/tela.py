@@ -126,6 +126,7 @@ class Tela(wx.Frame):
          self.Bind(wx.EVT_MENU, self.config, configurationEnsaio)
          self.Bind(wx.EVT_MENU, self.conection, configurationConection)
          self.Bind(wx.EVT_MENU, self.ajudaGUI, ajudaMenuItem)
+         self.Bind(wx.EVT_CLOSE, self.onExit)
          self.SetMenuBar(menuBar)
 
          '''Botao Novo Ensaio'''
@@ -422,7 +423,6 @@ class Tela(wx.Frame):
     #--------------------------------------------------
      def onExit(self, event):
           '''Opcao Sair'''
-          self.Close(True)
           self.Destroy()
           
     #--------------------------------------------------
@@ -439,3 +439,4 @@ class Tela(wx.Frame):
      def conection(self, event):
          '''Opcao de conexao'''
          frame = Conn()
+

@@ -5,6 +5,7 @@ import sqlite3
 import time
 import datetime
 import math
+import banco.bdConfiguration as bdConfiguration 
 
 pi = math.pi
 
@@ -367,8 +368,8 @@ def dados_da_coleta_179(idt):
 '''Atualiza os dados iniciais do ensaio 179'''
 def update_dados_179(identificacao, tipo, naturazaDaAmostra, teorUmidade, pesoEspecifico, umidadeOtima, energiaCompactacao, grauCompactacao, dataColeta, amostra, diametro, altura, obs, tecnico, formacao):
     dataColeta = str(datetime.datetime.strptime(str(dataColeta), '%d/%m/%Y %H:%M:%S').strftime('%d-%m-%Y'))
-    pressaoConf = QD_179_MOD()[1][tipo][0]
-    pressaoDesvio = QD_179_MOD()[1][tipo][1] - pressaoConf
+    pressaoConf = bdConfiguration.QD_179_MOD()[1][tipo][0]
+    pressaoDesvio = bdConfiguration.QD_179_MOD()[1][tipo][1] - pressaoConf
     c.execute("UPDATE dadosIniciais SET tipo = ? WHERE identificacao = ?", (tipo, identificacao,))
     c.execute("UPDATE dadosIniciais SET naturazaDaAmostra = ? WHERE identificacao = ?", (naturazaDaAmostra, identificacao,))
     c.execute("UPDATE dadosIniciais SET teorUmidade = ? WHERE identificacao = ?", (teorUmidade, identificacao,))
@@ -395,8 +396,8 @@ def data_save_dados_179(identificacao, tipo, naturazaDaAmostra, teorUmidade, pes
     ensaio = '179'
     status = '0'  #0 - apenas salvou os dados de início / 1 - O ensaio já foi iniciado em algum momento / 2 - O ensaio foi finalizado com sucesso! / 3 - O ensaio foi interrompido pelo critério de rompimento / 4 - O ensaio foi interrompido por algum erro inesperado
     freq = ''
-    pressaoConf = QD_179_MOD()[1][tipo][0]
-    pressaoDesvio = QD_179_MOD()[1][tipo][1] - pressaoConf
+    pressaoConf = bdConfiguration.QD_179_MOD()[1][tipo][0]
+    pressaoDesvio = bdConfiguration.QD_179_MOD()[1][tipo][1] - pressaoConf
     tipoEstabilizante = ''
     pesoEstabilizante = ''
     tempoCura = ''

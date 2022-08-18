@@ -6,6 +6,7 @@ import wx.adv
 import datetime
 import banco.bancodedados as bancodedados
 import banco.bdPreferences as bdPreferences
+import banco.bdConfiguration as bdConfiguration
 import back.HexForRGB as HexRGB
 from front.TelaRealizacaoEnsaioDNIT134 import TelaRealizacaoEnsaioDNIT134
 from front.TelaRealizacaoEnsaioDNIT179 import TelaRealizacaoEnsaioDNIT179
@@ -19,7 +20,13 @@ class EditarDNIT134(wx.Dialog):
         def __init__(self, idt, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 134/2018ME - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
             self.idt = idt
+            self.Bind(wx.EVT_CLOSE, self.onExit)
             frame = self.basic_gui()
+
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()
 
         #--------------------------------------------------
         def basic_gui(self):
@@ -333,7 +340,13 @@ class EditarDNIT179(wx.Dialog):
         def __init__(self, idt, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 179/2018IE - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
             self.idt = idt
+            self.Bind(wx.EVT_CLOSE, self.onExit)
             frame = self.basic_gui()
+
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()
 
         #--------------------------------------------------
         def basic_gui(self):
@@ -640,8 +653,14 @@ class EditarDNIT181(wx.Dialog):
         def __init__(self, idt, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - DNIT 181/2018ME - Editar', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
             self.idt = idt
+            self.Bind(wx.EVT_CLOSE, self.onExit)
             frame = self.basic_gui()
-
+        
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()
+            
         #--------------------------------------------------
         def basic_gui(self):
             idt = self.idt

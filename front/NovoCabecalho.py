@@ -15,7 +15,8 @@ class NovoCabecalho(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, *args, **kwargs):
             wx.Dialog.__init__(self, None, -1, 'EDP - Novo Cabeçalho', style = wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
-
+            self.Bind(wx.EVT_CLOSE, self.onExit)
+            
             colors = bdPreferences.ListColors()
             colorBackground = colors[2]
 
@@ -277,4 +278,4 @@ class NovoCabecalho(wx.Dialog):
     #--------------------------------------------------
         def onExit(self, event):
             '''Opcao Sair'''
-            self.Close(True)
+            self.Destroy()

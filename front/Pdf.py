@@ -22,9 +22,16 @@ class Pdf134(wx.Dialog):
     #--------------------------------------------------
      def __init__(self, idt, *args, **kwargs):
         wx.Dialog.__init__(self, None, -1, 'EDP - PDF')
+        self.Bind(wx.EVT_CLOSE, self.onExit)
+
         self.idt = idt
         self.a = bancodedadosCAB.idEscolha()
         frame = self.basic_gui()
+
+    #--------------------------------------------------
+     def onExit(self, event):
+        '''Opcao Sair'''
+        self.Destroy()
 
     #--------------------------------------------------
      def basic_gui(self):
@@ -199,9 +206,16 @@ class Pdf179(wx.Dialog):
     #--------------------------------------------------
      def __init__(self, idt, *args, **kwargs):
         wx.Dialog.__init__(self, None, -1, 'EDP - PDF')
+        self.Bind(wx.EVT_CLOSE, self.onExit)
+        
         self.idt = idt
         self.a = bancodedadosCAB.idEscolha()
         frame = self.basic_gui()
+
+    #--------------------------------------------------
+     def onExit(self, event):
+        '''Opcao Sair'''
+        self.Destroy()
 
     #--------------------------------------------------
      def basic_gui(self):
@@ -502,10 +516,17 @@ class Pdf181(wx.Dialog):
     #--------------------------------------------------
      def __init__(self, idt, *args, **kwargs):
         wx.Dialog.__init__(self, None, -1, 'EDP - PDF')
+        self.Bind(wx.EVT_CLOSE, self.onExit)
+
         self.idt = idt
         self.a = bancodedadosCAB.idEscolha()
         frame = self.basic_gui()
 
+    #--------------------------------------------------
+     def onExit(self, event):
+        '''Opcao Sair'''
+        self.Destroy()
+        
     #--------------------------------------------------
      def basic_gui(self):
         idt = self.idt

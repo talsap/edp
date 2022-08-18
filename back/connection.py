@@ -46,15 +46,11 @@ B4_S4 = float(L2[6])
 
 '''Coeficientes da calibracao da valvula DINAMICA 1'''
 E = bdConfiguration.DadosD1()
-AE2= float(E[1])
-BE2= float(E[2])
 AE1 = float(E[5])
 BE1 = float(E[6])
 
-'''Coeficientes da calibracao da valvula DINAMICA 1'''
+'''Coeficientes da calibracao da valvula DINAMICA 2'''
 F = bdConfiguration.DadosD2()
-AF2= float(F[1])
-BF2= float(F[2])
 AF1 = float(F[5])
 BF1 = float(F[6])
 
@@ -480,7 +476,7 @@ def ColetaI(valores):
         glp = valores[8]
         ntglp = valores[9]
 
-    return temp, y1mm, y2mm, y1v, y2v, sen/10000, cam/10000, sts, glp, ntglp
+    return temp, y1mm, y2mm, y1v, y2v, sen, cam, sts, glp, ntglp
 
 #-------------------------------------------------------------------
 def ColetaJ(valores):

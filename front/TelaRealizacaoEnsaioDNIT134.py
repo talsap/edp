@@ -332,6 +332,7 @@ class TopPanel(wx.Panel):
 
             #--------------------------------------------------
             def worker1(self):
+                global conddd
                 global condition
                 global conditionEnsaio
                 global Fase
@@ -345,7 +346,7 @@ class TopPanel(wx.Panel):
                 global REFERENCIA_MEDIA
 
                 if Fase == 'CONDICIONAMENTO':
-                    while True:
+                    while conddd:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             if valorGolpe == int(glpCOND):
@@ -369,7 +370,7 @@ class TopPanel(wx.Panel):
                             pass
 
                 if Fase == 'MR':
-                    while True:
+                    while conddd:
                         try:
                             valorGolpe = int(self._self.bottom.GolpeAtual.GetValue())
                             alturaFinalCP = float(self._self.bottom.AlturaFinal.GetValue())
@@ -392,6 +393,7 @@ class TopPanel(wx.Panel):
                                 break
                         except:
                             pass
+                print 'Thread-worker1-finalizada\n'
             #--------------------------------------------------
             self.t1 = threading.Thread(target=worker1, args=(self,))
             self.t1.start()
@@ -400,6 +402,7 @@ class TopPanel(wx.Panel):
         '''Função FIM'''
         def FIM(self, event):
             print '\nTopPanel - FIM'
+            global conddd
             global condition
             global conditionEnsaio
             global Fase
@@ -442,12 +445,10 @@ class TopPanel(wx.Panel):
                         con.modeStoped()
                         time.sleep(.3)
                         con.modeB()
+                        condition = False
+                        conddd = False
                         time.sleep(.3)
                         con.modeD()
-                        condition = False
-                        time.sleep(.3)
-                        self._self.Close(True)
-                        self._self.Destroy()
 
     #--------------------------------------------------
         '''Ajusta min e max EIXO X'''
@@ -991,6 +992,7 @@ class BottomPanel(wx.Panel):
 
                     #--------------------------------------------------
                     def worker(self):
+                        global conddd
                         global condition
                         global conditionEnsaio
                         global Fase
@@ -1025,7 +1027,7 @@ class BottomPanel(wx.Panel):
                         self.leituraZerob2 = 0
                         x_counter = 0
                         valores = [0,0,0,0,0,0,0,0,0,0]
-                        while True:
+                        while conddd:
                             while condition == True:
                                 valores = con.ColetaI(valores)
                                 if cont1 >= 20: #mede a frequencia da impressão de dados na tela
@@ -1148,7 +1150,7 @@ class BottomPanel(wx.Panel):
                                         GolpeAnterior = int(valores[8])
                                         self.GolpeAtual.Clear()
                                         self.GolpeAtual.AppendText(str(int(valores[8])))
-
+                        print "Thread-worker-Finalizada\n"
                     #--------------------------------------------------
                     self.t = threading.Thread(target=worker, args=(self,))
                     self.t.start()
@@ -1435,8 +1437,10 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
     #--------------------------------------------------
         def __init__(self, identificador, tipo, diametro, altura, *args, **kwargs):
             wx.Dialog.__init__(self, parent = None, title = 'EDP - Ensaios Dinâmicos para Pavimentação - DNIT 134/2018ME - Tela Ensaio', size = (1000,750), style = wx.MAXIMIZE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION)
-
+            self.Bind(wx.EVT_CLOSE, self.onExit)
+            
             '''Variáveis Globais'''
+            global conddd #variavel de controle das Threads
             global idt #identificador do ensaio
             global leituraZerob1 #leitura zero do sensor 1
             global leituraZerob2 #leitura zero do sensor 2
@@ -1475,6 +1479,7 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             pressoes = bdConfiguration.QD_134_MOD()
             config = bdConfiguration.CONFIG_134()
 
+            conddd = True
             idt = identificador
             subleito = tipo
             H = altura
@@ -1530,3 +1535,8 @@ class TelaRealizacaoEnsaioDNIT134(wx.Dialog):
             message3 = "realizando a CONEXAO"
             dlg = dialogoDinamico(1, info, titulo, message1, message2, message3, None)
             dlg.ShowModal()
+
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            self.Destroy()

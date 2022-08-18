@@ -48,7 +48,7 @@ class Conn(wx.Dialog):
 
                 self.LTeste = wx.Button(self, -1, "CONECTAR", size = wx.DefaultSize)
                 self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
-
+                self.Bind(wx.EVT_CLOSE, self.onExit)
                 self.LTeste.SetFont(FontTitle1)
 
                 texto1 = wx.StaticText(self, label = "TESTAR CONEXÃO", style = wx.ALIGN_CENTRE)
@@ -225,3 +225,9 @@ class Conn(wx.Dialog):
             self.t.join()
             self.LTeste.SetLabel('CONECTAR')
             self.Bind(wx.EVT_BUTTON, self.LTESTE, self.LTeste)
+        
+        #--------------------------------------------------
+        def onExit(self, event):
+            '''Opcao Sair'''
+            print 'sair'
+            self.Destroy()
