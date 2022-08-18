@@ -61,6 +61,7 @@ def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS Quadro134 (id INTEGER PRIMARY KEY AUTOINCREMENT, sigma3 real, sigmad real, Razaosigma1sigma3 real)")
     c.execute("CREATE TABLE IF NOT EXISTS Quadro179 (id INTEGER PRIMARY KEY AUTOINCREMENT, sigma3 real, sigmad real, Razaosigma1sigma3 real)")
     c.execute("CREATE TABLE IF NOT EXISTS Quadro181 (id INTEGER PRIMARY KEY AUTOINCREMENT, sigma1 real)")
+    c.execute("CREATE TABLE IF NOT EXISTS cilindro (id INTEGER PRIMARY KEY AUTOINCREMENT, A1 real)")
 
 def data_entry():
     try:
@@ -84,6 +85,7 @@ def data_entry():
         c.execute("INSERT INTO config134 (id, cicloCOND, cicloMR, erro, DPacum) VALUES (?, ?, ?, ?, ?)", (0, 500, 10, 5, 5))
         c.execute("INSERT INTO config179 (id, cicloCOND, cicloDP) VALUES (?, ?, ?)", (0, 50, 150000))
         c.execute("INSERT INTO config181 (id, cicloMR, erro) VALUES (?, ?, ?)", (0, 50, 5))
+        c.execute("INSERT INTO cilindro (id, A1) VALUES (?, ?)", (0, 7853.98163397))
         connection.commit()
     except Exception:
         pass
@@ -235,6 +237,23 @@ def DadosMT():
         list.append(row[3])
         list.append(row[4])
     return list
+
+######################################################################################
+################################# CILINDRO DE PRESSÃO ################################
+######################################################################################
+'''Atualiza a área do cilindro em mm²'''
+def update_dados_CL(A1):
+    id = 0;
+    c.execute("UPDATE cilindro SET A1 = ? WHERE id = ?", (A1, id,))
+    connection.commit()
+
+'''Retorna a área do cilindro em mm²'''
+def DadosCL():
+    list = []
+    for row in c.execute('SELECT * FROM cilindro'):
+        list.append(row[1])
+    
+    return list[0]
 
 ######################################################################################
 ###################################  DNIT 134  #######################################

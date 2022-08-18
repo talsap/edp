@@ -3,6 +3,7 @@ import wx
 import time
 import banco.bdConfiguration as bdConfiguration
 import back.connection as con
+import math
 from pubsub import pub
 from threading import Thread
 
@@ -60,7 +61,7 @@ class DinamicaThreadTwoZero(Thread):
         F = bdConfiguration.DadosD2()
         AF2= float(F[1])
         BF2= float(F[2])
-
+        
         presao2 = (10000*self.p2)*AF2+BF2
         pressao1Sen = (10000*self.p2Sen)*AF2+BF2
 
@@ -88,21 +89,30 @@ class DinamicaThreadTwoZero(Thread):
 '''DinamicaThreadOne'''
 class DinamicaThreadOne(Thread):
     #-------------------------------------------------------------------
-    def __init__(self, p1, p1Ant):
+    def __init__(self, p1, p1Ant, Diametro):
         Thread.__init__(self)
         self.start()
         self.p1 = p1
         self.p1Ant = p1Ant
+        self.Diam = Diametro
         self._return = True
 
     #-------------------------------------------------------------------
     def run(self):
         E = bdConfiguration.DadosD1()
+        A1 = bdConfiguration.DadosCL()
+        pi = math.pi
+        A2 = (self.Diam*self.Diam)*(p1/4)
+
+        const = abs(round(A2/A1,3))
+        if(const > 1.05 or const < 0.95):
+            const = 1
+
         AE2= float(E[1])
         BE2= float(E[2])
 
-        pressao1 = (10000*self.p1)*AE2+BE2
-        pressao1Ant = (10000*self.p1Ant)*AE2+BE2
+        pressao1 = (10000*(const)*self.p1)*AE2+BE2
+        pressao1Ant = (10000*(const)*self.p1Ant)*AE2+BE2
 
         con.modeS()
         wx.CallAfter(pub.sendMessage, "update", msg="Ativando válvula...")
@@ -134,6 +144,7 @@ class DinamicaThreadOneZero(Thread):
     #-------------------------------------------------------------------
     def run(self):
         E = bdConfiguration.DadosD1()
+   
         AE2= float(E[1])
         BE2= float(E[2])
 

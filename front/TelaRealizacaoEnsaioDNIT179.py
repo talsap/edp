@@ -123,11 +123,12 @@ class TopPanel(wx.Panel):
             global condition
             global conditionEnsaio
             global freq
+            global Diam
             self.fim_inicio.Disable()
 
             if Fase == 'CONDICIONAMENTO':
                 condition = False
-                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_COND[0][1], self.DINAMICA2_ANTERIOR, Diam)
                 dlgC1 = My.MyProgressDialog(3)
                 dlgC1.ShowModal()
                 time.sleep(1)
@@ -140,7 +141,7 @@ class TopPanel(wx.Panel):
 
             if Fase == 'DP':
                 condition = False
-                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_DP[0][1], self.DINAMICA2_ANTERIOR)
+                threadConection = DinamicaThread.DinamicaThreadOne(VETOR_DP[0][1], self.DINAMICA2_ANTERIOR, Diam)
                 dlgC1 = My.MyProgressDialog(3)
                 dlgC1.ShowModal()
                 time.sleep(1)

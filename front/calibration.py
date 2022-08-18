@@ -36,6 +36,7 @@ class Cal(wx.Dialog):
                 page03 = Page03(nb, id)
                 page04 = Page04(nb, id)
                 #page05 = Page05(nb, id)
+                page06 = Page06(nb, id)
 
                 # adicione as páginas ao caderno com o rótulo para mostrar na guia
                 nb.AddPage(page01, "S1-S2")
@@ -43,6 +44,7 @@ class Cal(wx.Dialog):
                 nb.AddPage(page03, "DIN-1")
                 nb.AddPage(page04, "DIN-2")
                 #nb.AddPage(page05, "MOTOR")
+                nb.AddPage(page06, "CIL-P")
 
                 sizer = wx.BoxSizer()
                 sizer.Add(nb, 1, wx.EXPAND)
@@ -558,7 +560,7 @@ class Page04(wx.Panel):
 class Page05(wx.Panel):
         #--------------------------------------------------
         def __init__(self, parent, id):
-                super(Page04, self).__init__(parent)
+                super(Page05, self).__init__(parent)
                 self.id = id
                 
                 colors = bdPreferences.ListColors()
@@ -644,5 +646,76 @@ class Page05(wx.Panel):
                         self.alvdt0.Disable()
                         self.blvdt0.Disable()
                         self.c0.Disable()
+                        self.Update()
+                        self.Refresh()
+
+class Page06(wx.Panel):
+        #--------------------------------------------------
+        def __init__(self, parent, id):
+                super(Page06, self).__init__(parent)
+                self.id = id
+                
+                colors = bdPreferences.ListColors()
+                colorBackground = colors[2]
+
+                self.SetBackgroundColour(colorBackground)
+                
+                '''Dados do bancodedados'''
+                A1 = bdConfiguration.DadosCL()
+
+                FontTitle = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
+                title0 = wx.StaticText(self, -1, "CILINDRO PNEUMÁTICO", (20,20), (-1,-1), wx.ALIGN_CENTER)
+                title0.SetFont(FontTitle)
+                texto1 = wx.StaticText(self, -1, "Área interna do cilindro em (mm)²", (20,40), (-1,-1), wx.ALIGN_RIGHT)
+                textoA1 = wx.StaticText(self, -1, "A1 =", (20,75), (-1,-1), wx.ALIGN_RIGHT)
+                self.A1= wx.TextCtrl(self, -1, "%.6f" % A1, (47,73), (120,-1), wx.TE_LEFT)
+                self.A1.Disable()
+
+                self.editar2 = wx.Button(self, -1, 'Editar', (60,400), (-1,-1))
+                self.Salvar2 = wx.Button(self, -1, 'Salvar', (200,400), (-1,-1))
+                self.Bind(wx.EVT_BUTTON, self.Editar2, self.editar2)
+                self.Bind(wx.EVT_BUTTON, self.Salva2, self.Salvar2)
+                self.Salvar2.Disable()
+
+        #--------------------------------------------------
+        def Editar2(self, event):
+                '''Edita...'''
+                self.editar2.Disable()
+                self.Salvar2.Enable()
+                self.A1.Enable()
+                self.Update()
+                self.Refresh()
+
+        #--------------------------------------------------
+        def Salva2(self, event):
+                '''Salva...'''
+                AA1 = self.A1.GetValue()
+                AA1 = format(AA1).replace(',','.')
+
+                condicional = 0
+
+                try:
+                    AA1 = float(AA1)
+                    condicional = 1
+
+                except ValueError:
+                    print('Os valores digitados em algum dos campos nao esta da maneira esperada')
+                    menssagError = wx.MessageDialog(self, 'Os valores digitados em algum dos campos não está da maneira esperada.', 'EDP', wx.OK|wx.ICON_INFORMATION)
+                    aboutPanel = wx.TextCtrl(menssagError, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+                    menssagError.ShowModal()
+                    menssagError.Destroy()
+                    condicional = -1
+
+                if AA1 == '':
+                    '''Diálogo para Forçar preenchimento dos valores'''
+                    dlg = wx.MessageDialog(None, 'É necessário que alguns campos estejam preenchidos.', 'EDP', wx.OK | wx .CENTRE| wx.YES_DEFAULT | wx.ICON_INFORMATION)
+                    result = dlg.ShowModal()
+
+                else:
+                    if(condicional>0):
+                        bdConfiguration.update_dados_CL(AA1)
+                        self.editar2.Enable()
+                        self.Salvar2.Disable()
+                        self.A1.Disable()
                         self.Update()
                         self.Refresh()
