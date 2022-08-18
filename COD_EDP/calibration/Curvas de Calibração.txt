@@ -5,7 +5,13 @@ Sensor:LVDT4:10mm:P2019113446:A=-0.0002:B=11.362:R2=1.0000
 Sensor:Camara:Output:A=2.0119:B=38.210:R2=0.9995
 Sensor:Camara:_Input:A=1.3610:B=-14.258:R2=1.0000
 Sensor:Motor:A=2.0677:B=10.010:R2=1.0000
+Dinâmica1:Pistão:_Input:AE2=0.6021:BE2=+62.652:RE2=
 Dinâmica1:Pistão:Output:AE1=2.0384:BE1=-2.7918:RE1=
-Dinâmica1:Pistão:_Input:AE2=0.6021:BE2=62.652:RE2=
-Dinâmica2:Camara:Outpur:AF1=1.0476:BF1=-1296:RF1=0.9996
-Dinâmica2:Camara:_Input:AF2=2.7668:BF2=84.886:RF2=0.9999
+Dinâmica2:Camara:_Input:AF2=2.7668:BF2=+84.886:RF2=0.9999
+Dinâmica2:Camara:Output:AF1=1.0476:BF1=-1296  :RF1=0.9996
+
+----------------- CALIBRAÇÃO 18-08-2022 ------------------
+Dinâmica1:Pistão:_Input:AE2=0.6153:BE2=+16.281:RE2=1.0000
+Dinâmica1:Pistão:Output:AE1=0.0002:BE1=+0.0112:RE1=1.0000
+Dinâmica2:Camara:_Input:AF2=2.5801:BF2=+118.57:RF2=0.9908
+Dinâmica2:Camara:Outpur:AF1=0.0001:BF1=-0.1231:RF1=1.0000
