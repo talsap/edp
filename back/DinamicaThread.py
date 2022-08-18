@@ -102,7 +102,7 @@ class DinamicaThreadOne(Thread):
         E = bdConfiguration.DadosD1()
         A1 = bdConfiguration.DadosCL()
         pi = math.pi
-        A2 = (self.Diam*self.Diam)*(p1/4)
+        A2 = (self.Diam*self.Diam)*(pi/4)
 
         const = abs(round(A2/A1,3))
         if(const > 1.05 or const < 0.95):
