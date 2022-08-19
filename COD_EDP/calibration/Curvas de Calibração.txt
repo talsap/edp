@@ -13,5 +13,5 @@ Dinâmica2:Camara:Output:AF1=1.0476:BF1=-1296  :RF1=0.9996
 ----------------- CALIBRAÇÃO 18-08-2022 ------------------
 Dinâmica1:Pistão:_Input:AE2=0.6153:BE2=+16.281:RE2=1.0000
 Dinâmica1:Pistão:Output:AE1=0.0002:BE1=+0.0112:RE1=1.0000
-Dinâmica2:Camara:_Input:AF2=2.5801:BF2=+118.57:RF2=0.9908
-Dinâmica2:Camara:Outpur:AF1=0.0001:BF1=-0.1231:RF1=1.0000
+Dinâmica2:Camara:_Input:AF2=2.7566:BF2=+12.500:RF2=1.0000
+Dinâmica2:Camara:Outpur:AF1=0.0001:BF1=-0.1325:RF1=0,9961

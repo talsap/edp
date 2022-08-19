@@ -14,6 +14,7 @@ from cabecalhos import Cab
 from calibration import Cal
 from configuration import Config
 from conection import Conn
+from preferencias import Pref
 from Pdf import *
 from Csv import *
 from Editar import *
@@ -113,6 +114,7 @@ class Tela(wx.Frame):
          novoEnsaioMenuItem = arquivoMenu.Append(wx.NewId(),'Novo Ensaio\tCtrl+N', 'Novo Ensaio')
          arquivoMenu.AppendSeparator()
          cabecalhosMenuitem = arquivoMenu.Append(wx.NewId(), 'Cabeçalhos', 'Cabeçalhos')
+         preferenciasMenuitem = arquivoMenu.Append(wx.NewId(), 'Preferências', 'Preferências')
          arquivoMenu.AppendSeparator()
          exitMenuItem = arquivoMenu.Append(wx.NewId(), 'Sair\tCtrl+S','Sair')
          calibrateLVDTitem = configuracoesMenu.Append(wx.NewId(), 'Coeficientes de Calibração \tCtrl+T', 'Coeficientes de Calibração')
@@ -121,6 +123,7 @@ class Tela(wx.Frame):
          ajudaMenuItem = ajudaMenu.Append(wx.NewId(),'Ajuda\tCtrl+A','Ajuda')
          self.Bind(wx.EVT_MENU, self.NovoEnsaio, novoEnsaioMenuItem)
          self.Bind(wx.EVT_MENU, self.Cabecalhos, cabecalhosMenuitem)
+         self.Bind(wx.EVT_MENU, self.Preferencias, preferenciasMenuitem)
          self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
          self.Bind(wx.EVT_MENU, self.calibrate, calibrateLVDTitem)
          self.Bind(wx.EVT_MENU, self.config, configurationEnsaio)
@@ -345,6 +348,11 @@ class Tela(wx.Frame):
      def Cabecalhos(self, event):
          '''Abri tela com os Cabeçalhos cadastrados'''
          frame = Cab()
+    
+    #--------------------------------------------------
+     def Preferencias(self, event):
+         '''Abri tela com as preferências'''
+         frame = Pref()
 
     #--------------------------------------------------
      def ajudaGUI(self, event):

@@ -457,11 +457,15 @@ def ColetaI(valores):
         y2mm = float(Array[2])*A2_S2+B2_S2
         y1v = float(Array[3])
         y2v = float(Array[4])
-        sen = float(Array[5])*AE1+BE1
-        cam = float(Array[6])*AF1+BF1
+        cam = float(Array[5])*AF1+BF1
+        pis = float(Array[6])*AE1+BE1
         sts = int(Array[7])
         glp = int(Array[8])
         ntglp = int(Array[9])
+        if pis < 0.015:
+            pis = 0.002
+        if cam < 0:
+            cam = 0.001
 
     except:
         print 'ColetaI - except'
@@ -470,13 +474,13 @@ def ColetaI(valores):
         y2mm = valores[2]
         y1v = valores[3]
         y2v = valores[4]
-        sen = valores[5]
-        cam = valores[6]
+        cam = valores[5]
+        pis = valores[6]
         sts = valores[7]
         glp = valores[8]
         ntglp = valores[9]
 
-    return temp, y1mm, y2mm, y1v, y2v, sen, cam, sts, glp, ntglp
+    return temp, y1mm, y2mm, y1v, y2v, cam, pis, sts, glp, ntglp
 
 #-------------------------------------------------------------------
 def ColetaJ(valores):
@@ -518,4 +522,4 @@ def ColetaII():
     except:
         print "Error Coleta Sensor"
 
-    return sen/10000
+    return sen

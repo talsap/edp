@@ -80,7 +80,7 @@ def data_entry():
         c.execute("INSERT INTO s1s2 (id, I0, A0, B0, C0, I1, A1, B1, C1) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113442', -0.0004, 25.394, 25, 'P2019113443', -0.0004, 25.369, 25))
         c.execute("INSERT INTO s3s4 (id, I0, A0, B0, C0, I1, A1, B1, C1) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (0, 'P2019113340', -0.0002, 11.447, 10, 'P2019113446', -0.0002, 11.362, 10))
         c.execute("INSERT INTO d1 (id, I0, A0, B0, C0, I1, A1, B1, C1) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (0, 'DIN1_INPUT', 0.6153, 16.281, '', 'DIN1_OUTPUT', 0.0002, 0.0112, ''))
-        c.execute("INSERT INTO d2 (id, I0, A0, B0, C0, I1, A1, B1, C1) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (0, 'DIN2_INPUT', 2.5801, 118.57, '', 'DIN2_OUTPUT', 0.0001,-0.1231, ''))
+        c.execute("INSERT INTO d2 (id, I0, A0, B0, C0, I1, A1, B1, C1) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (0, 'DIN2_INPUT', 2.7566, 12.500, '', 'DIN2_OUTPUT', 0.0001,-0.1325, ''))
         c.execute("INSERT INTO mt (id, I0, A0, B0, C0) VALUES (?, ?, ?, ?, ?)", (0, 'MOTOR_DE_PASSOS', 2.0677, 10.01, ''))
         c.execute("INSERT INTO config134 (id, cicloCOND, cicloMR, erro, DPacum) VALUES (?, ?, ?, ?, ?)", (0, 500, 10, 5, 5))
         c.execute("INSERT INTO config179 (id, cicloCOND, cicloDP) VALUES (?, ?, ?)", (0, 50, 150000))

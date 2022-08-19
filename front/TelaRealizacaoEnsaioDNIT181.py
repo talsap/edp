@@ -974,7 +974,7 @@ class BottomPanel(wx.Panel):
             print '\nBottomPanel - pressao_zero'
             global condition
             condition = False
-            threadConection = DinamicaThread.DinamicaThreadOneZero(0.005, p1Sen) #0.005 é o menor valor de pressão admissível para valvula dinamica
+            threadConection = DinamicaThread.DinamicaThreadOneZero(0, p1Sen)
             dlgC1 = My.MyProgressDialog(4)
             dlgC1.ShowModal()
             condition = True
